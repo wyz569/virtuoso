@@ -1,0 +1,81 @@
+#!/bin/ksh 
+#*******************************************************************
+#*   Copyright (c)  Cadence Design Systems, Inc.  2006-2017.       *
+#*                     All rights reserved.                        *
+#*                                                                 *
+#*                                                                 *
+#*                                                                 *
+#* This program contains confidential and trade secret information *
+#* of Cadence Design Systems, Inc.  Any reproduction, use,         *
+#* distribution or disclosure of this program, without the         *
+#* express, prior written consent of Cadence Design Systems, Inc., *
+#* is strictly prohibited.                                         *
+#*                                                                 *
+#*                 Cadence Design Systems, Inc.                    *
+#*                    2655 Seely Avenue                            *
+#*                   San Jose, CA 95134,  USA                      *
+#*******************************************************************
+unalias -a
+unset LS_COLORS
+if [ "${w3264pid}" != $$ ] ; then 
+  calledAs=$0
+  self=${calledAs##*/}
+  if [ ${self} = ksh ] || [ ${self} = sh ] || [ ${self} = csh ] || [ ${self} = tcsh ] || [ ${self} = bash ] || [ ${self} = zsh ]; then
+    echo "${self}:   ERROR: This ksh script cannot be sourced." 1>&2
+    exit 1
+  fi
+  if [ -n "${ENV}" ] ;  then
+    if eval [  \"\${W3264_PID$$}\" = $$ ] ; then
+      unset W3264_PID$$
+    else
+      export W3264_ENV=${ENV}
+      unset ENV
+      export W3264_PID$$=$$
+      exec "${calledAs}" "${@}"
+    fi
+  fi
+  #------------------------------------------------------------------------------
+  if [ -n "${PROD_SUBDIR+s}"   ] ; then _w3264PROD_SUBDIR=${PROD_SUBDIR} ; else unset _w3264PROD_SUBDIR ; fi
+  if [ -n "${TOOLS_BINDIR+s}"  ] ; then _w3264TOOLS_BINDIR=${TOOLS_BINDIR} ; else unset _w3264TOOLS_BINDIR ; fi
+  if [ -n "${TOOLS_DIR+s}"     ] ; then _w3264TOOLS_DIR=${TOOLS_DIR} ; else unset _w3264TOOLS_DIR ; fi
+  if [ -n "${ROOT_DIR+s}"      ] ; then _w3264ROOT_DIR=${ROOT_DIR} ; else unset _w3264ROOT_DIR ; fi
+
+  if [ -n "${LD_PRELOAD+s}"    ] ; then _w3264LD_PRELOAD=${LD_PRELOAD} ; else unset _w3264LD_PRELOAD ; fi
+  if [ -n "${LD_DEBUG+s}"      ] ; then _w3264LD_DEBUG=${LD_DEBUG} ; else unset _w3264LD_DEBUG ; fi
+  if [ -n "${MALLOC_CHECK_+s}" ] ; then _w3264MALLOC_CHECK_=${MALLOC_CHECK_} ; else unset _w3264MALLOC_CHECK_ ; fi
+  if [ -n "${TMPDIR+s}"        ] ; then _w3264TMPDIR=${TMPDIR} ; else unset _w3264TMPDIR ; fi
+
+  unset LD_PRELOAD LD_DEBUG MALLOC_CHECK_ TMPDIR
+  #------------------------------------------------------------------------------
+  selfalias=${self}
+  _w3264Force64bit=
+  TOOLS_BINDIR=${calledAs%/*}
+  if [ "${TOOLS_BINDIR}" = "${calledAs}" ] ; then
+    TOOLS_BINDIR=`pwd -L`
+  else
+    TOOLS_BINDIR=`cd ${TOOLS_BINDIR} ; pwd -L`
+  fi
+  _w3264TAIL_BINDIR=${TOOLS_BINDIR##*/tools}
+  _w3264TAIL_BINDIR=${_w3264TAIL_BINDIR#*/}
+  TOOLS_DIR=${TOOLS_BINDIR%/${_w3264TAIL_BINDIR}}
+  TOOLS_BINDIR="${TOOLS_DIR}/bin"
+  ROOT_DIR=${TOOLS_DIR%/*}
+  link=`/bin/ls -l "${calledAs}"`
+  link=${link#* -\> }
+  if [ "${link##*/}" = ${self} ] ; then
+    PROD_SUBDIR=${link#../}
+    PROD_SUBDIR=${PROD_SUBDIR%/bin/${self}}
+  else
+    if [ "${_w3264TAIL_BINDIR}" = "bin" ] ; then
+      PROD_SUBDIR=
+    else
+      PROD_SUBDIR=${_w3264TAIL_BINDIR%/bin}
+    fi
+  fi
+fi
+
+
+oa22mode="musthave"
+
+. "${ROOT_DIR}/share/bin/.cdnWrapper_core_64"
+
