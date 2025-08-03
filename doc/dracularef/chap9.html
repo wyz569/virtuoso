@@ -1,0 +1,806 @@
+
+<html><head><title>Extracting Parasitic Resistance (PRE)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-09-14" />
+<meta name="CreateTime" content="1694753422" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Dracula offers a complete set of integrated applications for IC layout designs. It contains information about the Dracula standalone verification product." />
+<meta name="DocTitle" content="Dracula Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Extracting Parasitic Resistance (PRE)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="dracularef" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-14" />
+<meta name="ModifiedTime" content="1694753422" />
+<meta name="NextFile" content="chap10.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap8.html" />
+<meta name="c_product" content="Dracula" />
+<meta name="Product" content="Dracula" />
+<meta name="ProductFamily" content="Dracula" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Dracula Reference -- Extracting Parasitic Resistance (PRE)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="dracularefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="dracularefTOC.html">Contents</a></li><li><a class="prev" href="chap8.html" title="Using Parametric Data (LPEPRO)">Using Parametric Data (LPEPRO)</a></li><li style="float: right;"><a class="viewPrint" href="dracularef.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap10.html" title="Using DRAC2CDL Netlist Generator">Using DRAC2CDL Netlist Generat ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Dracula Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>9
+<a id="pgfId-1016900"></a></h1>
+<h1>
+<a id="pgfId-1016902"></a><hr />
+<a id="35677"></a>Extracting Parasitic Resistance (PRE)<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014231"></a>This main focus of this chapter is on PRE for Dracula. The following areas are covered:</p>
+<ul><li>
+<a id="pgfId-1014235"></a><a href="chap9.html#60414">&#8220;Overview of Parasitic Resistance Extraction&#8221;</a></li><li>
+<a id="pgfId-1014239"></a><a href="chap9.html#29975">&#8220;Creating the Resistor and Resistor Terminal Layers&#8221;</a></li><li>
+<a id="pgfId-1014243"></a><a href="chap9.html#15018">&#8220;Creating the Pad Terminal Layers&#8221;</a></li><li>
+<a id="pgfId-1014247"></a><a href="chap9.html#52707">&#8220;Calculating Junction Resistance&#8221;</a></li><li>
+<a id="pgfId-1014251"></a><a href="chap9.html#32572">&#8220;Redistributing Parasitic Capacitances&#8221;</a></li><li>
+<a id="pgfId-1014255"></a><a href="chap9.html#29631">&#8220;Sample PRE Rules File&#8221;</a></li><li>
+<a id="pgfId-1014259"></a><a href="chap9.html#33923">&#8220;Considerations for Parasitic Resistance Extraction&#8221;</a></li><li>
+<a id="pgfId-1014263"></a><a href="chap9.html#17070">&#8220;Sample Data and Results&#8221;</a></li><li>
+<a id="pgfId-1014267"></a><a href="chap9.html#21951">&#8220;Hierarchical PRE&#8221;</a></li></ul>
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1014270"></a><a id="60414"></a>Overview of Parasitic Resistance Extraction</h2>
+
+<p>
+<a id="pgfId-1014272"></a><a id="marker-1014271"></a>Parasitic Resistance Extraction (PRE) is a Dracula tool that enhances Layout Parameter Extraction (LPE) by extracting <a id="marker-1014273"></a>parasitic resistance created by any of the conduction layers in the layout. With LPE and PRE, you can extract resistance and capacitance parameters in the interconnect layers of the layout and generate accurate simulations for the most critical designs.</p>
+<p>
+<a id="pgfId-1014274"></a>PRE works in both flat and composite modes. For information about running hierarchical PRE in composite mode, refer to the <h-hot><a href="chap9.html#21951">Hierarchical PRE</a></h-hot> section in this chapter.</p>
+<p>
+<a id="pgfId-1014278"></a>Features of PRE include the following:</p>
+<ul><li>
+<a id="pgfId-1014279"></a>Flexible geometric cutting of resistors, giving you control over the parasitic resistance extraction process</li><li>
+<a id="pgfId-1014280"></a>Automatic generation of resistor body and terminal layers for resistance computation</li><li>
+<a id="pgfId-1014281"></a>Computation of resistor values by square counting (using length and width) and sheet resistance values you provide</li><li>
+<a id="pgfId-1014282"></a>Accurate automatic calculation of junction resistances, including 90-degree corners, T-shaped junctions, and cross-shaped junctions</li><li>
+<a id="pgfId-1014283"></a>Pi (π) and ladder distribution of coupling and fringe capacitances involving parasitic resistor layers</li><li>
+<a id="pgfId-1014284"></a>Resistor shorting and smashing to reduce the R/C network based on thresholds you supply</li><li>
+<a id="pgfId-1014285"></a>Backannotation that extracts names from your schematic netlist and uses them on the extracted SPICE or CDL list</li><li>
+<a id="pgfId-1014286"></a>Output of netlist in SPICE or CDL format</li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1014288"></a><a id="marker-1014287"></a>PRE operates in two passes. During the first pass, which is usually performed as part of the <a id="marker-1014289"></a>Layout Versus Schematic (LVS) check, the circuit is connected normally. During the second pass, the specified conduction layers are geometrically divided into <a id="marker-1014290"></a>resistor terminals regions and <a id="marker-1014291"></a>parasitic resistor component regions. During this pass, the circuit is reconnected to include the parasitic components in place. The conduction layer nodes split up into subnodes (the resistor terminal regions) with the parasitic resistors (resistor layer regions) placed across them. Parasitic capacitors are created after this, such that they are distributed across the subnodes. The new circuit, including all parasitic information, is output as a SPICE or CDL file.</p>
+<p>
+<a id="pgfId-1014292"></a>You can backannotate the output netlist by deriving node and newly created subnode names from the original schematic netlist used in the LVS check.</p>
+<p>
+<a id="pgfId-1014294"></a>The following sections describe in detail the two passes of the <a id="marker-1014293"></a>extraction procedure.</p>
+
+<h3>
+<a id="pgfId-1014295"></a>First PRE Pass</h3>
+
+<p>
+<a id="pgfId-1014297"></a>During the first pass, you define and connect the various active <a id="marker-1014296"></a>components with the CONNECT commands, which is similar to preparing for an LPE or LVS operation. The first pass retrieves the original nodal information for automatic internal layout cross-reference purposes during the second pass. The second pass generates new nodal information because of the introduction of parasitic resistors and new nodes.</p>
+<p>
+<a id="pgfId-1014298"></a>During the first pass, PRE does the following:</p>
+<ul><li>
+<a id="pgfId-1014301"></a><a id="marker-1014299"></a>Backannotates to the schematic level when an <a id="marker-1014300"></a>LVS is performed in the first pass</li><li>
+<a id="pgfId-1014302"></a>Verifies there are no LVS errors prior to performing the parasitic resistor extraction</li></ul>
+
+<p>
+<a id="pgfId-1014303"></a>The LVSCHK command marks the end of the first pass. If you do not need an initial LVS run, follow the CONNECT statements with the commands for the second pass.</p>
+<p>
+<a id="pgfId-1014304"></a>If you want a layout-only PRE run, you do not need to include the LVSCHK command. The resulting SPICE or CDL netlist is based on layout information only.</p>
+
+<h3>
+<a id="pgfId-1014305"></a>Second PRE Pass</h3>
+
+<p>
+<a id="pgfId-1014306"></a>The second pass uses the nodal information from the first pass to reconnect the circuit. This pass can also use the first pass LVS schematic netlist for backannotation.</p>
+<p>
+<a id="pgfId-1014307"></a>In the second pass, PRE does the following:</p>
+<ol><li>
+<a id="pgfId-1014309"></a>Creates the resistor and <a id="marker-1014308"></a>resistor terminal layers from the specified resistive conduction layer.</li><li>
+<a id="pgfId-1014310"></a>Reconnects the circuit using the created terminal layer.</li><li>
+<a id="pgfId-1014311"></a>Redefines elements.</li><li>
+<a id="pgfId-1014313"></a>Creates the parasitic resistor and <a id="marker-1014312"></a>parasitic capacitor devices.</li><li>
+<a id="pgfId-1014314"></a>Generates the SPICE or CDL output file.</li></ol>
+
+
+
+
+<p>
+<a id="pgfId-1014315"></a>The following sections describe the commands you use for these steps.</p>
+
+<h4>
+<a id="pgfId-1014316"></a>Step 1:
+Creating the Resistor Terminal and Resistor Layers</h4>
+
+<p>
+<a id="pgfId-1014317"></a>Split the trapezoids of the conduction terminal regions and create two new layers by using the CUT-TERM command. The CUT-TERM command creates a <a id="marker-1014318"></a>resistor body layer and a resistor terminal layer from a conduction layer and a contact layer. You can also use a series of geometric operation commands (such as SELECT and SIZE), spacing and logical operations, and the CUT command to achieve similar results. The splits are done in such a way as to isolate the regions where it makes the most sense to create parasitic resistor devices. The regions corresponding to the <a id="marker-1014319"></a>resistor terminal layer are treated as conduction geometries, whereas the regions corresponding to the resistor layer are treated as parasitic resistor device recognition areas connected at two terminal regions.</p>
+<p>
+<a id="pgfId-1014321"></a>Resistor <a id="marker-1014320"></a>terminal regions are created over active devices (for example, gate areas of MOS transistors), contacts, corners of conduction lines, nonparallel geometries, wide conduction lines, and places where the width of the conduction line changes. </p>
+<p>
+<a id="pgfId-1014322"></a>For more details about splitting the resistance and resistance terminal layers, refer to the section <a href="chap9.html#29975">&#8220;Creating the Resistor and Resistor Terminal Layers&#8221;</a>.</p>
+<p>
+<a id="pgfId-1014326"></a>The following example shows how the conduction polysilicon (poly) layer is split into resistor and resistor terminal regions by the various commands.</p>
+
+<p>
+<a id="pgfId-1015666"></a></p>
+<div class="webflare-div-image">
+<img width="679" height="624" src="images/chap9-2.gif" /></div>
+<h4>
+<a id="pgfId-1014379"></a>Step 2:
+Reconnecting the Circuit</h4>
+
+<p>
+<a id="pgfId-1014382"></a>After the <a id="marker-1014380"></a>co<a id="marker-1014381"></a>nduction layer is split, the circuit must be completely reconnected with the resistance terminal layer taking the place of the conduction layer.</p>
+<p>
+<a id="pgfId-1014383"></a>Because contacts found in the conduction layer are still found in the resistor terminal regions, the connectivity remains the same with one exception: the <a id="marker-1014384"></a>parasitic resistors that approximate the resistance of the conduction layer are now in place between the terminal regions.</p>
+<p>
+<a id="pgfId-1014385"></a>To reconnect the circuit, use the RCONNECT-LAYER command in the Input-Layer block. The sequence of layers corresponds to the same layers used in the CONNECT-LAYER command, substituting the resistor terminal layers for the corresponding conduction layers. RCONNECT commands in the second pass correspond to the CONNECT commands in the first connection pass, except for the substitution of the resistor terminal layers for the corresponding conduction layers.</p>
+<p>
+<a id="pgfId-1014387"></a>All layers on the RCONNECT-LAYER sequence must have <a id="marker-1014386"></a>nodal information prior to executing the RCONNECT commands. The connection process during the first pass provides some of the information. Use the STAMP command to copy nodal information from the conduction layers that were split into the <a id="marker-1014388"></a>resistor terminal layers. After reconnection, all layers on the RCONNECT-LAYER sequence get new nodal information, reflecting the subnodes created (the split resistor terminals). </p>
+<p>
+<a id="pgfId-1014390"></a>New <a id="marker-1014389"></a>subnode numbers or names are generated from the original node numbers or from the original node text if you do not request backannotation<a id="marker-1014391"></a>. The new subnode number or name is generated by concatenating the original number or name with a delimiter and a new number. The second number is chosen to differentiate the new node numbers and names. The sample SPICE output files in this chapter show examples of new node names and numbers.</p>
+
+<h4>
+<a id="pgfId-1014392"></a>Step 3:
+Creating Parasitic Resistors and Capacitors from the Resistor Layers</h4>
+
+<p>
+<a id="pgfId-1014394"></a>You define <a id="marker-1014393"></a>parasitic resistor devices for a given resistor layer by using the PARASITIC RES command. This command uses the fully created resistor and resistor terminal layers as parameters. You must use an ATTRIBUTE RES command associated with the PARASITIC RES to provide the sheet resistivity. The resistances can then be derived from the geometries of the resistor layers, the sheet resistance value provided, and the resistor terminal pairs from the geometries of the resistance terminal layer.</p>
+<p>
+<a id="pgfId-1014395"></a>If you want parasitic capacitors, use the PARASITIC CAP and ATTRIBUTE CAP commands after creating the parasitic resistor devices.</p>
+<p>
+<a id="pgfId-1014397"></a>When creating the p<a id="marker-1014396"></a>arasitic capacitors, consider capacitances to both the resistor and the resistor terminal layers, now taking the place of the original conduction layer. Parasitic capacitances associated with the resistance layers are automatically redistributed to the resistor terminals. For more information about parasitic capacitances, refer to the <a href="chap9.html#32572">Redistributing Parasitic Capacitances</a> section in this chapter. If you specify the CUT-TERM command, Dracula automatically computes junctions of the resistance terminals. Refer to the <a href="chap9.html#52707">Calculating Junction Resistance</a> section in this chapter.</p>
+
+<h4>
+<a id="pgfId-1014404"></a>Step 4:
+Redefining Elements</h4>
+
+<p>
+<a id="pgfId-1014405"></a>After replacing a conduction layer with a resistor and resistor terminal layer, you must <a id="marker-1014406"></a>redefine elements defined with this conduction layer during the first pass, using the new resistor terminal for the second pass. For example, if the poly layer is split into a resistance layer PRES and a terminal layer PTRM, define MOS devices again during the second pass using the PTRM layer in place of the poly layer. The following commands might be used for such a purpose:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014407"></a>; Pass one MOS element definition:<br />     . . .<br />     ELEMENT  MOS[N]  NGATE  POLY  NSD  PWELL<br />     ELEMENT  MOS[P]  PGATE  POLY  PSD   NSUB<br />     . . .</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014408"></a>; Pass two MOS element definition:<br />     . . .<br />     ELEMENT  MOS[N]  NGATE  PTRM  NSD  PWELL<br />     ELEMENT  MOS[P]  PGATE  PTRM  PSD   NSUB<br />     . . .</pre>
+<h4>
+<a id="pgfId-1014409"></a>Step 5:
+Generating the SPICE or CDL Output File</h4>
+
+<p>
+<a id="pgfId-1014412"></a>Use the LPESELECT command to create the <a id="marker-1014410"></a>SPICE or <a id="marker-1014411"></a>CDL netlist file.</p>
+<p>
+<a id="pgfId-1014414"></a>To short small <a id="marker-1014413"></a>resistors created by the cutting of parasitic resistance, specify a threshold with the LPESELECT RES command. The terminals of resistors having less or equal resistance than the threshold are shorted. You can use the ATTRIBUTE RES command to merge resistors that are too small.</p>
+<p>
+<a id="pgfId-1014415"></a>Obtain new node names by concatenating a delimiter and a subnode number to the original node name or number. Use the SUBNODE-DELIMITER command to override the default delimiter, a colon (:) that is used in the concatenation. Request<a id="marker-1014416"></a> backannotation with the S option. With backannotation, node names from the original netlist are used instead of node numbers to create the new node names.</p>
+
+<h2>
+<a id="pgfId-1014419"></a><a id="29975"></a>Creating the Resistor and Resistor Terminal Layers</h2>
+
+<p>
+<a id="pgfId-1014423"></a>The two basic entities in <a id="marker-1014422"></a>layout circuit extractions are geometries representing devices and geometries representing <a id="marker-1014424"></a>conductive terminals or <a id="marker-1014425"></a>nodes. In cutting parasitic resistors, polygons (or the resistive conduction layers) must be partitioned into the following:</p>
+<ul><li>
+<a id="pgfId-1014426"></a>Rectangular areas (as much as possible) corresponding to resistor devices</li><li>
+<a id="pgfId-1014427"></a>Rectangles or polygons corresponding to resistor terminal regions. Resistor terminal regions act as conduction layer nodes that connect together the two-terminal parasitic resistors and other devices.</li></ul>
+
+<p>
+<a id="pgfId-1014428"></a>You can cut the resistor and resistor terminal layers in two ways: use the CUT-TERM command or use a series of commands. Using the CUT-TERM command is the preferred method for new rules files because it requires fewer commands and produces more accurate results.</p>
+
+<h3>
+<a id="pgfId-1014429"></a>Using the CUT-TERM Command</h3>
+
+<p>
+<a id="pgfId-1014431"></a>The CUT-TERM command cuts <a id="marker-1014430"></a>parasitic resistors as follows:</p>
+<ul><li>
+<a id="pgfId-1014433"></a>Cuts <a id="marker-1014432"></a>contact regions from the resistor layer.</li><li>
+<a id="pgfId-1014434"></a>Cuts junction areas from the resistor layer. It can cut 90-degree corner <a id="marker-1014435"></a>junctions, T-junctions, and cross-shaped junctions.</li><li>
+<a id="pgfId-1014436"></a>Cuts long geometry strips into smaller segments. A long strip geometry is more accurately represented as a series of R/C lumped circuits.</li></ul>
+
+
+<p>
+<a id="pgfId-1014437"></a>To learn how to create resistor and resistor terminal layers or for a list of the commands CUT-TERM replaces, refer to the <a href="chap13.html#33842">CUT-TERM</a> section in Chapter 13 of this manual.</p>
+
+<h3>
+<a id="pgfId-1014441"></a>Using a Command Sequence</h3>
+
+<p>
+<a id="pgfId-1014442"></a>You can use combinations of Dracula spacing and logical commands plus SIZE, SELECT and CUT commands to cut the layers, then save the result as the resistor layer and the resistor terminal layer. The <a id="marker-1014443"></a>conduction layer polygons can be split in a variety of ways. In general, the splitting process should follow these rules:</p>
+<ul><li>
+<a id="pgfId-1014444"></a>The connection between different layers can only be done through contacts at <a id="marker-1014445"></a>conduction nodes. <br />
+<a id="pgfId-1014448"></a>Form<a id="marker-1014446"></a> resistor <a id="marker-1014447"></a>terminal regions around contacts involving the specified conduction layer.</li><li>
+<a id="pgfId-1014449"></a>Resistors are two-terminal devices. <br />
+<a id="pgfId-1014450"></a>Form resistor terminals at all branching corners (corners of T-shaped polygons, Y-shaped polygons, and so forth).</li><li>
+<a id="pgfId-1014451"></a>All resistors must be rectangles. <br />
+<a id="pgfId-1014452"></a>Cut non-rectangular resistors into rectangles to get better accuracy in the parasitic resistance calculations.</li><li>
+<a id="pgfId-1014453"></a>Terminals for active devices must be connected to nodes. <br />
+<a id="pgfId-1014454"></a>Include the MOS gate areas made out of a specified resistive conduction layer, such as poly, as resistor terminals.</li></ul>
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1014459"></a><a id="15018"></a>Creating the Pad Terminal Layers</h2>
+
+<p>
+<a id="pgfId-1014461"></a>The basic parts of the <a id="marker-1014460"></a>layout circuit extractions are geometries representing devices and <a id="marker-1014462"></a>conductive terminals or <a id="marker-1014463"></a>nodes. You must do the following when using the PAD-LAYER command:</p>
+<ul><li>
+<a id="pgfId-1014464"></a>Define the pad terminals in the Input-Layer block following the RCONNECT-LAYER command. </li><li>
+<a id="pgfId-1014465"></a>Specify one PAD-LAYER command in the rules file for PRE or HPRE
+if it applies all cut-term layers. Otherwise, list each pad layer for its effected layers respectively. If you do not specify the affected cut-term layers, PAD-LAYER affects all cut-term layers.</li><li>
+<a id="pgfId-1014466"></a>Input the pad layer from the input database or a derived layer.</li></ul>
+
+
+<p>
+<a id="pgfId-1014467"></a>PRE or HPRE performs the LOGICAL AND operation on the CUT-TERM input-conduction layer and on the pad layer defined by the PAD-LAYER command in order to form extra terminals automatically. </p>
+<p>
+<a id="pgfId-1014468"></a>You can specify multiple PAD-LAYER commands with a set of affected cut-term layers specified for each pad-layer in the same rules file. </p>
+<p>
+<a id="pgfId-1014470"></a>Use one of the following methods to create <a id="marker-1014469"></a>pad layers:</p>
+<ul><li>
+<a id="pgfId-1014471"></a>Generate a ring geometry (that is, on the boundary) as the pad layer (HPRE). This method does not work for hierarchical runs.<br /><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1014472">
+<a id="pgfId-1014472"></a>PAD-LAYER = PPAD
+...
+SIZE BULK BY -0.1 TBULK
+NOT BULK TBULK PPAD</pre></span></li><li>
+<a id="pgfId-1014474"></a>Use the <a id="marker-1014473"></a>passivation layer as the PAD-LAYER.</li><li>
+<a id="pgfId-1014475"></a>Use the LABEL command. For example, attach text to the METAL layer located near the boundary.<br /><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1014476">
+<a id="pgfId-1014476"></a>PAD-LAYER = PPAD
+....
+SELECT METAL LABEL[R] ? PPAD</pre></span></li><li>
+<a id="pgfId-1016923"></a>Use the output of the PIN-TEXT-LAYER command as the pad layer.<br /><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1016924">
+<a id="pgfId-1016924"></a>PIN-TEXT-LAYER = pinlay 5
+PAD-LAYER = pinlay</pre></span></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1014479"></a>Examples</h3>
+
+<p>
+<a id="pgfId-1014480"></a>The following example shows the location and syntax of the PAD-LAYER command in the Input-Layer block of the rules file.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014481"></a>*INPUT-LAYER<br />;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014482"></a>PWELL = 1                   ;PWELL layer<br />ACTIVE = 2                  ;All active diffusion<br />POLY = 3                    ;Polysilicon<br />PDIFF = 4                   ;P+ implant<br />CONT = 5                    ;All metal contacts<br />MET = 6    TEXT=6<br />SUBSTRATE = BULK 63         ;BULK used for reverse field<br />;<br />CONNECT-LAY  = NSUB  PWELL  PSD  NSD  POLY  MET<br />;<br />RCONNECT-LAY = NSUB PWELL PSD NSD PTRM MET<br />;<br />PAD-LAYER = VAPOX<br />*END</pre>
+
+<p>
+<a id="pgfId-1014483"></a>The following example uses multiple PAD-LAYER commands. You can specify a set of affected cut-term layers for each PAD-LAYER command.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014484"></a>.<br />.<br />CONNECT-LAY = NSUB PWELL PSD NSD POLY MET<br />RCONNECT-LAY = NSUB PWELL PSD NSD PTRM MTRM<br />.<br />.<br />PAD-LAYER = PAD, POLY<br />PAD-LAYER = VAPOZ, MET<br />.<br />.<br />CUT-TERM MET CONT MRES MTRM<br />CUT-TERM POLY CONT PRES PTRM</pre>
+<h3>
+<a id="pgfId-1014485"></a>Error Conditions</h3>
+
+<p>
+<a id="pgfId-1014486"></a>The following error conditions can occur when you use the PAD-LAYER command.</p>
+<ul><li>
+<a id="pgfId-1014488"></a>If you do not specify a <a id="marker-1014487"></a>pad layer in the rules file for a PRE or HPRE job, PDRACULA reports an error message in the .log file.</li><li>
+<a id="pgfId-1014489"></a>If you do not select a pad terminal layer, the UPDPAD module reports a warning message in the<a id="marker-1014490"></a> .log file and randomly picks a subnode terminal for the pad. </li><li>
+<a id="pgfId-1014491"></a>If you select multiple pad terminals for the same node but do not specify the MULTI-PIN-FILE command, PRE shorts the terminals together.</li></ul>
+
+
+
+<h2>
+<a id="pgfId-1014496"></a><a id="52707"></a>C<a id="marker-1014494"></a>alculatin<a id="junction_res"></a>g Junction Resistance </h2>
+
+<p>
+<a id="pgfId-1014497"></a>Resistance layer geometries must have two terminals. Single-terminal resistance regions are discarded. Rectangular resistance layer geometries, which provide the most accurate resistance calculation, are preferred.</p>
+<p>
+<a id="pgfId-1014499"></a>The CUT-TERM command cuts <a id="marker-1014498"></a>junction regions from the original resistance layer and treats them as terminals. To improve the accuracy of the resistance extraction results, the resistances associated with junction regions are calculated by the following models for corner junctions, T-shaped junctions, and cross-shaped junctions:</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014523"></a><a id="marker-1014522"></a>Corner Junction Resistances</div>
+<p>
+<a id="pgfId-1015724"></a></p>
+<div class="webflare-div-image">
+<img width="488" height="197" src="images/chap9-3.gif" /></div>
+<div class="ft-figtabl-title">
+<a id="pgfId-1014546"></a><a id="marker-1014524"></a>T-Shaped Junction Resistances</div>
+<p>
+<a id="pgfId-1015753"></a></p>
+<div class="webflare-div-image">
+<img width="487" height="268" src="images/chap9-4.gif" /></div>
+<div class="ft-figtabl-title">
+<a id="pgfId-1014576"></a><a id="marker-1014547"></a>Cross-Shaped Junction Resistances</div>
+<p>
+<a id="pgfId-1015781"></a></p>
+<div class="webflare-div-image">
+<img width="495" height="267" src="images/chap9-5.gif" /></div>
+
+<p>
+<a id="pgfId-1014589"></a>The following equations express the functions f1, f2, and f3.</p>
+
+<p>
+<a id="pgfId-1015816"></a></p>
+<div class="webflare-div-image">
+<img width="520" height="261" src="images/chap9-6.gif" /></div>
+<h2>
+<a id="pgfId-1014592"></a><a id="32572"></a>Redistributing Parasitic Capacitances </h2>
+
+<p>
+<a id="pgfId-1014594"></a>Define <a id="marker-1014593"></a>parasitic capacitances only after the introduction of the parasitic resistors so that you take into account the new subnodes.</p>
+<p>
+<a id="pgfId-1014595"></a>The parasitic capacitances can be categorized into the following types.</p>
+<ul><li>
+<a id="pgfId-1014596"></a>Node to node</li><li>
+<a id="pgfId-1014597"></a>Resistor to node</li><li>
+<a id="pgfId-1014598"></a>Resistor to resistor</li></ul>
+
+
+<p>
+<a id="pgfId-1014599"></a>A node corresponds to a connected set of conduction layer geometries, or resistor terminals, or both.</p>
+<p>
+<a id="pgfId-1014600"></a>Treat internodal capacitances the same as in LPE. Lump and divide distributed capacitances computed along regions forming resistors as shown in the following two illustrations.</p>
+
+<p>
+<a id="pgfId-1015835"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="365" src="images/chap9-7.gif" /></div>
+
+<p>
+<a id="pgfId-1014702"></a>Because creating the parasitic resistor elements involves splitting a <a id="marker-1014701"></a>conduction la<a id="marker-1014703"></a>yer into the resistor elements and the resistor terminals, you need to consider additional parasitic capacitances with the creation of parasitic resistors. The following is an example of a single-metal CMOS process. The layers from the top surface of the die to the bottom are</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014704"></a>Metal
+Poly
+NSD (N - diffusion)
+PSD (P - diffusion)
+P-Well,
+N-Sub (Substrate)</p>
+<p>
+<a id="pgfId-1014706"></a>The <a id="marker-1014705"></a>capacitances for these layers (without creating parasitic resistors) might be the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014707"></a>Metal to NSD
+Metal to PSD
+Metal to P-Well
+Metal to Nsub
+Poly to Metal
+Poly to P-Well
+Poly to N-Sub</p>
+<p>
+<a id="pgfId-1014709"></a>If the poly layer<a id="marker-1014708"></a> is used to extract parasitic resistors, then it is split into the resistor layer PRES and the <a id="marker-1014710"></a>resistor terminal layer PTRM. When you write the rules file to generate parasitic capacitances, these two new layers have to be considered instead of the poly layer. The new capacitances to be calculated are the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014711"></a>Metal to NSD
+Metal to PSD
+Metal to P-Well
+Metal to Nsub</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014712"></a>PRES to Metal
+PTRM to Metal</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014713"></a>PRES to P-Well
+PTRM to P-Well</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014714"></a>PRES to N-Sub
+PTRM to N-Sub</p>
+<p>
+<a id="pgfId-1014715"></a>PRE automatically splits the total resistor-to-node capacitances (PRES to Metal, PRES to P-Well, PRES to N-Sub) into two halves and connects them to the two endpoints of the resistor terminals in the form of a PI network.</p>
+<p>
+<a id="pgfId-1014716"></a>Although fringe resistor-to-resistor capacitances are not considered in the previous example, the same consideration of the split layers applies.</p>
+
+<h2>
+<a id="pgfId-1014720"></a><a id="29631"></a>Sampl<a id="pre_comfile"></a>e PRE Rules File</h2>
+
+<p>
+<a id="pgfId-1014722"></a>The following <a id="marker-1014721"></a>rules file shows a typical command sequence for an LVS check followed by PRE operations that include <a id="marker-1014723"></a>parasitic resistance extraction. Many of the commands in this file correspond to the commands needed for a normal LVS check. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014724"></a>;***************************************************<br />;*******   SI-GATE CMOS INPUT FILE FOR LPE  ********<br />;*******   PARASITIC RESISTANCE EXTRACTION  ********<br />;*******              sample.com            ********<br />;<br />*DESCRIPTION<br /> PRIMARY = STRAIGHT_GEO     ;Top structure name<br /> SYSTEM = GDS2              ;System that data came from<br /> INDISK = STREAM.OUT        ;File on disk where data is stored<br /> OUTDISK = SAMPLE           ;File where output data is stored<br /> SCALE = .001 MICRON        ;1 database unit is equal to .001 micron<br /> RESOLUTION = .25 MICRON    ;Smallest increment used in DRACULA<br /> MODE = EXEC NO             ;Job is not be submitted automatically<br /> BATCH-QUEUE = FAST         ;Job is entering the FAST queue<br /> PRINTFILE = SAMPLE         ;Specify prefix for output files<br /> PROGRAM-DIR = usr1/dracula/bin <br />                            ;Path for DRACULA to find executables<br />;<br />DIODESEQ = A1 P1            ;Spice parameter sequence<br />SCHEMATIC = LVSLOGIC        ;Compiled schematic name to be used<br /></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014725"></a>;---------------------------------------------------------<br />SUBNODE-DEL = &quot;:&quot;           ; Subnode delimiter command<br />;---------------------------------------------------------<br />MODEL = MOS[N],N MOS[P],P DIODE[N],N DIODE[P],P<br />UNIT = CAPACITANCE,PF AREA,U PERIMETER,M RESISTANCE,K<br />*END<br />*INPUT-LAYER<br />;<br /> PWELL = 1             ;PWELL layer<br /> ACTIVE = 2            ;All active diffusion<br /> POLY = 3              ;Polysilicon<br /> PDIFF = 4             ;P+ implant<br /> CONT = 5              ;All metal contacts<br /> MET = 6 TEXT=6<br /> SUBSTRATE = BULK 63   ;BULK used for reverse field<br />;<br /> CONNECT-LAY  = NSUB  PWELL  PSD  NSD  POLY  MET<br />;<br />;<br />;<br />;----------------------------------------------------------<br />RCONNECT-LAY = NSUB PWELL PSD NSD PTRM MET<br />;This command establishes the layers that are involved<br />;when the layout circuit is reconnected by the RCONNECT<br />;commands given when the parasitic resistance is extracted.<br />;The layers shown here are the same as the CONNECT-LAY command<br />;except that the POLY layer has been substituted by the PTRM<br />;layer, corresponding to the resistor terminal layer.<br />;<br />PAD-LAYER = VAPOX<br />;----------------------------------------------------------<br />*END<br />*OPERATION<br />;<br />;*******************************************************<br />;*******          DO REGULAR LVS CHECK           *******<br />;*******************************************************<br />;<br />AND  ACTIVE  PDIF  PDIF       ;All P+ active regions<br /> NOT  ACTIVE  PDIF NDIF       ;All N+ active regions<br /> AND  POLY  NDIF  NGATE       ;Create all N-channel gates<br /> AND  POLY  PDIF PGATE        ;Create all P-channel gates<br /> NOT  NDIF  NGATE  NSD        ;Create all N-channel source/drains<br /> NOT  PDIF  PGATE  PSD        ;Create all P-channel source/drains<br /> NOT  BULK  PWELL  NSUB       ;Create N-substrate area<br /> AND  PSD  PWELL  PTAP        ;Create PWELL taps for vss<br /> AND  NSD  NSUB NTAP          ;Create NSUB taps for vdd<br />;<br /> CONNECT MET POLY BY CONT     ;Connect the various conduction<br /> CONNECT MET PSD BY CONT      ;layers through the proper<br /> CONNECT MET NSD BY CONT      ;contacts.<br /> CONNECT PSD PWELL BY PTAP    ;Connect substrate and P well<br /> CONNECT NSD NSUB BY NTAP     ;region through proper taps.<br />;<br /> ELEMENT MOS[N] NGATE POLY NSD PWELL ;Define N-Channel MOS<br />;                             ;transistors.<br /> ELEMENT MOS[P] PGATE POLY PSD NSUB  ;Define P-Channel MOS<br />;                             ;transistors.<br />;<br />LVSCHK[C]<br />;<br />;<br />;<br />;<br />;<br />;<br />;<br />***************************************************<br />;Here begins the second pass - which performs the *<br />;parasitic resistor extraction from the Poly layer*<br />;**************************************************<br />;<br />;********************************************<br />;*****   CUT RESISTORS ON POLY LAYER   ******<br />;********************************************<br />;<br />;Cutting Resistor Terminal Areas around Contacts<br />;<br /> OR   NGATE  PGATE  GATE   ;GATE gets all gate layer geometries.<br /> CUT-TERM POLY CONT PRES PTRM GATE <br />;                          ;GATE is T_DEV<br />;<br />;PRES now has the geometries corresponding to the Poly parasitic<br />;resistors and PTRM has the geometries corresponding to the Poly<br />;resistor terminals.<br />;*****************************************************<br />;*****  RE-CONNECT WITH PARASITIC RESISTANCE CUT  ****<br />;*****************************************************<br />;<br /> STAMP PTRM BY POLY   ;Get original nodal information<br />;                     ;from the Poly layer stamped<br />;                     ;into the resistor terminals.<br />;<br />;---------------------------------------------------------<br />;Establish new connects i.e., reconnect the circuit using<br />;the Poly resistor terminal layer, PTRM, instead of the <br />;Poly conduction layer.<br /> RCONNECT  MET  PTRM  BY  CONT<br /> RCONNECT  MET  PSD  BY  CONT<br /> RCONNECT  MET  NSD  BY  CONT<br /> RCONNECT  PSD  PWELL  BY  PTAP<br /> RCONNECT  NSD  NSUB  BY  NTAP<br />;---------------------------------------------------------<br />;With the Parasitic Resistors created and inserted into<br />;the circuit, the other parasitic devices are handled.<br />;<br />;<br />;<br />;*****************************************************<br />;*****          CREATE PARASITIC DIODES          *****<br />;*****************************************************<br />;<br /> AND  NSD  PWELL  NDIO   ;N+ Diode minus taps<br /> AND  PSD  NSUB   PDIO   ;P+ Diode minus taps<br />;<br />;<br />;<br />;<br />;<br />;*****************************************************<br />;*****       CREATE PARASITIC CAPACITANCES       *****<br />;*****************************************************<br />;!!!!!!! Note the splitting of parasitic capacitances !!!!!!!<br />
+
+ AND&#160;&#160;MET  PTRM MPOLY        ;Metal to Poly Terminal Cap<br /> AND  MET  PRES  MPOLYR      ;Metal to Poly Resistor Cap<br />;<br /> NOT  MET  POLY  METNP       ;Create Metal with no Poly layer<br /> AND  METNP  NSD  MNSD       ;Metal to N+ Diffusion Cap<br /> AND  METNP  PSD  MPSD       ;Metal to P+ Diffusion Cap<br />;<br /> NOT  MET  MPOLY  M0        ;Prepare for PWELL and NSUB Caps<br /> NOT  M0  MPOLYR   M1       ;Remove all other Cap values<br /> NOT  M1  MNSD  M2<br /> NOT  M2  MPSD  M3<br /> AND  M3  PWELL MWELL       ;Metal to PWELL cap<br /> AND  M3  NSUB  MSUB        ;Metal to NSUB cap<br />;<br /> NOT  PTRM  GATE  PTRM1     ;Remove gate from interconnect<br /> AND  PTRM1  PWELL  POWELL  ;POLY interconnect to PWELL cap 1<br /> AND  PRES  PWELL  POWELR   ;POLY interconnect to PWELL cap 2<br /> AND  PTRM1  NSUB  POSUB    ;POLY interconnect to NSUB cap 1<br /> AND  PRES  NSUB  POSUBR    ;POLY interconnect to NSUB cap 2<br />;<br />;************************************************<br />;****  DECLARE ELEMENT AND PARASITIC DEVICES ****<br />;************************************************<br />;<br /> ELEMENT MOS[N] NGATE PTRM NSD PWELL ;Redefine elements with poly<br /> ELEMENT MOS[P] PGATE PTRM PSD NSUB  ;terminal layer PTRM instead<br />;                                    ;of POLY layer.<br /> PARASITIC DIO[N] NDIO PWELL NDIO    ;N+ Diode to PWELL<br /> PARASITIC DIO[P] PDIO PDIO NSUB     ;P+ Diode to SUBSTRATE<br />;<br /> PARASITIC  RES[P]  PRES  PTRM       ;POLY interconnect resistor<br /> ATTRIBUTE  RES[P] 0.01              ;Kohms per square<br />; Note that the above command indicates that the PRES layer<br />; corresponds to the resistance layer. This tells Dracula<br />; that any capacitances to these layers should be split <br />; according to the Pi or ladder network form.<br />;<br />;#### Capacitance attributes are in pf per unit area, as <br />;#### indicated in the UNIT command<br />;<br />;!!!! Parasitic Capacitors involving parasitic resistance  !!!!!<br />;!!!! layer and parasitic terminal resistor layer.         !!!!!<br />;!!!!                                                      !!!!!<br />;!!!! Note that capacitances involving parasitic           !!!!!<br />;!!!! poly resistor devices (PRES)  are automatically      !!!!!<br />;!!!! split in half and placed across the two ends of the  !!!!!<br />;!!!! resistors.                                           !!!!!<br />;<br /> PARASITIC CAP[A1] MPOLY MET PTRM   ;Capacitor from METAL layer<br /> ATTRIBUTE CAP[A1] 0.000025         ;to POLY resistor terminal.<br /> PARASITIC CAP[A2] MPOLYR MET PRES  ;METAL to POLY resistor<br /> ATTRIBUTE CAP[A2] 0.000025         ;capacitor.<br />;<br /> PARASITIC CAP[B] MNSD MET NSD      ;METAL to N+ capacitor<br /> ATTRIBUTE CAP[B] 0.000025          <br /> PARASITIC CAP[C] MPSD MET PSD      ;METAL to P+ capacitor<br /> ATTRIBUTE CAP[C] 0.000025<br />;<br /> PARASITIC CAP[D] MWELL MET PWELL   ;METAL to PWELL capacitor<br /> ATTRIBUTE CAP[D] 0.000025<br /> PARASITIC CAP[E] MSUB MET NSUB     ;METAL to SUBSTRATE<br /> ATTRIBUTE CAP[E] 0.000025          ;capacitor.<br />;<br /> PARASITIC CAP[F1] POWELL PTRM1 PWELL;POLY to PWELL capacitor 1<br /> ATTRIBUTE CAP[F1] 0.000075<br /> PARASITIC CAP[F2] POWELR PRES PWELL ;POLY to PWELL capacitor 2<br /> ATTRIBUTE CAP[F2] 0.000075<br />;<br /> PARASITIC CAP[G1] POSUB PTRM1 NSUB  ;POLY to SUBSTRATE cap 1<br /> ATTRIBUTE CAP[G1] 0.000075<br /> PARASITIC CAP[G2] POSUBR PRES NSUB  ;POLY to SUBSTRATE cap 2<br /> ATTRIBUTE CAP[G2] 0.00007<br />;<br />;<br />;;*******************************************<br />;*****   DEFINE FRINGE CAPACITANCE     *****<br />;*******************************************<br /> PARASITIC CAP[MF] MET  MET  MET  ; MET fringe capacitance<br /> ATTRIBUTE CAP[MF] 5.0 0.00001 <br />;<br />;!!! Note cut-term conduction layer&#8217;s fringe capacitance !!!!<br />;!!! use one FRINGE[R] command to define it              !!!<br />;<br /> FRINGE[R] CAP[PF] PTRM  PRE      ; POLY fringe capacitance<br /> ATTRIBUTE CAP[PF] 5.0 0.00002<br />;<br />;*******************************************<br />;*****        OUTPUT SPICE FILE        *****<br />;*******************************************<br />;<br />;!!!!  Note that the [S] option below indicates !!!!<br />;!!!!  back-annotation to the output netlist.   !!!!<br />;<br /> LPESELECT[S] MOS &amp;               ;Output MOS transistors<br /> LPESELECT[S] DIO &amp;               ;Output diodes<br /> LPESELECT[S] CAP GT 0.0 &amp;        ;Output capacitors<br />;---------------------------------------------------------<br /> LPESELECT[S] RES GT 0.001 OUTPUT SPICE  ;Output resistances <br />                                         ;above .001 Kohms were<br />                                         ;indicated in the units<br />                                         ;command.<br />;---------------------------------------------------------<br />*END</pre>
+<h2>
+<a id="pgfId-1014729"></a><a id="33923"></a>Considerations for Parasitic <a id="marker-1014728"></a>Resistance Extraction</h2>
+
+<p>
+<a id="pgfId-1014732"></a>Parasitic resistance extraction (PRE) depends on geometry and method of formation. In defining parasitic resistances, consider the following:</p>
+<ul><li>
+<a id="pgfId-1014733"></a>Because wider poly provides a reduced resistance contribution for a given length, we recommend a value of three to five times the minimum poly width as the upper limit for the MAXWIDTH parameter in the CUT-TERM command. Take into consideration the layout aspects of the resistive layer because the resistance contribution is dependent on sheet resistance and length, as well as the width of the geometries.</li><li>
+<a id="pgfId-1014734"></a>Because parasitic resistance extraction is dependent on the shape of the geometries and the method of extraction, some resistances yield only approximations, rather than accurate values.</li></ul>
+
+<p>
+<a id="pgfId-1014735"></a>The following examples illustrate how the interface between the resistor device geometries and the resistor terminal geometries affects the resistance computation.</p>
+<p>
+<a id="pgfId-1014736"></a>The calculation of a trapezoidal resistor is determined by the widths W1 and W2 of the endpoints of the resistor. </p>
+<p>
+<a id="pgfId-1014737"></a>Resistance is calculated as </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014738"></a>R = r * L/W </pre>
+
+<p>
+<a id="pgfId-1014739"></a>where </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014740"></a>W = (W1 + W2) / 2<br />L = Area / W</pre>
+
+<p>
+<a id="pgfId-1014741"></a>When the resistor terminals cleanly touch the resistor element endpoints, as in the following figure, W1 and W2 both are equal to W; that is, the width of the resistor layer and the area are easily determined.</p>
+
+<p>
+<a id="pgfId-1015939"></a></p>
+<div class="webflare-div-image">
+<img width="566" height="201" src="images/chap9-8.gif" /></div>
+
+<p>
+<a id="pgfId-1014761"></a>The following examples indicate the computed values for W1 and W2 when the resistor terminal geometries abut the resistor elements in special ways. For these cases, the width on a given side is determined by the edge of the resistor geometry along its intersection with the resistor terminal. If the resistor geometry fully encloses the resistor terminal, the width for that terminal is 0. The full area of the resistor regions computes L.</p>
+<p>
+<a id="pgfId-1014811"></a>The widths W1 and W2 are shown with the thicker lines.</p>
+
+<p>
+<a id="pgfId-1015965"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="685" src="images/chap9-9.gif" /></div>
+<h2>
+<a id="pgfId-1014814"></a><a id="17070"></a>Sample Data and Results </h2>
+
+<p>
+<a id="pgfId-1014816"></a>The following <a id="marker-1014815"></a>schematic and netlist represent an example of a four-inverter circuit given as input.</p>
+
+<p>
+<a id="pgfId-1016022"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="92" src="images/chap9-10.gif" /></div>
+<h4>
+<a id="pgfId-1014839"></a>Example Input SPICE/CDL File</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014840"></a>
+*.GLOBAL VDD,VSS
+*
+.SUBCKT INV1 Z / A
+* INVERTER
+MP1 Z A VDD VDD P WP=75 LP=3
+MN1 Z A VSS VSS N WN=25 LN=3
+.ENDS INV1
+*
+.SUBCKT INV2 Z / A
+* INVERTER
+MP1 Z A VDD VDD P WP=120 LP=3
+MN1 Z A VSS VSS N WN=40 LN=3
+.ENDS INV2
+*
+*
+.SUBCKT SAMPLE OUT / IN
+X1 P IN /INV1
+X2 Q P /INV2
+X3 R Q /INV1
+X4 OUT R /INV2
+.ENDS SAMPLE</pre>
+
+<p>
+<a id="pgfId-1014842"></a>After <a id="marker-1014841"></a>parasitic resistance extraction, the circuit is shown by the figure and the output SPICE file that follows. Single nodes often translate into many parasitic resistors and capacitors because the number of terminals and parasitic resistors generated along a path relates to the number of bends, contacts, gates, multiway branches, and other such aspects of the layout. The output SPICE file was generated with backannotation enabled so that it reflects the signal names specified in the SPICE input file.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014876"></a>Schematic of Out<a id="marker-1014875"></a>put SPICE File Including Parasitic Resistors</div>
+<p>
+<a id="pgfId-1016051"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="170" src="images/chap9-11.gif" /></div>
+<h4>
+<a id="pgfId-1014877"></a>Example Output SPICE File</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014878"></a>*<br />* ECAD/LPE SPICE FILE : SPICE<br />* DATE : 28-AUG-85<br />*<br />******<br />******  MOS XTOR    PARAMETERS FROM : 7MOSXREF<br />******<br />*<br />*.GLOBAL   VDD  VSS<br />*<br />.SUBCKT SPICE  OUT  IN<br />*<br />******<br />******CORNER ADJUSTMENT FACTOR =&#160;&#160;0.0000000</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016436"></a>******<br />*<br />MP1X1      P IN:3  VDD VDD P   L=3.00M   W=75.00M<br />MN1X1      P IN:2  VSS VSS N   L=3.00M   W=25.00M<br />MP1X2      Q P:10  VDD VDD P   L=3.00M   W=120.00M<br />MN1X2      Q P:9   VSS VSS N   L=3.00M   W=40.00M<br />MP1X3      R:3 Q:2 VDD VDD P   L=3.00M   W=75.00M<br />MN1X3      R:3 Q:1 VSS VSS N   L=3.00M   W=25.00M<br />MP1X4      OUT R:9 VDD VDD P   L=3.00M   W=120.00M<br />MN1X4      OUT R:8 VSS VSS N   L=3.00M   W=40.00M<br />*<br />*----- TOTAL # OF MOS TRANSISTORS FOUND : 8<br />*-----                        COMMENTED : 0<br />*<br />******<br />******   DIODE    PARAMETERS FROM:7DIOXMER<br />******<br />*<br />D18   P VDD P    364.50U  195.00M<br />D10   VSS P N    164.50U   95.00M<br />D20   OUT VDD P  544.50U  285.00M<br />D12   VSS OUT N  224.50U  125.00M<br />D22   Q VDD P    544.50U  285.00M<br />D14   VSS Q N    224.50U  125.00M<br />D24   R:3 VDD P  364.50U  195.00M<br />D16   VSS R:3 N  164.50U   95.00M<br />*<br />*----- TOTAL # OF DIODES FOUND :8<br />*-----               COMMENTED :0<br />
+*******
+****** CAPACITORS&#160;&#160;PARAMETERS FROM:7CAPXMER<br />******<br />*<br /> C1   P     VSS  1.28000E-02PF<br /> C2   P:1   VSS  5.71750E-02PF<br /> C3   P:2   VSS  5.38625E-02PF<br /> C4   P:3   VSS  7.87875E-02PF<br /> C5   R     VSS  5.71750E-02PF<br /> C6   R:1   VSS  5.38625E-02PF<br /> C7   VDD   VSS  5.64625E-01PF<br /> C8   OUT   VSS  3.22750E-02PF<br /> C9   R:2   VSS  3.97625E-02PF<br /> C10  P:4   VSS  3.50750E-02PF<br /> C11  Q     VSS  9.36750E-02PF<br /> C12  R:3   VSS  1.28000E-02PF<br /> C13  IN    VSS  6.75000E-04PF<br /> C14  N:1   VSS  6.75000E-04PF<br /> C15  R:4   VSS  6.75000E-04PF<br /> C16  R:5   VSS  9.75000E-04PF<br /> C17  R:6   VSS  6.75000E-04PF<br /> C18  R:7   VSS  6.75000E-04PF<br /> C19  R:8   VSS  3.00000E-04PF<br /> C20  R:9   VSS  3.00000E-04PF<br /> C21  R:10  VSS  9.75000E-04PF<br /> C22  P:5   VSS  8.25000E-04PF<br /> C23  P:6   VSS  6.75000E-04PF<br /> C24  P:7   VSS  8.25000E-04PF<br /> C25  R:11  VSS  1.05000E-03PF<br /> C26  R:12  VSS  6.75000E-04PF<br /> C27  R:13  VSS  1.05000E-03PF<br /> C28  P:8   VSS  6.75000E-04PF<br /> C29  P:9   VSS  3.00000E-04PF<br /> C30  P:10  VSS  3.00000E-04PF<br /> C31  R:14  VSS  6.75000E-04PF<br />*<br />*----- TOTAL # OF CAPS FOUND : 31<br />*-----             COMMENTED :  0<br />
+******
+******RESISTORS&#160;&#160;PARAMETERS FROM:7RESPREF<br />******<br /> <br /> R27  IN    IN:1  1.70333E00K<br /> R30&#160;&#160;IN:1&#160;&#160;IN:2&#160;&#160;1.29167E-01K</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016437"></a> R31  IN:2  IN:3  1.80833E-01K<br /> R32  P     P:1   3.11000E00K<br /> R33  P:1   P:2   3.38333E00K<br /> R35  P:2   P:3   3.03333E00K<br /> R37  R     R:4   2.61667E00K<br /> R38  R     R:1   3.38333E00K<br /> R40  R:1   R:5   3.13167E00K<br /> R41  R:4   R:7   1.72000E00K<br /> R42  R:5   R:10  2.34750E00K<br /> R44  R:6   R:7   1.27333E00K<br /> R46  R:6   R:8   1.51667E-01K<br /> R47  R:8   R:9   9.00000E-02K<br /> R49  R:2   R:10  7.50000E-02K<br /> R51  P:3   P:6   1.20000E-01K<br /> R53  P:5   P:6   9.00000E-02K<br /> R54  P:5   P:7   3.47000E00K<br /> R55  P:4   P:7   8.33333E-02K<br /> R58  R:2   R:11  7.83333E-02K<br /> R59  R:11  R:13  1.17250E00K<br /> R60  R:12  R:13  1.11500E00K<br /> R61  R:12  R:14  5.10000E-01K<br /> R63  P:4   P:8   5.03333E-01K<br /> R64  P:8   P:9   1.51667E-01K<br /> R66  P:9   P:10  9.00000E-02K<br /> R67  Q:1   Q:2   1.80833E-01K<br /> R68  R:3   R:14  4.13333E-01K<br /> R69  Q     Q:2   2.06667E-01K<br />*<br />*-----  TOTAL # OF RESISTORS FOUND :   29<br />*-----                   COMMENTED :    0<br />*<br /> .ENDS</pre>
+<h2>
+<a id="pgfId-1014884"></a><a id="21951"></a>Hierarchical PRE</h2>
+
+<p>
+<a id="pgfId-1014886"></a>Composite mode <a id="marker-1014885"></a>PRE extracts the designed and parasitic devices from the composite plane. Like flat mode PRE, HPRE generates a <a id="marker-1014887"></a>SPICE file with back annota<a id="marker-1014888"></a>tion to the schematic if you are also running LVS as part of the job. HPRE generates a SPICE file with layout information only if you are not running LVS as part of the job.</p>
+<p>
+<a id="pgfId-1014889"></a>The difference between PRE and HPRE is that when you run HPRE in composite mode, the HPRE program includes interconnection between instances or placements. Because of this, the format HPRE generates is not the same as flat SPICE.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014890"></a>There is no cell mode PRE. </div>
+<p>
+<a id="pgfId-1014892"></a>For more information on running HPRE, see &#8220;<h-hot>Running Hierarchical Parameter Extractions</h-hot>&#8221; in the &#8220;Setting up Hierarchical Dracula&#8221; chapter of the Dracula User Guide.</p>
+
+<h3>
+<a id="pgfId-1014893"></a>SPF File Overview</h3>
+
+<p>
+<a id="pgfId-1014895"></a>The <a id="marker-1014894"></a>Standard Parasitic File (SPF) lists extracted electrical data for a design created by Place and Route tools such as Block Ensemble, Cell Ensemble, and Gate Ensemble. This extracted data consists of placed and interconnected cell instances.</p>
+<p>
+<a id="pgfId-1014896"></a>The SPF file can have one of two formats: detailed SPF (DSPF) format or reduced SPF (RSPF) format. Embedded in each format are two circuit level models, each with different degrees of complexity and accuracy, that represent the physical design.</p>
+
+<h3>
+<a id="pgfId-1014897"></a><a id="47651"></a>DSPF Format</h3>
+
+<p>
+<a id="pgfId-1014900"></a>The DSPF<a id="marker-1014898"></a> format co<a id="marker-1014899"></a>ntains complete extracted circuit information, including designed and parasitic devices. Circuit simulators can use DSPF for comprehensive simulation, and timing simulators can use DSPF for delay analysis. DSPF also lists circuit-level debugging information so you can identify parasitic layout components and study their effects.</p>
+<p>
+<a id="pgfId-1014901"></a>DSPF has two sections: a net section and an instance section. The net section consists of a series of net description blocks. Each net description block corresponds to a net in the physical design. A net description block begins with a net statement followed by pins, instance pins, subnodes, and parasitic resistor/capacitor (R/C) components that characterize the electrical behavior of the net. The instance section consists of a series of SPICE instance statements. SPICE instance statements begin with an X.</p>
+<p>
+<a id="pgfId-1014902"></a>The DSPF format is as generic and as much like SPICE as possible. While native SPICE statements describe the R/C sections, some nonnative SPICE statements complete the net descriptions. These nonnative SPICE statements start with the notation &#8220;*|&#8221; to differentiate them from native SPICE statements.</p>
+<p>
+<a id="pgfId-1014903"></a>Each file consists of hierarchical cells and interconnects only. When the data also contains designed devices, the DSPF excludes these extracted devices (MOSFETs, bipolar transistors, and so on). These devices are not reported in DSPF.</p>
+
+<h4>
+<a id="pgfId-1014904"></a>DSPF Sample</h4>
+
+<p>
+<a id="pgfId-1015029"></a>The following sample circuit is shown in DSPF format.</p>
+
+<p>
+<a id="pgfId-1016090"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="369" src="images/chap9-12.gif" /></div>
+
+<p>
+<a id="pgfId-1015030"></a>In this example, nonnative SPICE statements start with the notation &#8220;*|&#8221; to differentiate them from native SPICE statements.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015031"></a>.SUBCKT BUFFER OUT IN<br />*<br />* Net Section<br />*<br />*|GROUND_NET VSS<br />*<br />*|NET IN 1.221451PF<br />*|P (IN I 0.0 0 10)<br />*|I (DF1:A DF1 A I 0.0 10.0 10.0)<br />*|I (DF1:B DF1 B I 0.0 10.0 20.0)<br />*|S (IN:1 5.0 10.0)<br />*|S (IN:2 5.0 20.0)<br />C1 IN VSS 1.17763E-01PF<br />C2 IN:1 VSS 2.76325E-01PF<br />C3 IN:2 VSS 2.86325E-01PF<br />C4 DF1:A VSS 2.70519E-01PF<br />C5 DF1:B VSS 2.70519E-01PF<br />R20 IN IN:1 1.70333E00<br />R21 IN:1 DF1:A 1.29167E-01<br />R22 IN:1 IN:2 1.29167E-01<br />R23 IN:2 DF1:B 1.70333E00<br />*<br />*|NET BF 2.87069E-01PF<br />*|I (DF1:C DF1 C O 0.0 10.0 10.0)<br />*|I (INV1:IN INV1 IN I 0.0 30.0 20.0)<br />C6 DF1:C VSS 2.08719E-01PF<br />C7 INV1:IN VSS 7.83500E-02PF<br />R24 DF1:C INV1:IN 1.80833E-01<br />*<br />*|NET OUT 1.48478E-01PF<br />*|S (OUT:1 45.0 10.0)<br />*|P (OUT O 0.0 50.0 5.0)<br />*|I (INV1:OUT INV1 OUT O 0.0 40.0 20.0)<br />C8 INV1:OUT VSS 1.47069E-01PF<br />C9 OUT:1 VSS 6.32813E-03PF<br />C10 OUT VSS 7.76250E-03PF<br />R25 INV1:OUT OUT:1 3.11000E00<br />R26 OUT:1 OUT 3.03333E00<br />*<br />* Instance Section<br />*<br />XDF1 DF1:A DF1:B DF1:C DFF<br />XINV1 INV1:IN INV1:OUT INV<br />.ENDS</pre>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015032"></a>This example does not contain coupling capacitors. Coupling capacitors would normally be listed at the end of the net description block that includes the first node name of the capacitor.</div>
+<p>
+<a id="pgfId-1015033"></a>Non-native SPICE syntax and conventions are described below.</p>
+<p>
+<a id="pgfId-1015035"></a><a id="marker-1015034"></a>NET netName netCap</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015036"></a>NET indicates the beginning of a new net description. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015037"></a>netName assigns each net statement a unique net name. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015038"></a>netCap specifies the total capacitance associated with the net. netCap includes capacitances to ground and capacitances to nearby wires. It includes a numerical value (which can sometimes be zero) and a unit name, usually PF, with no space between. Because the NET statement includes the total capacitance, you can examine the NET statement to extract the sim.cap format from the DSPF format.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015039"></a>Pins, instance pins, subnodes, and all the R/C descriptions that characterize the net follow the NET statement. </p>
+<p>
+<a id="pgfId-1015041"></a>P {(pin<a id="marker-1017753"></a>Name pinType pinCap [xCoord yCoord])}</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015042"></a>You must specify all pin capacitance values in the timing view library for computation<a id="marker-1015043"></a>.</div>
+<p class="webflare-indent1">
+<a id="pgfId-1015044"></a>P denotes pins in the net. Each pin description is delimited by parentheses and contains the information for its name (pinName), its type (pinType), its generalized capacitance value (pinCap), and its x coordinate location (xCoord) and its y coordinate location (yCoord). Multiple pin descriptions can be listed on one line.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015045"></a>pinType can be P (power), G (ground), C (clock), I (input), O (output), B (bidirectional), and X (unspecified). </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015046"></a>pinCap consists of a capacitance value followed by any number of optional R/C pairs. For example</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015047"></a> C0 [R1 C1 R2 C2 ...]. </pre>
+<p class="webflare-indent1">
+<a id="pgfId-1015048"></a>This format lets you model the pin characteristics by a higher order equivalent R/C ladder circuit than is represented by a single capacitor. The order of the equivalent circuit is increased from the first order (represented by C0) by attaching R/C pairs. The value of each capacitance is determined by a numerical value and a unit specifier such as PF. Use the generalized pin capacitance only if the pin type is I, O, or B. With other pin types, pinCap is dropped. In this case, you should use a number (for example, 0) as a place holder. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015049"></a>xCoord and yCoord describe a pin location (optional).</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1015080"></a>Generalized Pin Description</div>
+<p>
+<a id="pgfId-1016221"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="166" src="images/chap9-13.gif" /></div>
+
+<p>
+<a id="pgfId-1015082"></a><a id="marker-1015081"></a>I {(instPinName instName pinName pinType pinCap [xCoord yCoord]..)}</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015083"></a>I describes instance pins in the net. Each instance pin description is delimited by parentheses. The pinName, pinType, pinCap, and xCoord and yCoord follow the same format as described in the P statement. The description of the instance pin location is optional. Multiple instance pin descriptions can be listed on one line. The xCoord and yCoord can be repeated for feedthrough pins.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015084"></a>instPinName is the instance pin name component obtained by concatenating the instName and the pinName with a delimiting character specified by the DELIMITER statement. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015085"></a>instName is the instance name component.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015086"></a>pinName is the name of the pin in the master of the instance.</p>
+<p>
+<a id="pgfId-1015088"></a><a id="marker-1015087"></a>S {(subnodeName [xCoord yCoord])}</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015089"></a>S denotes subnodes in the net. Each subnode description is delimited by parentheses and contains the name of the subnode and its location. A subnode name is obtained by concatenating the net name and a subnode number by a colon (netname:1). Multiple subnode descriptions can be listed in one line.</p>
+<p>
+<a id="pgfId-1015091"></a><a id="marker-1015090"></a>GROUND_NET netName</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015092"></a>GROUND_NET specifies the ground net for loading capacitors. It must precede the NET statement.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015093"></a>netName is the name of the ground net.</p>
+<p>
+<a id="pgfId-1015095"></a><a id="marker-1015094"></a>DELIMITER &#8220;C&#8221;</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015096"></a>This statement specifies the character C as the delimiter used to construct the instance pin name instPinName. If you do not include this statement, the default delimiter character, colon (:), is used.</p>
+<p>
+<a id="pgfId-1015098"></a><a id="marker-1015097"></a>For native SPICE statements, a continuation line begins with a plus sign (+) in the first column. For other statements, a continuation line begins with an asterisk and a plus sign (*+) in the first and second columns. The maximum number of continuation lines allowed is 1000.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015099"></a>You might see instances of resistors and capacitors starting with the instance names RD and CD, respectively. These are dummy instances created for the CDC, which requires a pie model (capacitor-resistor-capacitor) for the RC mesh. If there are cases that do not fit the pie model, dummy resistors or capacitors with a value of zero are added where needed.</div>
+
+<h3>
+<a id="pgfId-1015100"></a>RSPF Format</h3>
+
+<p>
+<a id="pgfId-1015101"></a>The DSPF file contains complete circuit information extracted by a parasitic extractor. Although this information is indispensable for debugging purposes, this can be too much data to use for circuit simulation or timing simulation. </p>
+<p>
+<a id="pgfId-1015102"></a>One of the major applications of the parasitic circuit extractor is analysis of interconnect nets created by automatic placement and routing tools. In such applications, you do not usually require comprehensive circuit simulation of the parasitics; however, you might be very concerned about the total delays introduced by interconnect because the interconnect delays tend to limit the overall system performance. Traditionally, a delay calculator is invoked to perform the delay analysis. Arbitrary interconnect structures have to be reduced to a simpler form to allow fast delay calculation. The most common simplification is to reduce an interconnect net to a total capacitance, ignoring the effects of resistance and net topology. </p>
+<p>
+<a id="pgfId-1015104"></a>The <a id="marker-1015103"></a>RSPF format is very similar to DSPF format except for the syntax in the spf_type and net_block sections. In addition to the keywords defined in the DSPF file, two extra keywords are used in the RSPF format: the DRIVER and the LOAD statements. The purpose of these two statements is to identify the driver-load relationship. The following syntax description shows only the syntax specific to RSPF.</p>
+<p>
+<a id="pgfId-1015105"></a>*|RSPF {qstring}</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015106"></a>qstring represents the version number of the SPF format. </p>
+<p>
+<a id="pgfId-1015107"></a>NET netName driver_def {subNode_def} resistor_def2 capacitor_def2 {load_def {subNode_def} voltage_def resistor_def?}</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015108"></a>NET indicates the beginning of a new net description. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015109"></a>driver_block describes the driver pin of the net followed by an optional subNode, then two resistors and two capacitors to form the driver block.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015110"></a>subNode_def is the same as that in DSPF format except that it does not output a subnode&#8217;s coordinates.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015111"></a>load_block describes the load pin of the net followed by an optional subNode, then a voltage-controlled voltage source, resistor, and capacitor to form the load block. The load block is optional because one pin nets are typically drivers with no load.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015112"></a>driver_def represents the driver pin of the net. It starts with the DRIVER keyword followed either by a top-level pin or an instance pin. For an instance pin, the instance pin name is obtained from the instance name and the pin name by concatenating them with a delimiter The default delimiter is a colon (:).</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015113"></a>load_def represents the load pin of the net. It starts with the LOAD keyword followed either by a top-level pin or an instance pin. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015114"></a>voltage_def is a native SPICE statement. </p>
+
+<h4>
+<a id="pgfId-1015115"></a>RSPF Example</h4>
+
+<p>
+<a id="pgfId-1015179"></a>The following sample circuit is s<a id="marker-1015116"></a>hown in RSPF format.</p>
+
+<p>
+<a id="pgfId-1016258"></a></p>
+<div class="webflare-div-image">
+<img width="683" height="357" src="images/chap9-14.gif" /></div>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015180"></a>*|RSPF 1.0<br />*<br />*|DESIGN &quot;ABC&quot;<br />*|DATE  &quot;September 8, 1995 20:10:00&quot;<br />*|VENDOR &quot;CADENCE&quot;<br />*|PROGRAM &quot;PREVIEW&quot;<br />*|VERSION &quot;PREVIEW_1.0&quot;<br />*|DIVIDER /<br />*|DELIMITER :<br />*<br />.SUBCKT MODULE1 OUTP INP<br />*|GROUND_NET VSS<br />*<br />* Net Section</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015181"></a>*|NET INP 1.7534PF<br />.<br />.<br />.*<br />*|NET NET1 0.8405578PF<br />*|DRIVER A:OUT A OUT<br />*|S (A:OUT:1)<br />R1 A:OUT VSS 2.84626E02<br />R2 A:OUT A:OUT:1 6.23854E02<br />C1 A:OUT VSS 0.533474PF<br />C2 A:OUT:1 VSS 0.392564PF<br />*|LOAD B:IN B IN<br />*|S (B:IN:1)<br />E1 B:IN:1 VSS A:OUT VSS 1.0<br />R3 B:IN:1 B:IN 1.4835E03<br />C3 B:IN VSS 1.0PF<br />*<br />*|NET OUTP 0.83975PF<br />...<br />.<br />*<br />*Instance Section<br />*<br />XA ...<br />XB ...<br />.<br />.ENDS</pre>
+
+<h4>
+<a id="pgfId-1015182"></a>RSPF Example with Multiple Drivers and Multiple Loads</h4>
+
+<p>
+<a id="pgfId-1015184"></a>For a general mu<a id="marker-1015183"></a>ltiple-driver and multiple-load net, a separate equivalent reduced model must be created for each driver-load pair. </p>
+
+<p>
+<a id="pgfId-1016327"></a></p>
+<div class="webflare-div-image">
+<img width="495" height="319" src="images/chap9-15.gif" /></div>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015205"></a>*|RSPF &quot;1.0&quot;<br />*<br />*|DESIGN &quot;ABC&quot;<br />*|DATE  &quot;December 8, 1995 20:10:00&quot;<br />*|VENDOR &quot;CADENCE&quot;<br />*|PROGRAM &quot;PREVIEW&quot;<br />*|VERSION &quot;PREVIEW_1.0&quot;<br />*|DIVIDER &quot;/&quot;<br />*|DELIMITER &quot;:&quot;<br />*<br />
+
+.SUBCKT MODULE2 OUTP INP 
+*|GROUND_NET VSS
+*
+*Net Section
+*
+.
+.
+.
+*|NET net 5.4982PF
+* 1st driver pin group
+
+*|DRIVER A:OUT A OUT
+*|S (A:OUT:1)
+R1 ...
+R2 ...
+C1 ...
+C2 ...
+*|LOAD C:IN C IN
+*|S (C:IN:1)
+E1 ...
+R3 ...
+C3 ...
+*|LOAD D:IN D IN
+*|S (D:IN:1)
+E2 ...
+R4 ...
+C4 ...
+* 2nd driver pin group
+*|DRIVER B:OUT B OUT
+*|S (B:OUT:1)
+R5 ...
+R6 ...
+C5 ...
+C6 ...
+*|LOAD C:IN C IN
+*|S (C:IN:1)
+E3 ...
+R7 ...
+C7 ...
+*|LOAD D:IN D IN
+*|S (D:IN:1)
+E4 ...
+R8 ...
+C8 ...
+*
+*|NET next_net 1.9387PF
+.
+.
+.
+*
+*Instance Section
+*
+.
+.
+.
+XA ...
+XB ...
+XC ...
+XD ....
+.
+.
+.ENDS</pre>
+
+<h3>
+<a id="pgfId-1015206"></a>Dracula, CDC, DSPF and RSPF Flow</h3>
+
+<p>
+<a id="pgfId-1015207"></a>The following example illustrates the flow between Dracula, CDC, DSPF, and RSPF<a id="marker-1015208"></a>.</p>
+
+<p>
+<a id="pgfId-1015311"></a></p>
+<div class="webflare-div-image">
+<img width="672" height="571" src="images/chap9-16.gif" /></div>
+
+<p>
+<a id="pgfId-1014140"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap8.html" id="prev" title="Using Parametric Data (LPEPRO)">Using Parametric Data (LPEPRO)</a></em></b><b><em><a href="chap10.html" id="nex" title="Using DRAC2CDL Netlist Generator">Using DRAC2CDL Netlist Generat ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
