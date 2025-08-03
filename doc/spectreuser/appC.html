@@ -1,0 +1,312 @@
+
+<html><head><title>Netlist Compiled Functions (NCF)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-09-01" />
+<meta name="CreateTime" content="1693555146" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the features of Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC analysis, and Legato reliability solution." />
+<meta name="DocTitle" content="Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC Analysis, and Legato Reliability Solution User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Netlist Compiled Functions (NCF)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreuser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-01" />
+<meta name="ModifiedTime" content="1693555146" />
+<meta name="NextFile" content="appD.html" />
+<meta name="Order" content="1" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="appB.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC Analysis, and Legato Reliability Solution User Guide -- Netlist Compiled Functions (NCF)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreuser231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectreuserTOC.html">Contents</a></li><li><a class="prev" href="appB.html" title="Using Compiled-Model Interface">Using Compiled-Model Interface</a></li><li style="float: right;"><a class="viewPrint" href="spectreuser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appD.html" title="Digital Vector File Format">Digital Vector File Format</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC Analysis, and Legato Reliability Solution User Guide<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>C
+<a id="pgfId-1032955"></a></h1>
+<h1>
+<a id="pgfId-1144453"></a><hr />
+Netlist Compiled Functions (NCF)<hr />
+</h1>
+
+<p>
+<a id="pgfId-1131644"></a>The Spectre circuit simulator now allows a netlist expression to call functions that are loaded from a Dynamic Link Library (DLL).With this functionality, you can create your own functions in C or C++, for example, taking advantage of the features of these languages and overcoming the restrictions of the netlist user-defined function. </p>
+
+<h2>
+<a id="pgfId-1145865"></a>Loading a Plug-in</h2>
+
+<p>
+<a id="pgfId-1145866"></a>A plug-in can be loaded using either the <code>-plugin</code> command-line option or the <code>CDS_MMSIM_PLUGINS</code> environment variable. Both approaches allow the use of embedded environment variables, % modifiers and tilde expansion. A list of plug-ins can be provided using <code>CDS_MMSIM_PLUGINS</code>. Elements of the list are separated by whitespace or semicolons. </p>
+
+<a id="pgfId-1145867"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+% spectre -plugin ~/plugins/%O/libmyplugin_sh.so mytest.scs +log %C:r.out</pre>
+
+<a id="pgfId-1145868"></a>or 
+<a id="pgfId-1145869"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+% setenv CDS_MMSIM_PLUGINS &quot;~/plugins/%O/libmyplugin_sh.so&quot;</pre>
+<a id="pgfId-1145870"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+% spectre mytest.scs +log %C:r.out</pre>
+
+<p>
+<a id="pgfId-1145871"></a>Commonly used % modifiers are </p>
+<ul><li>
+<a id="pgfId-1145872"></a><code>%I</code>: MMSIM installation hierarchy</li><li>
+<a id="pgfId-1145873"></a><code>%O</code>: Platform specified, equivalent to the result of <code>cds_plat</code> </li><li>
+<a id="pgfId-1145874"></a><code>%B</code>: A 32-bit executable replaces this with an empty string. A 64-bit executable expands this to the string <code>64bi</code>t. </li></ul>
+
+
+
+<h2>
+<a id="pgfId-1145882"></a>Using a NCF in a Spectre Netlist</h2>
+
+<p>
+<a id="pgfId-1145912"></a>A NCF is called in a Spectre netlist just like any built-in mathematical function or user-defined function is called. There is no special syntax required to use a NCF once its plug-in has been successfully loaded by Spectre. In the following example, <code>safe_sqrt( x )</code> is a simple NCF that evaluates the following code</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145884"></a> if (x &lt; 0.0)<br />  return 0.0;<br /> else<br />  return sqrt( x );</pre>
+
+<p>
+<a id="pgfId-1145885"></a>In the Spectre netlist, this is called as follows</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145886"></a> parameters w=1u y=safe_sqrt( w )</pre>
+
+<p>
+<a id="pgfId-1145887"></a>It could also be called on any instance or model parameter expression. There are some restrictions on the use of NCF functions.</p>
+<ul><li>
+<a id="pgfId-1145888"></a>A NCF cannot be used in a behavioral source if an argument to the NCF is non-constant, i.e. a reference to a node voltage, device current, etc. </li></ul>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145889"></a> r1 1 0 resistor r=add( 1.0, 2.0 )*1k&#160;&#160;     // Used correctly</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145890"></a> b1 1 0 bsource i=v(1)/(add( 1.0, 2.0 )*1k) // Used correctly</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145891"></a> b1 1 0 bsource i=add( v(1), 0 )/1k&#160;&#160;       // Error, cannot compute d(i)/d(v(1))</pre>
+
+<ul><li>
+<a id="pgfId-1145892"></a>A NCF cannot be used in a post-processing statement, such as a save, <code>.PRINT</code>, <code>.PROBE</code> or <code>.MEASURE</code>. </li></ul>
+
+<h2>
+<a id="pgfId-1144811"></a>Creating a Plug-in</h2>
+
+<p>
+<a id="pgfId-1145931"></a>You must include the <code>ncf.h</code> file to provide declarations of all functions and variables used in the plug-in. </p>
+<p>
+<a id="pgfId-1145932"></a>The plug-in must contain the <code>ncfinstall</code> function, which must include a call to the <code>ncfSetDefaultVersion</code> version. This function informs the application the version of the NCF interface that the following NCF functions support. If the call to this function fails, the application prints an error message, and ignores all subsequent NCF calls from this plug-in.</p>
+<p>
+<a id="pgfId-1144691"></a>A sample plug-in is given below.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144467"></a>#include &lt;math.h&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144468"></a>#include &quot;plugins/ncf.h&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144469"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144470"></a>double </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144471"></a>foo( ncfHandle_t handle, int argc, double argv[] )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144472"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144473"></a> /* return result; */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144474"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144475"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144476"></a>void </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144477"></a>ncfInstall( void )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144478"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144479"></a> ncfHandle_t func = 0L;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144480"></a> if (ncfSetDefaultVersion( NCF_VERSION_1 ) == ncfFalse )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144481"></a> return;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144482"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144483"></a> /* Create and register the function &quot;foo&quot; */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144484"></a> func = ncfCreateFunction( &quot;foo&quot; );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144485"></a> ncfRegisterFunction( func );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144464"></a>}</pre>
+
+<p>
+<a id="pgfId-1147197"></a>Assuming that <span class="webflare-courier-new" style="white-space:pre"><em>SPECTRE_INSTALL</em></span> is the root of the SPECTRE installation, the path to the <code>ncf.h</code> file is</p>
+<p>
+<a id="pgfId-1147198"></a><span class="webflare-courier-new" style="white-space:pre"><em>${SPECTRE_INSTALL}</em></span><code>/tools/mmsim/include/plugins</code></p>
+<p>
+<a id="pgfId-1147199"></a>When adding this path to the compile line using the <code>-I</code> option, you can add the path to the <code>mmsim/include</code> directory, rather the path to the plug-ins directory, as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144911"></a>% gcc -fPIC -I${MMSIM_INSTALL}/tools/mmsim/include -o myplugin.o -c myplugin.c</pre>
+
+<p>
+<a id="pgfId-1144912"></a>No Cadence libraries need to be linked to the final plug-in DLL, however it is normally necessary to link in the math library. To create the plug-in, all object files should be compiles with the appropriate PIC option and then linked together into the DLL. The following example uses gcc to create the shared library. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144913"></a>% gcc -shared -o libmyplugin_sh.so myplugin.o -lm</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1144807"></a>% cp libmyplugin_sh.so ~/plugins/`cds_plat`</pre>
+<h2>
+<a id="pgfId-1145081"></a>Installing a NCF </h2>
+
+<p>
+<a id="pgfId-1145097"></a>To create a NCF, you must first call the function <code>ncfCreateFunction</code>. The only argument is the name of the NCF as it will be called from the netlist. The return value is a handle to the NCF object, a <code>ncfHandle_t</code>. If the call to <code>ncfCreateFunction</code> fails, a value of <code>0L</code> is returned. You must then register the NCF with the application by calling <code>ncfRegisterFunction</code>. The only argument passed to this function is the previously created handle. </p>
+
+<a id="pgfId-1145098"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ncfHandle_t func = ncfCreateFunction( &quot;foo&quot; );</pre>
+<a id="pgfId-1145162"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ncfRegisterFunction( func );</pre>
+
+<p>
+<a id="pgfId-1145100"></a>In the above example, the NCF foo is created and registered with the application. By default the NCF has the following attributes. </p>
+<ul><li>
+<a id="pgfId-1145101"></a>It takes one scalar real argument which has pass-by-value semantics. </li><li>
+<a id="pgfId-1145102"></a>Its return value is a real scalar. </li><li>
+<a id="pgfId-1145103"></a>The name of the function as called from the netlist is <code>foo</code>. </li><li>
+<a id="pgfId-1145104"></a>Since the developer has not provided a compiled function, the application searches the plug-in for an exported symbol with the name <code>foo</code>, and assumes that symbol is the function to be executed when the NCF is called. </li></ul>
+
+
+
+
+<h2>
+<a id="pgfId-1145197"></a>Modifying the Default Behavior of a NCF</h2>
+
+<p>
+<a id="pgfId-1145947"></a>While the default behavior of the NCF can be sufficient, this may not be the case. For example, the NCF may take more than one argument, the name of the compiled function is different than the name of the NCF, or the compiled function is not exported from the plug-in. The following functions can be used to modify the default behavior of the NCF.</p>
+
+<h3>
+<a id="pgfId-1145201"></a><a id="ncfSetNumArgs_ncfHandle_t_int_in"></a><a id="_ncfSetNumArgs_ncfHandle_t_int_i"></a>ncfSetNumArgs( ncfHandle_t, int, int ) </h3>
+
+<p>
+<a id="pgfId-1145202"></a>This function takes three arguments. The first is a handle to the NCF being modified. The next two are the minimum and maximum number of arguments, respectively. </p>
+
+<a id="pgfId-1145261"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ncfSetNumArgs( func, 2, 2 );</pre>
+<a id="pgfId-1145262"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ncfSetNumArgs( func, 2, 10 );</pre>
+
+<p>
+<a id="pgfId-1145263"></a>In the first example above, the NCF <code>func</code> accepts two arguments. If the call to this NCF from the netlist has a different number of arguments, the parser will error out immediately. In the second example, the NCF can have any number of arguments from a minimum of two to a maximum of ten. </p>
+
+<h3>
+<a id="pgfId-1145378"></a><a id="ncfSetArgBinding_ncfHandle_t_int"></a><a id="_ncfSetArgBinding_ncfHandle_t_in"></a><a id="ncfSetDLLFunctionV1_ncfHandle_t"></a><a id="_ncfSetDLLFunctionV1_ncfHandle_t"></a>ncfSetDLLFunctionV1( ncfHandle_t, ncfFunctionV1Ptr_t ) </h3>
+
+<p>
+<a id="pgfId-1145955"></a>If the you do not specify a compiled function for a particular NCF, the application searches the plug-in for a function with the same name as the NCF. If such a symbol does not exist or it exists but does not have global scope (in C this would indicate that it has static linkage), then an error message is printed and the application exits. </p>
+<p>
+<a id="pgfId-1145956"></a>The function <code>ncfSetDLLFunctionV1 </code>can be used to specify the compiled function to be called when an NCF is evaluated. The <code>V1</code> suffix indicates that the function conforms to the <code>NCF_VERSION_1</code> interface. The first argument is a handle to the NCF being modified. The second argument is a pointer to the actual compiled function. For the <code>NCF_VERSION_1</code> interface, the compiled function takes three arguments. The first is a handle to the function registered NCF, the second is the number of arguments in the netlist call, and the third is an array of double values. Each value corresponds to a value from the netlist call. The signature of the compiled function is </p>
+
+<a id="pgfId-1145957"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+double (*ncfFunctionV1Ptr_t)( ncfHandle_t handle, int argc, double argv[] );</pre>
+
+<p>
+<a id="pgfId-1145958"></a>A simple example of the use of <code>ncfSetDLLFunctionV1</code> is as follows </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145959"></a> <br /> #include &lt;math.h&gt;<br /> #include &quot;plugins/ncf.h&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145960"></a> /* A simple function to add two arguments. */<br /> static <br /> double add( ncfHandle_t handle, int argc, double argv[] )<br /> {<br />  return argv[0] + argv[1];<br /> }</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145961"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145962"></a> void <br /> ncfInstall( void )<br /> {<br />  ncfHandle_t func = 0L;<br />  if (ncfSetDefaultVersion( NCF_VERSION_1 ) == ncfFalse)<br />   return;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145963"></a>  func = ncfCreateFunction( &quot;add&quot; );<br />  ncfSetNumArgs( func, 2, 2 );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145964"></a>  /* The call to ncfSetDLLFunctionV1 is required since &#39;add&#39; <br />   * is defined above to have static linkage, hence it cannot be<br />   * seen by the application loading the plugin. */<br />  ncfSetDLLFunctionV1( func, &amp;add );&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145965"></a>  ncfRegisterFunction( func );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145966"></a>  return;<br /> }</pre>
+<h2>
+<a id="pgfId-1145399"></a>Attaching Arbitrary Data to a NCF </h2>
+
+<p>
+<a id="pgfId-1145973"></a>You may wish to attach extra data to a NCF. This data can be attached during the creation of the NCF and then retrieved during function evaluation, using the provided <code>ncfHandle_t</code> argument. This feature is normally used to allow multiple NCFs to share a common for implementation or to provide a interposer type functionality.</p>
+
+<a id="pgfId-1145975"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ncfSetData( ncfHandle_t, ncfData_t )</pre>
+<a id="pgfId-1145976"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ncfData_t ncfGetData( ncfHandle_t )</pre>
+
+<p>
+<a id="pgfId-1146060"></a>These functions set and get data on a previously created NCF. In the following example, two NCF, <code>add</code> and <code>sub</code>, are registered with the application, but they share a common compiled function implementation, <code>add_or_sub</code>. The compiled function uses the <code>ncfGetData</code> function to get the data associated with the supplied <code>ncfHandle_t</code>. If the data is +1, the supplied arguments are added: if the data is -1, the supplied arguments are subtracted. When the NCF&#8217;s are being created, you use the <code>ncfSetData</code> function to set data on each <code>ncfHandle_t</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1146082"></a>#include &lt;math.h&gt;<br />#include &quot;plugins/ncf.h&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1146083"></a>static 
+double add_or_sub( ncfHandle_t handle, int argc, double argv[] )
+{
+&#160;&#160;&#160;&#160;ncfData_t data = ncfGetData( handle );
+&#160;&#160;&#160;&#160;if (data == +1 )
+&#160;&#160;&#160;&#160; return argv[0] + argv[1];<br /> else if (data == -1)<br />  return argv[0] - argv[1];<br /> else<br />  return 0.0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145992"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1145994"></a>void
+ncfInstall( void )
+{
+&#160;&#160;&#160;&#160;ncfHandle_t func = 0L;
+&#160;&#160;&#160;&#160;if (ncfSetDefaultVersion( NCF_VERSION_1 ) == ncfFalse)
+&#160;&#160;&#160;&#160; return;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1146002"></a>func = ncfCreateFunction( &quot;add&quot; );<br />ncfSetNumArgs( func, 2, 2 );<br />ncfSetDLLFunctionV1( func, &amp;add_or_sub );<br />ncfSetData( func, +1 );<br />ncfRegisterFunction( func );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1146008"></a>func = ncfCreateFunction( &quot;sub&quot; );<br />ncfSetNumArgs( func, 2, 2 );<br />ncfSetDLLFunctionV1( func, &amp;add_or_sub );<br />ncfSetData( func, -1 );<br />ncfRegisterFunction( func );<br />}</pre>
+
+<p>
+<a id="pgfId-1145971"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="appB.html" id="prev" title="Using Compiled-Model Interface">Using Compiled-Model Interface</a></em></b><b><em><a href="appD.html" id="nex" title="Digital Vector File Format">Digital Vector File Format</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

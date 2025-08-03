@@ -1,0 +1,1453 @@
+
+<html><head><title>Modeling for Signal Integrity</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-09-01" />
+<meta name="CreateTime" content="1693555188" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the features of Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC analysis, and Legato reliability solution." />
+<meta name="DocTitle" content="Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC Analysis, and Legato Reliability Solution User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Modeling for Signal Integrity" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreuser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-01" />
+<meta name="ModifiedTime" content="1693555188" />
+<meta name="NextFile" content="chap7.html" />
+<meta name="Order" content="1" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap5.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC Analysis, and Legato Reliability Solution User Guide -- Modeling for Signal Integrity" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreuser231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectreuserTOC.html">Contents</a></li><li><a class="prev" href="chap5.html" title="Parameter Specification and Modeling Features">Parameter Specification and Mo ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreuser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap7.html" title="Analyses">Analyses</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Classic Simulator, Spectre APS, Spectre X, Spectre XPS, Spectre FMC Analysis, and Legato Reliability Solution User Guide<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>10
+<a id="pgfId-1611"></a></h1>
+<h1>
+<a id="pgfId-195448"></a><hr />
+<a id="41330"></a>Modeling for Signal Integrity<hr />
+</h1>
+
+<p>
+<a id="pgfId-258055"></a>The performance of an IC design is no longer limited to how many million transistors a vendor fits on a single chip. With tighter packaging space, and increasing clock frequencies, packaging issues and system-level performance issues (such as crosstalk and transmission lines) are becoming increasingly significant.</p>
+<p>
+<a id="pgfId-258097"></a>At the same time, with the popularity of multi-chip packages, and increased I/O counts, package design itself is becoming more like chip design.</p>
+<p>
+<a id="pgfId-258063"></a>This chapter describes the modeling capability the Spectre circuit simulator provides to assess signal integrity for your design, and describes</p>
+<ul><li>
+<a id="pgfId-258109"></a><a href="chap6.html#38761">N-Port Modeling</a></li><li>
+<a id="pgfId-258563"></a><a href="chap6.html#23635">Transmission Line Modeling</a></li><li>
+<a id="pgfId-258567"></a><a href="chap6.html#59480">Input/Output Buffer Modeling Using IBIS</a></li></ul>
+
+
+
+<h2>
+<a id="pgfId-258050"></a><a id="38761"></a><a id="12501"></a>N-Port Modeling<a id="marker-256730"></a></h2>
+
+<p>
+<a id="pgfId-256733"></a>When you model N-ports, you must first create a file listing the S, Y, or Z-parameters. Then you complete the modeling by using this file as input for an <code>nport</code> statement. You can create the S, Y, or Z-parameter file listing in two different ways.</p>
+<ul><li>
+<a id="pgfId-256734"></a>You can run an <code>sp</code> analysis and create a listing of S-parameter estimates automatically.</li><li>
+<a id="pgfId-256735"></a>If you already know the S-parameter values, you can create an S-parameter listing manually with a text editor such as <code>vi</code>.</li></ul>
+
+<p>
+<a id="pgfId-256736"></a>The S, Y, or Z-parameter data file describes the characteristics of a linear N-port over a list of frequencies. The format of the data file used by the Spectre simulator is flexible and self documenting. The Spectre simulator native format describes N-ports with an arbitrary number of ports, specifies the reference resistance of each port, mentions the frequency with no hidden scale factors, and allows the S-parameters to be given in several formats. The Spectre circuit simulator can also read the Touchstone and CITIfile format.</p>
+<p>
+<a id="pgfId-256737"></a>You can set the <code>matrixform</code> parameter to specify a state-space model in your netlist. A state space model is a set of state space equations in matrix form describing a linear system. Use the <code>porttypes</code> parameter to specify the port types and the <code>portquantities</code> parameter to specify whether the port is current or voltage. For more information on state-space model parameters, see <code>spectre -h nport</code>.</p>
+
+<h3>
+<a id="pgfId-256740"></a>N-Port Exa<a id="marker-256738"></a>mple</h3>
+
+<p>
+<a id="pgfId-256745"></a>This example demonstrates the use of the <code>nport</code><a id="marker-256744"></a> statement.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256746"></a>// Two port test circuit<br />global gnd<br />simulator lang=spectre<br />// Models<br />model sp_data nport file=&quot;Spara.data&quot;<br />// Components</pre>
+<p>
+<a id="pgfId-256844"></a></p>
+<table class="webflareTable" id="#id256747">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256749"></a>Port1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256751"></a>(i1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256753"></a>gnd)</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256755"></a>port </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256757"></a>num=1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256759"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256761"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256763"></a></pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256765"></a>TL1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256767"></a>(i1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256769"></a>gnd</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256771"></a>o1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256773"></a>gnd)</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256775"></a>tline</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256777"></a>z0=25</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256779"></a>f=1M</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256781"></a>Port2</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256783"></a>(o1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256785"></a>gnd)</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256787"></a>port</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256789"></a>num=2</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256791"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256793"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256795"></a></pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256797"></a>Port3</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256799"></a>(i2</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256801"></a>gnd)</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256803"></a>port</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256805"></a>r=50</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256807"></a>num=3</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256809"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256811"></a></pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256813"></a>X1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256815"></a>(o2</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256817"></a>gnd</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256819"></a>o2</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256821"></a>gnd)</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256823"></a>sp_data</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256825"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256827"></a></pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256829"></a>Port4</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256831"></a>(o2</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256833"></a>gnd)</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256835"></a>port</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256837"></a>r=50</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256839"></a>num=4</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256841"></a></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256843"></a></pre>
+</td>
+</tr>
+</tbody></table>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256845"></a>// Analyses<br />Op_Point dc<br />Sparams sp stop=0.3MHz lin=100 ports=[Port1 Port3]</pre>
+<h3>
+<a id="pgfId-256847"></a>Creating an S-Parameter File Automatically<a id="marker-256846"></a></h3>
+
+<p>
+<a id="pgfId-256848"></a>To create an S-parameter file automatically, run an <code>sp</code> analysis that sweeps frequency and set the output <code>file</code> parameter to <code>file=&quot;</code><span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span><code>&quot;</code>. The parameter <span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span> is the name you select for the S-parameter file. For more information about specifying an <code>sp</code> analyses, see <a href="chap7.html#18192">Chapter 11, &#8220;Analyses&#8221;</a> and the parameter listings for the <code>sp</code> analysis in the Spectre online help (<code>spectre -h sp</code>).</p>
+
+<h3>
+<a id="pgfId-256854"></a>Creating an S, Y, or Z-Parameter File Manually<a id="marker-256852"></a></h3>
+
+<p>
+<a id="pgfId-256855"></a>To create an S, Y, or Z-parameter file manually in a text editor, observe the following guidelines and rules:</p>
+<ul><li>
+<a id="pgfId-256856"></a>The Spectre simulator accepts the following formats for S, Y, or Z-parameters: <code>real</code>-<code>imag</code>, <code>mag</code>-<code>deg</code>, <code>mag</code>-<code>rad</code>, <code>db</code>-<code>deg</code>, and <code>db</code>-<code>rad</code>. The formats do not have to be the same for each parameter. For clarity, use a comma to separate the two parts of an S, Y, or Z-parameter.</li><li>
+<a id="pgfId-256865"></a>Begin each file with a semicolon. Semicolons indicate comment lines.</li><li>
+<a id="pgfId-256866"></a>Use spaces, commas, and newlines as delimiters.</li><li>
+<a id="pgfId-256867"></a>You can enter the parameters in any order.</li><li>
+<a id="pgfId-256868"></a>You can specify any number of frequency points. The frequency points do not have to be equally spaced, but the frequency index must be in ascending or descending order.</li><li>
+<a id="pgfId-256869"></a>You must place the frequency specification before the S-parameters, and you must separate the frequency specification from the S-parameters with a colon.</li><li>
+<a id="pgfId-256870"></a>There is no limit to the number of ports. If either port number is greater than nine, place a colon between the two port numbers when you specify the S, Y, or Z-parameter format (<code>S13:15</code>).</li></ul>
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-256871"></a>The S, Y, or Z-parameters can be given in any order and in any supported format, but the order and format used must be consistent through out the file and must match the order and format specified in the format line.</div>
+
+<h3>
+<a id="pgfId-256874"></a>Reading the S, Y or Z-Parameter File<a id="marker-256872"></a></h3>
+
+<p>
+<a id="pgfId-256875"></a>After you create the S, Y, or Z-parameter file, you must place instructions in the netlist for the Spectre simulator to read it. You can give these instructions with an <code>nport</code><a id="marker-256876"></a> <code>model</code> statement or directly on the instance line. The following example shows how to enter an S-parameter file into a netlist. This <code>model</code> statement reads S-parameters from the file <code>Spara.data</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256877"></a>model Sdata nport file=&quot;Spara.data&quot; datafmt=spectre|touchstone|citiformat|rfm|bnp </pre>
+
+<p>
+<a id="pgfId-256878"></a>If the S-parameter file is not in the same directory as the Spectre simulator, you can use a path to the S-parameter file as a value for the <code>nport</code> statement <code>file</code> parameter, or you can specify a search path using the <code>-I</code> command line argument.</p>
+<p>
+<a id="pgfId-256879"></a>The Spectre circuit simulator reads the S, Y, or Z-parameter data file in the Spectre, CITIfile, or Touchstone format. If you do not specify the input file format, the Spectre circuit simulator detects it automatically by reading the first line in the input file as follows:</p>
+<p>
+<a id="pgfId-256880"></a><code>;</code> as Spectre</p>
+<p>
+<a id="pgfId-256881"></a><code>!</code> as Touchstone</p>
+<p>
+<a id="pgfId-256882"></a><code>CITI </code>as CITIfile.</p>
+<p>
+<a id="pgfId-256883"></a>The Spectre circuit simulator supports </p>
+<ul><li>
+<a id="pgfId-256884"></a>two-port noise data and noise correlation matrix data in Spectre format</li><li>
+<a id="pgfId-256885"></a>two-port noise data in Touchstone format</li></ul>
+
+
+<h4>
+<a id="pgfId-256886"></a>Spectre Format </h4>
+
+<p>
+<a id="pgfId-256887"></a>An S, Y, or Z-parameter file in the Spectre format must have a header. The header </p>
+<ul><li>
+<a id="pgfId-256888"></a>must have a comment beginning with a semicolon as the first line</li><li>
+<a id="pgfId-256889"></a>must define the reference resistance of ports and the S, Y, or Z-parameter formats</li><li>
+<a id="pgfId-256890"></a>can include any number of comment and blank lines. </li></ul>
+
+
+<p>
+<a id="pgfId-256891"></a>When reading the file, the simulator ignores all the lines beginning with semicolons, spaces, commas, and newlines in the header. The simulator reads the numbers immediately after <code>=</code> on the lines after the <code>reference resistance</code> line as impedance data of the ports. The <code>format</code> section is treated as the format definition of S-parameter data entries. </p>
+<p>
+<a id="pgfId-256892"></a>You can enter the S, Y, or Z-parameters in any order, but the frequency must be first and is separated from the parameters with a colon. Each parameter can be expressed as <code>(real,imag)</code>, <code>(mag,deg)</code>, <code>(mag,rad)</code>, <code>(db,deg)</code>, or <code>(db,rad)</code>. You can use commas to separate the two parts of a parameter. </p>
+<p>
+<a id="pgfId-256893"></a>Any number of frequency points can be presented. They do not need to be equally spaced, but the frequency index must be monotonic, and the frequency data must be given explicitly, with no hidden scale factors. There is no limit to the number of ports. S-parameters use the syntax <code>S13:15</code> when either port number is greater than 9.</p>
+
+<h4><em>
+<a id="pgfId-256894"></a>Adding Noise Parameters </em></h4>
+
+<p>
+<a id="pgfId-256895"></a>An S-parameter file in Spectre format can contain external two-port noise data as well as noise correlation matrix data. The syntax for two-port noise data is:</p>
+
+<a id="pgfId-256896"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+noiseformat freq: Fmin (mag|db) Gamma(real,imag|mag,deg|db,deg) Rn</pre>
+
+<p>
+<a id="pgfId-256897"></a>followed by two-port noise parameters. </p>
+<p>
+<a id="pgfId-256898"></a>The syntax for general n-port noise data is: </p>
+
+<a id="pgfId-256899"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+noiseformat freq: CY1:1 CY2:2 CY1:2 CY2:2 </pre>
+
+<p>
+<a id="pgfId-256900"></a>followed by the noise coefficient matrix. </p>
+
+<h4><em>
+<a id="pgfId-256901"></a>Example </em></h4>
+
+<p>
+<a id="pgfId-256902"></a>A Spectre S-parameter file for three ports looks as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256903"></a>; S-parameter data file &#39;port2.data&#39;.<br />; Generated by spectre from circuit file &#39;gendata&#39; during analysis swp.<br />; 12:13:06 PM, Fri May 8, 1998<br />reference resistance <br />        port3=137       ; is port p3<br />        port2=137       ; is port p2<br />        port1=137       ; is port p1<br />
+format&#160;&#160;freq:   s33(real,imag)  s23(real,imag)<br />                s13(real,imag)  s32(real,imag)<br />                s22(real,imag)  s12(real,imag)<br />                s31(real,imag)  s21(real,imag)<br />                s11(real,imag)<br />
+0.00000000e+00:&#160;&#160;   0.333333,         0           -0.666667,         0<br />                    0.666667,         0           -0.666667,         0<br />                    0.333333,         0            0.666667,         0<br />                    0.666667,         0            0.666667,         0<br />                    0.333333,         0<br />2.50000000e+07:     0.549736,-0.0181715           -0.446126, 0.0466097<br />                    0.450264, 0.0181715           -0.446126, 0.0466097<br />                    0.546593,-0.0556029            0.446126,-0.0466097<br />                    0.450264, 0.0181715           -0.446126, 0.0466097<br />                    0.549736,-0.0181715<br />5.00000000e+07:     0.546094,-0.0359074           -0.437504, 0.0922889<br />                    0.453906, 0.0359074           -0.437504, 0.0922889<br />                    0.533673,  -0.10951            0.437504, 0.0922889<br />                    0.453906, 0.0359074            0.437504, 0.0922889<br />                    0.546094,-0.0359074</pre>
+
+<p>
+<a id="pgfId-256904"></a>The following is an example of two-port noise data. </p>
+
+<p>
+<a id="pgfId-256966"></a> </p>
+<table class="webflareTable" id="#id256905">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256907"></a>noiseformat freq:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256909"></a>Fmin(mag)</pre>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256911"></a>Gamma(real,imag) </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256915"></a>Rn</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256917"></a>1.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256919"></a>340.85</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256921"></a>0.348552</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256923"></a>.63566e-16</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256925"></a>4.88929</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256927"></a>2.00000000e+09: </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256929"></a>340.85</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256931"></a>0.348552</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256933"></a>3.63566e-16</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256935"></a>4.88929</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256937"></a>3.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256939"></a>340.85</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256941"></a>0.348552</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256943"></a>3.63566e-16</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256945"></a>4.88929</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256947"></a>4.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256949"></a>340.85</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256951"></a>0.348552</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256953"></a>3.63566e-16</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256955"></a>4.88929</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256957"></a>5.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256959"></a>340.85</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256961"></a>0.348552</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256963"></a>3.63566e-16</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256965"></a>4.88929</pre>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-256967"></a>The following is an example of a noise co-relation matrix:</p>
+
+<p>
+<a id="pgfId-257029"></a></p>
+<table class="webflareTable" id="#id256968">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256970"></a>noiseformat freq: </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256972"></a>CY1:1</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256974"></a>CY2:1 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256976"></a>CY1:2 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256978"></a>CY2:2</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256980"></a>1.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256982"></a>0.344025 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256984"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256986"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256988"></a>0.0259336</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256990"></a>2.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256992"></a>0.344025 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256994"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256996"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-256998"></a>0.0259336</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257000"></a>3.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257002"></a>0.344025 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257004"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257006"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257008"></a>0.0259336</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257010"></a>4.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257012"></a>0.344025 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257014"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257016"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257018"></a>0.0259336</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257020"></a>5.00000000e+09:</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257022"></a>0.344025 </pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257024"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257026"></a>0.00632498</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257028"></a>0.0259336</pre>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-257031"></a><a id="34818"></a>Touchstone Fo<a id="touchstone"></a>rmat </h4>
+
+<p>
+<a id="pgfId-261068"></a>Spectre supports Touchstone 1 and Touchstone 2 (MMSIM11.1ISR12 onwards) file formats, which complies with the published standards. For the official Touchstone format documentation refer to <h-hot><a actuate="user" class="URL" href="http://www.eda.org/pub/ibis/touchstone_ver2.0/touchstone_ver2_0.pdf" show="replace" xml:link="simple">http://www.eda.org/pub/ibis/touchstone_ver2.0/touchstone_ver2_0.pdf</a></h-hot>.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-261148"></a>Spectre does not support the <code>H</code> and <code>G</code> parameters in the Touchstone 2 file format.</div>
+
+<h4>
+<a id="pgfId-257427"></a>CITIfile Format</h4>
+
+<p>
+<a id="pgfId-257428"></a>CITIfile stands for Common Instrumentation Transfer and Interchange file format. A typical CITIfile package consists of a</p>
+<ul><li>
+<a id="pgfId-257429"></a>header containing keywords and setup information</li><li>
+<a id="pgfId-257430"></a>data section containing one or more data arrays</li></ul>
+
+<p>
+<a id="pgfId-257431"></a>A data array is numeric data arranged with one data element per line. A data array starts after the BEGIN keyword, and the END keyword follows the last data element in an array.</p>
+
+<h4><em>
+<a id="pgfId-257432"></a>Example </em></h4>
+
+<p>
+<a id="pgfId-257433"></a>The following example shows the basic structure of a CITIfile package.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257434"></a>CITIFILE A.01.00<br />NAME Momentum.SP<br />CONSTANT NBR_OF_PORTS 2<br />CONSTANT NORMALIZATION 1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257435"></a>VAR freq MAG 12</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257436"></a>DATA S[1,1] RI<br />DATA S[1,2] RI<br />...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257437"></a>VAR_LIST_BEGIN<br />1000000000<br />2000000000<br />...<br />VAR_LIST_END </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257438"></a>BEGIN
+0.017216494,&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;  0<br />0.040005801,&#160;&#160;&#160;&#160;   0.116494405<br />...<br />END </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257439"></a>BEGIN 
+0.9827835,&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;  0<br />0.944136351,&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;  -0.176952631<br />...<br />END </pre>
+
+<p>
+<a id="pgfId-257440"></a>In the above example, the VAR_LIST_BEGIN section contains the frequency data points. Each data array block (marked by <code>BEGIN</code> and <code>END</code> keywords) corresponds to an S-parameter and contains the value of that parameter for each frequency point. The first block corresponds to <code>S[1,1]</code>, the second block corresponds to <code>S[1,2]</code> and so on.</p>
+<p>
+<a id="pgfId-257441"></a>You can use the SEG_LIST keyword to specify a frequency range. For example,</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257442"></a>SEG_LIST_BEGIN<br />SEG 1000000000 4000000000 10<br />SEG_LIST_END</pre>
+
+<p>
+<a id="pgfId-257443"></a>specifies that the frequency range is from 1000000000 to 4000000000 with intervals of <code>10</code>.</p>
+
+<h3>
+<a id="pgfId-257446"></a>Improving the Modeling Capability of the N-Port</h3>
+
+<p>
+<a id="pgfId-260008"></a>You can set the value of the parameter <code>dcextrap</code> to <code>unwrap</code> or <code>constant</code> depending on your data file.</p>
+<p>
+<a id="pgfId-260065"></a>If your data file is not sampled adequately at low frequency (the lowest frequency point does not represent DC reasonably well) or if the data file has a long delay, you can set <code>dcextrap</code> to <code>unwrap</code>. When a dc point is not provided in the data file, the magnitude is determined based on the regression of some low-frequency data. The phase is determined by extracting the delay and setting the phase to the real axis. If the dc point is provided, the magnitude is interpolated while the phase is determined as mentioned above. </p>
+<p>
+<a id="pgfId-260009"></a>The default value is <code>constant</code>. In this case, if a dc point is provided in the data file, interpolation is performed for both the magnitude and phase. If a dc point is not provided in the data file, the low-frequency magnitude is held constant to the lowest data provided. The low-frequency phase is determined using a simple algorithm which sets it to closest point on the real axis from the lowest-frequency data point. </p>
+
+<h3>
+<a id="pgfId-259987"></a><a id="45830"></a>S-Parame<a id="marker-257445"></a>ter File Format Translator</h3>
+
+<p>
+<a id="pgfId-257447"></a>The S-parameter data file format translator (<code>sptr</code>) is a separate program from the Spectre simulator. Since the Spectre circuit simulator now reads the Touchstone and CITIfile formats directly, you need to use the translator only if you have it built into your design flow. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-257448"></a>The translator does not support the MHARM, HPMNS, or Linear Neutral Model (LNM) formats any more. </div>
+
+<h4>
+<a id="pgfId-257449"></a>Command Arguments </h4>
+
+<p>
+<a id="pgfId-257450"></a>The following is a synopsis of the command line and arguments used to run the translator.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-257452"></a>spt<a id="marker-257451"></a>r [<code>-i </code><code><em>inputFormat</em></code>] [<code>-o </code><code><em>outputFormat</em></code>] [<code>-f </code><code><em>FreqScale</em></code>] [<code>-V |-version</code>] <br />[<code>-format<span class="webflare-courier-new" style="white-space:pre"><em> paramFormat</em></span></code>] [<code><em>inputFile</em></code>] [<code><em>outputFile</em></code>]</pre>
+<p>
+<a id="pgfId-257453"></a></p>
+<p>
+<a id="pgfId-257487"></a></p>
+<table class="webflareTable" id="#id257454">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id257456">
+<a id="pgfId-257456"></a>Option</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id257458">
+<a id="pgfId-257458"></a>Description</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257460"></a>-<code>i </code><span class="webflare-courier-new" style="white-space:pre"><em>inputFormat</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257462"></a>Input file format.<br />Valid values: <code>spectre</code>, <code>touchstone</code>, <code>citifile<br /></code>Default value: <code>spectre</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257464"></a>-<code>o </code><span class="webflare-courier-new" style="white-space:pre"><em>outputFormat</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257466"></a>Output file format.<br />Valid values: <code>spectre</code> and <code>touchstone<br /></code>Default value: <code>spectre</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257468"></a>-<code>f </code><span class="webflare-courier-new" style="white-space:pre"><em>FreqScale</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257470"></a>If frequency scale is not explicitly given in the input file, then, TrueFreq = GivenFreq * freqscale<br />Default value: <code>1.0</code> for Spectre and CITIfile formats.<br /><code>1.0e09</code> for touchstone format.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257472"></a><span class="webflare-courier-new" style="white-space:pre"><em>-</em></span><code>V</code> <code>|</code> <code>-version</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257474"></a>Prints the version information. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257476"></a><code>-format</code><span class="webflare-courier-new" style="white-space:pre"><em> paramFormat</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257478"></a>Parameter data format of the output file. <br />Valid values: <code>RI</code>, <code>MA</code>, and <code>DB<br /></code>Default value: <code>RI</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257480"></a><span class="webflare-courier-new" style="white-space:pre"><em>inputFile</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257482"></a>Input file name. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257484"></a><span class="webflare-courier-new" style="white-space:pre"><em>outputtFile</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-257486"></a>Output file name.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-257917"></a>Standard Scattering Parameter Modeling and Mixed-Mode Scattering Parameter Modeling </h3>
+
+<p>
+<a id="pgfId-258743"></a>Standard S-parameters and mixed-mode S-parameters are defined in the following sections.</p>
+
+<h4>
+<a id="pgfId-258745"></a>Standard S-parameters</h4>
+
+<p>
+<a id="pgfId-259883"></a>A two-port network N can be characterized by standard S-parameters S11, S12, S21, and S22 as shown below: </p>
+
+<p>
+<a id="pgfId-259930"></a></p>
+<div class="webflare-div-image">
+<img width="577" height="242" src="images/chap6-2.gif" /></div>
+<p>
+<a id="pgfId-258855"></a><img width="160" height="29" src="images/chap6-3.gif" /></p>
+<p>
+<a id="pgfId-259933"></a><img width="160" height="29" src="images/chap6-4.gif" /></p>
+
+<p>
+<a id="pgfId-258856"></a>or </p>
+
+<p>
+<a id="pgfId-258864"></a><img width="138" height="59" src="images/chap6-5.gif" /></p>
+
+<p>
+<a id="pgfId-258876"></a>where the incident waves a1, a2, and the reflected waves b1, b2 are:</p>
+
+<p>
+<a id="pgfId-258769"></a><img width="133" height="61" src="images/chap6-6.gif" />
+ <img width="133" height="61" src="images/chap6-7.gif" /></p>
+<p>
+<a id="pgfId-258885"></a><img width="141" height="64" src="images/chap6-8.gif" />
+ <img width="141" height="64" src="images/chap6-9.gif" /></p>
+
+<p>
+<a id="pgfId-258770"></a>The values of S11, S21, S22, and S12 can be obtained by the <code>sp</code> analysis.</p>
+
+<h4>
+<a id="pgfId-258928"></a>Mixed-Mode S-Parameters </h4>
+
+<p>
+<a id="pgfId-258936"></a>A 4-port network can be characterized by mixed-mode S-parameters.</p>
+
+<p>
+<a id="pgfId-258951"></a> </p>
+<div class="webflare-div-image">
+<img width="632" height="198" src="images/chap6-10.gif" /></div>
+
+<p>
+<a id="pgfId-258952"></a>where </p>
+
+<p>
+<a id="pgfId-259030"></a><img width="281" height="53" src="images/chap6-11.gif" /></p>
+<p>
+<a id="pgfId-259043"></a><img width="288" height="53" src="images/chap6-12.gif" /></p>
+
+<p>
+<a id="pgfId-259031"></a>are differential incident wave and differential reflected wave between port pair (p1,p2), and</p>
+
+<p>
+<a id="pgfId-259032"></a><img width="204" height="29" src="images/chap6-13.gif" />
+ is the differential impedance</p>
+<p>
+<a id="pgfId-259069"></a><img width="115" height="29" src="images/chap6-14.gif" />
+ is the differential voltage, </p>
+<p>
+<a id="pgfId-259055"></a><img width="123" height="41" src="images/chap6-15.gif" />
+ is the differential current, </p>
+<p>
+<a id="pgfId-259057"></a><img width="134" height="29" src="images/chap6-16.gif" />
+ is the port 1 voltage, and </p>
+<p>
+<a id="pgfId-259166"></a><img width="133" height="30" src="images/chap6-17.gif" />
+ is the port 2 voltage. </p>
+
+<p>
+<a id="pgfId-259191"></a>Also, </p>
+
+<p>
+<a id="pgfId-259192"></a><img width="272" height="53" src="images/chap6-18.gif" /></p>
+<p>
+<a id="pgfId-259126"></a>and <img width="280" height="53" src="images/chap6-19.gif" /></p>
+
+<p>
+<a id="pgfId-259222"></a>are common-mode incident wave and reflected wave between port pair (p1, p2), and</p>
+
+<p>
+<a id="pgfId-259230"></a><img width="311" height="29" src="images/chap6-20.gif" />
+ is the common-mode impedance,</p>
+<p>
+<a id="pgfId-259318"></a><img width="147" height="29" src="images/chap6-21.gif" />
+ is the common-mode voltage,</p>
+<p>
+<a id="pgfId-259319"></a><img width="99" height="29" src="images/chap6-22.gif" />
+ is the common-mode current </p>
+<p>
+<a id="pgfId-259314"></a>with similar definitions of <img width="116" height="23" src="images/chap6-23.gif" />
+ for port pair (p3,p4).</p>
+
+<p>
+<a id="pgfId-259342"></a>The mixed-mode S-parameters sdd11, sdd12, ..., scc21, scc22 are defined as</p>
+
+<p>
+<a id="pgfId-259358"></a><img width="603" height="136" src="images/chap6-24.gif" /></p>
+
+<p>
+<a id="pgfId-259371"></a>The values of the mixed-mode s-parameters sdd11, sdd12, ..., scc21, scc22 can be obtained by <code>sp</code> analysis directly if <code>mode=mm</code> is used in the <code>sp</code> analysis. The mixed-mode s-parameters are also denoted here by sub-matrices Sdd, Sdc, Scd, and Scc: Sdd as the differential-mode s-parameters, Sdc the common-to-differential mode s-parameters, Scd the differential-to-common mode s-parameters, and Scc the common-mode s-parameters. </p>
+
+<h4>
+<a id="pgfId-259359"></a>Conversion of Standard S-Parameters to Mixed Mode S-Parameters </h4>
+
+<p>
+<a id="pgfId-259945"></a>Since the port-pairs (p1,p2) and (p3,p4) have the same impedance<img width="211" height="23" src="images/chap6-25.gif" />
+, the mixed-mode waves become </p>
+
+<p>
+<a id="pgfId-259492"></a><img width="300" height="45" src="images/chap6-26.gif" />
+ <img width="300" height="45" src="images/chap6-27.gif" /></p>
+<p>
+<a id="pgfId-259496"></a><img width="300" height="45" src="images/chap6-28.gif" />
+ <img width="300" height="45" src="images/chap6-29.gif" /></p>
+
+<p>
+<a id="pgfId-259497"></a>or </p>
+
+<p>
+<a id="pgfId-259513"></a><img width="284" height="136" src="images/chap6-30.gif" />
+ <img width="319" height="147" src="images/chap6-31.gif" /></p>
+
+<p>
+<a id="pgfId-259514"></a>The conversion formula is </p>
+
+<p>
+<a id="pgfId-259532"></a><img width="159" height="39" src="images/chap6-32.gif" /></p>
+
+<p>
+<a id="pgfId-259533"></a>It can be shown there is a linear relationship between the standard s-parameters S11, S12, ..., S44 (i.e. Sstd) to the mixed-mode s-parameters Sdd11, Sdd12, ..., Scc22 (i.e. Smm).</p>
+
+<p>
+<a id="pgfId-259550"></a><img width="558" height="41" src="images/chap6-33.gif" /></p>
+<p>
+<a id="pgfId-259601"></a><img width="558" height="41" src="images/chap6-34.gif" /></p>
+<p>
+<a id="pgfId-259602"></a><img width="557" height="41" src="images/chap6-35.gif" /></p>
+<p>
+<a id="pgfId-259603"></a><img width="557" height="41" src="images/chap6-36.gif" /></p>
+<p>
+<a id="pgfId-259562"></a><img width="559" height="41" src="images/chap6-37.gif" /></p>
+<p>
+<a id="pgfId-259563"></a><img width="559" height="41" src="images/chap6-38.gif" /></p>
+<p>
+<a id="pgfId-259564"></a><img width="558" height="41" src="images/chap6-39.gif" /></p>
+<p>
+<a id="pgfId-259573"></a><img width="558" height="41" src="images/chap6-40.gif" /></p>
+<h4>
+<a id="pgfId-259574"></a>Combined Standard S-Parameters with Mixed-Mode S-Parameters </h4>
+
+<p>
+<a id="pgfId-259680"></a>It is possible for a corner case that wave vectors be represented by mixing differential, common-mode, and regular waves. Then there are terms of </p>
+
+<p>
+<a id="pgfId-259697"></a><img width="122" height="23" src="images/chap6-41.gif" /></p>
+
+<p>
+<a id="pgfId-259699"></a>that relates mixed-mode to single-end conversions. For example, if there is an additional 5th port, and the <code>sp</code> analysis has <code>mode=m12m34s5</code>, then the wave vectors become</p>
+
+<p>
+<a id="pgfId-259688"></a> <img width="226" height="37" src="images/chap6-42.gif" />
+ and</p>
+<p>
+<a id="pgfId-259717"></a><img width="228" height="37" src="images/chap6-43.gif" /></p>
+
+<p>
+<a id="pgfId-259729"></a>The mixed-mode s-parameters are related to standard s-parameters as</p>
+
+<p>
+<a id="pgfId-259678"></a><img width="594" height="254" src="images/chap6-44.gif" /></p>
+<h4>
+<a id="pgfId-259756"></a>Examples </h4>
+<h4><em>
+<a id="pgfId-259803"></a>Spectre Mixed-Mode S-Parameter Format Examples</em></h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259772"></a>; S-parameter data file test.sparam.<br />; Tue Nov  8 11:38:04 2005<br />; Number of ports is 4<br />; mode = mm</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259955"></a>reference resistance</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259956"></a>         port4 = 50.000000 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259957"></a>         port3 = 50.000000 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259780"></a>         port2 = 50.000000 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259781"></a>         port1 = 50.000000 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259974"></a>format freq:&#160;&#160;sdd1:1(real,imag)&#160;&#160;    sdd1:2(real,imag)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259975"></a>          sdc1:1(real,imag)      sdc1:2(real,imag)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259976"></a>          sdd2:1(real,imag)      sdd2:2(real,imag)      </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259786"></a>          sdc2:1(real,imag)      sdc2:2(real,imag)   </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259787"></a>          scd1:1(real,imag)      scd1:2(real,imag) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259788"></a>          scc1:1(real,imag)      scc1:2(real,imag) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259789"></a>          scd2:1(real,imag)      scd2:2(real,imag) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259790"></a>          scc2:1(real,imag)      scc2:2(real,imag) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259791"></a>5.00000000e+08:&#160;&#160;     -0.985696,    1.20713e-16        0.00520889,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259792"></a>0</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259793"></a>... </pre>
+<h4><em>
+<a id="pgfId-259821"></a>Touchstone Mixed-Mode S-Parameter Format Example </em></h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259823"></a>! Libra (TM) Ver. 3.500.103.3 <br />! Tue Nov  8 11:39:42 2005 <br />! Number of ports is 4 <br />! mode = mm </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259827"></a># Hz&#160;&#160;  S   RI  R   50.000000 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259828"></a>! S11 = SDD11 S12 = SDD12 S13 = SDC11 S14 = SDC12 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259829"></a>! S21 = SDD21 S22 = SDD22 S23 = SDC21 S24 = SDC22 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259830"></a>! S31 = SCD11 S32 = SCD12 S33 = SCC11 S34 = SCC12 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259831"></a>! S41 = SCD21 S42 = SCD22 S43 = SCC21 S44 = SCC22 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259832"></a>! SCATTERING PARAMETERS&#160;&#160;: </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-259833"></a>5.00000000e+08&#160;&#160;  -0.985696  1.20713e-16   0.00520889        0  ...</pre>
+<h2>
+<a id="pgfId-258721"></a><a id="23635"></a>Transmission Line Modeling </h2>
+
+<p>
+<a id="pgfId-257918"></a>Multi-conductor transmission line models (MTLINE) are widely used in Spectre simulations. MTLINE is based on Quasi-TEM approximation and the telegrapher&#8217;s equation, according to which</p>
+<ul><li>
+<a id="pgfId-257919"></a>An MTLINE can be uniquely characterized by RLGC matrices.</li><li>
+<a id="pgfId-257920"></a>Once the RLGC matrices have been determined, the behavior of the MTLINE can be predicted in any external environment. </li></ul>
+
+<p>
+<a id="pgfId-257921"></a>MTLINE can be used to assess the signal integrity of a design in a wide range of interconnect modeling applications.</p>
+<p>
+<a id="pgfId-257922"></a>An MTLINE can have as many conductors as described in the input, with a minimum of two conductors where one conductor is used as a reference to define terminal voltages. The reference conductor can be ground. The order of conductors is the same as the order of the data in the input. It is assumed that all the conductors are of the same length and uniform along the length.</p>
+<p>
+<a id="pgfId-257923"></a>MTLINE accepts the following inputs (described below):</p>
+<ul><li>
+<a id="pgfId-257924"></a>Per-unit-length constant RLGC matrices</li><li>
+<a id="pgfId-257925"></a>Per-unit-length frequency dependent RLGC data</li><li>
+<a id="pgfId-257926"></a>2-D field solver geometry and material information</li><li>
+<a id="pgfId-257928"></a>S-parameter data</li><li>
+<a id="pgfId-258613"></a>Single-conductor TLINE parameters</li></ul>
+
+
+
+
+<p>
+<a id="pgfId-257929"></a>You can specify all MTLINE parameters (other than the conductor length) through an instance line or model line. When a parameter is specified both on the instance and model line, the value on the instance line takes precedence.</p>
+
+<h3>
+<a id="pgfId-257930"></a>Constant RLGC Matrices</h3>
+
+<p>
+<a id="pgfId-257931"></a>For narrow band applications, you can assume that transmission line characteristics are constant over the frequency you are interested in. The input to MTLINE is per-unit-length resistance (R), inductance (L), conductance (G), and capacitance (C) matrices, and is usually generated by a field solver. MTLINE accepts both full matrix descriptions, and lower-half matrix descriptions because these matrices are generally symmetric.</p>
+<p>
+<a id="pgfId-257932"></a>The following example describes the resistance matrix of a four conductor line system:</p>
+
+<p>
+<a id="pgfId-257936"></a><img width="204" height="67" src="images/chap6-45.gif" /></p>
+
+<p>
+<a id="pgfId-257937"></a>The following model descriptions are equivalent:</p>
+
+<a id="pgfId-257938"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+model line mtline
++ r=[50 10 1
++ 10 50 10
++ 1  10 50]
++&#8230;</pre>
+<a id="pgfId-257939"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+model line mtline
++ r=[50 
++ 10 50
++ 1  10 50]
++&#8230;</pre>
+
+<p>
+<a id="pgfId-257940"></a>In the past, the only information available to describe a transmission line system was constant RLGC matrices based on narrow band assumption. Some approximation is now used to make the model better cover frequency dependent effects such as skin effect and dielectric loss effect in wide band applications. </p>
+<p>
+<a id="pgfId-257941"></a>The following equation can be used to model skin effect with constant RLGC matrices:</p>
+
+<p>
+<a id="pgfId-257945"></a><img width="189" height="21" src="images/chap6-46.gif" /></p>
+
+<p>
+<a id="pgfId-257946"></a>The following equation can be used to model dielectric loss effect with constant RLGC matrices</p>
+<p>
+<a id="pgfId-257950"></a><img width="142" height="18" src="images/chap6-47.gif" /></p>
+<p>
+<a id="pgfId-257951"></a>where <em>f</em> stands for frequency.</p>
+
+<h3>
+<a id="pgfId-257952"></a>Frequency-Dependent RLGC Data </h3>
+
+<p>
+<a id="pgfId-257953"></a>Frequency dependent RLGC data is described in a data file through the parameter <code>file</code>. The frequency axis can be scaled with the <code>scale</code> parameter. The frequencies in the data file are then multiplied by <code>scale</code> before the simulator uses them. The default scale factor is unity. </p>
+<p>
+<a id="pgfId-257954"></a>The data file has a format section and a data section. Both full matrix and lower half matrix descriptions are accepted. Lines starting with <code>;</code> are interpreted as comment lines.</p>
+<p>
+<a id="pgfId-257955"></a>An example data file is shown below:</p>
+
+<a id="pgfId-257956"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+; Comments: rl.dat </pre>
+<a id="pgfId-257957"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+FORMAT FREQ:  R1:1 R2:1 R2:2 </pre>
+<a id="pgfId-257958"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+  L1:1 L2:1 L2:2 </pre>
+<a id="pgfId-257959"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+0.001e+9:  4.444 0.000383 4.444 
+  4.565 0.3545   4.565 
+0.010e+9:  4.447 0.003834 4.447 
+  4.565 0.3545   4.565 
+0.100e+9  4.476 0.03834  4.476 
+  4.565 0.3545   4.565 
+1.000e+9  4.762 0.3834   4.762 
+  3.103 0.2357   3.103 
+10.00e+9  13.96 1.082    13.96 
+  2.718 0.2058   2.718 
+100.0e+9  56.88 3.294    56.88 
+  2.531 0.1866   2.531 </pre>
+<a id="pgfId-257960"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+; end of file rl.dat </pre>
+
+<p>
+<a id="pgfId-257961"></a>You can mix constant RLGC parameters with frequency-dependent RLGC data. When a particular parameter (R, L, G, or C) is provided in both constant matrices and frequency-dependent data file, the value in the constant matrix is given priority. If only one frequency point is provided in the <code>file</code> parameter, it is assumed that the RLGC data is constant over the frequency of interest. </p>
+<p>
+<a id="pgfId-257962"></a>For best results, you should provide enough data points to cover low-frequency characteristics as well as the changing nature in the high-frequency range. A rule of thumb is that the lowest frequency point should be down to 1kHz, and there should be at least 5 points per decade, particularly in the high-frequency range where RLGC data tends to change rapidly.</p>
+
+<h3>
+<a id="pgfId-257963"></a>2-D Field Solver Geometry and Material Information</h3>
+
+<p>
+<a id="pgfId-257964"></a>MTLINE supports a built-in 2-D field solver which has the same modeling engine as the standalone Line Model Generator (LMG) utility. The output of the 2-D field solver is RLGC data, which can be stored for re-use through the <code>file</code> parameter. This makes the actual RLGC model generation a one-time cost, given the field solver input remains unchanged. </p>
+
+<h4>
+<a id="pgfId-257965"></a>Line Configuration </h4>
+
+<p>
+<a id="pgfId-257966"></a>MTLINE supports four interconnect line configurations: microstrip line, strip line, coplanar waveguide, and substrate lossy line. You can specify the line configuration through the <code>linetype</code> parameter. The default is substrate lossy line.</p>
+
+<h4>
+<a id="pgfId-257967"></a>Model Type </h4>
+
+<p>
+<a id="pgfId-257968"></a>You can specify the model type through the <code>modeltype</code> parameter. For each line configuration, you can choose between three model types:</p>
+<ul><li>
+<a id="pgfId-257969"></a>For the narrow band model, the RLGC data is calculated at frequency <code>fmax</code> and assumed to be constant over the frequency of interest. </li><li>
+<a id="pgfId-257970"></a>In the wideband model, true frequency dependent RLGC data is calculated over the frequency of interest. This is the default value.</li><li>
+<a id="pgfId-257971"></a>In the lossless model, the internal inductance of the conductor is disregarded by setting the frequency value high: 50 GHz for cases without substrate loss and 15 GHz for cases with substrate loss.The value of <code>fmax</code> is ignored. </li></ul>
+
+
+<p>
+<a id="pgfId-257972"></a>For most applications, you should choose the wideband model as it provides the best model accuracy.</p>
+
+<h4>
+<a id="pgfId-257973"></a>Ground Plane </h4>
+
+<p>
+<a id="pgfId-257974"></a>You can specify the ground planes through the <code>numgnd</code> parameter. </p>
+<p>
+<a id="pgfId-257975"></a>For microstrip line, the number of ground planes is 1 placed at the bottom of the 2-D interconnect cross section. </p>
+<p>
+<a id="pgfId-257976"></a>For strip line, the number of ground planes is 2 placed at both the bottom and top of the 2-D interconnect cross section. </p>
+<p>
+<a id="pgfId-257977"></a>For coplanar waveguide and substrate lossy line, the number of ground planes can be 1 or 2, placed at the bottom and top of the 2-D interconnect cross section. For coplanar waveguide, you can also specify 0 ground planes because two ground strips are added automatically to the cross section. You can specify the width, height, thickness, and spacing of these ground strips like you specify the signal line. For more information on signal lines, see <a href="chap6.html#27480">&#8220;Signal Line&#8221;</a>.</p>
+<p>
+<a id="pgfId-257981"></a>You can specify the thickness of the ground plane(s) with the <code>gndthickness</code> parameter and the ground plane conductivity with the <code>gndsigma</code> parameter.</p>
+
+<h4>
+<a id="pgfId-257982"></a>Dielectric Layer </h4>
+
+<p>
+<a id="pgfId-257983"></a>You can specify the dielectric layer through the <code>numlayer</code> parameter. Dielectric layers are stacked above the lower ground plane (when <code>numgnd</code>=<code>1</code>), or between the ground planes (when <code>numgnd</code>=<code>2</code>). There can be more than one dielectric layer. </p>
+<p>
+<a id="pgfId-257984"></a>You can specify the thickness of the dielectric layer through the <code>layerthickness</code> parameter, and the relative dielectric constant of the dielectric layer through the <code>er</code> parameter. Both <code>layerthickness</code> and <code>er</code> are of vector type to handle different layer geometries and layer properties.</p>
+<p>
+<a id="pgfId-257985"></a>When the number of elements in the vector is less than the number of layers, the value of the last element in the vector is applied to all of the remaining layers. </p>
+<p>
+<a id="pgfId-257986"></a>If a dielectric layer is lossy, either the <code>loss tangent</code> parameter (tan = sigma/(w*ep0)) or the <code>loss sigma</code> parameter (sigma = tan*w*ep0) can be used. This is decided through the <code>dlosstype</code> parameter and the actual loss value(s) is provided through the <code>dloss</code> vector parameter.</p>
+
+<h4>
+<a id="pgfId-257988"></a><a id="27480"></a>Signal Line </h4>
+
+<p>
+<a id="pgfId-257989"></a>You can specify signal line conductivity through the <code>linesigma</code> parameter. There can be more than one signal line. The geometry of the signal line(s) is decided through the <code>linewidth</code>, <code>linethickness</code>, <code>lineheight</code>, and <code>linespace</code> parameters The parameter <code>lineheight</code> is the distance between the signal line and ground plane at the bottom of the 2-D interconnect cross section. The parameter <code>linespace</code> is the distance between the signal lines &#8211; it can be negative in order to describe overlapping signal lines. </p>
+
+<h4>
+<a id="pgfId-257990"></a>Intermediate RLGC File </h4>
+
+<p>
+<a id="pgfId-257991"></a>The 2-D field solver output can be stored in the <code>file</code> parameter to be used in subsequent simulations. This makes RLGC model generation a one-time effort. </p>
+<p>
+<a id="pgfId-257992"></a>If the <code>file</code> parameter is given, MTLINE first checks for the file:</p>
+<ul><li>
+<a id="pgfId-257993"></a>if the <code>file</code> exists, MTLINE checks if the RLGC data stored in the <code>file</code> matches the MTLINE 2-D field solver input. If it matches, the data is re-used. If it does not match, a new set of RLGC data is generated and the <code>file</code> is over-written. </li><li>
+<a id="pgfId-257994"></a>If the <code>file</code> does not exist, an RLGC model is generated by the field solver and the output is stored in <code>file</code>.</li></ul>
+
+<p>
+<a id="pgfId-257995"></a>If the <code>file</code> parameter is not given, RLGC data is stored in the file <code>%C.rlgc</code> after the simulation. </p>
+<p>
+<a id="pgfId-257996"></a>The following diagram displays a cross-section of the 2-D solver:</p>
+
+<p>
+<a id="pgfId-258000"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="335" src="images/chap6-48.gif" /></div>
+
+<p>
+<a id="pgfId-258001"></a>The following shows an example model card:</p>
+
+<a id="pgfId-258002"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Mxyz in1 out1 in2 out2 in3 out3 in4 out4 
++ gnd gnd my_model len=100mm</pre>
+<a id="pgfId-258003"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+model my_model mtline
++ file=&quot;sim_results.dat&quot; fmax=10e9 </pre>
+<a id="pgfId-258004"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
++  linetype = sublossline
++  modeltype = wideband
++  numgnd = 2
++  numlayer = 3</pre>
+<a id="pgfId-258005"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
++  er = [12.9  4.5  1]
++  layerthickness = [200e-6  300e-6  300e-6]
++  dlosstype = tangent
++  dloss = [0.0016  0.008  0]</pre>
+<a id="pgfId-258006"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
++  linewidth = [100e-6  100e-6  100e-6  300e-6]
++  linethickness = [20e-6]
++  lineheight = [200e-6  200e-6  200e-6  500e-6]
++  linespace=[100e-6  100e-6  -400e-6 ]
++  linesigma = 5.76e7</pre>
+<a id="pgfId-258007"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
++  gndthickness = [20e-6  20e-6]
++  gndsigma = 5.76e7</pre>
+<h3>
+<a id="pgfId-258016"></a>S-Parameter Data</h3>
+
+<p>
+<a id="pgfId-258017"></a>MTLINE also accepts an S-parameter data file to describe a transmission line system. Even though both MTLINE and NPORT accept S-parameter data, simulation accuracy can be different. A transmission line system with long delay often requires certain numerical manipulation to achieve better simulation accuracy, which you can achieve only by using MTLINE. </p>
+<p>
+<a id="pgfId-258629"></a>You can specify an S-parameter data file describing a transmission line system using the <code>file</code> parameter. MTLINE converts the frequency dependent S-parameter to frequency dependent RLGC data and stores the results in the file <code>%C.rlgc</code> for reuse in subsequent simulations. </p>
+<p>
+<a id="pgfId-258018"></a>If the <code>file</code> parameter corresponds to S-parameter data, MTLINE first checks the existence of the file <code>%C.rlgc</code> to determine if the S-to-RLGC extraction has been performed in a previous simulation. </p>
+<p>
+<a id="pgfId-258019"></a>The S-parameter data file formats supported are Touchstone, Spectre and Citi. </p>
+<p>
+<a id="pgfId-258020"></a>The physical length of the line must also be specified using the <code>len</code> parameter. </p>
+<p>
+<a id="pgfId-258021"></a>The ordering of the S-parameter input file should be in the format of input ports followed by the output ports of the transmission line system, or <span class="webflare-courier-new" style="white-space:pre"><em>Pin1</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>Pin2</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>Pin3</em></span>, &#8230;, <span class="webflare-courier-new" style="white-space:pre"><em>Pout1</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>Pout2</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>Pout3</em></span>, &#8230;.</p>
+
+<h3>
+<a id="pgfId-258594"></a>TLINE Parameters </h3>
+
+<p>
+<a id="pgfId-258595"></a>MTLINE has a more accurate and robust modeling algorithm than TLINE. However, to ease customer migration, MTLINE supports the old single-conductor TLINE parameters.</p>
+<p>
+<a id="pgfId-258596"></a>Due to a name conflict, the TLINE parameter <code>r</code> has been renamed as <code>seriesr</code> in MTLINE, and the TLINE parameter <code>g</code> has been renamed as <code>shuntg</code> in MTLINE. </p>
+<p>
+<a id="pgfId-258597"></a>In addition, the terminal maps between TLINE and MTLINE are different. The following TLINE syntax</p>
+
+<a id="pgfId-258598"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ( t1 b1 t2 b2 ) tline &lt;parameter=value&gt; ... </pre>
+
+<p>
+<a id="pgfId-258599"></a>should be mapped to the following MTLINE syntax </p>
+
+<a id="pgfId-258600"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ( t1 t2 b1 b2 ) mtline &lt;parameter=value&gt; ... </pre>
+
+<p>
+<a id="pgfId-258592"></a>For a detailed explanation of TLINE parameters, see <code>spectre -h tline</code>.</p>
+
+<h2>
+<a id="pgfId-258115"></a><a id="59480"></a>Input/Output Buffer Modeling Using IBIS</h2>
+
+<p>
+<a id="pgfId-258116"></a>You can use IBIS to model integrated circuit drivers, receivers, and packaging, as well as whole circuit boards, containing multiple IBIS components. Parameters of IBIS model can be either obtained by transistor&#8211;level circuit simulation, or directly measured by the actual integrated circuit. Modeling with IBIS:</p>
+<ul><li>
+<a id="pgfId-258117"></a>is faster than the corresponding transistor level simulation since it is based on behavioral data, and ignores detailed circuit topology.</li><li>
+<a id="pgfId-258118"></a>does not reveal any sensitive information about the design technology or underlying fabrication process so the vendor&#8217;s intellectual property is protected. </li></ul>
+
+<p>
+<a id="pgfId-258119"></a>The IBIS buffer primitive is used to model IBIS drivers and receivers of various types. The rest of the IBIS file content, including series models, package parasitics, external package and board descriptions is modeled by subcircuits, which include resistors, inductors, capacitors, controlled sources, and transmission lines. Differential buffers are modeled by a pair of IBIS buffer primitives. Multi-stage buffers and other advanced buffer types are modeled by multiple IBIS buffer primitives, one for each buffer stage, added model, or submodel. </p>
+<p>
+<a id="pgfId-258120"></a>The IBIS buffer primitive can be used with or without a model card. Using a model card enables model sharing, which is an important feature in IBIS since a lot of pins share the same model characteristics. Using IBIS buffer primitive without a model card allows you to avoid translation of IBIS file into Spectre format, since all the required model information is obtained directly from the specified model section of the IBIS file.</p>
+
+<h3>
+<a id="pgfId-258121"></a>IBIS Translator Model</h3>
+
+<p>
+<a id="pgfId-258122"></a>The IBIS2SUBCKT utility translates IBIS data files into a Spectre netlist format. Input files must comply with IBIS standard, and have the extension <code>.ibs</code>, <code>.pkg</code>, or <code>.ebd</code>. The output file contains subcircuit definitions for all components described in the input files, as well as all necessary model cards. </p>
+
+<h4>
+<a id="pgfId-258123"></a>Syntax</h4>
+<a id="pgfId-258124"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ibis2subckt  -in <code><em>IBIS files</em></code> -out <code><em>subckt file</em></code> -corner {typ|min|max} -swsel <code><em>int</em></code> 
+-mdsel <code><em>int</em></code></pre>
+
+<p>
+<a id="pgfId-258125"></a>where</p>
+<table class="webflareTable" id="#id261351">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261353"></a><code>-in</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261355"></a>Specifies the list of input files.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261357"></a><code>-out</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261359"></a>Specifies the name of the output file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261361"></a><code>-corner</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261363"></a>Specifies the IBIS model corner for which the model is created. Default value: <code>typ</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261365"></a><code>-swsel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261367"></a>Defines the position of series switches. Default value: <code>1</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261369"></a><code>-mdsel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-261371"></a>Specifies the actual models from the IBIS model selector lists. Default value:<code>1</code></p>
+</td>
+</tr>
+</tbody></table>
+
+<h3>
+<a id="pgfId-258131"></a>Example of an IBIS Component Subcircuit</h3>
+
+<p>
+<a id="pgfId-258132"></a>In Figure 1, component pin terminals are shown on the left hand side of the subcircuit symbol. They are connected to the die pad terminals of the buffers through the package circuits. In this case, the simplest package model is shown consisting of lumped R, L, and C elements. IBIS specification allows for more advanced package models, with multiple stubs of lumped or distributed RLC, or coupling RLC matrices, similar to Spectre mtline primitive. Signal terminals of the buffers are connected to the signal terminals of the component subcircuit, shown on the right hand side. These terminals represent digital signals internal to the component. The number of signals depend on the buffer type. Output buffer has only one signal called <code>out</code>. Depending on the state of this signal (0, or 1V) the buffer drives its die pad terminal to low or high voltage. Input buffer has an <code>in</code> signal. The state of this signal changes when the die pad voltage crosses the threshold. The I/O buffer contains both driver and receiver, and therefore has three signal terminals: <code>in</code> signal is the output of the receiver; <code>out</code> is input for the driver; <code>enable</code> can be used to disable the driver by turning it into high impedance state. The terminator buffer has no signals and serves as an RC load for corresponding pin. IBIS standard also allows series or series_switch connectors between die pads. They are modeled by a subcircuit containing RLC or VCCS elements.</p>
+
+<p><strong>Figure 10-1
+<a id="pgfId-258133"></a>IBIS Component Circuit</strong></p>
+<p>
+<a id="pgfId-258262"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="539" src="images/chap6-49.gif" /></div>
+
+<p>
+<a id="pgfId-258263"></a>Figure 2 shows an example of an IBIS board subcircuit. Board pins are connected to the component pins through the pin path circuits. Each pin paths consist of a number of stubs connected in series or through the forks. A stub is either transmission line or lumped RLC. Components, which are instantiated on the board, are listed in the reference designation map section of the IBIS board file. Signal terminals of the board subcircuit are directly connected to the component signals.</p>
+
+<p><strong>Figure 10-2
+<a id="pgfId-258264"></a>IBIS Board Subcircuit</strong></p>
+<p>
+<a id="pgfId-258541"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="557" src="images/chap6-50.gif" /></div>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5.html" id="prev" title="Parameter Specification and Modeling Features">Parameter Specification and Mo ...</a></em></b><b><em><a href="chap7.html" id="nex" title="Analyses">Analyses</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
