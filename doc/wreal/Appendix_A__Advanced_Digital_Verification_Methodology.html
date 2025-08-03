@@ -1,0 +1,116 @@
+
+<html><head><title>Appendix A: Advanced Digital Verification Methodology</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668856" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Appendix A: Advanced Digital Verification Methodology" />
+<meta name="Keywords" content="Digital Verification Methodology,Metric-driven verification" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="Real Number Modeling," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668856" />
+<meta name="NextFile" content="Appendix_B__Mixed-Signal_Simulation.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Case_Study_of_Using_Wreal_Modeling.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Appendix A: Advanced Digital Verification Methodology" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Case_Study_of_Using_Wreal_Modeling.html" title="Case_Study_of_Using_Wreal_Modeling">Case_Study_of_Using_Wreal_Mode ...</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Appendix_B__Mixed-Signal_Simulation.html" title="Appendix_B__Mixed-Signal_Simulation">Appendix_B__Mixed-Signal_Simul ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Appendix A: Advanced Digital Verification Methodology</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>Digital verification flow includes important intersections with analog, which adds challenges when bringing the two together for mixed-signal verification.&#160;A simplified view of the digital verification flow as it applies to implementation is as follows:</p>
+
+<p><span class="confluence-anchor-link" id="AppendixA:AdvancedDigitalVerificationMethodology-44786"></span></p>
+<ul><li>Functional verification through RTL simulation.</li><li>Equivalence checking of RTL and gate-level.</li><li>Static timing analysis throughout the design.</li></ul>
+<p>Functional verification is the most&#160;critical and costly verification step at a relatively high level of abstraction. Equivalence checking provides the verification against the synthesized gate design and other checks for structural, functional, and electrical integrity. The timing of the final place and route implemented physical design is checked by the static timing analysis step.</p>
+
+<p>Equivalence checking generates mathematical models of the two different circuit representations in order to determine the equivalence. There are some theoretical approaches to apply those techniques to analog design as well, but in general, this step is not related to mixed-signal verification.</p>
+
+<p>Since static timing analysis is only applicable in context with a reference clock, it is not directly useful for analog blocks. However, it is important to consider analog parts when integrating the analog IP into an SoC, since the analog block might be part of a critical path through the design. This situation is solved either by running detailed performance simulations using mixed-signal tools to check the timing or by creating a timing model for the analog blocks and using this model during standard static timing analysis. The method employed here is leveraging the analog design environment setting up an automatic regression suite for each analog architecture and then having the analog environment generate the input data for the timing model.</p>
+
+<p>The challenge of digital functional verification comes down to answering the question of whether or not enough simulations have been run and all corner cases have been covered. Only additional measures, such as code coverage, assertion coverage, and functional coverage provide this information and enable an easy assessment of the current verification status. Finally, reuse and automation are much better supported in modern verification techniques (see below).</p>
+<h2 id="AppendixA:AdvancedDigitalVerificationMethodology-VerificationPlanandMetric-DrivenVerification">Verification Plan and Metric-Driven Verification</h2>
+
+<p>The verification plan is refined, modified, and enhanced during the design and verification process. This is because the design, spec, and experiences are changing during the design phase. Clearly defined verification goals are very helpful for the whole verification process, even if the goals are not formally written down in a verification plan.</p>
+
+<p>Advanced verification techniques have been developed and introduced in today&#8217;s digital design flows to overcome the limitations and productivity restrictions. The prediction of verification quality is a major improvement in the state of the art verification methods. The main components of these verification techniques are:</p>
+<ul><li>Automated random stimulus generation</li><li>Automated self-checking (assertions and reference models)</li><li>Coverage measurements and tracking</li><li>Adding formal methods into the verification flow</li></ul>
+<p>The design under test (DUT) is stimulated with some input data, simulated, and the simulation results are stored. There are two important tasks:</p>
+<ul><li>Generation of input stimuli</li><li>Checking the results against expectations</li></ul>
+<p>A third task is a functional coverage to measure which verification goals have been achieved during simulation.</p>
+<h2 id="AppendixA:AdvancedDigitalVerificationMethodology-Metric-DrivenVerificationandAdvancedTestbench">Metric-Driven Verification and Advanced Testbench</h2>
+
+<p>A metric-driven verification flow assembles the factors of digital verification flow. The simulation results are automatically checked and problems are being reported. An automatic stimuli generator creates tests on a random basis within given constraints. Additionally, you may have some tests that are pre-defined and need to be run (directed tests) to reach certain corner cases. The advanced testbench takes care of these different simulation scenarios. The testbench is typically written in e or SystemVerilog; and, also in SystemC, Verilog, or VHDL.</p>
+
+<p><br /></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Case_Study_of_Using_Wreal_Modeling.html" id="prev" title="Case_Study_of_Using_Wreal_Modeling">Case_Study_of_Using_Wreal_Mode ...</a></em></b><b><em><a href="Appendix_B__Mixed-Signal_Simulation.html" id="nex" title="Appendix_B__Mixed-Signal_Simulation">Appendix_B__Mixed-Signal_Simul ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

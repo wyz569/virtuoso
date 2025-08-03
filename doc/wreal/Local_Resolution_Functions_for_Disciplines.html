@@ -1,0 +1,120 @@
+
+<html><head><title>Local Resolution Functions for Disciplines</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668840" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Local Resolution Functions for Disciplines" />
+<meta name="Keywords" content="Local Resolution Functions" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="wreal , Wreal/Real Nets," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668840" />
+<meta name="NextFile" content="Real_Value_Probe_Filtering.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Specifying_Connect_Module_and_Discipline_Definitions.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Local Resolution Functions for Disciplines" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Specifying_Connect_Module_and_Discipline_Definitions.html" title="Specifying_Connect_Module_and_Discipline_Definitions">Specifying_Connect_Module_and_ ...</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Real_Value_Probe_Filtering.html" title="Real_Value_Probe_Filtering">Real_Value_Probe_Filtering</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Local Resolution Functions for Disciplines</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>Initially, <code>wreal</code> resolution functions were limited to one global resolution function. This was not appropriate in larger designs where wreals are used to model different types of interconnects (For example, voltage and currents).</p>
+
+<p>As a solution to this, Cadence introduced the concept of defining wreal resolution function for disciplines. This&#160;differentiates which resolution function should be used for which net. Disciplines definitions can contain&#160;<code style="letter-spacing: 0.0px;">realresolve</code> statements that control the resolution function for the discipline.</p>
+
+<p>The following code example defines a sum resolution function for the <code>wreal_current</code> discipline.&#160;</p>
+
+<p><code>discipline wreal_current</code><br /><code>&#160; domain discrete;</code><br /><code>&#160; realresolve sum;</code><br /><code>enddiscipline</code></p>
+
+<p>The&#160;<code>xrun</code>&#160;switch&#160;<code>+wreal_res__info</code>&#160;provides information of the resolution function used for net in a design.</p>
+
+<p>If you specify discipline using the <code>-setdiscipline</code> option or in the ams control file, resolution function is&#160;applied to a discipline during the elaboration time and gives the same result as when defined in the hardcoded example.</p>
+<h3 id="LocalResolutionFunctionsforDisciplines-DesignExample">Design Example</h3>
+
+<p>Considering the above definition for the resolution function, the following example illustrates how wreal resolution function is defined separately for individual blocks that work with discipline. Two drivers are stimulating the same net and a receiver displays the resolution values. In this case, there are two instances of all three blocks in the top-level and the resolution function is controlled for both. Discrete disciplines <code style="letter-spacing: 0.0px;">wreal_current</code> and <code style="letter-spacing: 0.0px;">wreal_voltage</code>&#160;are used for the two wreal wires. The discipline and the related resolution functions are defined first. The <code>wreal_current</code> discipline is using the <code>sum</code> resolution function assuming that current summing is the appropriate behavior in this case. The voltage-related <code>wreal</code> discipline is using the average function that provides the right output value under the assumption that the driver strengths are equivalent.</p>
+
+<p><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns/1ps</code></p>
+
+<p><code>discipline wreal_current</code><br /><code>&#160; &#160;domain discrete;</code><br /><code>&#160; &#160;realresolve sum;</code><br /><code>enddiscipline</code></p>
+
+<p><code>discipline wreal_voltage</code><br /><code>&#160; &#160;domain discrete;</code><br /><code>&#160; &#160;realresolve avg;</code><br /><code>enddiscipline</code></p>
+
+<p><code>module top();</code><br /><code>&#160; &#160;wreal real_wire1;</code><br /><code>&#160; &#160;wreal_current real_wire1;</code><br /><code>&#160; &#160;source1 I11 (real_wire1);</code><br /><code>&#160; &#160;source2 I21 (real_wire1);</code><br /><code>&#160; &#160;sink I31 (real_wire1);</code><br /><code>&#160; &#160;wreal real_wire2;</code><br /><code>&#160; &#160;wreal_voltage real_wire2;</code><br /><code>&#160; &#160;source1 I12 (real_wire2);</code><br /><code>&#160; &#160;source2 I22 (real_wire2);</code><br /><code>&#160; &#160;sink I32 (real_wire2);</code><br /><code>endmodule</code></p>
+
+<p><code>module source1(r);</code><br /><code>&#160; &#160;output r;</code><br /><code>&#160; &#160;wreal r;</code><br /><code>&#160; &#160;real realnumber;</code><br /><code>&#160; &#160;initial begin</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = 2.2;</code><br /><code>&#160; &#160; &#160;#1 realnumber = 1.1;</code><br /><code>&#160; &#160; &#160;#1 $stop;</code><br /><code>&#160; &#160;end</code><br /><code>&#160; &#160;assign r = realnumber;</code><br /><code>endmodule // send</code></p>
+
+<p><code>module source2(r);</code><br /><code>&#160; &#160;output r;</code><br /><code>&#160; &#160;wreal r;</code><br /><code>&#160; &#160;real realnumber;</code><br /><code>&#160; &#160;initial begin</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = 1.1;</code><br /><code>&#160; &#160; &#160;#1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; &#160;#1 realnumber = 1.1;</code><br /><code>&#160; &#160; &#160;#1 realnumber = 1.1;</code><br /><code>&#160; &#160; &#160;#1 realnumber = 1.1;</code><br /><code>&#160; &#160; &#160;#1 $stop;</code><br /><code>&#160; &#160; end</code><br /><code>&#160; &#160; assign r = realnumber;</code><br /><code>endmodule // send</code></p>
+
+<p><code>module sink(r);</code><br /><code>&#160; &#160;input r;</code><br /><code>&#160; &#160;wreal r;</code><br /><code>&#160; &#160;always @(r) begin</code><br /><code>&#160; &#160; &#160;$display(&quot;%m --&gt; real value @ %f = %f&quot;, $abstime/1n, r);</code><br /><code>&#160; &#160;end</code><br /><code>endmodule</code></p>
+<h4 id="LocalResolutionFunctionsforDisciplines-RelatedTopics">Related Topics</h4>
+<ul><li><a href="Specifying_Connect_Module_and_Discipline_Definitions.html">Specifying Connect Module and Discipline Definitions</a></li><li><a href="Defining_New_Disciplines.html">Defining New Disciplines</a></li></ul>
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Specifying_Connect_Module_and_Discipline_Definitions.html" id="prev" title="Specifying_Connect_Module_and_Discipline_Definitions">Specifying_Connect_Module_and_ ...</a></em></b><b><em><a href="Real_Value_Probe_Filtering.html" id="nex" title="Real_Value_Probe_Filtering">Real_Value_Probe_Filtering</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

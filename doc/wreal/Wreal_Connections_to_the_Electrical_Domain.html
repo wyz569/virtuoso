@@ -1,0 +1,159 @@
+
+<html><head><title>Wreal Connections to the Electrical Domain</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668835" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Wreal Connections to the Electrical Domain" />
+<meta name="Keywords" content="Wreal to Electrical Domain Connections,Wreal Connections" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="wreal , Wreal/Real Nets," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668835" />
+<meta name="NextFile" content="Connection_to_the_Digital_Domain.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Wreal_Connections_to_VHDL_real_and_SystemVerilog_real.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Wreal Connections to the Electrical Domain" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Wreal_Connections_to_VHDL_real_and_SystemVerilog_real.html" title="Wreal_Connections_to_VHDL_real_and_SystemVerilog_real">Wreal_Connections_to_VHDL_real ...</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Connection_to_the_Digital_Domain.html" title="Connection_to_the_Digital_Domain">Connection_to_the_Digital_Doma ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Wreal Connections to the Electrical Domain</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>In connections between wreal and electrical, the E2R, R2E_2, and ER_bidir connect modules (CM) are inserted automatically, if needed, during the elaboration process.</p>
+
+<p>The current connect modules are shown below. The source file can be found in the Xcelium release in <code>&lt;install_path&gt;/tools/affirma_ams/etc/connect_lib/</code>. The Real to Electrical (R2E) CM implementation is relatively straightforward. The newly introduced X and Z states are taken into account. The input <code>wreal</code> value is assigned to a voltage source with serial resistance. Transition operators help to avoid abrupt changes in the behavior that might convergence issues in the analog solver.</p>
+
+<p><code>
+// R2E_2.vams - Efficient Verilog-AMS discrete wreal to </code><br /><code>// electrical connection module</code></p>
+
+<p><code>`include &quot;disciplines.vams&quot;<br /></code><code>`timescale 1ns / 1ps</code></p>
+
+<p><code>connectmodule R2E_2 (Din, Aout);<br /></code><code>&#160; input Din;<br /></code><code>&#160; wreal Din;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; // input wreal<br /></code><code>&#160; \logic Din;<br /></code><code>&#160; output Aout;<br /></code><code>&#160; electrical Aout;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; // output electrical</code></p>
+
+<p><code>&#160; parameter real vss=0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (-inf:inf); // Voltage of negative supply<br /></code><code>&#160; parameter real vsup=1.8&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;from (0:inf);&#160;&#160;&#160; // supply voltage based on vss<br /></code><code>&#160; parameter real vdelta=vsup/64&#160;&#160;&#160; from (0:vsup];&#160;&#160; // voltage delta<br /></code><code>&#160; parameter real vx=vss&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from [0:vsup];&#160;&#160; // X output voltage<br /></code><code>&#160; parameter real tr=10p&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (0:inf);&#160;&#160;&#160; // risetime of analog output<br /></code><code>&#160; parameter real tf=tr&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (0:inf);&#160;&#160;&#160; // falltime of analog output<br /></code><code>&#160; parameter real ttol_t=(tr+tf)/20 from (0:inf);&#160;&#160;&#160; // time tol of transition<br /></code><code>&#160; parameter real tdelay=0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from [0:1m);&#160;&#160;&#160;&#160; // delay time of analog output<br /></code><code>&#160; parameter real rout=200&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (0:inf);&#160;&#160;&#160; // output resistance<br /></code><code>&#160; parameter real rx=rout&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (0:inf);&#160;&#160;&#160; // X output resistance<br /></code><code>&#160; parameter real rz=10M&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (0:inf);&#160;&#160;&#160; // Z output resistance<br /></code><code>&#160; parameter integer currentmode=0&#160; from [-1:1];&#160;&#160;&#160;&#160; // 0:voltage 1:forward -1:backward<br /></code><code>&#160; parameter real idelta=10u&#160;&#160;&#160;&#160;&#160;&#160;&#160; from (0:inf);&#160;&#160;&#160; // current delta<br /></code><code>&#160; parameter real ix=0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from [0:inf);&#160;&#160;&#160; // X output current<br /></code><code>&#160; parameter real i0=0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; from [0:inf);&#160;&#160;&#160; // 0 output current<br /></code><code>&#160; parameter integer clamp=0&#160;&#160;&#160;&#160;&#160;&#160;&#160; from [0:1];&#160;&#160;&#160;&#160;&#160; // 0: disable, 1: enable clamp<br /></code><code>&#160; parameter real dvclamp=vsup/20&#160;&#160; from (0:vsup/2); // clamp zoon from supply<br /></code><code>&#160; parameter integer idealmode=0&#160;&#160;&#160; from [0:1];&#160;&#160;&#160;&#160;&#160; // ideal supply mode<br /></code><code>&#160; parameter real vdd=vss+vsup;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; // internal parameter: vss+vsup<br /></code><code>&#160; parameter real vdd10=vdd+vsup*10;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; // internal parameter: vdd+vsup*10<br /></code><code>&#160; parameter real vss10=vss-vsup*10;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; // internal parameter: vss-vsup*10<br /></code><code>&#160; parameter integer debug=0&#160;&#160;&#160;&#160;&#160;&#160;&#160; from [0:1];&#160;&#160;&#160;&#160; // 1: enable debug features<br /></code><code>&#160; parameter real vinlimit=vsup*4/3 from [0:inf);&#160; // input signal limit</code></p>
+
+<p><code>&#160; real RealN, Rstate;<br /></code><code>&#160; real RealA;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;//analog value converted from wreal<br /></code><code>&#160; real VprevA;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; //voltage at previous analog-step<br /></code><code>&#160; real Rout;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; //impedence converted from wreal driver<br /></code><code>&#160; wreal R_val;<br /></code><code>&#160; reg sie;</code></p>
+
+<p><code>//debug feature variabless:<br /></code><code>&#160;real (*integer mn_browser_default=&quot;1&quot;; integer mn_broswer_description=<br /></code><code>&#160;&#160;&#160;&#160; &quot;Number of d2a events of any logic toggling from the digital port&quot;; *)<br /></code><code>&#160;&#160; num_d2a_events=0;<br /></code><code>&#160;real (*integer mn_browser_default=&quot;1&quot;; integer mn_broswer_description=<br /></code><code>&#160;&#160;&#160;&#160; &quot;Number of a2d events of any logic toggling to the digital port&quot;; *)<br /></code><code>&#160;&#160; num_a2d_events=0;&#160;&#160;&#160;&#160;<br /></code><code>&#160;reg&#160;&#160; (*integer mn_browser_default=&quot;1&quot;; integer mn_broswer_description=<br /></code><code>&#160;&#160;&#160;&#160; &quot;Flag to 1 once the analog port signal voltage has exceeded vinlimit, vsup*4/3 by default&quot;; *)<br /></code><code>&#160;&#160; vin_exceeded_limit = 0;<br /></code><code>&#160;real num_d2a_x_events=0;&#160;&#160;&#160;&#160; // Number of d2a events of logic X<br /></code><code>&#160;real num_d2a_z_events=0;&#160;&#160;&#160;&#160; // Number of d2a events of logic Z</code></p>
+
+<p><code>&#160; initial begin<br /></code><code>&#160;&#160;&#160; if (Din === `wrealXState)<br /></code><code>&#160;&#160;&#160;&#160;&#160; begin RealN = currentmode ? (currentmode*ix) : vx; Rstate = rx; end<br /></code><code>&#160;&#160;&#160; else if (Din === `wrealZState)<br /></code><code>&#160;&#160;&#160;&#160;&#160; begin RealN = currentmode ? (currentmode*i0) : vss; Rstate = rz; end<br /></code><code>&#160;&#160;&#160; else<br /></code><code>&#160;&#160;&#160;&#160;&#160; begin RealN = Din; Rstate = rout; end<br /></code><code>&#160;&#160;&#160; sie = $SIE_input(Din, R_val);<br /></code><code>&#160; end</code></p>
+
+<p><code>&#160; always begin<br /></code><code>&#160;&#160;&#160; if (Din === `wrealXState) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (debug) begin num_d2a_events=num_d2a_events+1; num_d2a_x_events=num_d2a_x_events+1; end<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; RealN = currentmode ? (currentmode*ix) : vx; Rstate = rx; end<br /></code><code>&#160;&#160;&#160; else if (Din === `wrealZState) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (debug) begin num_d2a_events=num_d2a_events+1; num_d2a_z_events=num_d2a_z_events+1; end<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; Rstate = rz;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; //in voltage mode, Z means float, so Rout is rz<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (currentmode) RealN = currentmode*i0;&#160; //in current mode, Z means open circuit, so I=i0<br /></code><code>&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160; else begin</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160; Rstate = rout;<br /></code><code>&#160;&#160;&#160;&#160;&#160; if ( currentmode &amp;&amp; abs(Din-RealN) &gt;= idelta ) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; RealN = currentmode*Din; if (debug) num_d2a_events=num_d2a_events+1; end<br /></code><code>&#160;&#160;&#160;&#160;&#160; else if ( currentmode==0 &amp;&amp; abs(Din-RealN) &gt;= vdelta ) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; RealN = Din; if (debug) num_d2a_events=num_d2a_events+1; end<br /></code><code>&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160; @(Din);<br /></code><code>&#160; end</code></p>
+
+<p><code>&#160; assign Din = $drs_driver(Din);<br /></code><code>&#160; analog initial VprevA = vss;<br /></code><code>&#160; analog begin<br /></code><code>&#160;&#160;&#160; RealA = transition(RealN, tdelay, tr, tf, ttol_t);<br /></code><code>&#160;&#160;&#160; Rout = transition(Rstate, tdelay, tr, tf, ttol_t);<br /></code><code>&#160;&#160;&#160; if (currentmode) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160; if (RealA &gt; 0) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (clamp) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (V(Aout) &gt; vdd - dvclamp) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (VprevA &lt; vdd - dvclamp)<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $display(&quot;Warning: AMS IE %M at %g: wreal Din=%g is causing V(Aout)=%g being clamped near vdd. Please check for any mismatch between the electrical circuit and the R2E&quot;,<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $abstime, RealN, V(Aout));<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;VprevA = V(Aout);<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; RealA = RealA * (vdd - V(Aout)) / dvclamp;<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; end else begin</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (V(Aout) &gt; vdd10 ) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (VprevA &lt; vdd10 )<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $display(&quot;Warning: AMS IE %M at %g: wreal Din=%g is causing V(Aout)=%g being 10x vsup above vdd. Please check for any mismatch between the electrical circuit and the 2E&quot;,<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $abstime, RealN, V(Aout));<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; VprevA = V(Aout);<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160;&#160;&#160; end else begin</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; if (clamp) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if ( V(Aout) &lt; vss + dvclamp ) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if ( VprevA &gt; vss + dvclamp )<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $display(&quot;Warning: AMS IE %M at %g: wreal Din=%g is causing V(Aout)=%g being clamped near vss. Please check for any mismatch between the electrical circuit and the R2E&quot;,<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $abstime, RealN, V(Aout));<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; VprevA = V(Aout);<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; RealA = RealA * (V(Aout) - vss) / dvclamp;<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; end else begin</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if ( V(Aout) &lt; vss10 ) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; if ( VprevA &gt; vss10 )<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $display(&quot;Warning: AMS IE %M at %g: wreal Din=%g is causing V(Aout)=%g being 10x vsup below vss. Please check for any mismatch between the electrical circuit and the R2E&quot;,<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; $abstime, RealN, V(Aout));<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; VprevA = V(Aout);<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160; end<br /></code><code>&#160;&#160;&#160;&#160;&#160; end</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160; I(Aout) &lt;+ -RealA + V(Aout)/rz;<br /></code><code>&#160;&#160;&#160; end else if (idealmode) begin<br /></code><code>&#160;&#160;&#160;&#160;&#160; V(Aout) &lt;+ RealA;<br /></code><code>&#160;&#160;&#160; end else begin<br /></code><code>&#160;&#160;&#160;&#160;&#160; I(Aout) &lt;+ (V(Aout) - RealA) / Rout;<br /></code><code>&#160;&#160;&#160; end<br /></code><code>&#160; end<br /></code><code>endmodule</code></p>
+
+<p>In contrast to the R2E, the E2R (Electrical to Real) operation is not so obvious because the continuous analog value needs to be translated into an event-based wreal signal. For this purpose, a new system function,&#160;<code>absdelta</code>&#160;is available, which creates events based on input value changes. The&#160;<code style="letter-spacing: 0.0px;">absdelta</code>&#160;function generates events for the following times and conditions:</p>
+
+<p><code>(absdelta ( expr, delta [ , time_tol [ , expr_tol ]]):</code></p>
+<ul><li>At time zero</li><li>When the analog solver finds a stable solution during initialization</li><li>When the <code>expr</code> value changes more than delta plus or minus expr_tol, relative to the previous&#160;<code>absdelta</code>&#160;event (but not when the current time is within <code>time_tol</code> of the previous <code>absdelta</code> event)</li><li>When <code>expr</code> changes direction (but not when the amount of the change is less than <code>expr_tol</code></li></ul>
+<p>In the CM below, the&#160;<code>absdelta</code>&#160;function issues an event and updates the <code>wreal</code> value whenever&#160;<code>V(Ain)</code>&#160;changes more than the value&#160;<code>vdelta</code>.</p>
+
+<p><code>// E2R.vams - basic Verilog-AMS electrical to discrete wreal connection module</code><br /><code>// last revised:&#160;&#160;08/01/06, jhou</code><br /><code>//</code><br /><code>// REVISION HISTORY:</code><br /><code>// Created:&#160;&#160;08/01/06, jhou</code></p>
+
+<p><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns / 100ps</code></p>
+
+<p><code>connectmodule E2R (Ain, Dout);</code><br /><code>input Ain;</code><br /><code>electrical Ain;&#160;&#160;  //input electrical</code><br /><code>output Dout;</code><br /><code>wreal Dout;&#160;&#160;      //output wreal</code><br /><code>\logic Dout;&#160;&#160;     //discrete domain</code></p>
+
+<p><code>  parameter real vdelta=1.8/64   from (0:inf);</code><br /><code>// voltage delta</code><br /><code>parameter real vtol=vdelta/4   from (0:vdelta);</code><br /><code>// voltage tolerance</code><br /><code>parameter real ttol=10p        from (0:1m];</code><br /><code>// time tolerance</code></p>
+
+<p><code>  real Dreg;       &#160;&#160;&#160;&#160;   //real register for A to D wreal conversion</code><br /><code>assign Dout = Dreg;</code><br /><code>//discretize V(Ain) triggered by absdelta function</code><br /><code>&#160; always @(absdelta(V(Ain), vdelta, ttol, vtol))</code><br /><code>&#160; Dreg = V(Ain);</code><br /><code>endmodule</code></p>
+
+<p>The proper setting of the CM parameters is critical for correct simulation results. While the supply voltage level mainly influences the electrical to logic connection thresholds, the E2R settings can be totally independent of the supply voltage. For example, if an electrical <code>5mV</code> bias voltage is passed into a wreal block, a good setting for a&#160;<code>vdelta</code>&#160;parameter might be <code>100uV</code>, independent of what the supply voltage is.</p>
+
+<p>Also, consider the default resistance in the R2E CM. If a wreal net is connected to an electrical part that consumes significant current (for example, power net) the 200-Ohm default resistance of the R2E CM might have an unwanted influence on the signal level.</p>
+
+<p>The following example shows a simple connection between <code>electrical</code> and <code>wreal</code>. The E2R connect module is&#160;inserted automatically. The connect rule definition at the end of the file defines the parameters for the connect modules.</p>
+
+<p><code>// run with:</code><br /><code>// xrun cm.vams cm.scs -clean -amsconnrules e2r_only </code><br /><code>//&#160;&#160;      -discipline logic</code><br /><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns / 1ps</code></p>
+
+<p><code>module top();</code><br /><code>&#160; wreal real_wire;</code><br /><code>&#160; source I1  (real_wire);</code><br /><code>&#160; sink   I3  (real_wire);</code><br /><code>endmodule</code></p>
+
+<p><code>module source(r);</code><br /><code>&#160; output r;</code><br /><code>&#160; electrical  r;</code><br /><code>&#160; analog begin</code><br /><code>&#160; &#160; V(r) &lt;+ sin($abstime * 1E4);</code><br /><code>&#160; &#160; $bound_step(1e-5); // limit the step size</code><br /><code>&#160; end</code><br /><code>endmodule // source</code></p>
+
+<p><code>module sink(r);</code><br /><code>&#160; input r;</code><br /><code>&#160; wreal r;</code><br /><code>&#160; always @(r) begin</code><br /><code>&#160; &#160; $display(&quot; real value = %f&quot;, r);</code><br /><code>&#160; end</code><br /><code>endmodule</code></p>
+
+<p><code>connectrules e2r_only;</code><br /><code>&#160; connect E2R</code><br /><code>&#160; &#160; #( .vdelta(0.1), .vtol(0.001), .ttol(1n));</code><br /><code>&#160; Endconnectrules</code></p>
+
+<p>And, the&#160;<code>analog.scs</code>&#160;file contains the following statements:</p>
+
+<p><code>simulator lang=spectre</code><br /><code>tran1 tran stop=1ms</code></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Wreal_Connections_to_VHDL_real_and_SystemVerilog_real.html" id="prev" title="Wreal_Connections_to_VHDL_real_and_SystemVerilog_real">Wreal_Connections_to_VHDL_real ...</a></em></b><b><em><a href="Connection_to_the_Digital_Domain.html" id="nex" title="Connection_to_the_Digital_Domain">Connection_to_the_Digital_Doma ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

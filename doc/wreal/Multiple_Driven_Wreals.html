@@ -1,0 +1,380 @@
+
+<html><head><title>Multiple Driven Wreals</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668831" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Multiple Driven Wreals" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed Signal,Digital Mixed Signal," />
+<meta name="prod_subfeature" content="RNM,Wreal/Real Nets," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668831" />
+<meta name="NextFile" content="Wreal_Coercion.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Wreal_X_and_Z_State.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Multiple Driven Wreals" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Wreal_X_and_Z_State.html" title="Wreal_X_and_Z_State">Wreal_X_and_Z_State</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Wreal_Coercion.html" title="Wreal_Coercion">Wreal_Coercion</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Multiple Driven Wreals</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>While the resulting values of multiply driven 4-state logic nets are relatively obvious, it is not obvious what the result value on a wreal net should be if one driver provides 2.7 and another -4.87 at the same time. You can use the six built-in resolution functions that&#160;Cadence delivers, to instruct the elaborator how to resolve wreal nets that have more than one driver.&#160;The built-in resolution function can be specified using&#160;the <code>-wreal_resolution</code> command-line option with <code>xmelab</code> or <code>xrun</code>.</p>
+<h2 id="MultipleDrivenWreals-Syntax"><strong>Syntax</strong></h2>
+
+<p>The syntax is:</p>
+
+<p><code>-wreal_resolution <em>resolutionFunction</em></code></p>
+
+<p>where, <em>resolutionFunction</em> can be any one of the following&#160;six resolution functions are:</p>
+<ul><li><strong><code>DEFAULT</code></strong>: Single active driver only, support for Z state</li><li><strong><code>4STATE</code></strong>: Similar to Verilog 4-State resolution for digital nets</li><li><strong><code>SUM</code></strong>:&#160; Resolves to a summation of all the driver values</li><li><strong><code>AVG</code></strong>: Resolves to the average of all the driver values</li><li><strong><code>MIN</code></strong>: Resolves to the least value of all the driver values</li><li><strong><code>MAX</code></strong>: Resolves to the greatest value of all the driver values</li></ul>
+<p>The following shows the results of a wreal, which is being driven by two drivers using different resolution functions:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /><col /><col /><col /><col /><col /><col /><col /></colgroup><tbody><tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+D1</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+D2</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+Default</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+4state</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+sum</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+avg</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+min</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+max</code></strong></p>
+</th></tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+</tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+</tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+</tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</td>
+</tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+z</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+</tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+2.2</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+3.3</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.65</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+2.2</code></strong></p>
+</td>
+</tr>
+<tr><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</th><th class="confluenceTh" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</th><td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+x</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+2.2</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+<td class="confluenceTd" colspan="1" rowspan="1">
+<p><strong><code>
+1.1</code></strong></p>
+</td>
+</tr>
+</tbody></table></div>
+<h2 id="MultipleDrivenWreals-Example">Example</h2>
+
+<p>The following example illustrates the use of multiple drivers on a wreal net. The top-level wire <code>real_wire</code> is driven by the two blocks <code>source1</code> and <code>source2</code>. A third module is reading and displaying the result value of the net.</p>
+
+<p><code>
+`include &quot;disciplines.vams&quot;</code><br /><code>module top();</code><br /><code>&#160; wreal real_wire;</code><br /><code>&#160; source1 I1  (real_wire);</code><br /><code>&#160; source2 I2  (real_wire);</code><br /><code>&#160; sink    I3  (real_wire);</code><br /><code>endmodule</code></p>
+
+<p><code>module source1(r);</code></p>
+
+<p><code>&#160; output r;</code><br /><code>&#160; wreal  r;</code><br /><code>&#160; real      realnumber;</code><br /><code>&#160; initial begin</code><br /><code>&#160; &#160; #1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; #1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; #1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; #1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; #1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; #1 realnumber = 2.2;</code><br /><code>&#160; &#160; #1 realnumber = 1.1;</code><br /><code>&#160; &#160; #1 $stop;</code><br /><code>&#160; end</code><br /><code>&#160; assign r = realnumber;</code><br /><code>endmodule // send</code></p>
+
+<p><code>
+module source2(r);</code><br /><code>&#160; output r;</code><br /><code>&#160; wreal  r;</code><br /><code>&#160; real      realnumber;</code><br /><code>&#160; initial begin</code><br /><code>&#160; &#160; #1 realnumber = `wrealXState;</code><br /><code>&#160; &#160; #1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; #1 realnumber = 1.1;</code><br /><code>&#160; &#160; #1 realnumber = `wrealZState;</code><br /><code>&#160; &#160; #1 realnumber = 1.1;</code><br /><code>&#160; &#160; #1 realnumber = 1.1;</code><br /><code>&#160; &#160; #1 realnumber = 1.1;</code><br /><code>&#160; &#160; #1 $stop;</code><br /><code>&#160; end</code><br /><code>&#160; assign r = realnumber;</code><br /><code>endmodule // send</code></p>
+
+<p><code>module sink(r);</code><br /><code>&#160; input r;</code><br /><code>&#160; wreal r;</code><br /><code>&#160; always @(r) begin</code><br /><code>&#160; &#160; $display(&quot; real value = %f&quot;, r);</code><br /><code>&#160; end</code><br /><code>endmodule</code></p>
+
+<p>The output of the simulation depends on the&#160;<code>&#8211;wreal_resolution</code>&#160;argument to&#160;<code>xrun</code>. For example, if the following statement is used for simulation:</p>
+
+<p><code>
+xrun multi_driver.vams -exit -wreal_resolution sum</code></p>
+
+<p>The resulting output is displayed as shown below:</p>
+
+<p><code>
+real value = `wrealXState</code><br /><code>real value = `wrealXState</code><br /><code>real value = `wrealXState</code><br /><code>real value = `wrealZState</code><br /><code>real value = 1.100000</code><br /><code>real value = 3.300000</code><br /><code>real value = 2.200000</code></p>
+
+<p>In the given example, the wreal drivers and receivers are nicely separated in different modules; however, the resolution function feature works the same way inside a single model. If you display&#160;<code>r</code>&#160;and&#160;<code>realnumber</code>&#160;in one of the source modules in the example, you will notice that the driven real value <code>realnumber</code> and the received wreal value <code>r</code> are different. The received wreal value represents the end result of the overall resolution process.&#160;&#160;</p>
+
+<p>The resolution function provides you the ability to model analog behaviors, such as current summing nodes, in a straightforward manner.&#160;</p>
+<div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>The resolution function defined by the&#160;<code>&#8211;wreal_resolution</code>&#160;command line switch is a global setting that applies to all wreal nets in the design. However, Cadence also supports local resolution functions defined using disciplines.</p>
+</div>
+</div>
+<h3 id="MultipleDrivenWreals-RelatedTopics">Related Topics</h3>
+<ul><li><a href="#MultipleDrivenWreals-_Toc234394661">Local Resolution Functions.</a></li></ul>
+<p><br /></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Wreal_X_and_Z_State.html" id="prev" title="Wreal_X_and_Z_State">Wreal_X_and_Z_State</a></em></b><b><em><a href="Wreal_Coercion.html" id="nex" title="Wreal_Coercion">Wreal_Coercion</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

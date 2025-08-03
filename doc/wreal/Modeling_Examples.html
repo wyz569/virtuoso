@@ -1,0 +1,231 @@
+
+<html><head><title>Modeling Examples</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668855" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Modeling Examples" />
+<meta name="Keywords" content="Modeling examples" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="wreal ,Real Number Modeling, Wreal/Real Nets," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668855" />
+<meta name="NextFile" content="Case_Study_of_Using_Wreal_Modeling.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Analog_Functions_Translated_to_Wreal.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Modeling Examples" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Analog_Functions_Translated_to_Wreal.html" title="Analog_Functions_Translated_to_Wreal">Analog_Functions_Translated_to ...</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Case_Study_of_Using_Wreal_Modeling.html" title="Case_Study_of_Using_Wreal_Modeling">Case_Study_of_Using_Wreal_Mode ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Modeling Examples</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>Examples of analog models and how these analog models have been converted to pure wreal models to enable mixed-signal connections.</p>
+<h2 id="ModelingExamples-VoltageControlledOscillator">Voltage Controlled Oscillator</h2>
+
+<p>Consider the example of a voltage-controlled oscillator (VCO). VCO is a standard analog block that is used for examples in PLLs. It creates an output oscillation with a given frequency. This frequency can be modified to some range by the input voltage of the block.</p>
+
+<p>The following testbench specifies that a real variable (<code>r_in</code>) is changed every 10ns from one value to another. The real variable is assigned to the <code>wreal</code> wire (<code>w_in</code>). This <code>wreal</code> signal is connected to the input port of the VCO block that is instantiated in the testbench.</p>
+
+<p><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns / 1ps</code></p>
+
+<p><code>module top();</code><br /><code>&#160; wreal w_in;</code><br /><code>&#160; real r_in;</code><br /><code>&#160; vco vco (w_in, clk);</code></p>
+
+<p><code>&#160; always begin</code><br /><code>&#160; &#160; r_in = 1.0;</code><br /><code>&#160; &#160; #10 r_in = 1.2;</code><br /><code>&#160; &#160; #10 r_in = 0.2;</code><br /><code>&#160; &#160; #10 r_in = -0.2;</code><br /><code>&#160; &#160; #10 r_in = 1.345;</code><br /><code>&#160; &#160; #10 $finish;</code><br /><code>&#160; end</code><br /><code>&#160; assign w_in = r_in;</code><br /><code>endmodule</code></p>
+
+<p>The VCO block takes the wreal input signal and calculates at each change of the signal (<code>@(vin)</code>) the required output frequency. Remember that the wreal signal is event based. That means that there are discrete events whenever the signal changes and the signal stay constant otherwise.</p>
+
+<p>The calculated output frequency is used to determine the delay time between the clock inversion operations. Please note that the frequency settings depend on the timescale used. In this case, we used a 1ns timescale resulting in a 1 GHz frequency unit.</p>
+
+<p><code>module vco(vin, clk);</code><br /><code>&#160; input vin;</code><br /><code>&#160; wreal vin;</code><br /><code>&#160; output clk;</code><br /><code>&#160; reg &#160;&#160;&#160;&#160; clk;</code><br /><code>&#160; real freq, clk_delay;</code><br /><code>&#160; real center_freq = 1; // freq in GHz</code><br /><code>&#160; real vco_gain = 1; // freq gain in GHz</code></p>
+
+<p><code>&#160; initial clk = 0;</code></p>
+
+<p><code>&#160; always @(vin) begin</code><br /><code>&#160; &#160; freq = center_freq + vco_gain*vin;</code><br /><code>&#160; &#160; clk_delay = 1.0/(2*freq);</code><br /><code>&#160; end</code><br /><code>&#160; always #(clk_delay) clk = !clk;</code><br /><code>endmodule</code></p>
+
+<p>The following figure shows the simulation result for this example.</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498871/443498872.gif" data-linked-resource-container-id="443498871" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="vco-waveform1.gif" data-linked-resource-id="443498872" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498871/443498872.gif" /></span></p>
+
+<p>This is a simple example where there are no parameters with value range restrictions for the constant definitions, input values of type&#160;<code>`wrealXState</code>&#160;and&#160;<code>`wrealZState</code>&#160;are not considered. It is possible to create negative frequency values and thus negative delay times, the clock frequency changes instantaneously with the input voltage change. All these &#8211; and probably more &#8211; issues and effects need to be considered for a good, robust, and reusable behavioral model. We will address some of these in later examples.</p>
+<h2 id="ModelingExamples-LowPassFilterlow_pass_filter">Low Pass Filter<span class="confluence-anchor-link" id="ModelingExamples-low_pass_filter"></span></h2>
+
+<p>The slewing effect is typical time-domain behavior of analog circuits. Other circuits are more dominated by their frequency-domain behavior, similar to filters. Continuous filters, for example, RC, or analog behavioral filters using the&#160;<code>idt/ddt</code>&#160;functions can be implemented directly in the analog domain. However, an equivalent behavior in the discrete domain is not available. A translation for the continuous filter function into a discrete z domain filter is required. This process is called the bilinear transform. References and theoretical details can be found in various textbooks and white papers.</p>
+
+<p>First, let us see the testbench and the analog filter used. Study the code example below.</p>
+
+<p><code>//xrun lpf.vams -input probe.tcl -access r analog.scs -gui</code><br /><code>`include &quot;constants.vams&quot;</code><br /><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns/1ps</code></p>
+
+<p><code>module top ();</code><br /><code>&#160; electrical Vin, Vout;</code><br /><code>&#160; filter i_ctf (Vin, Vout);</code><br /><code>&#160; analog begin</code><br /><code>&#160; &#160; V(Vin) &lt;+ sin($abstime * `M_TWO_PI * 1E8);</code><br /><code>&#160; end</code><br /><code>endmodule</code></p>
+
+<p><code>module filter (Vin, Vout);</code><br /><code>&#160; input Vin;</code><br /><code>&#160; output Vout;</code><br /><code>&#160; electrical Vout;</code><br /><code>&#160; electrical Vin;</code><br /><code>&#160; real  r_in;</code><br /><code>&#160; real  r_in_wreal;</code><br /><code>&#160; wreal  r_out;</code></p>
+
+<p><code>&#160; parameter real Fp = 1e7;</code><br /><code>&#160; parameter real Dp = 0.5;</code><br /><code>&#160; real      Wp;</code></p>
+
+<p><code>&#160; initial begin</code><br /><code>&#160; &#160; Wp = `M_TWO_PI*Fp;</code><br /><code>&#160; end</code><br /><code>&#160; // electrical implementation</code><br /><code>&#160; analog begin</code><br /><code>&#160; &#160; r_in = V(Vin);</code><br /><code>&#160; &#160; if (abs(r_in)&lt;100n) r_in=0;</code><br /><code>&#160;// ignore small oscillations</code><br /><code>&#160; &#160; &#160; &#160;// second order low pass filter</code><br /><code>&#160; &#160; V(Vout) &lt;+ idt(Wp*(</code><br /><code>&#160; &#160; &#160; &#160;idt(Wp*(r_in-V(Vout)),2*Dp*(r_in),0,1e-6 ) -</code><br /><code>&#160; &#160; &#160; &#160;2*Dp*V(Vout)),</code><br /><code>&#160; &#160; &#160; &#160;r_in,0,1e-6);</code><br /><code>&#160; end</code><br /><code>&#160; // wreal implementation</code><br /><code>&#160; always begin</code><br /><code>&#160; &#160; r_in_wreal = V(Vin);</code><br /><code>&#160; &#160; #1;</code><br /><code>&#160; end</code><br /><code>&#160; lpf #(.Fp(Fp), .Dp(Dp), .hfs(1G)) i_lpf_1 ( r_in_wreal, r_out );</code><br /><code>endmodule // filter</code></p>
+
+<p>A sine wave is transferred into the filter module. The core filter is a second-order low pass filter implemented by two integration functions. The corner frequency (Wp) and the damping factor (Dp) are used to parameterize the filter behavior.</p>
+
+<p>The input signal is converted into a wreal signal at a fixed sampling rate. In this example, we know that the input is a sine input signal with a well-defined maximum frequency bandwidth, thus, we do not need to use the complex fix rate sampler block described above. However, for other input signals, a more complex sampling routine might be required to avoid aliasing effects. The input sampling rate for the low pass filter implementation is assumed to be a fixed rate. The rate is provided to the filter as hfs input parameter. In addition, the sampling rate is a critical factor for real live input signals. The sampling rate limits the frequency bandwidth of the sampled data by the Nyquist criteria, thus, the sampling rate of at least twice the maximum frequency of the input signal is required. However, the simulation performance obviously decreases with higher sampling rates. The right sampling rate is a trade-off that needs to be made based on the actual characteristics of the input signal and accuracy requirements.</p>
+
+<p>The bilinear transform takes a two-step approach. It converts the analog differential equation into the s-domain and converts the s-domain data into the discrete z-domain in the second step.</p>
+
+<p>The following is the basic differential equation of the filter function described above:</p>
+
+<p><code>Vout = idt(Wp*(idt(Wp*(Vin-Vout))-2*Dp*Vout))</code></p>
+
+<p>For the transformation into the frequency domain, all differentiations are replaced by multiplication by&#160;<code>s</code>&#160;while all integrations result in division by&#160;<code>s</code>. Note that we are neglecting most of the mathematical terminologies and variables naming conventions here to highlight the general process. Refer to standard literature for details.</p>
+
+<p>The above example leads to the following equation:</p>
+
+<p><code>s^2*Vout = (Wp*((Wp*(Vin-Vout))-2*Dp*s*Vout))</code><br /><code>s^2*Vout + Wp^2*Vout + Wp*2*Dp*s*Vout = Wp^2*Vin </code></p>
+
+<p>The linear transfer function&#160;H(s)&#160;is calculated as the s-domain output divided by the input:</p>
+
+<p><code>H(s) = Vout/Vin = Wp^2 / ( +Wp^2 + Wp*2*Dp*s + s^2 )</code></p>
+
+<p>In the second step of the transformation, we replace&#160;s&#160;by (g*(1-z^-1)/(1+z^-1)). Where&#160;g&#160;is 2 divided by the sampling rate of the discrete filter.</p>
+
+<p><code>s = (g*(1-z^-1)/(1+z^-1))</code><br /><code>H(z) = Wp^2 / ( +Wp^2 + Wp*2*Dp*(g*(1-z^-1)/(1+z^-1)</code><br /><code>&#160; &#160; &#160;+ (g*(1-z^-1)/(1+z^-1))^2 )</code></p>
+
+<p>This leads to the discrete transfer function as shown above. The only remaining part of the exercise is to transform the equation in such a way that the filter coefficients for the numerator and dominator are obvious. This is not difficult but still an error-prune process, so you need to pay close attention.</p>
+
+<p><code>H(z) = Wp^2*(1+z^-1)^2 / ( Wp^2*(1+z^-1)^2 </code><br /><code>&#160; &#160; &#160; &#160; + Wp*2*Dp*g*(1-z^-1)*(1+z^-1)) + (g*(1-z^-1)^2 )</code><br /><code>H(z) = Wp^2 + 2*Wp^2*(z^-1) +Wp^2*(z^-2) /</code><br /><code>&#160; &#160; &#160; &#160; ( Wp^2 + 2*Wp^2*(z^-1) +Wp^2*(z^-2) + Wp*2*Dp*g</code><br /><code>&#160; &#160; &#160; &#160; - Wp*2*Dp*g(z^-2) + g^2 - 2*g^2*(z^-1) + g^2*(z^-2))</code><br /><code>H(z) = Wp^2 + 2*Wp^2*(z^-1) +Wp^2*(z^-2) /</code><br /><code>&#160; &#160; &#160; &#160; ( (Wp^2 + g^2 + Wp*2*Dp*g) + (2*Wp^2 - 2*g^2)*(z^-1)</code><br /><code>&#160; &#160; &#160; &#160; + (Wp^2 - Wp*2*Dp*g + g^2)*(z^-2))</code></p>
+
+<p>After this conversion, the discrete filter coefficients are still available, so the filter implementation is very easy as shown in the below example.</p>
+
+<p><code>
+module lpf(Vin, Vout);</code><br /><code>&#160; // H(z) = Wp^2 + 2*Wp^2*(z^-1) +Wp^2*(z^-2) /</code><br /><code>&#160; //        ( (Wp^2 + g^2 + Wp*2*Dp*g) + (2*Wp^2 - 2*g^2)*(z^-1)</code><br /><code>&#160; //        + (Wp^2 - Wp*2*Dp*g + g^2)*(z^-2))</code></p>
+
+<p><code>&#160; output Vout;</code><br /><code>&#160; wreal Vout;</code><br /><code>&#160; input  Vin;</code><br /><code>&#160; wreal Vin;</code></p>
+
+<p><code>&#160; parameter real hfs = 1G; // Filter sampling frequency</code><br /><code>&#160; parameter real Fp = 10M;</code><br /><code>&#160; parameter real Dp = 0.5;</code></p>
+
+<p><code>&#160; // LOCAL VARIABLES</code><br /><code>&#160; real     Ts, g, Wp;</code><br /><code>&#160; real     num0, num1, num2;</code><br /><code>&#160; real     den0, den1, den2;</code><br /><code>&#160; real     yn0, yn1, yn2;</code><br /><code>&#160; real     xn0, xn1, xn2;</code></p>
+
+<p><code>&#160; initial begin</code><br /><code>&#160; &#160; Wp = `M_TWO_PI*Fp;</code><br /><code>&#160; &#160; yn2 = 0;</code><br /><code>&#160; &#160; yn1 = 0;</code><br /><code>&#160; &#160; yn0 = 0;</code><br /><code>&#160; &#160; xn2 = 0;</code><br /><code>&#160; &#160; xn1 = 0;</code><br /><code>&#160; &#160; xn0 = 0;</code></p>
+
+<p><code>&#160; // Filter intermediate variables and coefficients calculation</code><br /><code>&#160; //</code><br /><code>&#160; Ts= 1.0E+9/hfs; // in ns</code><br /><code>&#160; g = 2.0*hfs;    // 2/Ts in sec</code></p>
+
+<p><code>&#160; // numerator</code><br /><code>&#160; num0 = (Wp**2);</code><br /><code>&#160; num1 = + 2*Wp**2;</code><br /><code>&#160; num2 = +Wp**2;</code></p>
+
+<p><code>&#160; // denominator</code><br /><code>&#160; den0 = (Wp**2 + g**2 + Wp*2*Dp*g);</code><br /><code>&#160; den1 = (2*Wp**2 - 2*g**2);</code><br /><code>&#160; den2 = (Wp**2 - Wp*2*Dp*g + g**2);</code><br /><code>&#160; end // always begin</code></p>
+
+<p><code>&#160; always @(Vin) begin</code><br /><code>&#160; &#160; // Signal flow graph intermediate values</code><br /><code>&#160; &#160; xn2 = xn1;</code><br /><code>&#160; &#160; xn1 = xn0;</code><br /><code>&#160; &#160; xn0 = Vin;</code><br /><code>&#160; &#160; yn2 = yn1;</code><br /><code>&#160; &#160; yn1 = yn0;</code><br /><code>&#160; &#160; yn0 = ((num0*xn0) + (num1*xn1) + (num2*xn2)</code><br /><code>&#160; &#160; &#160; - (den1*yn1 + den2*yn2)            )/den0 ;</code><br /><code>&#160; &#160; end</code><br /><code>&#160; &#160; assign Vout  = + yn0;</code><br /><code>endmodule</code></p>
+
+<p>The following figure shows the results of the low pass filter examples. The output results of the analog and discrete filter implementation are almost identical.<br /><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498871/443498874.gif" data-linked-resource-container-id="443498871" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="lowpass_filter.gif" data-linked-resource-id="443498874" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498871/443498874.gif" /></span></p>
+<h2 id="ModelingExamples-Event-basedandFixedSamplingTime">Event-based and Fixed Sampling Time</h2>
+
+<p>In the example given in the <a href="#ModelingExamples-low_pass_filter">Low Pass Filter</a> section, the input signal is first converted into a fixed rate sampled data. The filter block is triggered by these events in the always @(Vin) section. This ensures that the filter block is triggered right after the sampling event and a series of filters would trigger one after another in the sequential order.</p>
+
+<p>However, the sampling frequency is a parameter to the filter block itself that is used to calculate the filter coefficients. A mismatch between the actual sampling rate and the filter parameter setting would result in wrong output results. A measurement of the sampling rate inside the filter replacing the instance parameter might be a useful enhancement to overcome this limitation.</p>
+
+<p>The other task would be to change the always block triggering to a time-based trigger, such as always #Ts begin. This would ensure that the filter input is sampled at the right rate and that it is not driven accidentally by a flexible sampling rate. However, the comments above about choosing the right sampling rate still apply.</p>
+
+<p>Furthermore, if a chain of filters triggers at the same time point then the sequence of execution of these filters is unpredictable. Thus, it might be that the sequence of blocks is executed in the wrong order.</p>
+
+<p>Generally, event-based modeling and modeling with fixed sample times are both adequate measures in real value modeling. However, we need to choose the appropriate technique while considering different cases.</p>
+<h2 id="ModelingExamples-ADC/DACExample">ADC/DAC Example</h2>
+
+<p>The following is an example of an ADC and a DAC combination. The testbench is creating a different kind of input stimuli including a ramp and a sinusoidal waveform similar to the value sources discussed earlier. In addition, VDD, VSS, and a CLK value are created.</p>
+
+<p><code>
+`timescale 1ns/1ps</code><br /><code>`define Nbits 12</code><br /><code>`include &quot;constants.vams&quot;</code><br /><code>`include &quot;disciplines.vams&quot;</code></p>
+
+<p><code>
+module top ();</code><br /><code>wreal AIN, AOUT, VDD, VSS;</code><br /><code>wire [`Nbits-1:0] DOUT;</code><br /><code>wrealADC I_ACD (DOUT,AIN,CK,VDD,VSS);</code><br /><code>wrealDAC I_DAC (AOUT,DOUT,CK,VDD,VSS);</code></p>
+
+<p><code>real r_ain, r_vdd, r_vss;&#160; &#160; &#160; &#160;// input voltage</code><br /><code>real Freq=600K,Phase=0;&#160; &#160; &#160; &#160; &#160;// sinusoid params</code><br /><code>reg &#160;&#160;&#160;&#160;clk;</code></p>
+
+<p><code>
+   initial begin</code><br /><code>&#160; clk = 0;</code><br /><code>&#160; r_vdd = 3.3;</code><br /><code>&#160; r_vss = 0.0;</code><br /><code>&#160; r_ain=0.1;&#160; &#160; &#160; &#160; &#160; &#160; // out=0.1 for DC op point</code><br /><code>&#160; repeat (10) #10 r_ain=r_ain+0.348;&#160; &#160; // increasing ramp</code><br /><code>&#160; repeat (10) #10 r_ain=r_ain-0.339;&#160; &#160; // falling ramp</code><br /><code>&#160; #30 while ($abstime&lt;6000p) begin</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// generate ramped sine input</code><br /><code>&#160; #2 Freq=Freq*1.0007;&#160; &#160; &#160; &#160; &#160;// gradual freq increase</code><br /><code>&#160; Phase=Phase+2n*Freq;&#160; &#160; &#160; &#160; &#160;// integrate freq to get phase</code><br /><code>&#160; if (Phase&gt;1) Phase=Phase-1;&#160; // wraparound per cycle</code><br /><code>&#160; r_ain=1.8*(1+sin(`M_TWO_PI*Phase));</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160;// sinusoidal waveform shape</code><br /><code>&#160; end</code><br /><code>&#160; #200 $finish;                 // done with test</code><br /><code>end</code></p>
+
+<p><code>always #2 clk = ~clk;</code></p>
+
+<p><code>assign AIN = r_ain;</code><br /><code>assign CK  = clk;</code><br /><code>assign VDD = r_vdd;</code><br /><code>assign VSS = r_vss;</code></p>
+
+<p><code>endmodule&#160;&#160;</code></p>
+
+<p>The wreal input signals are passed to an ADC block. The first always block calculates the lower and upper limits for the output values and the input value precision (PerBit) given by the input value swing and the number of output bits. These values are updated, whenever the supply values are changing.</p>
+
+<p>The second always block is triggered on every change of the clock. If the input value does not exceed the lower or upper limits, the value is divided by the <code>PerBit</code> value providing the output value in the integer format. This value is assigned to the output bus after a given delay.</p>
+
+<p><code>module wrealADC (DOUT,AIN,CK,VDD,VSS);</code><br /><code>&#160; output [`Nbits-1:0] DOUT;</code><br /><code>&#160; input &#160;&#160;&#160;&#160;       &#160;&#160;&#160;&#160; CK;</code><br /><code>&#160; input &#160;&#160;&#160;&#160;       &#160;&#160;&#160;&#160; AIN,VDD,VSS;</code><br /><code>&#160; wreal        &#160;&#160;&#160;&#160;AIN,VDD,VSS;</code><br /><code>&#160; parameter &#160;&#160;&#160;&#160;  &#160;&#160;&#160;&#160;Td=1n;</code><br /><code>&#160; real &#160;&#160;&#160;&#160;       &#160;&#160;&#160;&#160; PerBit, VL, VH;</code><br /><code>&#160; integer &#160;&#160;&#160;&#160;    &#160;&#160;&#160;&#160; Dval;</code><br /><code>&#160; always begin&#160;&#160;&#160;&#160;     // get dV per bit wrt supply</code><br /><code>&#160; &#160; PerBit = (VDD-VSS) / ((1&lt;&lt;`Nbits)-1);</code><br /><code>&#160; &#160; VL = VSS;</code><br /><code>&#160; &#160; VH = VDD;</code><br /><code>&#160; &#160; @(VDD,VSS);&#160;&#160;&#160;&#160;// update if supply changes</code><br /><code>&#160; end</code><br /><code>&#160; always @(CK) begin</code><br /><code>&#160; &#160; if (AIN&lt;VL) Dval = &#39;b0;</code><br /><code>&#160; &#160; else if (AIN&gt;VH) Dval = {`Nbits{1&#39;b1}};</code><br /><code>&#160; &#160; else Dval = (AIN-VSS)/PerBit;</code><br /><code>&#160; end</code><br /><code>&#160; assign #(Td/1n) DOUT = Dval;</code><br /><code>endmodule // wrealADC</code></p>
+
+<p>The inverse digital to analog (or wreal in this case) operation is even simpler. The first always block is almost identical and the second just multiplies the output precision value with the input value bus. The resulting value is assigned to the <code>wreal</code> output wire.</p>
+
+<p><code>
+module wrealDAC (AOUT,DIN,CK,VDD,VSS);</code><br /><code>&#160; input [`Nbits-1:0] DIN;</code><br /><code>&#160; input &#160;&#160;&#160;&#160;    &#160;&#160;&#160;&#160;  CK,VDD,VSS;</code><br /><code>&#160; output &#160;&#160;&#160;&#160;      &#160;&#160;&#160;&#160; AOUT;&#160;&#160;</code><br /><code>&#160; wreal          &#160;&#160;&#160;&#160;AOUT,VDD,VSS;</code><br /><code>&#160; parameter real &#160;&#160;&#160;&#160;Td=1n;</code><br /><code>&#160; real &#160;&#160;&#160;&#160;      &#160;&#160;&#160;&#160; PerBit,Aval;</code><br /><code>&#160; always begin &#160;&#160;&#160;&#160;// get dV per bit wrt supply</code><br /><code>&#160; &#160; PerBit = (VDD-VSS) / ((1&lt;&lt;`Nbits)-1);</code><br /><code>&#160; &#160; @(VDD,VSS);&#160;&#160;&#160;&#160;// update if supply changes</code><br /><code>&#160; end</code><br /><code>&#160; always @(CK)  Aval &lt;= VSS + PerBit*DIN;</code><br /><code>&#160; assign  #(Td/1n) AOUT = Aval;</code><br /><code>endmodule // wrealDAC</code></p>
+
+<p>The following figure shows the simulation results for the above test case.</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498871/443498873.gif" data-linked-resource-container-id="443498871" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="ADC-DAC_sample.gif" data-linked-resource-id="443498873" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498871/443498873.gif" /></span></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Analog_Functions_Translated_to_Wreal.html" id="prev" title="Analog_Functions_Translated_to_Wreal">Analog_Functions_Translated_to ...</a></em></b><b><em><a href="Case_Study_of_Using_Wreal_Modeling.html" id="nex" title="Case_Study_of_Using_Wreal_Modeling">Case_Study_of_Using_Wreal_Mode ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

@@ -1,0 +1,231 @@
+
+<html><head><title>Analog Functions Translated to Wreal</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668854" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Analog Functions Translated to Wreal" />
+<meta name="Keywords" content="Analog Functions,analogtowreal" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal," />
+<meta name="prod_subfeature" content="wreal ," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668854" />
+<meta name="NextFile" content="Modeling_Examples.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Modeling_with_Wreal.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Analog Functions Translated to Wreal" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Modeling_with_Wreal.html" title="Modeling_with_Wreal">Modeling_with_Wreal</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Modeling_Examples.html" title="Modeling_Examples">Modeling_Examples</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Analog Functions Translated to Wreal</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>Some analog operations can be directly implemented in wreal and others need a real translation. The following are a few standard tasks that are needed during wreal modeling:</p>
+<ul><li><a href="#AnalogFunctionsTranslatedtoWreal-wreal_value_sources">Wreal Value Sources</a></li><li><a href="#AnalogFunctionsTranslatedtoWreal-int_diff">Integration and Differentiation</a></li><li><a href="#AnalogFunctionsTranslatedtoWreal-value_sampling">Value Sampling</a></li><li><a href="#AnalogFunctionsTranslatedtoWreal-slew_limiting">Slew Limiting</a></li></ul><h2 id="AnalogFunctionsTranslatedtoWreal-WrealValueSourceswreal_value_sources">Wreal Value Sources<span class="confluence-anchor-link" id="AnalogFunctionsTranslatedtoWreal-wreal_value_sources"></span></h2>
+
+<p>How can we generate sources with values varying over time? The following example is a source for an analog amplifier that we discuss later on. It creates a differential signal on the output ports <code>P</code> and <code>N</code>.</p>
+
+<p>A real value (<code>Vin</code>) is used to assign different values to it after certain delays. Discrete events are created on the real value, for example, at 150 ps the value is changing from 0.108 to 0.15. At 300 ps, a sinusoidal signal is generated. The loop is updated every 20 ps with a new value generated by the sin function. Note that we need to define the sampling time for these types of continuous signals. Wreal is changing at discrete events, thus, a continuous signal needs to be approximated by a given sampling rate. The appropriate sampling rate and the decision on using a fixed or a flexible time step depend on the sampled signal and the accuracy requirements for the following blocks.</p>
+
+<p>The real value is assigned to the wreal outputs P and N is a symmetrical way.</p>
+
+<p><code>`include &quot;constants.vams&quot;</code><br /><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ps/1ps</code></p>
+
+<p><code>module wrealAmp_stim (P,N);</code><br /><code>output P,N;</code><br /><code>wreal P,N;</code></p>
+
+<p><code>real Vin;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; // input voltage</code><br /><code>real Freq=600M,Phase=0;&#160;&#160; // sinusoid params</code></p>
+
+<p><code>initial begin&#160; &#160;// drive input, comment on expected result:</code><br /><code>&#160; Vin=0.1;&#160; &#160; &#160; &#160; &#160; &#160;// out=1 for DC op point</code><br /><code>&#160; #50  Vin=0.108;&#160; &#160; &#160;// out=1.08 in &lt;20ps</code><br /><code>&#160; #100 Vin=0.15;&#160; &#160; &#160;// out=1.5  in 100ps</code><br /><code>&#160; #150 Vin=0.5;&#160; &#160; &#160; // out sat=3.0  in 300ps</code><br /><code>&#160; #400 Vin=0;&#160; &#160; &#160; &#160; // out=0    in 600ps</code><br /><code>&#160; #700 Vin=0.2;&#160; &#160; &#160; // out=2.0 after 400ps, but:</code><br /><code>&#160; #300 Vin=0.1;&#160; &#160; &#160; // prior to full change, ramp down to out=1</code><br /><code>&#160; #300 while ($abstime&lt;6000p) begin&#160;</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// generate ramped sine input</code><br /><code>#20 Freq=Freq*1.007;&#160; &#160; &#160; &#160; &#160; &#160;// gradual freq increase</code><br /><code>Phase=Phase+20p*Freq;&#160; &#160; &#160; &#160; &#160; // integrate freq to get phase</code><br /><code>if (Phase&gt;1) Phase=Phase-1;&#160; &#160; // wraparound per cycle</code><br /><code>Vin=0.1*(1+sin(`M_TWO_PI*Phase));</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// sinusoidal waveform shape</code><br /><code>end</code><br /><code>#200 $finish;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; // done with test</code><br /><code>end</code></p>
+
+<p><code>assign P = Vin/2;&#160; &#160; &#160; &#160; &#160; &#160; &#160; // drive symmetric diffl signal to inputs</code><br /><code>assign N = -Vin/2;</code><br /><code>endmodule</code></p>
+<h2 id="AnalogFunctionsTranslatedtoWreal-IntegrationandDifferentiationint_diff">Integration and Differentiation<span class="confluence-anchor-link" id="AnalogFunctionsTranslatedtoWreal-int_diff"></span></h2>
+
+<p>The following example shows an analog integration and differentiation on a given sinusoid input function.</p>
+
+<p><code>
+`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns/1ns</code></p>
+
+<p><code>module top ();</code><br /><code>&#160; &#160;electrical x, idt_x, ddt_x;</code></p>
+
+<p><code>&#160; &#160;w_idt I_w_idt (x);</code><br /><code>&#160; &#160;w_ddt I_w_ddt (x);</code></p>
+
+<p><code>&#160; &#160;analog begin</code><br /><code>&#160; &#160; &#160;V(x) &lt;+ sin($abstime*1E7);</code><br /><code>&#160; &#160; &#160;V(ddt_x) &lt;+ ddt(V(x));</code><br /><code>&#160; &#160; &#160;V(idt_x) &lt;+ idt(V(x),0);</code><br /><code>&#160; &#160;end</code><br /><code>endmodule // top</code></p>
+
+<p>The same input waveform is converted into a wreal signal using the E2R connect rules with a 0.1 V accuracy.</p>
+
+<p><code>
+connectrules e2r_only;</code><br /><code>&#160; &#160;connect E2R</code><br /><code>&#160; &#160; &#160;#( .vdelta(0.1), .vtol(0.001), .ttol(1n));</code><br /><code>endconnectrules</code></p>
+
+<p>The two sub modules implement the integration and differentiation function in the discrete domain. The only information needed in addition to the input signal is the time point of the last event (<code>lasttime</code>) and the value at this time (<code>lastval</code>). The time difference between the last event and the current time determines the integration interval for this particular step. A simple multiplication with the last wreal input increments the integral values. The initial condition for the integral is set to 0.0.</p>
+
+<p><code>
+module w_idt(w_x);</code><br /><code>&#160; input w_x;</code><br /><code>&#160; wreal w_x, w_idt_x;</code><br /><code>&#160; real  r_idt_x  = 0;</code><br /><code>&#160; real  lasttime = 1;</code><br /><code>&#160; real  lastval  = 0;</code></p>
+
+<p><code>&#160; always begin</code><br /><code>&#160; &#160; if (lasttime &lt; $abstime) begin</code><br /><code>&#160; &#160; &#160; r_idt_x = r_idt_x + lastval * ($abstime - lasttime);</code><br /><code>&#160; &#160; end</code><br /><code>&#160; &#160; lasttime = $abstime;</code><br /><code>&#160; &#160; lastval = w_x;</code><br /><code>&#160; &#160; @(w_x);</code><br /><code>&#160; end</code><br /><code>&#160; assign w_idt_x = r_idt_x;</code><br /><code>endmodule</code></p>
+
+<p>The differentiation operator is implemented very similarly. Dividing value by the time difference gives the derivative of the last step. Note that this is the linear interpolated derivative over the given time period.</p>
+
+<p><code>
+module w_ddt(w_x);</code><br /><code>&#160; input w_x;</code><br /><code>&#160; wreal w_x, w_ddt_x;</code><br /><code>&#160; real r_ddt_x = 0;</code><br /><code>&#160; real lasttime = 1;</code><br /><code>&#160; real lastval = 0;</code></p>
+
+<p><code>&#160;always begin</code><br /><code>&#160; &#160; if (lasttime &lt; $abstime) begin</code><br /><code>&#160; &#160; &#160; r_ddt_x = (w_x - lastval) / ($abstime - lasttime);</code><br /><code>&#160; &#160; end</code><br /><code>&#160; &#160; lasttime = $abstime;</code><br /><code>&#160; &#160; lastval = w_x;</code><br /><code>&#160; &#160; @(w_x);</code><br /><code>&#160; end</code><br /><code>&#160; assign w_ddt_x = r_ddt_x;</code><br /><code>endmodule</code></p>
+
+<p>It should be considered that the step size of the wreal events highly influences the derivative calculation. Large steps can lead to inaccurate values. Moreover, the differentiation and integration function will update only when a wreal event occurs. For example, if you were calculating the integral of a constant value you would not get any results because there is only one event on the wreal signal at time point zero. In such cases, you need to sample the input signal appropriately, for example, by the fix rate sampling shown above.</p>
+
+<p>The&#160;<code>w_idt</code>&#160;function implements the integral of the wreal signals sample and hold behavior while the&#160;<code>w_ddt</code>&#160;assumes a linear interpolation. It is a matter of which definition concept you follow. Generally, the sample and hold behavior is more digital-like while the linear interpolation is closer to the analog signal nature. If you want to integrate wreal as linear interpolated signal, a trapezoidal integration of the values would be more appropriate. This would result in:</p>
+<p style="margin-left: 30.0px;"><code>
+     r_idt_x = r_idt_x +</code><br /><code>&#160; &#160; 0.5 * (w_x + lastval) * ($abstime - lasttime);</code></p>
+
+<p>The differentiation of the sample and hold interpretation of the signal results in a Dirac pulse, which is not useful for most models.</p>
+<h2 id="AnalogFunctionsTranslatedtoWreal-ValueSamplingvalue_sampling">Value Sampling<span class="confluence-anchor-link" id="AnalogFunctionsTranslatedtoWreal-value_sampling"></span></h2>
+
+<p>Wreal signals are event-based. They can have a fixed sampling rate or the step size from one event to another can vary from step to step. During the conversion from a continuous domain into the discrete wreal domain, events are created based on the amount of value change. Even inside the event-based simulation, it is often necessary to change the sampling rate from one block to another.</p>
+
+<p>The following example shows a triangular step wave input signal that should be sampled at a lower rate. We implemented two different sample modules to show the different behavior.</p>
+
+<p><code>
+//xrun sampler.vams -gui -access r</code><br /><code>`include &quot;constants.vams&quot;</code><br /><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ns / 1ps</code><br /><code>module top ( s_out );</code><br /><code>&#160; &#160;output s_out;</code><br /><code>&#160; &#160;wreal  s_out, s_sample, s_sample_simple;</code><br /><code>&#160; &#160;real   r_out;</code></p>
+
+<p><code>&#160; &#160;fix_rate_sampler #(.sr(200M)) I_frs (s_out, s_sample);</code><br /><code>&#160; &#160;fix_rate_sampler_simple #(.sr(200M)) I_frss (s_out, s_sample_simple);</code></p>
+
+<p><code>&#160; &#160;always begin</code><br /><code>&#160; &#160; &#160;repeat (5) begin</code><br /><code>&#160; &#160; &#160;r_out = 0.0;</code><br /><code>&#160; &#160; &#160;#1 r_out = 1.0;</code><br /><code>&#160; &#160; &#160;#1 r_out = 2.0;</code><br /><code>&#160; &#160; &#160;#1 r_out = 3.0;</code><br /><code>&#160; &#160; &#160;#1 r_out = 4.0;</code><br /><code>&#160; &#160; &#160;#1;</code><br /><code>&#160; &#160; &#160;end</code><br /><code>&#160; &#160; &#160;$finish;</code><br /><code>&#160; &#160;end</code><br /><code>&#160; &#160;assign s_out = r_out;</code><br /><code>endmodule</code></p>
+
+<p>The first module is a very simple sampling module that is triggered at the given sampling rate. At this point in time, it takes the wreal input signal, samples it and holds the value until the next sample time.</p>
+
+<p>A limitation of this simple mechanism is that every event on the real input signal between the sampling times is completely ignored. If you simulate the example, you see that the outcome of the sampler is always 4.0 because it happens to sample the input wave on the 4.0 step. This obviously does not reflect the real behavior very well.</p>
+
+<p><code>
+module fix_rate_sampler_simple (s_in, s_out );</code><br /><code>&#160; &#160;input s_in;</code><br /><code>&#160; &#160;wreal s_in;</code><br /><code>&#160; &#160;output s_out;</code><br /><code>&#160; &#160;wreal s_out;</code><br /><code>&#160; &#160;real   r_out, ts;</code></p>
+
+<p><code>&#160; &#160;parameter sr = 1M; // sampling rate in Hz</code></p>
+
+<p><code>&#160; &#160;initial begin</code><br /><code>&#160; &#160; &#160;ts= 1.0E+9/sr; // in ns</code><br /><code>&#160; &#160;end</code></p>
+
+<p><code>&#160; &#160;always #ts begin</code><br /><code>&#160; &#160; &#160;r_out = s_in;</code><br /><code>&#160; &#160;end</code><br /><code>&#160; &#160;assign s_out = r_out;</code><br /><code>endmodule</code></p>
+
+<p>The following sampling block is a bit more advanced. It integrates the input signal over the period between the sampling steps. Thus, all events of the real signal are taken into account. The simulation shows that the output values results in 2.0, which is the time average of the input signal. The block also considers&#160;<code>wrealXState</code>&#160;and&#160;<code>wrealZState</code>&#160;input values. Whenever one of these values occur the output value follows this assignment.</p>
+
+<p><code>
+module fix_rate_sampler (s_in, s_out );</code><br /><code>input s_in;</code><br /><code>wreal s_in;</code><br /><code>output s_out;</code><br /><code>wreal s_out;</code></p>
+
+<p><code>parameter sr = 1M; // sampling rate in Hz</code></p>
+
+<p><code>// Input signal averageing based on sampling time</code><br /><code>real T_begin, s_integ;</code><br /><code>real T_last, s_last;</code><br /><code>real ts;</code><br /><code>real avg_out;</code></p>
+
+<p><code>// initialize all values to zero</code><br /><code>initial begin</code><br /><code>&#160; s_integ = 0;</code><br /><code>&#160; s_last = 0;</code><br /><code>&#160; T_begin = 0;</code><br /><code>&#160; T_last = 0;</code><br /><code>&#160; ts= 1.0E+9/sr; // in ns</code><br /><code>end</code></p>
+
+<p><code>always @(s_in) begin</code><br /><code>&#160; if (s_last === `wrealXState)</code><br /><code>begin</code><br /><code>&#160; &#160;s_integ = `wrealXState;</code><br /><code>end</code><br /><code>&#160; else if ((s_last === `wrealZState)&#160;</code><br /><code>&#160; &#160; &#160; &amp;&amp; (s_integ !== `wrealXState))</code><br /><code>begin</code><br /><code>&#160; s_integ = `wrealZState;</code><br /><code>end</code><br /><code>&#160; else begin // if s_in is a normal value</code><br /><code>&#160; // collecting the value*time integral</code><br /><code>&#160; s_integ = s_integ + s_last*($abstime-T_last);</code><br /><code>end</code><br /><code>&#160; T_last=$abstime; // save the time of the current event</code><br /><code>&#160; s_last=s_in;     // save the value</code><br /><code>&#160; end // always @ (s_in)</code></p>
+
+<p><code>always #ts begin</code><br /><code>&#160; // add the last missing time periode to the integral</code><br /><code>&#160; if (s_last === `wrealXState)</code><br /><code>begin</code><br /><code>&#160; &#160;s_integ = `wrealXState;</code><br /><code>&#160; &#160;avg_out = `wrealXState;</code><br /><code>end</code><br /><code>&#160; else if ((s_last === `wrealZState) &amp;&amp; (s_integ !== `wrealXState))</code><br /><code>begin</code><br /><code>&#160; &#160;s_integ = `wrealZState;</code><br /><code>&#160; &#160;avg_out = `wrealZState;</code><br /><code>end</code><br /><code>&#160; &#160;else if ((s_integ !== `wrealZState) || (s_integ !== `wrealXState))</code><br /><code>begin // if s_in is a normal value</code><br /><code>&#160; &#160;// collecting the value*time integral</code><br /><code>&#160; &#160;s_integ = s_integ + s_last*($abstime-T_last);</code><br /><code>&#160; &#160;avg_out = s_integ/($abstime-T_begin);&#160;&#160;// calc average</code><br /><code>end</code><br /><code>&#160; &#160;T_last=$abstime;&#160; &#160; // same the current time</code><br /><code>&#160; &#160;s_last=s_in;&#160; &#160; &#160; &#160; // and value</code><br /><code>&#160; &#160;T_begin = $abstime;        // reset time interval</code><br /><code>&#160; &#160;s_integ = 0;&#160; &#160; &#160; &#160; // reset integral</code><br /><code>&#160;end&#160; &#160;&#160;</code><br /><code>&#160;assign s_out = avg_out;</code><br /><code>endmodule</code></p>
+<h2 id="AnalogFunctionsTranslatedtoWreal-SlewLimitingslew_limiting">Slew Limiting<span class="confluence-anchor-link" id="AnalogFunctionsTranslatedtoWreal-slew_limiting"></span></h2>
+
+<p>Digital systems mostly react instantaneously on input changes or they might have some delay until the output response is visible. However, analog systems mostly have a limited rise and fall time, which means when a signal changes from 0.0 V to 3.3 V it takes a certain amount of time for this change. During this period, the signal &#8211; more or less &#8211; linearly rises to the final value. This effect is called slew limit. The maximal rise&#160;value per time is called slew rate.</p>
+
+<p>Describing this fundamental analog behavior in the discrete domain is not trivial. A single event causes a series of other events to mimic the linear ramp. We need to control the number of steps that are created for the ramp carefully. Too many events will slow down the simulation unnecessarily while fewer events will be not accurate enough.</p>
+
+<p>The following example is an amplifier that limits the output values and the output slope. The testbench provides a set of different input signals.</p>
+
+<p><code>
+`include &quot;constants.vams&quot;</code><br /><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ps/1ps</code><br /><code>module top();</code><br /><code>&#160; wrealAmp_stim stim (P,N);</code><br /><code>&#160; wrealAmp      amp (P,N, OUT);</code></p>
+
+<p><code>endmodule // top</code></p>
+
+<p><code>module wrealAmp_stim (P,N);</code><br /><code>output P,N;</code><br /><code>wreal P,N;</code></p>
+
+<p><code>real Vin;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; // input voltage</code><br /><code>real Freq=600M,Phase=0;&#160;&#160; // sinusoid params</code></p>
+
+<p><code>
+initial begin&#160; &#160; &#160; &#160; // drive input, comment on expected result:</code><br /><code>&#160; Vin=0.1;&#160; &#160; &#160; &#160; &#160; // out=1 for DC op point</code><br /><code>&#160; #50  Vin=0.108;&#160; &#160; // out=1.08 in &lt;20ps</code><br /><code>&#160; #100 Vin=0.15;&#160; &#160; // out=1.5  in 100ps</code><br /><code>&#160; #150 Vin=0.5;&#160; &#160; &#160;// out sat=3.0  in 300ps</code><br /><code>&#160; #400 Vin=0;&#160; &#160; &#160; &#160;// out=0    in 600ps</code><br /><code>&#160; #700 Vin=0.2;&#160; &#160; &#160;// out=2.0 after 400ps, but:</code><br /><code>&#160; #300 Vin=0.1;&#160; &#160; &#160;// prior to full change, ramp down to out=1</code><br /><code>&#160; #300 while ($abstime&lt;6000p) begin&#160;</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; // generate ramped sine input</code><br /><code>#20 Freq=Freq*1.007;&#160; &#160; &#160; &#160; // gradual freq increase</code><br /><code>Phase=Phase+20p*Freq;&#160; &#160; &#160; &#160;// integrate freq to get phase</code><br /><code>if (Phase&gt;1) Phase=Phase-1;       // wraparound per cycle</code><br /><code>Vin=0.1*(1+sin(`M_TWO_PI*Phase));</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; // sinusoidal waveform shape</code><br /><code>end</code><br /><code>#200 $finish;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// done with test</code><br /><code>end</code></p>
+
+<p><code>
+assign P = Vin/2;&#160; &#160; &#160; &#160; &#160; // drive symmetric diffl signal to inputs</code><br /><code>assign N = -Vin/2;</code><br /><code>endmodule</code></p>
+
+<p>The amplifier calculates the nominal output value first based on the input and the given limit values. The second always block is responsible to apply the slew limit to the output. The maximum change in value that can be performed depends on the step size since the last event. If the nominal output value change is smaller than this value (<code>dvlast</code>) the change can be applied directly to the output.</p>
+
+<p>Larger changes are limited to the given maximum change value and new events are being created with the given step size of <code>tstep</code>. The output is stepping up/down until the nominal output value is reached.</p>
+
+<p><code>
+// Wreal amplifier with added slew limiting of output signal.</code><br /><code>// Input does not require equally spaced timepoints.</code><br /><code>// The output waveform will add timepoints at the specified</code><br /><code>// tstep spacing when needed to simulate slewing behavior.&#160;&#160;</code><br /><code>`include &quot;constants.vams&quot;</code><br /><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 1ps/1ps</code><br /><code>module wrealAmp (P,N,OUT);</code><br /><code>&#160; input P,N; output OUT; wreal P,N,OUT;</code><br /><code>&#160; parameter real vio=0, gain=10; // input offset voltage (V),</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// gain (V/V)</code><br /><code>&#160; parameter real voh=3, vol=0;&#160; &#160;// output voltage range (V)</code><br /><code>&#160; parameter real slewrate=5G;&#160; &#160; // max output slew rate (V/sec)</code><br /><code>&#160; parameter real tstep=20p;&#160; &#160; &#160; // timestep for slew ramp (sec)</code><br /><code>&#160; real      Vnom,Vslew;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// nominal output, and slew</code><br /><code>&#160; real      dtstep,dvstep;&#160; &#160; &#160; &#160; &#160; &#160; // time &amp; voltage max step size</code><br /><code>&#160; real      tlast=0,dvlast;&#160; &#160; &#160; &#160; &#160; &#160;// last timepoint, and</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// max dV of last step</code><br /><code>&#160; always begin&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// compute nominal output value</code><br /><code>&#160; &#160; Vnom &lt;= min(voh,max(vol,gain*(P-N-vio)));</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// linear gain with hard clip</code><br /><code>&#160; &#160; @(P,N);&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; // repeat when input changes</code><br /><code>&#160; end</code></p>
+
+<p><code>&#160; always begin&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// slew limit the output signal</code><br /><code>&#160; &#160; if ($abstime==0)</code><br /><code>&#160; &#160; &#160; dvlast = voh-vol;&#160; &#160; &#160; &#160; &#160; // no step limit at DC</code><br /><code>&#160; &#160; else</code><br /><code>&#160; &#160; &#160; dvlast = slewrate*min($abstime-tlast,tstep);</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// max prev step</code><br /><code>&#160; &#160; tlast = $abstime;&#160; &#160; &#160; &#160; &#160; &#160; // save event time</code><br /><code>&#160; &#160; if (abs(Vnom-Vslew) &lt;= dvlast) begin</code><br /><code>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;// If change within +-dV range:</code><br /><code>&#160; &#160; &#160; Vslew = Vnom;          //  step to new value</code><br /><code>&#160; &#160; &#160; @(Vnom);               //  and wait for Vnom to change</code><br /><code>&#160; &#160; end</code></p>
+
+<p><code>&#160; &#160; else if (Vnom&gt;Vslew) begin  // Perform slew limit, rising:</code><br /><code>&#160; &#160; &#160; Vslew = Vslew+dvlast;  // limit max change.</code><br /><code>&#160; &#160; &#160; #(tstep/1p);           // and wait for timestep</code><br /><code>&#160; &#160; end</code></p>
+
+<p><code>&#160; &#160; else begin                  // Perform slew limit, falling:</code><br /><code>&#160; &#160; &#160; Vslew = Vslew-dvlast;  // limit change per step.</code><br /><code>&#160; &#160; &#160; #(tstep/1p);           // and wait for timestep</code><br /><code>&#160; &#160; end</code></p>
+
+<p><code>&#160; end</code><br /><code>&#160; assign OUT = Vslew;            // drive wreal output value</code><br /><code>endmodule</code></p>
+
+<p>The following figure shows the input and output waveform of the slew limited filter. It is shows how the red output signal is not able to follow the input signal. It is ramping up or down linearly with the given slew rate.</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498869/443498870.gif" data-linked-resource-container-id="443498869" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="slew-limiting.gif" data-linked-resource-id="443498870" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498869/443498870.gif" /></span></p>
+
+<p><br /></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Modeling_with_Wreal.html" id="prev" title="Modeling_with_Wreal">Modeling_with_Wreal</a></em></b><b><em><a href="Modeling_Examples.html" id="nex" title="Modeling_Examples">Modeling_Examples</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

@@ -1,0 +1,173 @@
+
+<html><head><title>Case Study of Using Wreal Modeling</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668856" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Case Study of Using Wreal Modeling" />
+<meta name="Keywords" content="wreal case study" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal," />
+<meta name="prod_subfeature" content="wreal ," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668856" />
+<meta name="NextFile" content="Appendix_A__Advanced_Digital_Verification_Methodology.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Modeling_Examples.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Case Study of Using Wreal Modeling" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Modeling_Examples.html" title="Modeling_Examples">Modeling_Examples</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Appendix_A__Advanced_Digital_Verification_Methodology.html" title="Appendix_A__Advanced_Digital_Verification_Methodology">Appendix_A__Advanced_Digital_V ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Case Study of Using Wreal Modeling</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>A phase locked loop (PLL) example demonstrates the wreal modeling approach in a more complex scenario. The PLL was designed in the Virtuoso Schematic environment. The following is the top-level schematic.&#160;</p>
+<span class="content-title" id="Figure-4.1"><strong>Figure 4.1:</strong> Top-Level Schematic of PLL</span>
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498875/443498878.gif" data-linked-resource-container-id="443498875" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="case_study.gif" data-linked-resource-id="443498878" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498875/443498878.gif" width="640" /></span></p>
+
+<p>Let us now see the functions of all the blocks in the PLL. The upper left block is the reference clock generator, for example, a crystal oscillator. The next block, PHD, is the phase detector that compares the phase of the oscillator with the phase of the signal inside the PLL loop. Depending on which signal is first in terms of phase it creates a signal on one or the other output pin. The next block is the charge pump (CP). A charge pump translates the PHD output signals in a small amount of charge that is pumped into or pulled out of the following low pass filter (LPF). In a perfectly locked PLL, the output of the charge pump would have a constant voltage. If the frequency of the PLL is too small according to the reference, the output voltage is increased a bit. If it is too high, the voltage level is decreased. The LPF block is filtering out high-frequency portions of the signal to stabilize the loop. Finally, the voltage-controlled oscillator (VCO) is generating the output signal. This signal might have a higher frequency, for example, three times higher, as the input reference. To close the loop, the VCO output frequency is divided by this factor, 3 in the example. Now the reference signal and the downscaled output frequency can be compared in the PHD as shown in the above figure.</p>
+
+<p>The two additional blocks on the schematic are a frequency measurement block on the extreme right-hand side and the source of all the power and reference signals at the bottom.</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498875/443498879.gif" data-linked-resource-container-id="443498875" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="case_study-1.gif" data-linked-resource-id="443498879" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498875/443498879.gif" /></span></p>
+
+<p>The PLL starts in a divide by 2 modes resulting in a 1.6 GHz output frequency given the 800 MHz reference clock. At about 2.5us the mode switches to a divide by 3, thus, the output frequency stabilizes at 2.4 GHz after some time. Now the supply voltage drops in three steps from 1.2 V down to 1.17 V where the VCO cannot deliver the 2.4 GHz anymore and the PLL goes out of the lock. It recovers after the VCC voltage rose again.</p>
+
+<p>The following example illustrates the supply block.</p>
+
+<p><code>`include &quot;disciplines.vams&quot;</code><br /><code>`timescale 100ps / 10ps</code><br /><code>module supply ( B0, B1, PDWN, VCC, VCO_enable, VSS, i_bias );</code></p>
+
+<p><code>&#160; wreal  i_bias[1:0];</code><br /><code>&#160; wreal VCC;</code><br /><code>&#160; wreal VSS;</code></p>
+
+<p><code>&#160; parameter real pvcc = 1.2;</code></p>
+
+<p><code>&#160; real      v_supply;</code></p>
+
+<p><code>&#160; assign    i_bias[1] = 50u;</code><br /><code>&#160; assign    i_bias[0] = 50u;</code><br /><code>&#160; assign    VCC = v_supply;</code></p>
+
+<p><code>&#160; initial begin</code><br /><code>&#160; &#160; // initial settings</code><br /><code>&#160; &#160; v_supply = pvcc;</code><br /><code>&#160; &#160; #25000 // after another 2.5 us reduce v_supply</code><br /><code>&#160; &#160; v_supply = v_supply - 0.01;</code><br /><code>&#160; &#160; #25000 // after another 2.5 us reduce v_supply</code><br /><code>&#160; &#160; v_supply = v_supply - 0.01;</code><br /><code>&#160; &#160; #25000 // after another 2.5 us reduce v_supply</code><br /><code>&#160; &#160; v_supply = v_supply - 0.01;</code><br /><code>&#160; &#160; #25000 // after another 2.5 us recover VCC</code><br /><code>&#160; &#160; v_supply = pvcc;</code><br /><code>&#160; end</code><br /><code>endmodule</code></p>
+
+<p>Let us now focus on the power supply pin VCC. It is defined as an output of type wreal. Internally, we use a real variable<code>&#160;v_supply</code>&#160;to assign the different voltage levels at specific time points &#8211; as we would do in pure digital Verilog. We assign the&#160;<code>v_supply</code>&#160;real variable to the real-wire VCC. Note the concept of event-based changes of the values at specific time points (discrete-time).</p>
+
+<p>Another important observation is that the wreal values have no unit. While we intuitively think of VCC being a voltage level &#8211; which is in reality &#8211; but it is not specified explicitly. The wreal port just carries a real value without a unit.</p>
+
+<p>Wreal also supports arrays as shown above. In this case, two bias current values for the charge pump are defined in the supply module. The use of arrays follows the Verilog concept and syntax.</p>
+
+<p>The following example illustrates the use of X and Z states. The concept of an unknown &#8211; X and high impedance &#8211; Z state that is used in the 4-state logic is useful for wreal signals as well. The meaning of X and Z is equivalent to the wreal case. The charge pump example uses the X value in case the enable signal is low:</p>
+
+<p><code>  always @(ENABLE,upReal,dnReal,I_out) begin</code><br /><code>&#160; // calculate up or dn current values based </code><br /><code>&#160; // on the validity of supply</code><br /><code>&#160; // and enable signals</code><br /><code>&#160; if (ENABLE===1&#39;b1) begin</code><br /><code>&#160; &#160; iup = (upReal&gt;0) ? IUPscale*I_out : 2u;</code><br /><code>&#160; &#160; idn = (dnReal&gt;0) ? IDNscale*I_out : 2u;</code></p>
+
+<p><code>&#160; end</code></p>
+
+<p><code>&#160; else begin</code><br /><code>&#160; &#160; iup = `wrealXState;</code><br /><code>&#160; &#160; idn = `wrealXState;</code><br /><code>&#160; end</code><br /><code>    end</code></p>
+
+<p>The following schematic figure shows the outputs of the charge pump (Zp, Zn) connecting to the single filter input. Diving into the charge pump source code, the result was that both the output values are actively driven:</p>
+
+<p><code>assign ZP = iup;&#160;&#160;<br /></code><code>assign ZN = -idn;</code></p>
+<pre><code><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498875/443498877.gif" data-linked-resource-container-id="443498875" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="casestudy-2.gif" data-linked-resource-id="443498877" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498875/443498877.gif" /></span><br /></code></pre>
+<p>In the time point shown above, <code>iup</code> drives the net <code>CP_ZP</code> to a value of 2 u while<code> idn</code> drives the same net to 0.15 m. This results in a conflict since two drivers are driving the net at the same time toward different values.</p>
+
+<p>The concept of wreal resolution functions resolves this limitation. In the simulation, when the <code>-wreal_resolution sum</code> switch is specified to&#160;<code>xrun</code>, it&#160;resolves the connected net to the sum of both values. In the original design, this <code>CP_ZP</code> node was a current summing node connecting the two charge pump outputs. To mimic this behavior in wreal, the above resolution function sum is used.</p>
+
+<p>Another useful enhancement is the&#160;<code>$table_model</code>&#160;function known from analog Verilog-A and Verilog-AMS blocks. The function is now available for real values as well. The table model function enables an easy calibration of a real value behavioral model against measured data provided as a text file. The VCO in this example uses this capability.</p>
+
+<p><code>real input_value;</code><br /><code>&#160; always @(LVDD_VCO_1p2, LGND_VCO, VCTRL) begin</code><br /><code>&#160; &#160; input_value = (LVDD_VCO_1p2 - LGND_VCO);</code><br /><code>&#160; &#160; tableInstantaneousFreq = $table_model(input_value, VCTRL,</code><br /><code>&#160; &#160; &#160; &#160; &#160; &quot;vtuneFreqControl.tbl&quot;,&quot;1CC,3CC&quot;);</code><br /><code>&#160; end</code></p>
+
+<p>The example above calculates the VCO output frequency according to the table in the text file&#160;<code>vtuneFreqControl.tbl</code>. The text file contains the following data that is collected during the characterization of the original VCO.</p>
+
+<p><code>#VDD&#160; &#160; &#160;VCNTL&#160; &#160; Freq</code><br /><code>1&#160; &#160; &#160; &#160; 0&#160; &#160; &#160; &#160; 9.81E+06</code><br /><code>1&#160; &#160; &#160; &#160; 0.4&#160; &#160; &#160; 1.05E+09</code><br /><code>1&#160; &#160; &#160; &#160; 0.8&#160; &#160; &#160; 1.41E+09</code><br /><code>1.1&#160; &#160; &#160; 0&#160; &#160; &#160; &#160; 9.88E+06</code><br /><code>1.1&#160; &#160; &#160; 0.45&#160; &#160; &#160;1.29E+09</code><br /><code>1.1&#160; &#160; &#160; 0.9&#160; &#160; &#160; 1.52E+09</code><br /><code>1.2&#160; &#160; &#160; 0&#160; &#160; &#160; &#160; 9.95E+06</code><br /><code>1.2&#160; &#160; &#160; 0.3&#160; &#160; &#160; 1.37E+09</code><br /><code>1.2&#160; &#160; &#160; 1&#160; &#160; &#160; &#160; 2.69E+09</code><br /><code>...</code></p>
+
+<p>Similar to the mechanism of automatically inserted connect modules (AICM) between the continuous and discrete domains (electrical/logic) are connect modules available between <code>wreal</code> and <code>electrical</code>. These are called <code>E2R</code> and <code>R2E</code>. They are also inserted automatically if needed during the elaboration process. That ensures an easy replacement of blocks from different types of representations. In this case, we changed the filter into an electrical filter to see results.</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498875/443498881.gif" data-linked-resource-container-id="443498875" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="casestudy-3.gif" data-linked-resource-id="443498881" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498875/443498881.gif" /></span></p>
+
+<p>You might have noticed that the&#160;<code>LPF_Pout</code>&#160;value rises higher than the supply voltage in this case (around 12 us). This is a modeling artifact because we used an ideal charge pump with a wreal signal flow output (not feedback) that creates a current event though the voltage level is above the supply voltage range. In reality, the charge pump current would settle around the supply voltage level.</p>
+
+<p>The IE Report message in the&#160;<code>xrun</code>&#160;logfile (use the &#8211;iereport option).</p>
+
+<p><code>
+IE Report Summary:</code><br /><code>  E2R ( electrical input; wreal inout; )         total: 1</code><br /><code>  ER_bidir ( wreal inout; electrical inout; )    total: 2</code><br /><code>---------------------------------------------------------------</code></p>
+
+<p><code>Total Number of Connect Modules&#160;&#160;              total: 3</code></p>
+
+<p>The proper settings of the CM parameters are critical for correct simulation results, as we can see in the next exercise. If we change the&#160;<code>vdelta</code>&#160;parameter back to its default value of <code>`Vsup/64:(... #(.vdelta(`Vsup/64) ...)</code> the simulation results look quite different.</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498875/443498876.gif" data-linked-resource-container-id="443498875" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="case_study-4.gif" data-linked-resource-id="443498876" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498875/443498876.gif" /></span></p>
+
+<p>Vsub/64 results in about 0.028 V for the given supply of 1.2 V, thus, only changes larger than this value are creating events on the wreal net. Consequently, the first two supply voltage drops of 0.01 are not seen on the top-level VCC net.</p>
+
+<p>Consider another scenario where we change the internal resistance of the <code>R2E_2</code> and <code>R2E_bidir</code> CM back to their default value of 200 Ohm.&#160;</p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498875/443498880.gif" data-linked-resource-container-id="443498875" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="Case_Study-5.gif" data-linked-resource-id="443498880" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498875/443498880.gif" /></span></p>
+
+<p>The electrical filter is consuming some amount of current from the VCC power supply that is generated from the wreal source. The power net is now connected by a 200 Ohm resistor to the wreal supply. This results in a significant IR drop on the VCC line and consequently in a changing VCC supply level. The simulation results are far from being correct anymore. As you saw in the last few simulations, the parameter settings of the wreal CM are critical and need to be set carefully to achieve good results.</p>
+
+<p><br /></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Modeling_Examples.html" id="prev" title="Modeling_Examples">Modeling_Examples</a></em></b><b><em><a href="Appendix_A__Advanced_Digital_Verification_Methodology.html" id="nex" title="Appendix_A__Advanced_Digital_Verification_Methodology">Appendix_A__Advanced_Digital_V ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

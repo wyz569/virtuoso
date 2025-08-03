@@ -1,0 +1,145 @@
+
+<html><head><title>Specifying Connect Module and Discipline Definitions</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668839" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Digital-centric Mixed-signal Verification methodology that enables top-level verification at digital speed." />
+<meta name="DocTitle" content="Real Number Modeling Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Specifying Connect Module and Discipline Definitions" />
+<meta name="Keywords" content="Specifying Connect Modules for wreal,Wreal Connect Modules,Discipline Resolutions and Connect Modules" />
+<meta name="topic_type" content="task" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="wreal , Wreal/Real Nets," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="wreal" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668839" />
+<meta name="NextFile" content="Local_Resolution_Functions_for_Disciplines.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Defining_New_Disciplines.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Real Number Modeling Guide -- Specifying Connect Module and Discipline Definitions" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="wreal2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="wrealTOC.html">Contents</a></li><li><a class="prev" href="Defining_New_Disciplines.html" title="Defining_New_Disciplines">Defining_New_Disciplines</a></li><li style="float: right;"><a class="viewPrint" href="wreal.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Local_Resolution_Functions_for_Disciplines.html" title="Local_Resolution_Functions_for_Disciplines">Local_Resolution_Functions_for ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Real Number Modeling Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Specifying Connect Module and Discipline Definitions</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>The following example introduces the concept of connect module insertion being controlled by the discipline definition. A wreal model of a very simple charge pump is used inside an analog testbench. The stimuli are created by pulse voltage sources. The output of the charge pump is connected to a simple RC filter.</p>
+
+<p>The charge pump circuit drives current into the RC filter according to the input voltage levels. However, simulating this design as it would not lead to the expected simulation results. The wreal output signal of the charge pump is +/- 300u. This value is far smaller than the normal accuracy setting for R2E CM, which might be in a range of 1m. Moreover, the normal R2E CM is an electrical voltage source at the output. This does not fit to our requirements here.</p>
+
+<p><code>module top();</code><br /><code>&#160; electrical in1, in2, out, gnd;</code><br /><code>&#160; ground gnd;</code><br /><code>&#160; vsource #(.type(&quot;pulse&quot;), .val0(0), .val1(3.3), .period(2n),</code><br /><code>&#160; &#160; &#160; .delay(0), .rise(100p), .fall(100p), .width(1n))</code><br /><code>&#160; &#160; V1 (in1, gnd);</code><br /><code>&#160; vsource #(.type(&quot;pulse&quot;), .val0(0), .val1(3.3),</code><br /><code>&#160; &#160; &#160; .period(1.87n), .delay(0.5n), .rise(100p),</code><br /><code>&#160; &#160; &#160; .fall(100p), .width(1n))</code><br /><code>&#160; &#160; V2 (in2, gnd);</code></p>
+
+<p><code>&#160; CP I1 (in1, in2, out);</code></p>
+
+<p><code>&#160; capacitor #(.c(4p)) c1 (out, gnd);</code><br /><code>&#160; resistor #(.r(20k)) r1 (out, gnd);</code><br /><code>endmodule</code></p>
+
+<p><code>module CP(UP, DN, Z );</code><br /><code>&#160; input UP; &#160;&#160;&#160;&#160; // Increment Input Controls</code><br /><code>&#160; input DN; &#160;&#160;&#160;&#160; // Decrement Input Controls</code><br /><code>&#160; output Z; &#160;&#160;&#160;&#160; // Single ended output</code></p>
+
+<p><code>&#160; wreal UP, DN, Z;</code><br /><code>&#160; wreal_current Z; &#160;&#160;&#160;&#160; // Disciplines could be hardcoded</code><br /><code>&#160; wreal_voltage UP, DN; &#160;&#160;&#160;&#160; //&#160;&#160; or set with the -setd option</code><br /><code>&#160; parameter real I_out = 300u; // Output Current</code><br /><code>&#160; parameter real thres = 1.5; // threshold value</code><br /><code>&#160; real iup, idn, out;</code></p>
+
+<p><code>&#160; always @(UP) begin</code><br /><code>&#160; &#160; if (UP &gt; thres )</code><br /><code>&#160; iup = I_out;</code><br /><code>&#160; &#160; else</code><br /><code>&#160; iup = 0.0;</code><br /><code>&#160; &#160; out = iup - idn;</code><br /><code>&#160; end</code></p>
+
+<p><code>&#160; always @(DN) begin</code><br /><code>&#160; &#160; if (DN &gt; thres )</code><br /><code>&#160; &#160; idn = I_out;</code><br /><code>&#160; else</code><br /><code>&#160; &#160; idn = 0.0;</code><br /><code>&#160; &#160; out = iup - idn;</code><br /><code>&#160; end</code><br /><code>&#160; &#160; assign Z = out;</code><br /><code>endmodule</code></p>
+
+<p>A few things need to be done to set up the test case correctly. First, we need to define a wreal to electrical connect module with a current source output, as shown below. To simplify matters only basic conversion features have been taken into account. However,&#160;<code>`wrealX/ZStates</code>&#160;are not considered.</p>
+
+<p>The standard E2R CM can be used for the voltage to wreal conversion at the input of the charge pump.</p>
+
+<p><code>connectmodule R2E_current (Din, Aout);</code><br /><code>&#160; &#160; input Din;</code><br /><code>&#160; &#160; wreal Din;&#160;&#160;&#160;&#160; // input wreal</code><br /><code>&#160; &#160; \logic Din;</code><br /><code>&#160; &#160; output Aout;</code><br /><code>&#160; &#160; electrical Aout;&#160;&#160;&#160;&#160; // output electrical</code></p>
+
+<p><code>parameter real tr = 10p&#160;&#160;&#160;&#160; from (0:inf);&#160;</code><br /><code>// risetime of analog output</code><br /><code>&#160; &#160;parameter real tf = tr&#160;&#160;&#160;&#160; from (0:inf);</code><br /><code>// falltime of analog output</code><br /><code>&#160; &#160;parameter real ttol_t = (tr+tf)/20 from (0:inf);</code><br /><code>// time tol of transition</code><br /><code>&#160; &#160;parameter real rout = 1M&#160;&#160;&#160;&#160; from (0:inf);</code><br /><code>// output resistance</code><br /><code>&#160; &#160;real Iout;</code></p>
+
+<p><code>&#160; &#160;</code><code>analog begin</code><br /><code>&#160; &#160; Iout = transition(Din, 0, tr, tf, ttol_t);</code><br /><code>&#160; &#160; I(Aout) &lt;+ (V(Aout) / rout) - Iout;</code><br /><code>&#160; &#160;end</code><br /><code>endmodule</code></p>
+
+<p>As said earlier, discipline settings are used to control the connect module insertion process. For this purpose, we need to specify two new discrete disciplines for the &quot;voltage&quot; and the &quot;current&quot; domain inside our wreal model.</p>
+
+<p><code>discipline wreal_current</code><br /><code>&#160; domain discrete;</code><br /><code>enddiscipline</code><br /><code>discipline wreal_voltage</code><br /><code>&#160; domain discrete;</code><br /><code>enddiscipline&#160;</code></p>
+
+<p>The next step is to associate the connect modules with the appropriate discipline interfaces.</p>
+
+<p><code>connectrules wreal_V_I;</code><br /><code>connect E2R</code><br /><code>#( .vdelta(0.1), .vtol(0.001), .ttol(1n))</code><br /><code>electrical, wreal_voltage;</code><br /><code>connect R2E_current</code><br /><code>#( .tr(0.1n), .rout(1M) )</code><br /><code>wreal_current, electrical;</code><br /><code>endconnectrules</code></p>
+
+<p>The standard E2R/R2E connect module is used to combine the logic and electrical discipline. In this case, we need a connect module between the electrical and the&#160;<code>wreal_voltage</code>&#160;discipline. The default settings can be overwritten in the connect rules definition as shown above. The same applies for the R2E connect module. In addition, we use the newly defined R2E_current connect module instead of the default one.</p>
+
+<p>Note that the defined current connect module is oversimplified to understand basic principles. For real usage, we need to consider more details, such as E2R_current. The current is generated from the global ground node. Thus, it is not considered in the power nets. The current source is not supply-limited, which means it would create current even if the voltage is above or below the supply range.</p>
+
+<p>Current-based connect modules are sensitive about the placement of the CMs in the design. From the following figure, you can see that the output current of the one/two connect modules would be quite different in the two cases (assuming a wreal resolution function other than sum). To avoid these types of problems, current based CM is recommended for point-to-point connections only or you have to make sure that the resolution function <code>sum</code> is used for the wreal net in question.</p>
+<span class="content-title" id="Figure-2.1"><strong>Figure 2.1:</strong> Current Based Connect Modules</span>
+<p><br /></p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498814/443498816.png" data-linked-resource-container-id="443498814" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="image2020-4-9_10-46-36.png" data-linked-resource-id="443498816" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" height="209" src="attachments/443498814/443498816.png" /></span></p>
+
+<p>The final step is the definition of the disciplines in the design. This is done as hard-coded assignments, as shown in the two commented lines in the charge pump definitions. The source code modification is often not appropriate. In these cases, the disciplines can be set by&#160;<code>&#8211;setdiscipline</code>&#160;options to&#160;<code>xrun/xmelab</code>. These external settings allow discipline definitions without any source code modifications. There are different scopes available for the&#160;<code>setdiscipline</code>&#160;option, including library, cell, and instances. For the example shown above, the following command-line&#160;<code>run</code>&#160;option would be appropriate. All the code examples and the <code>discipline.vams</code> and timescale settings are assumed to be included in the&#160;<code>cp.vams</code>&#160;file.</p>
+<pre><code>xrun cp.vams analog.scs -clean -amsconnrules wreal_V_I -setd &quot;INSTTERM-top.I1.UP- wreal_voltage&quot; -setd &quot;INSTTERM-top.I1.DN- wreal_voltage&quot; -setd &quot;INSTTERM-top.I1.Z- wreal_current&quot;</code></pre>
+<p>The following figure shows the simulation results for the example. The loading of the capacitor through the charge pump output current is clearly visible.</p>
+<span class="content-title" id="Figure-2.2"><strong>Figure 2.2:</strong> Simulation Results for a E2R Connect Module</span>
+<p><br /><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/443498814/443498815.png" data-linked-resource-container-id="443498814" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="image2020-4-9_10-50-8.png" data-linked-resource-id="443498815" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/443498814/443498815.png" width="640" /></span></p>
+<h4 id="SpecifyingConnectModuleandDisciplineDefinitions-RelatedTopics">Related Topics</h4>
+<ul><li><a href="Defining_New_Disciplines.html">Defining New Disciplines</a></li><li><a href="Local_Resolution_Functions_for_Disciplines.html">Local Resolution Functions for Disciplines</a></li></ul>
+<p><br /></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Defining_New_Disciplines.html" id="prev" title="Defining_New_Disciplines">Defining_New_Disciplines</a></em></b><b><em><a href="Local_Resolution_Functions_for_Disciplines.html" id="nex" title="Local_Resolution_Functions_for_Disciplines">Local_Resolution_Functions_for ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>
