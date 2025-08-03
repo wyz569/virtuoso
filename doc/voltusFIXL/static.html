@@ -1,0 +1,364 @@
+
+<html><head><title>Static Current Analysis</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="anshikag" />
+<meta name="CreateDate" content="2023-07-24" />
+<meta name="CreateTime" content="1690261460" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the use flow information in Voltus-Fi Custom Power Integrity Solution" />
+<meta name="DocTitle" content="Voltus-Fi Custom Power Integrity Solution XL User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Static Current Analysis" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="voltusFIXL" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-07-24" />
+<meta name="ModifiedTime" content="1690261460" />
+<meta name="NextFile" content="irdrop.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Digital IC Design,Digital IC Design" />
+<meta name="PrevFile" content="extract_dspf.html" />
+<meta name="c_product" content="Virtuoso Power System,Voltus-Fi" />
+<meta name="Product" content="Virtuoso Power System,Voltus-Fi" />
+<meta name="ProductFamily" content="Virtuoso Power System,Voltus-Fi" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Voltus-Fi Custom Power Integrity Solution XL User Guide -- Static Current Analysis" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="voltusFIXLIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="voltusFIXLTOC.html">Contents</a></li><li><a class="prev" href="extract_dspf.html" title="xDSPF Generation using Quantus">xDSPF Generation using Quantus</a></li><li style="float: right;"><a class="viewPrint" href="voltusFIXL.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="irdrop.html" title="IR Drop Analysis Results">IR Drop Analysis Results</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Voltus-Fi Custom Power Integrity Solution XL User Guide<br />Product Version IC23.1, August 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+
+<h1>6
+<a id="pgfId-72959"></a><a id="97089"></a></h1>
+<h1>
+<a id="pgfId-72962"></a><hr />
+<a id="67049"></a>Static Current<a id="marker-150599"></a> Analysis<hr />
+</h1>
+
+<p>
+<a id="pgfId-151711"></a>This section contains information about static current analysis, types of static current analysis, and how to run these analyses in Voltus-Fi-XL.</p>
+
+<h2>
+<a id="pgfId-39203"></a><a id="27000"></a>Overview of Static Current Analy<a id="marker-48037"></a>sis</h2>
+
+<p>
+<a id="pgfId-150368"></a>Static current analysis is performed in Voltus-Fi-XL using Thunder. It is performed before running a simulation in Spectre. The static current analysis output file, <code>static_current.txt</code>, is used as an input for performing a Spectre simulation. Following are the key aspects of this feature:</p>
+<ul><li>
+<a id="pgfId-143558"></a>Support for both, peak and average modes for static analysis</li><li>
+<a id="pgfId-143559"></a>Support for both, GUI and Tcl commands </li></ul>
+
+<p>
+<a id="pgfId-143785"></a>A static EMIR analysis allows the evaluation of IR drop and EM currents based on user-provided subcircuit instance current consumption w/o running a transient or DC simulation. The user-provided currents are distributed to the tap devices based on the W/L ratio of the devices in the design. The IR drop and EM current analysis is performed based on the current at each tap device.</p>
+<p>
+<a id="pgfId-143786"></a>The static EMIR analysis is enabled with the <code>static ifile</code> statement in the EMIR conf file.</p>
+<p>
+<a id="pgfId-143787"></a><code>net name=[I1.VDD I1.VSS] analysis=[vavg iavg]</code></p>
+<p>
+<a id="pgfId-143788"></a><code>static ifile=&quot;static_currents.txt&quot;</code></p>
+<p>
+<a id="pgfId-143789"></a>Since the analysis is static, the IR drop <code>vmax</code> and <code>vavg</code>, and the EM current <code>imax</code>, <code>irms</code>, and <code>iavg</code> values will be the same, and just one can be selected in the statement.</p>
+
+<h2>
+<a id="pgfId-143575"></a>Types of Static Current Analy<a id="marker-151839"></a>sis</h2>
+
+<p>
+<a id="pgfId-151831"></a>Static current analysis can be either static peak current analysis (Ipeak) or static average current analysis (Iavg). Static peak current analysis is based on the peak saturation transistor currents. Because of simplicity and ability to find problems quickly in power grids, static current analysis is the most commonly performed analysis.</p>
+<p>
+<a id="pgfId-68699"></a>Static average current analysis or activity-based analysis resolves the distribution of currents on your power grid better than the static peak current analysis. The activity-based approach assumes that you have a mechanism such as a Verilog simulator to compute and report the relative activity of the nets in the design. These relative activities can be used in conjunction with net capacitances to estimate the average current load of each gate in the design. This form of analysis clearly provides more realistic current data than the Ipeak approach.</p>
+<p>
+<a id="pgfId-41218"></a><strong>Activity</strong> means the probability of all the signal nets in design switching from <code>0-&gt;1</code> or <code>1-&gt;0</code> in one clock cycle. For instance, if the activity of a net or instance is <code>0.1</code>, then the power engine assumes that the net or instance will switch from <code>0-&gt;1</code> or <code>1-&gt;0</code> once every ten clock cycles. </p>
+
+<p>
+<a id="pgfId-42719"></a></p>
+<div class="webflare-div-image">
+<img width="591" height="186" src="images/static-2.gif" /></div>
+<p>
+<a id="pgfId-41225"></a>For the above diagram,</p>
+<p>
+<a id="pgfId-94789"></a>Activity = <code>(Number of (0-&gt;1 or 1-&gt;0) transitions/Number of clock cycles) =2/5=0.4 </code></p>
+
+<p>
+<a id="pgfId-143336"></a><strong>Duty Cycle</strong> means the probability that a signal net has the value of <code>1</code>. </p>
+<p>
+<a id="pgfId-143337"></a>For example, if the signal of a net is 1 for 2ns in the total simulation time of <code>10ns</code>, then the duty cycle of net is <code>0.2</code>. The duty cycle of the signal in the previous diagram is <code>0.5</code> (2.5/5). However, if a signal is <code>Z</code> or <code>X</code> for some time and <code>0</code> for the rest of the time then the duty cycle of the signal is <code>0</code>. </p>
+<p>
+<a id="pgfId-143338"></a><strong>Transition Density</strong> means the number of times the signal toggles from <code>0-&gt;1</code> or <code>1-&gt;0</code> in <code>1</code> second. </p>
+<p>
+<a id="pgfId-143339"></a>For the previous diagram, if you assume that one clock cycle is <code>4ns</code>, then:</p>
+<p>
+<a id="pgfId-143340"></a>Transition Density = <code>1e+08 (2/20ns)</code></p>
+
+<h2>
+<a id="pgfId-91209"></a><a id="36532"></a><a id="24457"></a><a id="17962"></a><a id="15051"></a>Running Peak Static Current Analysis</h2>
+
+<p>
+<a id="pgfId-91216"></a>Peak static current (Ipeak) analysis gives the peak current (saturated current) of every transistor connected to the power nets. </p>
+<p>
+<a id="pgfId-151300"></a>The following data is required to perform peak static current analysis:</p>
+<ul><li>
+<a id="pgfId-151301"></a>A Quantus-generated DSPF file</li><li>
+<a id="pgfId-151302"></a>SPICE model libraries and SPICE corners</li><li>
+<a id="pgfId-151303"></a>An activity, clock, or value change dump (VCD) file&#8212;These inputs are required for the average static current analysis</li></ul>
+
+
+<p>
+<a id="pgfId-91210"></a>To set up and run peak static current analysis, do the following:</p>
+<ol><li>
+<a id="pgfId-98295"></a>In the Virtuoso&#174; console, choose <em>Simulation</em> and then <em>Setup and Run Simulation.</em> <br />
+<a id="pgfId-151361"></a>The Setup and Run Current Analysis form opens.<br />
+<a id="pgfId-114069"></a><div class="webflare-div-image">
+<img width="437" height="603" src="images/static-3.gif" /></div></li><li>
+<a id="pgfId-40984"></a>On the <em>Basic</em> tab, select <em>Peak</em> as the <em>Analysis Type</em>.</li><li>
+<a id="pgfId-92551"></a>Specify the <em>Net Names</em> for which you want to calculate the peak current.</li><li>
+<a id="pgfId-58349"></a>Specify the<em> Spice Netlist </em>file.<br />
+<a id="pgfId-91246"></a>The Spice netlist file can also be edited using the edit button provided next to this field. </li><li>
+<a id="pgfId-91276"></a>In the <em>Pins</em> group box, specify the <em>Power Pins</em><em> </em>and <em>Gnd Pins</em>, and the corresponding <em>Voltages</em><em> </em>for the power pins.</li><li>
+<a id="pgfId-50696"></a>In the <em>Model Files</em> group box, choose the <em>Spice Models</em> and the corresponding <em>Spice Corners</em> used by the SPICE netlist. </li><li>
+<a id="pgfId-64325"></a>Click <em>Add</em><em> </em>to add the SPICE model &#8211; SPICE corner pair to the table.</li><li>
+<a id="pgfId-143214"></a>In the <em>Output</em> group box, specify the output directory in which all the current data will be saved. </li><li>
+<a id="pgfId-114141"></a>On the <em>Advanced</em> tab, specify the <em>Hierarchical Separator</em><em>. </em>This is required only if the netlist used is hierarchical.</li><li>
+<a id="pgfId-119618"></a>Specify the <em>Simulation Temperature</em>, in degree Celsius.</li><li>
+<a id="pgfId-145984"></a>Specify the <em>Cmd Include File</em>.</li><li>
+<a id="pgfId-143125"></a>Click <em>Run.</em> </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-51224"></a>Tcl Command for Peak Static Current Analysis</h2>
+
+<p>
+<a id="pgfId-51041"></a>An example of the set of Tcl commands for the peak static current calculation is as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-58643"></a>setup_simulation\</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51117"></a>-spice_netlist&#160;&#160;design.spice\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51067"></a>-topcell design_name\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51068"></a>-output_directory ./vps_simulation_1</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51069"></a>spice_model\</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-74593"></a>-spice_lib ./models/model1.l\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51070"></a>-spice_corner {TT TT_dio}</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51071"></a>spice_model\ </pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-74607"></a>-spice_lib ./models/model2.l.special\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51072"></a>-spice_corner {TT_sr}</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51073"></a>power_pin\ </pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69385"></a>-pin_name VDD\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69396"></a>-voltage 0.9</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51074"></a>ground_pins VSS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51051"></a>run_static_simulation\</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69406"></a>-method Ipeak\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69413"></a>-nets {VDD VSS}</pre>
+
+<h2>
+<a id="pgfId-51025"></a><a id="AverageStaticCurrentAnalysis"></a>Running Average Static Current Analysis</h2>
+
+<p>
+<a id="pgfId-51433"></a>Average static current analysis is a method of analyzing a circuit to obtain the average current flowing through each tap point without using time-based simulation.</p>
+<p>
+<a id="pgfId-151490"></a>The following data is required to perform average static current analysis:</p>
+<ul><li>
+<a id="pgfId-151491"></a>A Quantus-generated DSPF file</li><li>
+<a id="pgfId-151492"></a>SPICE model libraries and SPICE corners</li><li>
+<a id="pgfId-151493"></a>An activity, clock, or value change dump (VCD) file&#8212;These inputs are required for the average static current analysis</li></ul>
+
+
+<p>
+<a id="pgfId-151494"></a>To set up and run average static current analysis, do the following:</p>
+<ol><li>
+<a id="pgfId-151495"></a>In the Virtuoso&#174; console, choose <em>Simulation</em> and then <em>Setup and Run Simulation.</em> </li><li>
+<a id="pgfId-151501"></a>On the <em>Basic</em> tab of the Setup and Run Current Analysis form, select <em>Average</em> as the <em>Analysis Type</em>.</li><li>
+<a id="pgfId-151502"></a>Specify the <em>Net Names</em> for which you want to calculate the peak current.</li><li>
+<a id="pgfId-151503"></a>Specify the<em> Spice Netlist </em>file.<br />
+<a id="pgfId-151504"></a>The Spice netlist file can also be edited using the edit button provided next to this field. </li><li>
+<a id="pgfId-151505"></a>In the <em>Pins</em> group box, specify the <em>Power Pins</em><em> </em>and <em>Gnd Pins</em>, and the corresponding <em>Voltages</em><em> </em>for the power pins.</li><li>
+<a id="pgfId-151506"></a>In the <em>Model Files</em> group box, choose the <em>Spice Models</em> and the corresponding <em>Spice Corners</em> used by the SPICE netlist. </li><li>
+<a id="pgfId-151507"></a>Click <em>Add</em><em> </em>to add the SPICE model &#8211; SPICE corner pair to the table.</li><li>
+<a id="pgfId-151508"></a>In the <em>Output</em> group box, specify the output directory in which all the current data will be saved. </li><li>
+<a id="pgfId-151509"></a>On the <em>Advanced</em> tab, specify the <em>Hierarchical Separator</em><em>. </em>This is required only if the netlist used is hierarchical.</li><li>
+<a id="pgfId-151510"></a>Specify the <em>Simulation Temperature</em>, in degree Celsius.</li><li>
+<a id="pgfId-151511"></a>Specify the <em>Cmd Include File</em>.</li><li>
+<a id="pgfId-51457"></a>In the <em>Static Options</em> group box, specify the dominant <em>Frequency</em><em> </em>of the design, the <em>Clock File</em>, and the <em>VCD File</em>. </li><li>
+<a id="pgfId-51527"></a>Specify a value for <em>Global Activity</em><em> </em>in the design. </li><li>
+<a id="pgfId-151623"></a>Specify the <em>Avg Power</em><em> (All Nets)</em> of the design. Alternatively, specify the path of the <em>Avg Power File</em>. </li><li>
+<a id="pgfId-128478"></a>Select <em>Net based average power</em> to specify different power values for different nets. <br />
+<a id="pgfId-151656"></a>When you check this option, a list box is enabled. The list box has two columns, <em>Net Name</em> and <em>Average Power in W</em>. The <em>Net Name</em> column is already populated with the names of nets specified on the <em>Basic</em> tab. For each net, specify the power value in the <em>Average Power in W</em> column. <br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-127691"></a>The <em>Avg Power</em> <em>(All Nets) </em>and<em> Net based average power </em>options are mutually exclusive.</div></li><li>
+<a id="pgfId-58796"></a>Click <em>Run.</em><br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-128506"></a>You can also create or edit the clock file, VCD file, activity file, and the average power file by using the edit buttons provided against each of these options in the form. <em></em></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-51676"></a>Tcl Command for Average Static Current Analysis</h2>
+
+<p>
+<a id="pgfId-51677"></a>The example Tcl command for the average static current analysis is as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51679"></a>setup_simulation\ </pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51680"></a>-spice_netlist adc_sample_hold.spice\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51682"></a>-topcell adc_sample_hold\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51683"></a>-output_directory ./vps_simulation_1\</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51684"></a>spice_model models/spectre/gpdk090.scs\</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51685"></a>-spice_corner {NN}</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51930"></a>power_pin\</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69653"></a>-pin_name VDD\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69663"></a>-voltage 2.5</pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51931"></a>ground_pins VSS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-51932"></a>run_static_simulation\</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69674"></a>-method Iavg\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-69684"></a>-nets {VDD VSS}\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51951"></a>-freq 333\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51952"></a>-global_activity 0.25\</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-51921"></a>-average_power 20mW</pre>
+
+<h2>
+<a id="pgfId-142785"></a><a id="99577"></a>Static Current Analysis Report</h2>
+
+<p>
+<a id="pgfId-142786"></a>The output of the static current analysis in Voltus-Fi-XL using Thunder is a text report that is saved in the output directory. The report is used by Spectre to run a simulation and create the simulation result file, which is then used for EMIR analysis and visualization in Voltus-Fi-XL. The default text report generated for both peak and average current analysis is <code>static_current.txt</code>.</p>
+<p>
+<a id="pgfId-142787"></a>Format:</p>
+<p>
+<a id="pgfId-142788"></a>Node Name&#160;&#160;        Static Current</p>
+<p>
+<a id="pgfId-142789"></a>Format Description:</p>
+<p>
+<a id="pgfId-142790"></a><code>Node Name</code> specifies the name of the node for which the static current is being reported.</p>
+<p>
+<a id="pgfId-142791"></a><code>Static Current</code> specifies the value of the static current on the specified node.</p>
+<p>
+<a id="pgfId-142792"></a>Sample Report</p>
+
+<a id="pgfId-142793"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI2/avI33/avD30_32    9.83e-05</pre>
+<a id="pgfId-142794"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI2/avI30/avD30_35    9.83e-05</pre>
+<a id="pgfId-142795"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI86/avD27_135        1.96e-05</pre>
+<a id="pgfId-142796"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI86/avD27_134        1.96e-05</pre>
+<a id="pgfId-142797"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI86/avD27_133        1.96e-05</pre>
+<a id="pgfId-142798"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI86/avD27_122        1.96e-05</pre>
+<a id="pgfId-142799"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI86/avD27_121        1.96e-05</pre>
+<a id="pgfId-142800"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+X0.AbcI86/avD27_120        1.96e-05</pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="extract_dspf.html" id="prev" title="xDSPF Generation using Quantus">xDSPF Generation using Quantus</a></em></b><b><em><a href="irdrop.html" id="nex" title="IR Drop Analysis Results">IR Drop Analysis Results</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

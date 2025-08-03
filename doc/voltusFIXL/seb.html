@@ -1,0 +1,497 @@
+
+<html><head><title>Statistical ElectroMigration Budgeting</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="anshikag" />
+<meta name="CreateDate" content="2023-07-24" />
+<meta name="CreateTime" content="1690261456" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the use flow information in Voltus-Fi Custom Power Integrity Solution" />
+<meta name="DocTitle" content="Voltus-Fi Custom Power Integrity Solution XL User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Statistical ElectroMigration Budgeting" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="voltusFIXL" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-07-24" />
+<meta name="ModifiedTime" content="1690261456" />
+<meta name="NextFile" content="batchmode.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Digital IC Design,Digital IC Design" />
+<meta name="PrevFile" content="pgvcreation.html" />
+<meta name="c_product" content="Virtuoso Power System,Voltus-Fi" />
+<meta name="Product" content="Virtuoso Power System,Voltus-Fi" />
+<meta name="ProductFamily" content="Virtuoso Power System,Voltus-Fi" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Voltus-Fi Custom Power Integrity Solution XL User Guide -- Statistical ElectroMigration Budgeting" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="voltusFIXLIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="voltusFIXLTOC.html">Contents</a></li><li><a class="prev" href="pgvcreation.html" title="PGV Generation in Voltus-Fi-XL">PGV Generation in Voltus-Fi-XL</a></li><li style="float: right;"><a class="viewPrint" href="voltusFIXL.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="batchmode.html" title="Batch Commands in Voltus-Fi-XL">Batch Commands in Voltus-Fi-XL</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Voltus-Fi Custom Power Integrity Solution XL User Guide<br />Product Version IC23.1, August 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>14
+<a id="pgfId-55593"></a><a id="97089"></a></h1>
+<h1>
+<a id="pgfId-55595"></a><hr />
+<a id="58483"></a>Statistical ElectroMigration Budgeting<hr />
+</h1>
+
+<p>
+<a id="pgfId-179560"></a>Statistical ElectroMigration Budgeting (SEB) enables you to meet the ElectroMigration (EM) reliability targets by performing a statistical interconnect EM analysis based on the current modeling and thermal analysis of the design. This feature leverages the statistical nature of EM reliability to compute the level of the EM risk for all design rule violations. SEB analysis requires fixing of only those violations that add significant risk. This reduces the design verification time and improves performance while ensuring that the design meets its chip-level reliability goals.</p>
+<p>
+<a id="pgfId-179561"></a>Failures in Time (FIT) is a factor to represent the chip failure rate. Following is the definition of FIT:</p>
+<p>
+<a id="pgfId-179562"></a>1 FIT&#160;&#160;= One failure per 10^9 product hours</p>
+<p>
+<a id="pgfId-179563"></a>          = One failure in 1000 products through 10^6 hours</p>
+<p>
+<a id="pgfId-179564"></a>          = One failure in 105 products through 10^4 hours</p>
+<p>
+<a id="pgfId-179565"></a>          = or any other combination between products and hours as long as the product of the two is 10^9</p>
+<p>
+<a id="pgfId-179568"></a>Voltus-Fi will calculate the FIT value for each resistor of metal and via. The tool will follow the foundry EM definition to calculate FIT. This flow is supported in Voltus-Fi and involves the following tasks:</p>
+<ol><li>
+<a id="pgfId-179570"></a>Calculating the FIT for each resistor of metals and vias.</li><li>
+<a id="pgfId-179571"></a>Applying FIT reduction using the calculation.</li><li>
+<a id="pgfId-179572"></a>Adding all the reduced FIT values to get the total block/chip FIT.</li><li>
+<a id="pgfId-179573"></a>Generating a report with all the FIT information in a text format.</li></ol>
+
+
+
+<p>
+<a id="pgfId-179493"></a>The following flowchart depicts the high-level flow for SEB in Voltus-Fi:</p>
+<p>
+<a id="pgfId-181896"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="405" src="images/seb-2.gif" /></div>
+<h4><em>
+<a id="pgfId-181927"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-181931"></a><a href="seb.html#23382">FIT Reduction Method</a></li><li>
+<a id="pgfId-181935"></a><a href="seb.html#96512">Inputs for the SEB Flow</a></li></ul>
+
+
+<h2>
+<a id="pgfId-179661"></a><a id="23382"></a>FIT Reduction Method</h2>
+
+<p>
+<a id="pgfId-179662"></a>This section details the FIT reduction methods used for metal and via resistors.</p>
+
+<h3>
+<a id="pgfId-179663"></a>Metal FIT Reduction </h3>
+
+<ul><li>
+<a id="pgfId-182362"></a>FIT reduction node is a node on the metal layer satisfying either of the following conditions:<ul><li>
+<a id="pgfId-182363"></a>one or more vias are connected to the node</li><li>
+<a id="pgfId-182364"></a>metal resistors branch (three or more metal resistors connected to a metal node) at the node</li><li>
+<a id="pgfId-182365"></a>the node is a metal boundary node</li></ul></li><li>
+<a id="pgfId-182366"></a>Metal FIT reduction segment is a group of connected resistors between two FIT reduction nodes</li><li>
+<a id="pgfId-182358"></a>Voltus-Fi selects the largest FIT among the resistors within a FIT reduction segment as the FIT of the metal segment</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-179675"></a>Metal FIT Reduction Example 1</p>
+<p>
+<a id="pgfId-181975"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="315" src="images/seb-3.gif" /></div>
+
+<p>
+<a id="pgfId-179676"></a></p>
+<p>
+<a id="pgfId-181776"></a></p>
+<p>
+<a id="pgfId-179677"></a>Metal FIT Reduction Example 2</p>
+<p>
+<a id="pgfId-179678"></a> </p>
+
+<div class="webflare-div-image">
+<img width="668" height="287" src="images/seb-4.gif" /></div>
+<h3>
+<a id="pgfId-179679"></a>VIA FIT Reduction </h3>
+
+<ul><li>
+<a id="pgfId-179680"></a>FIT reduction is not applied to vias</li><li>
+<a id="pgfId-181157"></a>Via array is divided into single vias</li><li>
+<a id="pgfId-181162"></a>FIT is calculated for all vias</li><li>
+<a id="pgfId-179683"></a>Total FIT of the block/chip is calculated by adding all FITs of single vias and metal FITs</li></ul>
+
+
+
+<p>
+<a id="pgfId-179854"></a>VIA FIT Reduction Example</p>
+<p>
+<a id="pgfId-182017"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="318" src="images/seb-5.gif" /></div>
+<h4><em>
+<a id="pgfId-181985"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-181989"></a><a href="seb.html#58483">Statistical ElectroMigration Budgeting</a></li><li>
+<a id="pgfId-181993"></a><a href="seb.html#96512">Inputs for the SEB Flow</a></li></ul>
+
+<p>
+<a id="pgfId-179886"></a></p>
+
+<h2>
+<a id="pgfId-179684"></a><a id="96512"></a>Inputs for the SEB Flow</h2>
+
+<p>
+<a id="pgfId-179685"></a>For running the SEB relaxation flow, you need to provide the SEB parameter file with FIT calculations. </p>
+<p>
+<a id="pgfId-179687"></a>Following is a sample of the SEB parameter file:</p>
+
+<a id="pgfId-179688"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+FIT_TABLE 72 5 (LAYER:V, MTF_HOUR:V, SIGMA:V, Ea:V, EXP_N:V r:V) </pre>
+<a id="pgfId-179690"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+FIELD             MTF_HOUR    SIGMA        Ea        EXP_N     r</pre>
+<a id="pgfId-179691"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER</pre>
+<a id="pgfId-179692"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+M12               1.73e5      0.22         0.8        1          1</pre>
+<a id="pgfId-179693"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA11             1.73e5      0.22         0.8        1          1</pre>
+<a id="pgfId-179694"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+M11               1.73e5      0.22         0.8        1          1</pre>
+<a id="pgfId-179695"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA10             1.73e5      0.22         0.8        1          1</pre>
+<a id="pgfId-179696"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+M10               1.73e5      0.22         0.8        1          1</pre>
+<a id="pgfId-179697"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA9              1.73e5      0.22         0.8        1          1</pre>
+<a id="pgfId-179698"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+M9                1.73e5      0.22         0.9        1          1</pre>
+<a id="pgfId-179699"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA8              1.73e5      0.22         0.9        1          1</pre>
+<a id="pgfId-179700"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+M8                1.73e5      0.22         0.9        1          1</pre>
+
+<p>
+<a id="pgfId-179702"></a>Where,</p>
+<ul><li>
+<a id="pgfId-179703"></a><code>FIELD LAYER</code> is the name of a metal layer/via</li><li>
+<a id="pgfId-179704"></a><code>MTF_HOUR</code> is the median time to failure in hour</li><li>
+<a id="pgfId-179705"></a><code>SIGMA</code> is spread in lifetime distribution (from foundry)</li><li>
+<a id="pgfId-179706"></a><code>r</code> is the relax factor</li></ul>
+
+
+
+
+<h4><em>
+<a id="pgfId-182021"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-182025"></a><a href="seb.html#58483">Statistical ElectroMigration Budgeting</a></li><li>
+<a id="pgfId-182029"></a><a href="seb.html#23382">FIT Reduction Method</a></li><li>
+<a id="pgfId-182070"></a><a href="seb.html#48771">SEB Flow emirutil Command Option</a></li></ul>
+
+
+<p>
+<a id="pgfId-182044"></a></p>
+
+<h2>
+<a id="pgfId-180155"></a><a id="48771"></a>SEB Flow emirutil Command Option</h2>
+
+<p>
+<a id="pgfId-180156"></a>The following option is specified in the EMIR control file using the <code>emirutil</code> command for the SEB flow:</p>
+<p>
+<a id="pgfId-182088"></a></p>
+<table class="webflareTable" id="#id180174">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id180176">
+<a id="pgfId-180176"></a>Keyword</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id180178">
+<a id="pgfId-180178"></a>Option Set</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id180238">
+<a id="pgfId-180238"></a>Explanation</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id180240">
+<a id="pgfId-180240"></a>Default Value</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180180"></a><code>emirutil</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<a id="pgfId-180182"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>sebParamFile=&#8221;</code><code><em>paramfilepath</em></code><code>&#8221;</code></pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180319"></a>Specifies the self-heating effect (SHE) analysis parameter file, which is required for calculating the SHE analysis results.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-180320"></a>For the SEB flow, this file should include the FIT information for all segments of metals and vias.</div>
+
+<p>
+<a id="pgfId-180322"></a><strong>Example</strong>:</p>
+<a id="pgfId-180323"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil sebParamFile=[../Techfile/ICTEM/seb.ircx]</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180244"></a>none</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180184"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<a id="pgfId-180186"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+print_em_report=[ [net=[all_nets | all_power | all_signal | <code><em>netname</em></code>] type=[fit] filename=<code><em>output_file_name</em></code>]</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180378"></a>Generates the EM report with the SHE for the SEB flow. You can specify the following:</p>
+
+<ul><li>
+<a id="pgfId-180380"></a><code>filename</code>: creates a report with the specified filename.</li><li>
+<a id="pgfId-180382"></a><code>net</code>: creates a report for the specified nets - all power nets (<code>all_power</code>), all signal nets (<code>all_signal</code>), all nets (<code>all_nets</code>), or a net (<span class="webflare-courier-new" style="white-space:pre"><em>netname</em></span>).</li><li>
+<a id="pgfId-180386"></a><code>type</code> - creates a report for the SEB flow (FIT).</li></ul>
+
+
+
+<p>
+<a id="pgfId-180387"></a><strong>Example</strong>: </p>
+<a id="pgfId-180448"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil </pre>
+<a id="pgfId-180388"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+print_em_report=[net=all_nets</pre>
+<a id="pgfId-180389"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+type=fit <code><em>filename</em></code>=</pre>
+<a id="pgfId-180246"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+fit_woshe.rpt]</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180248"></a>none</p>
+</td>
+</tr>
+</tbody></table>
+
+<h4><em>
+<a id="pgfId-182092"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-182096"></a><a href="seb.html#58483">Statistical ElectroMigration Budgeting</a></li><li>
+<a id="pgfId-182104"></a><a href="seb.html#96512">Inputs for the SEB Flow</a></li></ul>
+
+<p>
+<a id="pgfId-179707"></a></p>
+
+<h2>
+<a id="pgfId-180484"></a><a id="79481"></a>Sample EMIR Configuration File</h2>
+
+<p>
+<a id="pgfId-180486"></a>Following is a sample EMIR configuration file with specifications for the SEB flow:</p>
+
+<a id="pgfId-180488"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+net name=[XTOP.*] analysis=[iavg imax irms iacpeak vavg vmax]</pre>
+<a id="pgfId-180489"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil auto_detect_geounit=[false]</pre>
+<a id="pgfId-180490"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+solver method=[direct | iterated]       </pre>
+<a id="pgfId-180491"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil techfile=[../../../../Techfile/RCE_qrc/qrcTechFile]  &gt;&gt;  provide qrcTechfile path </pre>
+<a id="pgfId-180492"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil EMOnlyICTFile=[../../../../Techfile/ICTEM/drawn_color.ictem] &gt;&gt; provide ICTEM file (if any) </pre>
+<a id="pgfId-180493"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil Tj=&lt;value&gt;</pre>
+<a id="pgfId-180494"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil Tambient=&lt;value&gt;</pre>
+<a id="pgfId-180495"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil ProductLife=&lt;value&gt;        &gt;&gt; default value=5 years </pre>
+<a id="pgfId-180496"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil autorun=[true]</pre>
+<a id="pgfId-180497"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil report=[text |HTML]</pre>
+<a id="pgfId-180498"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil idirn=[true |false]</pre>
+<a id="pgfId-180499"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil splitACDCRules=[true|false]</pre>
+<a id="pgfId-180500"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil extendedreport=[true|false]</pre>
+<a id="pgfId-180501"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil optimisticEMRuleSelection=[true|false]</pre>
+<a id="pgfId-180502"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil simpleSingleViaDefinition=[true |false]</pre>
+<a id="pgfId-180503"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil redundantNonCDRules=[true |false]</pre>
+<a id="pgfId-180504"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil dbu=&lt;value&gt;</pre>
+<a id="pgfId-180505"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil powerRailRules=[on|off]</pre>
+<a id="pgfId-180506"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil sebParamFile=&quot;./test_SEB_n7_1p12m.ircx&quot;  &gt;&gt; provide the SEB param file path </pre>
+<a id="pgfId-180507"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+emirutil print_em_report=[net=all_nets type=fit filename=fit_woshe.rpt]   &gt;&gt; the reporting option to print the FIT report </pre>
+<h4><em>
+<a id="pgfId-182120"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-182180"></a><a href="seb.html#48771">SEB Flow emirutil Command Option</a></li><li>
+<a id="pgfId-182124"></a><a href="seb.html#58483">Statistical ElectroMigration Budgeting</a></li><li>
+<a id="pgfId-182128"></a><a href="seb.html#96512">Inputs for the SEB Flow</a></li></ul>
+
+
+<p>
+<a id="pgfId-179708"></a></p>
+
+<h2>
+<a id="pgfId-180551"></a><a id="79363"></a>SEB GUI Variable</h2>
+
+<p>
+<a id="pgfId-179501"></a>The option for the SEB flow can also be specified in the GUI in the <em>Variables</em> form that opens on the <em>EM</em> tab of the <em>IR/EM Results</em> form.</p>
+<p>
+<a id="pgfId-182198"></a></p>
+<table class="webflareTable" id="#id180573">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id180631">
+<a id="pgfId-180631"></a>Variable Name</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id180633">
+<a id="pgfId-180633"></a>Option Set</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-180635"></a><code>sebParamFile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-180683"></a>Specifies the SHE analysis parameter file, which is required for calculating the SHE analysis results.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-180684"></a>For the SEB flow, this file should include the FIT information for all segments of metals and vias.</div>
+<p>
+<a id="pgfId-180685"></a><strong>Example</strong>:</p>
+
+<a id="pgfId-180637"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+sebParamFile ./test_SEB_n7_1p12m.ircx</pre>
+</td>
+</tr>
+</tbody></table>
+
+<h4><em>
+<a id="pgfId-182202"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-182206"></a><a href="seb.html#48771">SEB Flow emirutil Command Option</a></li><li>
+<a id="pgfId-182210"></a><a href="seb.html#58483">Statistical ElectroMigration Budgeting</a></li><li>
+<a id="pgfId-182227"></a><a href="seb.html#96512">Inputs for the SEB Flow</a></li><li>
+<a id="pgfId-182233"></a><a href="seb.html#49529">SEB Report</a></li></ul>
+
+
+
+
+<h2>
+<a id="pgfId-180701"></a><a id="49529"></a>SEB Report</h2>
+
+<p>
+<a id="pgfId-180702"></a>The SEB flow generates a report with the total reduced FIT for all resistors.</p>
+<p>
+<a id="pgfId-180703"></a>Following is a sample SEB FIT Results file:</p>
+<p>
+<a id="pgfId-180704"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="291" src="images/seb-6.gif" /></div>
+
+<p>
+<a id="pgfId-180706"></a>Where,</p>
+<ul><li>
+<a id="pgfId-180707"></a><code>current (mA)</code>: resistor DC current</li><li>
+<a id="pgfId-180708"></a><code>limit (mA)</code>: EM limit at ambient temperature</li><li>
+<a id="pgfId-180709"></a><code>Sdc</code>: current/limit</li><li>
+<a id="pgfId-180710"></a><code>rmsT (C)</code>: rms temperature of metal</li><li>
+<a id="pgfId-180711"></a><code>coupledT (C)</code>: coupled temperature from OD layer</li><li>
+<a id="pgfId-180712"></a><code>Tseb (C)</code>: Tambient + rmsT if SHE is disabled</li><li>
+<a id="pgfId-180713"></a>                    Tambient + rmsT + coupledT if SHE is enabled</li><li>
+<a id="pgfId-180714"></a><code>MTF_new</code>: is the median time to failure that is calculated at Tseb </li><li>
+<a id="pgfId-180715"></a><code>Before_FIT_Reduction</code>: FIT values for resistors reported in the SEB parameter file</li><li>
+<a id="pgfId-180716"></a><code>After_FIT_Reduction</code>: FIT values after applying reduction method provided by foundry</li><li>
+<a id="pgfId-180717"></a><code>Reference_FIT_R</code>: resistor that is used as a reference</li><li>
+<a id="pgfId-179505"></a><code>NA</code> indicates that the tool cannot find matching EM rule for EM limit calculation</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-182256"></a>Related Topics</em></h4>
+
+<ul><li>
+<a id="pgfId-182260"></a><a href="seb.html#48771">SEB Flow emirutil Command Option</a></li><li>
+<a id="pgfId-182264"></a><a href="seb.html#58483">Statistical ElectroMigration Budgeting</a></li><li>
+<a id="pgfId-182268"></a><a href="seb.html#96512">Inputs for the SEB Flow</a></li><li>
+<a id="pgfId-182272"></a><a href="seb.html#49529">SEB Report</a></li></ul>
+
+
+
+<p>
+<a id="pgfId-162593"></a><em></em></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="pgvcreation.html" id="prev" title="PGV Generation in Voltus-Fi-XL">PGV Generation in Voltus-Fi-XL</a></em></b><b><em><a href="batchmode.html" id="nex" title="Batch Commands in Voltus-Fi-XL">Batch Commands in Voltus-Fi-XL</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
