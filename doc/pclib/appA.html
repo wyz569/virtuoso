@@ -1,0 +1,122 @@
+
+<html><head><title>Building Pcells with ROD Functions</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sumehta" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686598517" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to install and modify the sample parameterized cells built with relative object design functions of the SKILL programming language." />
+<meta name="DocTitle" content="Sample Parameterized Cells Installation and Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Building Pcells with ROD Functions" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="pclib" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686598517" />
+<meta name="NextFile" content="" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap2.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Sample Parameterized Cells Installation and Reference -- Building Pcells with ROD Functions" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="pclibIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="pclibTOC.html">Contents</a></li><li><a class="prev" href="chap2.html" title="Sample Parameterized Cells Reference">Sample Parameterized Cells Ref ...</a></li><li style="float: right;"><a class="viewPrint" href="pclib.pdf">View/Print PDF</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Sample Parameterized Cells Installation and Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>A
+<a id="pgfId-1032657"></a></h1>
+<h1>
+<a id="pgfId-1032664"></a><hr />
+Building Pcells with ROD Functions<hr />
+</h1>
+
+<p>
+<a id="pgfId-1032666"></a>The Pcells described in this reference were built in part with <h-hot><a actuate="user" class="URL" href="../roduser/roduserTOC.html#firstpage" show="replace" xml:link="simple">relative object design</a></h-hot> functions (ROD), a set of high-level Cadence<sup>&#174;</sup> SKILL language functions for defining simple and complex layout objects and their relationships to each other. The following <a id="marker-1032667"></a>code examples demonstrate how to use ROD functions to build Pcells. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1032704"></a>If you want to make changes to the code in any of the Pcell devices, utility functions, or installation files, you should create a copy of the original sample file using a new filename and make your changes to the new file. This method preserves the sample files for future use. If you do not create new files when you customize, your custom files replace the original sample files, and when the sample Pcells are loaded again, your custom files are overwritten by the original sample files.</div>
+
+<h2>
+<a id="pgfId-1032668"></a>Multipart Paths, Subpaths, and Subrectangles</h2>
+
+<p>
+<a id="pgfId-1032670"></a>This code example utilizes the ROD function <a href="../rodskillref/chap1.html#rodCreatePath">rodCreatePath</a> to create a guardring consisting of an enclosure subpath and a subrectangle. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032671"></a>procedure(buildGuardRing(cv layer1 layer2 layer3 width1 width3<br />    length3 pathpnts terminal pinlabel enc offset chop)<br />
+; pinlabel is a boolean that determines whether a label will be
+&#160;&#160;  created<br />
+&#160;&#160;  let(( guardRing )<br />    guardRing = <a id="marker-1032672"></a>rodCreatePath(<br />        ?cvId cv<br />        ?layer layer1<br />        ?width width1<br />        ?pts pathpnts<br />        ?encSubPath list( list(<br />            ?layer layer2<br />            ?enclosure enc<br />            ?choppable chop<br />            ?pin t<br />            ?termName terminal<br />            ?pinLabel pinlabel<br />            ?pinLabelHeight length3<br />            ?pinLabelLayer &quot;text&quot;<br />        ))<br />        ?subRect list( list(<br />            ?layer layer3<br />            ?width width3<br />            ?length length3<br />            ?endOffset offset<br />        ))<br />    )<br />))</pre>
+<h2>
+<a id="pgfId-1032673"></a>Path Stitching with ROD Functions</h2>
+
+<p>
+<a id="pgfId-1032676"></a>This code example uses the ROD functions <a href="../rodskillref/chap1.html#rodAlign">rodAlign</a> and <a href="../rodskillref/chap1.html#rodCreateRect">rodCreateRect</a> to build a Pcell that can be used for path stitching. It is set up for double contacts.</p>
+<p>
+<a id="pgfId-1032677"></a>To use this example, </p>
+
+<ol><li>
+<a id="pgfId-1032678"></a>Copy the sample <code>mpu.tf</code> from <br /><pre class="webflare-pre-block webflare-courier-new" id="#id1032679">
+<a id="pgfId-1032679"></a><code><em>your_install_dir</em></code>/tools/dfII/samples/techfiles/mpu.tf</pre>
+<a id="pgfId-1032680"></a>to the location where you store your libraries.</li><li>
+<a id="pgfId-1032681"></a>Comment out <code>M1_POLY1</code> from the <code>device</code> class of the technology file.<br />
+<a id="pgfId-1032682"></a>This is necessary because path stitching will see two contact definitions for the same layer and choose the single-contact definition</li><li>
+<a id="pgfId-1032683"></a>Create a new technology library using <code>mpu.tf</code> as the ASCII technology file. </li><li>
+<a id="pgfId-1032684"></a>Load this file into your new library.</li></ol>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1032685"></a>You can now use double contacts for path stitching.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032686"></a>; Path Stitching Example</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032687"></a>devices(<br />tcCreateDeviceClass( &quot;symbolic&quot; &quot;syEnhContact&quot;<br />    ; class parameters<br />    ( (viaLayer &quot;cont&quot;) <br />      (viaPurpose &quot;drawing&quot;)<br />      (layer1 &quot;poly1&quot;) <br />      (purpose1 &quot;drawing&quot;) <br />      (layer2 &quot;metal1&quot;) <br />      (purpose2 &quot;drawing&quot;)<br />      (encByLayer1 .4)<br />      (encByLayer2 .6)<br />    )<br />    ; formal parameters<br />    ( (w 1.8)<br />      (l .6)<br />      (row 1)<br />      (column 1)<br />      (xPitch 2.4)<br />      (yPitch 1.2)<br />      (xBias &quot;center&quot;)<br />      (yBias &quot;center&quot;)<br />    )<br />    cw = .6<br />    cs = .6<br />    lay1 = rodCreateRect(<br />        ?layer  list(layer1 purpose1)<br />        ?width   2 * encByLayer1 + column * w + (column - 1) * cs<br />        ?length  2 * encByLayer1 + row * l + (row - 1) * cs<br />        ?pin t<br />        ?termName &quot;m1p&quot;<br />    )<br />    lay2 = rodCreateRect(<br />        ?layer list(layer2 purpose2)<br />        ?width   2 * encByLayer2 + column * w + (column - 1) * cs<br />        ?length  2 * encByLayer2 + row * l + (row - 1) * cs<br />        ?pin t<br />        ?termName &quot;m1p&quot;<br />    )<br />    for(i 0 row - 1<br />      yStep = i * yPitch<br />      for(j 0 column - 1<br />        contlay1 = rodCreateRect(<br />                ?layer  list(viaLayer viaPurpose)<br />                ?width cw<br />                ?length cw<br />        )<br />        contlay2 = rodCreateRect(<br />                ?layer  list(viaLayer viaPurpose)<br />                ?width cw<br />                ?length cw<br />        )<br />        rodAlign(<br />                ?alignObj contlay1<br />                ?alignHandle &quot;cC&quot;<br />                ?refObj lay1<br />                ?refHandle &quot;lL&quot;<br />                ?xSep encByLayer1 + cw/2 + j * xPitch<br />                ?ySep encByLayer1 + cw/2 + yStep<br />        )<br />        rodAlign(<br />                ?alignObj contlay2<br />                ?alignHandle &quot;cC&quot;<br />                ?refObj lay1<br />                ?refHandle &quot;lL&quot;<br />                ?xSep encByLayer1 + cw/2 + j * xPitch + yPitch<br />                ?ySep encByLayer1 + cw/2 + yStep<br />        )<br />      )<br />    )<br />    rodAlign(<br />       ?alignObj lay1<br />       ?alignHandle &quot;centerCenter&quot;<br />       ?refObj lay2<br />       ?refHandle &quot;cC&quot;<br />    )<br />)<br />tfcDefineDeviceClassProp(<br />; (viewName        devClassName      propName          propValue)<br />  (symbolic        syEnhContact      function          &quot;contact&quot;)<br />)<br />tcDeclareDevice( &quot;symbolic&quot; &quot;syEnhContact&quot; &quot;M1_PLY&quot;<br />    ( (viaLayer &quot;cont&quot;) (viaPurpose &quot;drawing&quot;)<br />      (layer1 &quot;poly1&quot;) (purpose1 &quot;drawing&quot;)<br />      (layer2 &quot;metal1&quot;) (purpose2 &quot;drawing&quot;)<br />      (encByLayer1 .4) (encByLayer2 .6))<br />    (<br />      (w 1.8) (l .6)<br />      (row 1) (column 1)<br />      (xPitch 2.4)<br />      (yPitch 1.2)<br />      (xBias &quot;center&quot;)<br />      (yBias &quot;center&quot;)<br />    )<br />)<br />)<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1031936"></a></pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap2.html" id="prev" title="Sample Parameterized Cells Reference">Sample Parameterized Cells Ref ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
