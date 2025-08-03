@@ -1,0 +1,1869 @@
+
+<html><head><title>Calculating and Fixing Process Antenna Violations</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="leenap" />
+<meta name="CreateDate" content="2022-08-09" />
+<meta name="CreateTime" content="1660031387" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the syntax for Library Exchange Format (LEF) and Design Exchange Format (DEF) files." />
+<meta name="DocTitle" content="LEF/DEF 6.0 Language Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Calculating and Fixing Process Antenna Violations" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-3.3.1" />
+<meta name="Keyword" content="lefdef6man" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2022-08-09" />
+<meta name="ModifiedTime" content="1660031387" />
+<meta name="NextFile" content="lefdef6manIX.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Digital Implementation,Cadence Shared Tools" />
+<meta name="PrevFile" content="Examples.html" />
+<meta name="c_product" content="Innovus,Languages" />
+<meta name="Product" content="Innovus,Languages" />
+<meta name="ProductFamily" content="Innovus,Languages" />
+<meta name="ProductVersion" content="6.0" />
+<meta name="RightsManagement" content="Copyright 2022 Cadence Design Systems Inc." />
+<meta name="Title" content="LEF/DEF 6.0 Language Reference -- Calculating and Fixing Process Antenna Violations" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="6.0" />
+<meta name="SpaceKey" content="lefdef6man60" />
+<meta name="webflare-version" content="2.2" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="lefdef6manTOC.html">Contents</a></li><li><a class="prev" href="Examples.html" title="Examples">Examples</a></li><li style="float: right;"><a class="viewPrint" href="lefdef6man.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="lefdef6manIX.html" title="Index">Index</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>LEF/DEF 6.0 Language Reference<br />Product Version 6.0, September 2022</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>B
+<a id="pgfId-1032955"></a></h1>
+<h1>
+<a id="pgfId-1033512"></a><hr />
+<a id="96643"></a>Calculating and Fixing Process Antenna Violations<hr />
+</h1>
+
+<p>
+<a id="pgfId-1034525"></a>This appendix describes process antenna violations and how you can use the router to correct them. It includes the following sections:</p>
+<ul><li>
+<a id="pgfId-1034529"></a><a href="PAE.html#30534">Overview</a></li><li>
+<a id="pgfId-1034533"></a><a href="PAE.html#30597">Using Process Antenna Keywords in the LEF and DEF Files</a></li><li>
+<a id="pgfId-1034537"></a><a href="PAE.html#73260">Calculating Antenna Ratios</a></li><li>
+<a id="pgfId-1034541"></a><a href="PAE.html#52614">Checking for Antenna Violations</a></li><li>
+<a id="pgfId-1034545"></a><a href="PAE.html#67180">Using Antenna Diode Cells</a></li><li>
+<a id="pgfId-1034549"></a><a href="PAE.html#93564">Using DiffUseOnly</a></li><li>
+<a id="pgfId-1034561"></a><a href="PAE.html#21069">Calculations for Hierarchical Designs</a></li></ul>
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1034563"></a><a id="30534"></a>Overview</h2>
+
+<p>
+<a id="pgfId-1034564"></a>During deep submicron wafer fabrication, gate damage can occur when excessive static charges accumulate and discharge, passing current through a gate. If the area of the layer connected directly to the gate or connected to the gate through lower layers is large relative to the area of the gate and the static charges are discharged through the gate, the discharge can damage the oxide that insulates the gate and cause the chip to fail. This phenomenon is called the <em>process antenna effect </em>(PAE).</p>
+<p>
+<a id="pgfId-1034565"></a>To determine the extent of the PAE, the router calculates the area of the layer relative to the area of the gates connected to it, or connected to it through lower layers. The number it calculates is called the <em>antenna ratio</em>. Each foundry sets a maximum allowable antenna ratio for the chips it fabricates.</p>
+<p>
+<a id="pgfId-1034566"></a>For example, assume a foundry sets a maximum allowable antenna ratio of 500. If a net has two input gates that each have an area of 1 square micron, any metal layers that connect to the gates and have an area larger than 1,000 square microns have process antenna violations because they would cause the antenna ratio to be higher than 500:</p>
+
+<p>
+<a id="pgfId-1034589"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="56" src="images/PAE-2.gif" /></div>
+
+<p>
+<a id="pgfId-1038918"></a>To tell the router the values to use when it calculates the antenna ratio, you set antenna keywords in the LEF and DEF files. The router measures potential damage caused by PAE by checking the ratio it calculates against the values specified by the antenna keywords. When it finds a net whose antenna ratio for a specified layer exceeds the maximum allowed value for that layer, it finds a <em>process antenna violation</em> and attempts to fix it using one or both of the following methods:</p>
+<ul><li>
+<a id="pgfId-1034590"></a>Changing the routing so the routing layers connected to a gate or connected to a gate through lower layers are not so large that they build enough static charge to damage the gate</li><li>
+<a id="pgfId-1034592"></a>Inserting diodes that protect the gate by providing an alternate path to discharge the static charge</li></ul>
+
+<p>
+<a id="pgfId-1038921"></a>LEF can specify several types of antenna ratios, including ratios for PAE damage on one layer only and ratios calculated by adding accumulated damage on several layers. In addition, LEF can specify ratios based on the area of the metal wires or the cut area of vias. </p>
+
+<h3>
+<a id="pgfId-1034595"></a>What Are Process Antennas?</h3>
+
+<p>
+<a id="pgfId-1034596"></a>In a chip manufacturing process, metal layers are built up, layer by layer, starting with the first-level metal layer (usually referred to as <em>metal1</em>). Next, the <em>metal1</em>-<em>metal2</em> vias are created, then the second-level metal layer, then <em>metal2</em>-<em>metal3</em> vias, and so on.</p>
+<p>
+<a id="pgfId-1034597"></a>On each metal layer, metal is initially deposited so it covers the entire chip. Then, the unneeded portions of the metal are removed by etching, typically in plasma (charged particles). </p>
+<p>
+<a id="pgfId-1034598"></a><a href="PAE.html#70179">Figure&#160;B-1</a> shows a section of an imaginary chip after the unneeded metal from <em>metal2</em> is removed. </p>
+
+<p><strong>Figure B-1
+<a id="pgfId-1037490"></a><a id="70179"></a></strong></p>
+<p>
+<a id="pgfId-1034669"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="201" src="images/PAE-3.gif" /></div>
+
+<p>
+<a id="pgfId-1034670"></a>In the figure,</p>
+<ul><li>
+<a id="pgfId-1034671"></a>Gate areas for transistors are labelled <code>G</code><code><sub><em>k</em></sub></code>, where <span class="webflare-courier-new" style="white-space:pre"><em>k</em></span> is a sequential number starting with <code>1</code>.</li><li>
+<a id="pgfId-1034672"></a>Wire segments are labelled <code>N</code><code><sub><em>i,j</em></sub></code><ul><li>
+<a id="pgfId-1034673"></a><code>N</code> signifies that the wire segment is an electrically connected node</li><li>
+<a id="pgfId-1034674"></a><span class="webflare-courier-new" style="white-space:pre"><em>i</em></span> specifies the metal layer to which the node belongs</li><li>
+<a id="pgfId-1034675"></a><span class="webflare-courier-new" style="white-space:pre"><em>j</em></span> is a sequential number for the node on that metal layer</li></ul></li><li>
+<a id="pgfId-1034676"></a>Nodes are labelled so that all pieces of the metal geometry on layer <em>metal</em><sub><em>i</em></sub> that are electrically connected by conductors at layers below <em>metal</em><sub><em>i</em></sub> belong to the same node. For example, the two <em>metal2</em> wire segments that belong to node <code>N</code><code><sub>2,1</sub></code> are electrically connected to gates <code>G</code><code><sub>1</sub></code>, <code>G</code><code><sub>2,</sub></code> and <code>G</code><code><sub>3</sub></code> by a piece of wire on <em>metal1</em> (labelled <code>N</code><code><sub>1,2</sub></code>).</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1034677"></a>Thick oxide insulates the already-fabricated structures below <em>metal2</em>, preventing them from direct contact with the plasma. The <em>metal2</em> geometries, however, are exposed to the plasma, and collect charge from it. As the metal geometries collect charge, they build up voltage potential.</p>
+<p>
+<a id="pgfId-1034678"></a>Because the metal geometries collect charge during the metallization process, they are referred to as process antennas. In general, the more area covered by the metal geometries that are exposed to the plasma (that is, the larger the process antennas), the more charge they can collect.</p>
+<p>
+<a id="pgfId-1034679"></a>In <a href="PAE.html#70179">Figure&#160;B-1</a>, note the following:</p>
+<ul><li>
+<a id="pgfId-1034680"></a>Node <code>N</code><code><sub>1,1</sub></code> is electrically connected to gates <code>G</code><code><sub>1</sub></code> and <code>G</code><code><sub>2</sub></code>.</li><li>
+<a id="pgfId-1034681"></a>Node <code>N</code><code><sub>1,2</sub></code> is electrically connected to gate <code>G</code><code><sub>3</sub></code>. </li><li>
+<a id="pgfId-1034682"></a>Node <code>N</code><code><sub>2,1</sub></code> (node <code>N</code><code><sub>2,1</sub></code> has two pieces of metal) is electrically connected to gates <code>G</code><code><sub>1</sub></code>, <code>G</code><code><sub>2</sub></code>, and <code>G</code><code><sub>3</sub></code>.</li><li>
+<a id="pgfId-1034683"></a>Node <code>N</code><code><sub>1,3</sub></code> and node <code>N</code><code><sub>2,2</sub></code> are electrically connected to gate <code>G</code><code><sub>4</sub></code>.</li><li>
+<a id="pgfId-1034684"></a>Node <code>N</code><code><sub>1,4</sub></code> and node <code>N</code><code><sub>2,3</sub></code> are electrically connected to the diffusion (diode).</li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1034685"></a>What Is the Process Antenna Effect (PAE)?</h3>
+
+<p>
+<a id="pgfId-1034686"></a>If the voltage potential across the gate oxide becomes large enough to cause current to flow across the gate oxide, from the process antennas to the gates to which the process antennas are electrically connected, the current can damage the gate oxide. The process antenna effect (PAE) is the term used to describe the build-up of charge and increase in voltage potential. The larger the total gate area that is electrically connected to the process antennas on a specific layer, the more charge the connected gates can withstand.</p>
+<p>
+<a id="pgfId-1034687"></a>In the imaginary chip in <a href="PAE.html#70179">Figure&#160;B-1</a>, if the current were to flow, the following would happen, as a result of the node-gate connections:</p>
+<ul><li>
+<a id="pgfId-1034688"></a>The charge collected by process antennas on nodes <code>N</code><code><sub>1,1</sub></code>, <code>N</code><code><sub>1,2</sub></code>, and <code>N</code><code><sub>2,1</sub></code> would be discharged through one or more of gates <code>G</code><code><sub>1</sub></code>, <code>G</code><code><sub>2</sub></code>, and <code>G</code><code><sub>3</sub></code>.</li><li>
+<a id="pgfId-1034689"></a>The charge collected by process antennas on nodes <code>N</code><code><sub>1,3</sub></code> and <code>N</code><code><sub>2,2</sub></code> would be discharged through gate <code>G</code><code><sub>4</sub></code>.</li><li>
+<a id="pgfId-1034690"></a>The charge collected by process antennas on node <code>N</code><code><sub>1,4</sub></code> and <code>N</code><code><sub>2,3</sub></code> would be discharged through the diode.</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1034691"></a>What Is the Antenna Ratio?</h3>
+
+<p>
+<a id="pgfId-1034692"></a>Because the total gate area that is electrically connected to a node (and therefore connected to the process antennas) determines the amount of charge from the process antennas the electrically connected gates can withstand, and because the size of the process antennas connected to the node determines how much charge the antennas collect, it is useful to calculate the ratio of the size of the process antennas on a node to the size of the gate area that is electrically connected to the node. This is the antenna ratio. The greater the antenna ratio, the greater the potential for damage to the gate oxide.</p>
+<p>
+<a id="pgfId-1034693"></a>If you check a chip and obtain an antenna ratio greater than the threshold specified by the foundry, gate damage is likely to occur. </p>
+<p>
+<a id="pgfId-1034694"></a><a href="PAE.html#43985">Figure&#160;B-2</a> shows the same section of the imaginary chip as the previous figure. The shaded areas in this figure represent the process antennas on node <code>N</code><code><sub>2,1</sub></code> and the gates to which they connect: gates <code>G</code><code><sub>1</sub></code>, <code>G</code><code><sub>2</sub></code>, and <code>G</code><code><sub>3</sub></code>. The shaded gates discharge the electricity collected by the process antennas on node <code>N</code><code><sub>2,1</sub></code>. </p>
+
+<p><strong>Figure B-2
+<a id="pgfId-1037503"></a><a id="43985"></a></strong></p>
+<p>
+<a id="pgfId-1034777"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="286" src="images/PAE-4.gif" /></div>
+<h3>
+<a id="pgfId-1034778"></a>What Can Be Done to Improve the Antenna Ratio?</h3>
+
+<p>
+<a id="pgfId-1034779"></a>If there is an alternate path for the current to flow, the charge on the node can be discharged through the alternate path before the voltage potential reaches a level that damages the gate. For example, a Zener diode, which allows current to flow in the reverse direction when the reverse bias reaches a specified breakdown voltage, provides an alternate path, and helps avoid building up so much charge at the node that the charge is discharged through the gate oxide. Diffusion features that form the output of a logic gate (source and drain of transistors) can provide such an alternate discharge path.</p>
+<p>
+<a id="pgfId-1034780"></a>Routers typically use two methods to decrease the antenna ratio:</p>
+<ul><li>
+<a id="pgfId-1034781"></a>Changing the routing by breaking the metal layers into smaller pieces</li><li>
+<a id="pgfId-1034782"></a>Inserting antenna diode cells to discharge the current</li></ul>
+
+<p>
+<a id="pgfId-1034783"></a>Both of these methods supply alternate paths for the current. For details about how to specify antenna diode cells, see <a href="PAE.html#67180">&#8220;Using Antenna Diode Cells&#8221;</a>.</p>
+
+<h2>
+<a id="pgfId-1034861"></a><a id="30597"></a>Using Process Antenna Keywords in the LEF and DEF Files</h2>
+
+<p>
+<a id="pgfId-1034862"></a>You tell the router the values to use for the gate, diffusion, and metal areas by setting values for process antenna keywords in the LEF and DEF files for your design. You also tell the router the values to use for the threshold process antenna ratios by setting the keywords. </p>
+<p>
+<a id="pgfId-1034866"></a>The following table lists LEF version 5.5 antenna keywords. </p>
+
+<p>
+<a id="pgfId-1034898"></a></p>
+<table class="webflareTable" id="#id1034867">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1034869">
+<a id="pgfId-1034869"></a>If the keyword
+ends with ...</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1034871">
+<a id="pgfId-1034871"></a>It refers to ...</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1034873">
+<a id="pgfId-1034873"></a>Examples</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034875"></a><code>area</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034877"></a>Area of the gates or diffusion</p>
+<p>
+<a id="pgfId-1034878"></a>Measured in square microns</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034880"></a><code>ANTENNADIFFAREA <br />ANTENNAGATEAREA</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034882"></a><code>factor</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034884"></a>Area multiplier used for the metal nodes</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034886"></a><code>ANTENNAAREAFACTOR <br />ANTENNASIDEAREAFACTOR</code></p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1034887"></a>Use <code>DIFFUSEONLY</code> if you want the multiplier to apply only when connecting to diffusion. For more information, see <a href="PAE.html#93564">&#8220;Using DiffUseOnly&#8221;</a>.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034892"></a><code>ratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034894"></a>Relationship the router is calculating</p>
+<p>
+<a id="pgfId-1034895"></a><code>Cum</code> is used in keywords for cumulative antenna ratio.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1034897"></a><code>ANTENNAAREARATIO <br />ANTENNASIDEAREARATIO <br />ANTENNADIFFAREARATIO <br />ANTENNADIFFSIDEAREARATIO<br />ANTENNACUMAREARATIO <br />ANTENNACUMSIDEAREARATIO <br />ANTENNACUMDIFFAREARATIO<br />ANTENNACUMDIFFSIDEAREARATIO</code></p>
+</td>
+</tr>
+</tbody></table>
+<h2>
+<a id="pgfId-1034900"></a><a id="73260"></a>C<a id="CalculatingAntennaRatios"></a>alculating Antenna Ratios</h2>
+
+<p>
+<a id="pgfId-1038743"></a>Tools should calculate antenna ratios using one of the following models:</p>
+<ul><li>
+<a id="pgfId-1034902"></a>The partial checking model<br />
+<a id="pgfId-1038746"></a>Using this model, you calculate damage to gates by process antennas on one layer. For example, if you use the partial checking model to calculate the PAE referred to a gate from <em>metal3</em>, you do not consider any potential damages referred to that gate from metallization steps on <em>metal1</em> or <em>metal2</em>.<br />
+<a id="pgfId-1034904"></a>You use this model to calculate a partial antenna ratio (PAR). A PAR tells you if any single metallization step is likely to inflict damage to a gate.</li><li>
+<a id="pgfId-1034905"></a>The cumulative checking model<br />
+<a id="pgfId-1034906"></a>This model is more conservative than the partial checking model. It adds damage to a gate caused by the PAE referred to the gate from each metallization step, starting from <em>metal1</em> up to the layer that is being checked. For example, if you use the cumulative checking model to calculate the PAE referred to a gate from <em>metal3</em>, you add the PAR from the relevant antenna areas on <em>metal1</em>, <em>metal2</em>, and <em>metal3</em>.<br />
+<a id="pgfId-1034907"></a>You use this model to calculate a cumulative antenna ratio (CAR). A CAR adds the damages on successive layers together to accumulate them as the layers are built up.</li></ul>
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1039567"></a>Calculating the Antenna Area</h3>
+
+<p>
+<a id="pgfId-1034909"></a>The area used to model the charge-collecting ability of a node is called the <em>antenna area</em>. The router calculates the antenna area for one of the following areas:</p>
+<ul><li>
+<a id="pgfId-1034910"></a>The drawn area (the top surface area of the metal shape)</li><li>
+<a id="pgfId-1034911"></a>The side area (the area of the sides of the metal shape)</li></ul>
+
+<p>
+<a id="pgfId-1039514"></a>The height of each side is taken from the <code>THICKNESS</code> statement for that layer.</p>
+<p>
+<a id="pgfId-1034912"></a><a href="PAE.html#94449">Figure&#160;B-3</a> shows drawn and side areas.</p>
+
+<p><strong>Figure B-3
+<a id="pgfId-1037510"></a><a id="94449"></a></strong></p>
+<p>
+<a id="pgfId-1034932"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="113" src="images/PAE-5.gif" /></div>
+<h4>
+<a id="pgfId-1034933"></a>Antenna Area Factor</h4>
+
+<p>
+<a id="pgfId-1034934"></a>You can increase or decrease the calculated antenna area by specifying an antenna area factor in the LEF file. </p>
+<ul><li>
+<a id="pgfId-1034935"></a>Use <code>ANTENNAAREAFACTOR</code> to adjust the calculation of the drawn area.</li><li>
+<a id="pgfId-1034936"></a>Use <code>ANTENNASIDEAREAFACTOR</code> to adjust the calculation of the side area.</li></ul>
+
+<p>
+<a id="pgfId-1034938"></a>The default value of both factors is <code>1</code>. </p>
+<p>
+<a id="pgfId-1039661"></a>The final ratio check can be scaled (that is, made more or less pessimistic) by using the <code>ANTENNAAREAFACTOR</code> or <code>ANTENNASIDEAREAFACTOR</code> values that are used to multiply the final PAR and CAR values. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1039662"></a>The LEF and DEF <code>ANTENNA</code> values are always unscaled values; only the final ratio-check is affected by the scale factors.</div>
+
+<h3>
+<a id="pgfId-1034939"></a><a id="38162"></a>Calculating a PAR</h3>
+
+<p>
+<a id="pgfId-1040012"></a>The general PAR(m<sub>1</sub>) equation for a single layer is calculated as: </p>
+
+<div class="webflare-div-image">
+<img width="651" height="59" src="images/PAE-6.gif" /></div>
+
+<p>
+<a id="pgfId-1040048"></a>The existing <code>ANTENNAAREAFACTOR</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>metalFactor</em></span> for the metal area. It has no effect on the diff_area, gate_area, or cut_area shown. Likewise, the <code>ANTENNAAREADIFFREDUCEPWL</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>diffMetalReduceFactor</em></span>, the <code>ANTENNAAREAMINUSDIFF</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>minusDiffFactor</em></span>, and the <code>ANTENNAGATEPLUSDIFF</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>plusDiffFactor</em></span>. For cut layer, the ratio equation illustrates the effect of an <code>ANTENNAAREAFACTOR</code> <span class="webflare-courier-new" style="white-space:pre"><em>cutFactor</em></span> statement as <span class="webflare-courier-new" style="white-space:pre"><em>metalFactor</em></span>. If there is no preceding <code>ANTENNAAREAFACTOR</code> statement, the <span class="webflare-courier-new" style="white-space:pre"><em>metalFactor</em></span> value defaults to <code>1.0</code>. </p>
+<p>
+<a id="pgfId-1040071"></a>For single layer rules, the PAR value is compared to <code>ANTENNA[SIDE]AREARATIO</code> and/or <code>ANTENNADIFF[SIDE]AREARATIO</code>, as appropriate. For cumulative layer rules, the CAR values is compared to <code>ANTENNACUM[SIDE]AREARATIO</code> and/or <code>ANTENNACUMDIFF[SIDE]AREARATIO</code>, as appropriate.</p>
+<p>
+<a id="pgfId-1034940"></a>The following example uses a simplified formula to calculate a PAR, without including the various area factors:</p>
+
+<p>
+<a id="pgfId-1034944"></a></p>
+<div class="webflare-div-image">
+<img width="635" height="123" src="images/PAE-7.gif" /></div>
+
+<p>
+<a id="pgfId-1034945"></a><code>PAR(N</code><code><sub><em>i</em></sub></code><sub>,</sub><code><sub><em>j</em></sub></code>, G<code><sub><em>k</em></sub></code><code>)</code> is the partial antenna ratio for node <span class="webflare-courier-new" style="white-space:pre"><em>j</em></span> on <em>metal</em><sub><em>i</em></sub> with respect to gate <code>G</code><code><sub><em>k</em></sub></code>, where <code>G</code><code><sub><em>k</em></sub></code> is electrically connected to node <code>N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code> by layer <span class="webflare-courier-new" style="white-space:pre"><em>i</em></span> or below.</p>
+<p>
+<a id="pgfId-1034946"></a><code>Area(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>)</code> is the drawn or side area of node <code>N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code>.</p>
+<p>
+<a id="pgfId-1034948"></a><code>C(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>)</code> is the set of gates <code>G</code><code><sub><em>k</em></sub></code> that are electrically connected to <code>N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code> through the layers below <em>metal</em><sub><em>i</em></sub>. </p>
+<p>
+<a id="pgfId-1034949"></a><code>Area(G</code><code><sub><em>k</em></sub></code><code>)</code> is the drawn or side area of gate <code>G</code><code><sub><em>k</em></sub></code>. (The reason to include the <code>G</code><code><sub><em>k</em></sub></code> parameter for PAR is to maintain uniformity with the notation for CAR.)</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1034950"></a>For a specified node <code>N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code>, the <code>PAR(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>,</code> <code>G</code><code><sub><em>k</em></sub></code><code>)</code> for all gates <code>G</code><code><sub><em>k</em></sub></code> that are connected to the node <code>N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code> using <em>metal</em><sub><em>i</em></sub> or below are identical. </div>
+
+<h4>
+<a id="pgfId-1034951"></a>Calculations for PAR on the First Metal Layer</h4>
+
+<p>
+<a id="pgfId-1034952"></a><a href="PAE.html#87645">Figure&#160;B-4</a> shows a section of an imaginary chip after the first metal layer is processed.</p>
+
+<p><strong>Figure B-4
+<a id="pgfId-1037515"></a><a id="87645"></a></strong></p>
+<p>
+<a id="pgfId-1035005"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="189" src="images/PAE-8.gif" /></div>
+
+<p>
+<a id="pgfId-1035006"></a>To calculate <code>PAR(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>,</code> <code>G</code><code><sub><em>k</em></sub></code><code>)</code> for node <code>N</code><code><sub>1,1</sub></code>, a node on the first metal layer, with respect to gate <code>G</code><code><sub>1</sub></code>, use the following formula:</p>
+
+<p>
+<a id="pgfId-1035019"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="54" src="images/PAE-9.gif" /></div>
+
+<p>
+<a id="pgfId-1035020"></a>Because gates G<code><sub>1</sub></code> and G<code><sub>2</sub></code> both connect to node N<code><sub>1,1</sub></code>, the following statement is true:</p>
+
+<a id="pgfId-1035021"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+PAR(N<code><sub>1,1</sub></code>,G<code><sub>1</sub></code>) = PAR(N<code><sub>1,1</sub></code>,G<code><sub>2</sub></code>)</pre>
+
+<p>
+<a id="pgfId-1035022"></a>To calculate <code>PAR</code> for node <code>N</code><code><sub>1,2</sub></code>, another node on the first metal layer, with respect to gate <code>G</code><code><sub>3</sub></code>, use the following formula:</p>
+
+<p>
+<a id="pgfId-1035035"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="54" src="images/PAE-10.gif" /></div>
+
+<p>
+<a id="pgfId-1035036"></a>To calculate <code>PAR(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>,</code> <code>G</code><code><sub><em>k</em></sub></code><code>)</code> for node <code>N</code><code><sub>1,3</sub></code>, another node on the first metal layer, with respect to gate <code>G</code><code><sub>4</sub></code>, use the following formula:</p>
+
+<p>
+<a id="pgfId-1035049"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="51" src="images/PAE-11.gif" /></div>
+<h4>
+<a id="pgfId-1035051"></a>Calculations for PAR on the Second Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035052"></a><a href="PAE.html#58282">Figure&#160;B-5</a> shows the chip after the second metal layer is processed.</p>
+
+<p><strong>Figure B-5
+<a id="pgfId-1037520"></a><a id="58282"></a></strong></p>
+<p>
+<a id="pgfId-1035130"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="260" src="images/PAE-12.gif" /></div>
+
+<p>
+<a id="pgfId-1035131"></a><code>N</code><code><sub>2,1</sub></code> consists of two pieces of metal on the second layer that are electrically connected at this step in the fabrication process. Therefore, to calculate <code>PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code>, you must add the area of both pieces together.</p>
+<p>
+<a id="pgfId-1035132"></a>To calculate <code>PAR(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>,G<code><sub><em>k</em></sub></code><code>)</code></code> for node <code>N</code><code><sub>2,1</sub></code>, a node on the second metal layer, with respect to gate <code>G</code><code><sub>1</sub></code>, use the following formula:</p>
+
+<p>
+<a id="pgfId-1035145"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="54" src="images/PAE-13.gif" /></div>
+
+<p>
+<a id="pgfId-1035146"></a>As on the first layer,</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035147"></a>PAR(N<code><sub>2,1</sub></code>,G<code><sub>1</sub></code>) = PAR(N<code><sub>2,1</sub></code>,G<code><sub>2</sub></code>) = PAR(N<code><sub>2,1</sub></code>,G<code><sub>3</sub></code>)</pre>
+<h4>
+<a id="pgfId-1035148"></a>Calculations for PAR on the Third Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035149"></a><a href="PAE.html#18249">Figure&#160;B-6</a> shows the chip after the third metal layer is processed.</p>
+
+<p><strong>Figure B-6
+<a id="pgfId-1037525"></a><a id="18249"></a></strong></p>
+<p>
+<a id="pgfId-1035234"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="300" src="images/PAE-14.gif" /></div>
+
+<p>
+<a id="pgfId-1035235"></a>To calculate <code>PAR(N</code><code><sub><em>i</em></sub></code><code><sub>,</sub></code><code><sub><em>j</em></sub></code><code>,</code> <code>G</code><code><sub><em>k</em></sub></code><code>)</code>for node <code>N</code><code><sub>3,1</sub></code>, a node on the third metal layer, with respect to gate <code>G</code><code><sub>1</sub></code>, use the following formula:</p>
+
+<p>
+<a id="pgfId-1035248"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="54" src="images/PAE-15.gif" /></div>
+
+<p>
+<a id="pgfId-1035249"></a>As on the prior layers,</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035250"></a>PAR(N<code><sub>3,1</sub></code>,G<code><sub>1</sub></code>) = PAR(N<code><sub>3,1</sub></code>,G<code><sub>2</sub></code>) = PAR(N<code><sub>3,1</sub></code>,G<code><sub>3</sub></code>) = PAR(N<code><sub>3,1</sub></code>,G<code><sub>4</sub></code>)</pre>
+<h4>
+<a id="pgfId-1035251"></a>Calculations for PAR on the Fourth Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035252"></a><a href="PAE.html#17461">Figure&#160;B-7</a> shows the chip after the fourth metal layer is processed.</p>
+
+<p><strong>Figure B-7
+<a id="pgfId-1037530"></a><a id="17461"></a></strong></p>
+<p>
+<a id="pgfId-1035343"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="359" src="images/PAE-16.gif" /></div>
+
+<p>
+<a id="pgfId-1035344"></a>To calculate <code>PAR(N</code><code><sub><em>i</em></sub></code><code>,</code><code><sub><em>j</em></sub></code><code>,</code> <code>G</code><code><sub><em>k</em></sub></code><code>)</code> for the fourth metal layer, use the following formula:</p>
+
+<p>
+<a id="pgfId-1035357"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="54" src="images/PAE-17.gif" /></div>
+
+<p>
+<a id="pgfId-1035358"></a>As on the prior layers,</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035359"></a>PAR(N<code><sub>4,1</sub></code>,G<code><sub>1</sub></code>) = PAR(N<code><sub>4,1</sub></code>,G<code><sub>2</sub></code>) = PAR(N<code><sub>4,1</sub></code>,G<code><sub>3</sub></code>) = PAR(N<code><sub>4,1</sub></code>,G<code><sub>4</sub></code>)</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035360"></a>Node <code>N</code><code><sub>4,1</sub></code> is connected to the diffusion layer through the output diode. After the router calculates the antenna ratio, it compares its calculations to the area of the diffusion, instead of the area of the gates.</div>
+
+<h3>
+<a id="pgfId-1035362"></a><a id="21789"></a>Calculating a CAR</h3>
+
+<p>
+<a id="pgfId-1035363"></a>To calculate a CAR, the router adds the PARs for all the relevant nodes on the specified or lower metal layers that are electrically connected to a gate. Therefore, <code>CAR(N</code><code><sub><em>i</em></sub></code>,<code><sub><em>j</em></sub></code>,<code>G</code><code><sub><em>k</em></sub></code><code>)</code> designates the cumulative damage to gate <code>G</code><code><sub><em>k</em></sub></code> by metallization steps up to the current level of metal, <span class="webflare-courier-new" style="white-space:pre"><em>i</em></span>. </p>
+<p>
+<a id="pgfId-1040484"></a>To create a single accumulative model that combines both metal and cut damage into one model, specify the <code>ANTENNACUMROUTINGPLUSCUT</code> statement for the layer, so that:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1040485"></a><t-times>
+CAR(m</t-times>
+<sub>i</sub><t-times>
+) = PAR(m</t-times>
+<sub>i</sub><t-times>
+) + CAR(v</t-times>
+<sub>i-1</sub><t-times>
+)</t-times>
+ </p>
+<p>
+<a id="pgfId-1040486"></a>This means that the CAR from the cut layer below this metal layer is accumulated, instead of the CAR from the metal layer below this metal layer. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1038751"></a>In practice, the router only needs to keep track of the worst-case CAR; however, the CARs for all of the gates shown in <a href="PAE.html#64003">Figure&#160;B-8</a> are described here.</div>
+<p>
+<a id="pgfId-1035364"></a>The router calculates an antenna ratio with respect to a node-gate pair. To find the CAR for the node <code>N</code><code><sub><em>i</em></sub></code>,<code><sub><em>j</em></sub></code> - gate <code>G</code><code><sub><em>k</em></sub></code> pair, you trace the path of the current between gate <code>G</code><code><sub><em>k</em></sub></code> and node <code>N</code><code><sub><em>i</em></sub></code>,<code><sub><em>j</em></sub></code> and add the PAR with respect to gate <code>G</code><code><sub>k</sub></code> for the all nodes in the path between the first metal layer and layer <span class="webflare-courier-new" style="white-space:pre"><em>i</em></span> that you can trace back to <code>G</code><code><sub><em>k</em></sub></code>.</p>
+
+<p><strong>Figure B-8
+<a id="pgfId-1037643"></a><a id="64003"></a></strong></p>
+<p>
+<a id="pgfId-1035454"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="345" src="images/PAE-18.gif" /></div>
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1035455"></a>
+In <a href="PAE.html#64003">Figure&#160;B-8</a>, node <code>N</code><code><sub>1,2</sub></code> is not shaded because it was not electrically connected to <code>G</code><code><sub>2</sub></code> when <em>metal1</em> was processed. That is, because the charge accumulated on <code>N</code><code><sub>1,2</sub></code> when <em>metal1</em> was processed cannot damage gate <code>G</code><code><sub>1</sub></code>, the router does not include it in the calculations for <code>CAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code>. 
+
+Another way to explain this is to say that the PAE from node <code>N</code><code><sub>1,2</sub></code> with respect to gate <code>G</code><code><sub>2</sub></code> is <code>0</code>.</div>
+<h4>
+<a id="pgfId-1035456"></a>Calculations for CAR on the First Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035457"></a><a href="PAE.html#84701">Figure&#160;B-9</a> shows the chip after the first metal layer is processed.</p>
+
+<p><strong>Figure B-9
+<a id="pgfId-1037535"></a><a id="84701"></a></strong></p>
+<p>
+<a id="pgfId-1035507"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="137" src="images/PAE-20.gif" /></div>
+
+<p>
+<a id="pgfId-1035508"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1035509"></a><code>CAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035510"></a><code>CAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035511"></a>Because <code>PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code> equals <code>PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code>, <code>CAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code>) equals <code>CAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code>. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035512"></a>In general, <code>CAR(N</code><code><sub><em>i,j</em></sub></code>,<code>G</code><code><sub><em>k</em></sub></code><code>)</code> equals <code>CAR(N</code><code><sub><em>i,j</em></sub></code><code>,G</code><code><sub><em>k&#8217;</em></sub></code><code>)</code> if the two gates <code>G</code><code><sub><em>k</em></sub></code> and <code>G</code><code><sub><em>k&#8217;</em></sub></code> are electrically connected to the same node on <em>metal1</em>, the lowest layer that is subject to the process antenna effect.</div>
+
+<h4>
+<a id="pgfId-1035513"></a>Calculations for CAR on the Second Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035514"></a><a href="PAE.html#40061">Figure&#160;B-10</a> shows the chip after the second metal layer is processed.</p>
+
+<p><strong>Figure B-10
+<a id="pgfId-1037540"></a><a id="40061"></a></strong></p>
+<p>
+<a id="pgfId-1037728"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="231" src="images/PAE-21.gif" /></div>
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1037729"></a>
+In the figure above, <code>N</code><code><sub>1,2</sub></code> is not included in the calculations for <code>CAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code> because it was not electrically connected to <code>G</code><code><sub>1</sub></code> when <em>metal1</em> was processed. That is, because the charge accumulated on <code>N</code><code><sub>1,2</sub></code> when <em>metal1</em> was processed cannot damage gate <code>G</code><code><sub>1</sub></code>, the router does not include it in the calculations for <code>CAR(N</code>2,1,G<code><sub>1</sub></code><code>)</code>. </div>
+
+<p>
+<a id="pgfId-1035594"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1035595"></a><code>CAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code>,<code>G</code><code><sub>1</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035596"></a><code>CAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code>,<code>G</code><code><sub>2</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035597"></a>Gates <code>G</code><code><sub>1</sub></code> and <code>G</code><code><sub>2</sub></code> have the same history with regard to PAE because they are connected to the same piece of <em>metal1</em>, so they have the same CAR for any node on a specified layer:</p>
+<p>
+<a id="pgfId-1035598"></a><code>CAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = CAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code></p>
+
+<h4>
+<a id="pgfId-1035599"></a>Calculations for CAR on the Third Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035600"></a><a href="PAE.html#49113">Figure&#160;B-11</a> shows the chip after the third metal layer is processed. </p>
+
+<p><strong>Figure B-11
+<a id="pgfId-1037545"></a><a id="49113"></a></strong></p>
+<p>
+<a id="pgfId-1035685"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="283" src="images/PAE-22.gif" /></div>
+<h4><em>
+<a id="pgfId-1035686"></a>Gate G<strong>1</strong></em></h4>
+
+<p>
+<a id="pgfId-1035687"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1035688"></a><code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code> </p>
+
+<h4><em>
+<a id="pgfId-1035689"></a>Gate G<sub><strong>2</strong></sub></em></h4>
+
+<p>
+<a id="pgfId-1035690"></a>In the figure above, </p>
+<p>
+<a id="pgfId-1035691"></a><code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code> </p>
+<p>
+<a id="pgfId-1035692"></a><code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code> equals <code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code> because gates <code>G</code><code><sub>1</sub></code> and <code>G</code><code><sub>2</sub></code> are both electrically connected to the same node, <code>N</code><sub>1,1</sub>, on <em>metal1</em> and therefore have the same history with regard to PAE. Therefore, the formula for <code>CAR(N<code><sub>3,2</sub></code></code>, <code>G</code><code><sub>2</sub></code><code>)</code> is <code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code></p>
+
+<h4><em>
+<a id="pgfId-1035693"></a>Gates G<sub><strong>3</strong></sub> and G<sub><strong>4</strong></sub></em></h4>
+
+<p>
+<a id="pgfId-1035694"></a>Gates <code>G</code><code><sub>3</sub></code> and <code>G</code><code><sub>4</sub></code> are not connected to the same node on <em>metal1</em> and therefore do not have the same history with regard to PAE. Therefore, the <code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>3</sub></code><code>)</code> and <code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>4</sub></code><code>)</code> do not necessarily equal <code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code> or <code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code>.</p>
+<p>
+<a id="pgfId-1035695"></a>In <a href="PAE.html#25908">Figure&#160;B-12</a>, the relevant areas for calculating CAR for gate <code>G</code><sub>3</sub> are shaded.</p>
+
+<p><strong>Figure B-12
+<a id="pgfId-1037550"></a><a id="25908"></a></strong></p>
+<p>
+<a id="pgfId-1035776"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="251" src="images/PAE-23.gif" /></div>
+
+<p>
+<a id="pgfId-1035777"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1035778"></a><code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>3</sub></code><code>) = PAR(N</code><code><sub>1,2</sub></code><code>,G</code><code><sub>3</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>3</sub></code><code>) + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>3</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035779"></a>In <a href="PAE.html#74027">Figure&#160;B-13</a>, the relevant areas for calculating CAR for gate <code>G</code><code><sub>4</sub></code> are shaded.</p>
+
+<p><strong>Figure B-13
+<a id="pgfId-1037555"></a><a id="74027"></a></strong></p>
+<p>
+<a id="pgfId-1035860"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="251" src="images/PAE-24.gif" /></div>
+
+<p>
+<a id="pgfId-1035861"></a>In the figure above, </p>
+<p>
+<a id="pgfId-1035862"></a><code>CAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>4</sub></code><code>) = PAR(N</code><code><sub>1,3</sub></code><code>,G</code><code><sub>4</sub></code><code>) + PAR(N</code><code><sub>2,2</sub></code><code>,G</code><code><sub>4</sub></code><code>) + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>4</sub></code><code>)</code></p>
+
+<h4>
+<a id="pgfId-1035863"></a>Calculations for CAR on the Fourth Metal Layer</h4>
+
+<p>
+<a id="pgfId-1035864"></a>The following figure shows the chip after the fourth metal layer is processed. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035865"></a>Node <code>N</code><code><sub>4,1</sub></code> is connected to the diffusion layer through the output diode. After the router calculates the antenna ratio, it compares its calculations to the area of the diffusion, instead of the area of the gates.</div>
+
+<h4><em>
+<a id="pgfId-1035866"></a>Gates G<sub><strong>1</strong></sub> and G<sub><strong>2</strong></sub></em></h4>
+
+<p>
+<a id="pgfId-1035867"></a>In <a href="PAE.html#50219">Figure&#160;B-14</a>, the relevant areas for calculating <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>1</sub></code>) and <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) </code>are shaded.</p>
+
+<p><strong>Figure B-14
+<a id="pgfId-1037560"></a><a id="50219"></a></strong></p>
+<p>
+<a id="pgfId-1035954"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="311" src="images/PAE-25.gif" /></div>
+
+<p>
+<a id="pgfId-1035955"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1035956"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) <br />  + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) + PAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035957"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) = PAR(N</code><code><sub>1,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) <br />  + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>2</sub></code><code>) + PAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1035958"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>1</sub></code><code>) = CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code></p>
+
+<h4><em>
+<a id="pgfId-1035959"></a>Gate G<sub><strong>3</strong></sub></em></h4>
+
+<p>
+<a id="pgfId-1035960"></a>In <a href="PAE.html#13331">Figure&#160;B-15</a>, the relevant areas for calculating <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>3</sub></code>) are shaded.</p>
+
+<p><strong>Figure B-15
+<a id="pgfId-1037567"></a><a id="13331"></a></strong></p>
+<p>
+<a id="pgfId-1036047"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="311" src="images/PAE-26.gif" /></div>
+
+<p>
+<a id="pgfId-1036048"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1036049"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><sub>3</sub><code>) = PAR(N</code><code><sub>1,2</sub></code><code>,G</code><code><sub>3</sub></code><code>) + PAR(N</code><code><sub>2,1</sub></code><code>,G</code><code><sub>3</sub></code><code>) <br />  + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>3</sub></code><code>) + PAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>3</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1036050"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>3</sub></code><code>)</code> does not equal <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code> or <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code> because it is not connected to the same node on <em>metal1</em><code>.</code></p>
+
+<h4><em>
+<a id="pgfId-1036051"></a>Gate G<sub><strong>4</strong></sub></em></h4>
+
+<p>
+<a id="pgfId-1036052"></a>In <a href="PAE.html#39888">Figure&#160;B-16</a>, the relevant areas for calculating <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>4</sub></code>) are shaded.</p>
+
+<p><strong>Figure B-16
+<a id="pgfId-1037572"></a><a id="39888"></a></strong></p>
+<p>
+<a id="pgfId-1036139"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="311" src="images/PAE-27.gif" /></div>
+
+<p>
+<a id="pgfId-1036140"></a>In the figure above,</p>
+<p>
+<a id="pgfId-1036141"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>4</sub></code><code>) = PAR(N</code><code><sub>1,3</sub></code><code>,G</code><code><sub>4</sub></code><code>) + PAR(N</code><code><sub>2,2</sub></code><code>,G</code><code><sub>4</sub></code><code>) <br />  + PAR(N</code><code><sub>3,1</sub></code><code>,G</code><code><sub>4</sub></code><code>) + PAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>4</sub></code><code>)</code></p>
+<p>
+<a id="pgfId-1036142"></a><code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>4</sub></code><code>)</code> does not equal <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>1</sub></code><code>)</code>, <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code>, or <code>CAR(N</code><code><sub>4,1</sub></code><code>,G</code><code><sub>3</sub></code><code>) </code>because it is not connected to the same node on <em>metal1</em><code>.</code></p>
+
+<h3>
+<a id="pgfId-1036143"></a><a id="53050"></a>Calculating Ratios for a Cut Layer</h3>
+
+<p>
+<a id="pgfId-1036144"></a>The router calculates damage from a cut layer separately from damage from a metal layer. Calculations for the cut layers do not use side area modelling. </p>
+
+<h4>
+<a id="pgfId-1036150"></a><a id="31960"></a>Calculating a PAR on a Cut Layer</h4>
+
+<p>
+<a id="pgfId-1040443"></a>The general PAR(c<sub>i</sub>) equation for a single layer is calculated as: </p>
+
+<div class="webflare-div-image">
+<img width="651" height="59" src="images/PAE-28.gif" /></div>
+
+<p>
+<a id="pgfId-1040494"></a>The existing <code>ANTENNAAREAFACTOR</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>cutFactor</em></span> for the metal area. Likewise, the <code>ANTENNAAREADIFFREDUCEPWL</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>diffAreaReduceFactor</em></span>, the <code>ANTENNAAREAMINUSDIFF</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>minusDiffFactor</em></span>, and the <code>ANTENNAGATEPLUSDIFF</code> statement is shown as <span class="webflare-courier-new" style="white-space:pre"><em>plusDiffFactor</em></span>. For cut layer, the ratio equation illustrates the effect of an <code>ANTENNAAREAFACTOR</code> <span class="webflare-courier-new" style="white-space:pre"><em>cutFactor</em></span> statement as <span class="webflare-courier-new" style="white-space:pre"><em>metalFactor</em></span>. If there is no preceding <code>ANTENNAAREAFACTOR</code> statement, the <span class="webflare-courier-new" style="white-space:pre"><em>metalFactor</em></span> value defaults to <code>1.0</code>. </p>
+<p>
+<a id="pgfId-1040457"></a>In the figures and text that follow,</p>
+<ul><li>
+<a id="pgfId-1040458"></a><code>C</code><span class="webflare-courier-new" style="white-space:pre"><em>ij</em></span> is the cut layer between <em>metal</em><code><sub><em>i</em></sub></code> and <em>metal</em><code><sub><em>j</em></sub></code>.</li><li>
+<a id="pgfId-1040459"></a><code>N</code><code><sub>C</sub></code><code><sub><em>ij</em></sub></code><code><sub>,</sub></code><code><sub><em>k</em></sub></code> specifies an electrically connected node on <code>C</code><span class="webflare-courier-new" style="white-space:pre"><em>ij</em></span>.</li><li>
+<a id="pgfId-1040460"></a>The nodes are numbered sequentially, from left to right.</li></ul>
+
+
+<p>
+<a id="pgfId-1036151"></a><a href="PAE.html#65163">Figure&#160;B-17</a> shows the chip after the <code>C12</code> process step.</p>
+
+<p><strong>Figure B-17
+<a id="pgfId-1037577"></a><a id="65163"></a></strong></p>
+<p>
+<a id="pgfId-1036223"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="167" src="images/PAE-29.gif" /></div>
+
+<p>
+<a id="pgfId-1036224"></a>In the figure above,</p>
+
+<p>
+<a id="pgfId-1036237"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="50" src="images/PAE-30.gif" /></div>
+
+<p>
+<a id="pgfId-1036238"></a>As in calculations on the metal layers,</p>
+<p>
+<a id="pgfId-1036239"></a><code>PAR(N</code><code><sub>C12,1,</sub></code><code>G</code><code><sub>1</sub></code><code>) = PAR(N</code><code><sub>C12,1</sub></code><code>,G</code><code><sub>2</sub></code><code>)</code></p>
+
+<h4>
+<a id="pgfId-1036240"></a>Calculating a CAR on a Cut Layer</h4>
+
+<p>
+<a id="pgfId-1040505"></a>As explained in <h-hot><a actuate="user" class="URL" href="../lefdefref/PAE.html#CalculatingAntennaRatios" show="replace" xml:link="simple">&#8220;Calculating Antenna Ratios&#8221;</a></h-hot>:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1040506"></a><t-times>
+CAR(c</t-times>
+<sub>i</sub><t-times>
+) = PAR(c</t-times>
+<sub>i</sub><t-times>
+) + CAR(c</t-times>
+<sub>i-1</sub><t-times>
+)</t-times>
+ </p>
+<p>
+<a id="pgfId-1040507"></a>To create a single accumulative model that combines both metal and cut damage into one model, specify the <code>ANTENNACUMROUTINGPLUSCUT</code> statement for the layer, so that:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1040508"></a><t-times>
+CAR(c</t-times>
+<sub>i</sub><t-times>
+) = PAR(c</t-times>
+<sub>i</sub><t-times>
+) + CAR(m</t-times>
+<sub>i-1</sub><t-times>
+)</t-times>
+ </p>
+<p>
+<a id="pgfId-1040509"></a>This means that the CAR from the <em>metal</em> layer below this cut layer is accumulated, instead of the CAR from the cut layer below this cut layer. </p>
+<p>
+<a id="pgfId-1036241"></a><a href="PAE.html#55472">Figure&#160;B-18</a> shows the chip after the <code>C23</code> process step. </p>
+
+<p><strong>Figure B-18
+<a id="pgfId-1037582"></a><a id="55472"></a></strong></p>
+<p>
+<a id="pgfId-1036342"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="226" src="images/PAE-31.gif" /></div>
+
+<p>
+<a id="pgfId-1036343"></a>The router calculates the CAR with respect to gate <code>G</code><code><sub>3</sub></code> after the cut <code>C23</code> process step as follows:</p>
+
+<p>
+<a id="pgfId-1036366"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="58" src="images/PAE-32.gif" /></div>
+
+<p>
+<a id="pgfId-1036367"></a><a href="PAE.html#26306">Figure&#160;B-19</a> shows the chip after the <code>C34</code> process step. </p>
+
+<p><strong>Figure B-19
+<a id="pgfId-1037587"></a><a id="26306"></a></strong></p>
+<p>
+<a id="pgfId-1036483"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="293" src="images/PAE-33.gif" /></div>
+
+<p>
+<a id="pgfId-1036484"></a>The router calculates the CAR with respect to gate <code>G</code><code><sub>3</sub></code> after the cut <code>C34</code> process step as follows:</p>
+
+<p>
+<a id="pgfId-1036520"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="94" src="images/PAE-34.gif" /></div>
+<h2>
+<a id="pgfId-1036523"></a><a id="52614"></a><a id="92524"></a>Checking for Antenna Violations</h2>
+
+<p>
+<a id="pgfId-1036524"></a>For each metal layer, the router performs several antenna checks, using the keywords and values specified in the LEF or DEF file. The router can perform the following four types of antenna checks, depending on the keywords you set in the LEF file:</p>
+<ul><li>
+<a id="pgfId-1036528"></a><a href="PAE.html#32820">Area Ratio Check</a></li><li>
+<a id="pgfId-1036532"></a><a href="PAE.html#36525">Side Area Ratio Check</a></li><li>
+<a id="pgfId-1036536"></a><a href="PAE.html#19491">Cumulative Area Ratio Check</a></li><li>
+<a id="pgfId-1036540"></a><a href="PAE.html#42249">Cumulative Side Area Ratio Check</a></li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1036542"></a><a id="32820"></a>Area Ratio Check</h3>
+
+<p>
+<a id="pgfId-1036543"></a>The area ratio check compares the PAR for each layer to the value of the <code>ANTENNAAREARATIO</code> or <code>ANTENNADIFFAREARATIO</code>.</p>
+<p>
+<a id="pgfId-1036544"></a>The router calculates the PAR as follows:</p>
+
+<p>
+<a id="pgfId-1037752"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="53" src="images/PAE-35.gif" /></div>
+
+<p>
+<a id="pgfId-1037754"></a>According to the formula above, the area ratio check finds the PAR for node <code>N</code><code><sub><em>i,j</em></sub></code> with respect to gate <code>G</code><code><sub><em>k</em></sub></code> by dividing the drawn area of the node by the area of the gates that are electrically connected to it. The final PAR is multiplied by the <code>ANTENNAAREAFACTOR</code> (the default value for the factor is <code>1</code>) and compared to the <code>ANTENNAAREARATIO</code> or <code>ANTENNADIFFAREARATIO</code>. If the PAR is greater than the <code>ANTENNAAREARATIO</code> or <code>ANTENNADIFFAREARATIO</code> specified in the LEF file, the router finds a process antenna violation and attempts to fix it.</p>
+<p>
+<a id="pgfId-1036560"></a>The link between <code>PAR(N</code><code><sub><em>i,j</em></sub></code><code>,G</code><code><sub><em>k</em></sub></code><code>)</code> and a PAE violation at node <code>N</code><code><sub><em>i,j</em></sub></code> depends on whether node <code>N</code><code><sub><em>i,j</em></sub></code> is connected to a piece of diffusion, as follows:</p>
+<ul><li>
+<a id="pgfId-1036561"></a>If there is no connection from node <code>N</code><code><sub><em>i,j </em></sub></code>to a diffusion area through the current and lower layers, a violation occurs when the PAR is greater than the <code>ANTENNAAREARATIO</code>.</li><li>
+<a id="pgfId-1036562"></a>If there is a connection from node <code>N</code><code><sub><em>i,j </em></sub></code>to a diffusion area through current and lower layers, a violation occurs when the PAR is greater than the <code>ANTENNADIFFAREARATIO</code>.</li><li>
+<a id="pgfId-1038752"></a>If there is a connection from node <code>N</code><code><sub><em>i,j </em></sub></code>to a diffusion area through current and lower layers, and <code>ANTENNADIFFAREA</code> is not specified for an output or inout pin, the value is <code>0</code>. </li></ul>
+
+
+
+<h3>
+<a id="pgfId-1036566"></a><a id="36525"></a>Side Area Ratio Check</h3>
+
+<p>
+<a id="pgfId-1036567"></a>The side area ratio check compares the PAR computed based on the side area of the nodes for each layer to the value of the <code>ANTENNASIDEAREARATIO</code> or <code>ANTENNADIFFSIDEAREARATIO</code>.</p>
+<p>
+<a id="pgfId-1036568"></a>The router calculates the PAR as follows:</p>
+
+<p>
+<a id="pgfId-1036581"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="68" src="images/PAE-36.gif" /></div>
+
+<p>
+<a id="pgfId-1036583"></a>According to the formula above, the area ratio check finds the PAR for node <code>N</code><code><sub><em>i,j</em></sub></code> with respect to gate <code>G</code><code><sub><em>k</em></sub></code> by dividing the side area of the node by the area of the gates that are electrically connected to <code>N</code><code><sub><em>i,j</em></sub></code>. The final PAR is multiplied by the <code>ANTENNASIDEAREAFACTOR</code> (the default value for the factor is <code>1</code>) and compared to the <code>ANTENNASIDEAREARATIO</code> or <code>ANTENNADIFFSIDEAREARATIO</code>. If the PAR is greater than the <code>ANTENNASIDEAREARATIO</code> or <code>ANTENNADIFFSIDEAREARATIO</code> specified in the LEF file, the router finds a process antenna violation and attempts to fix it.</p>
+<p>
+<a id="pgfId-1036584"></a>The link between <code>PAR(N</code><code><sub><em>i,j</em></sub></code><code>,G</code><code><sub><em>k</em></sub></code><code>)</code> and a PAE violation at node <code>N</code><code><sub><em>i,j</em></sub></code> depends on whether node <code>N</code><code><sub><em>i,j</em></sub></code> is connected to a piece of diffusion, as follows:</p>
+<ul><li>
+<a id="pgfId-1036585"></a>If there is no connection to the diffusion area through the current and lower layers, a violation occurs when the PAR is greater than the <code>ANTENNASIDEAREARATIO</code>.</li><li>
+<a id="pgfId-1036586"></a>If there is a connection to the diffusion area through current and lower layers, a violation occurs when the PAR is greater than the <code>ANTENNADIFFSIDEAREARATIO</code>.</li><li>
+<a id="pgfId-1038763"></a>If there is a connection to the diffusion area through current and lower layers, and <code>ANTENNADIFFAREA</code> is not specified for an output or inout pin, the value is <code>0</code>. </li></ul>
+
+
+
+<h3>
+<a id="pgfId-1036590"></a><a id="19491"></a>Cumulative Area Ratio Check</h3>
+
+<p>
+<a id="pgfId-1036591"></a>The cumulative area ratio check compares the CAR to the value of <code>ANTENNACUMAREARATIO</code> or <code>ANTENNACUMDIFFAREARATIO</code>. The CAR is equal to the sum of the PARs of all nodes on the same or lower layers that are electrically connected to the gate.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1036592"></a>When you use CARs, you can ignore metal layers by not specifying the CAR keywords for those layers. For example, if you want to check <em>metal1</em> using a PAR and the remaining metal layers using a CAR, you can define <code>ANTENNAAREARATIO</code> or <code>ANTENNASIDEAREARATIO</code> for <em>metal1</em>, and <code>ANTENNACUMAREARATIO</code> or <code>ANTENNACUMSIDEAREARATIO</code> for the remaining metal layers.</div>
+<p>
+<a id="pgfId-1036593"></a>The cumulative area ratio check finds the CAR for node <code>N</code><code><sub><em>i,j</em></sub></code> with respect to gate <code>G</code><code><sub><em>k</em></sub></code> by adding the PARs for all layers of metal, from the current layer down to <em>metal1</em>, for all nodes that are electrically connected <code>G</code><code><sub>k</sub></code>. The final CAR is multiplied by the <code>ANTENNAAREAFACTOR</code> (the default value for the factor is <code>1</code>) and compared to the <code>ANTENNACUMAREARATIO</code> or <code>ANTENNACUMDIFFAREARATIO</code>. If the CAR is greater than the <code>ANTENNACUMAREARATIO</code> or <code>ANTENNACUMDIFFAREARATIO</code> specified in the LEF file, the router finds a process antenna violation and attempts to fix it.</p>
+<p>
+<a id="pgfId-1036594"></a>The link between <code>CAR(N</code><code><sub><em>i,j</em></sub></code><code>,G</code><code><sub><em>k</em></sub></code><code>)</code> and a PAE violation at node <code>N</code><code><sub><em>i,j</em></sub></code> depends on whether node <code>N</code><code><sub><em>i,j</em></sub></code> is connected to a piece of diffusion, as follows:</p>
+<ul><li>
+<a id="pgfId-1036595"></a>If there is no connection to a diffusion area through the current and lower layers, a violation occurs when the CAR is greater than the <code>ANTENNACUMAREARATIO</code>.</li><li>
+<a id="pgfId-1036596"></a>If there is a connection to a diffusion area through current and lower layers, a violation occurs when the CAR is greater than the <code>ANTENNACUMDIFFAREARATIO</code>.</li><li>
+<a id="pgfId-1038771"></a>If there is a connection to a diffusion area through current and lower layers, and <code>ANTENNADIFFAREA</code> is not specified for an output or inout pin, the value is <code>0</code>. </li></ul>
+
+
+
+<h3>
+<a id="pgfId-1036600"></a><a id="42249"></a>Cumulative Side Area Ratio Check</h3>
+
+<p>
+<a id="pgfId-1036601"></a>The cumulative side area ratio check compares the CAR to the value of the <code>ANTENNACUMSIDEAREARATIO</code> or <code>ANTENNACUMDIFFAREARATIO</code>.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1036602"></a>When you use CARs, you can ignore metal layers by not specifying the CAR keywords for those layers. For example, if you want to check <em>metal1</em> using a PAR and the remaining metal layers using a CAR, you can define <code>ANTENNAAREARATIO</code> or <code>ANTENNASIDEAREARATIO</code> for <em>metal1</em>, and <code>ANTENNACUMAREARATIO</code> or <code>ANTENNACUMSIDEAREARATIO</code> for the remaining metal layers.</div>
+<p>
+<a id="pgfId-1036604"></a>The cumulative side area ratio check finds the CAR for node <code>N</code><code><sub><em>i,j</em></sub></code> with respect to gate <code>G</code><code><sub><em>k</em></sub></code> by adding the PARs for all layers of metal, from the current layer down to <em>metal1</em>, for all nodes that are electrically connected <code>G</code><code><sub>k</sub></code>. The final CAR is multiplied by the <code>ANTENNASIDEAREAFACTOR</code> (the default value for the factor is <code>1</code>) and compared to the <code>ANTENNACUMSIDEAREARATIO</code> or <code>ANTENNACUMDIFFAREARATIO</code>. If the CAR is greater than the <code>ANTENNACUMSIDEAREARATIO</code> or <code>ANTENNACUMDIFFAREARATIO</code> specified in the LEF file, the router finds a process antenna violation and attempts to fix it.</p>
+<ul><li>
+<a id="pgfId-1036605"></a>If there is no connection to a diffusion area through the current and lower layers, a violation occurs when the CAR is greater than the <code>ANTENNACUMSIDEAREARATIO</code>.</li><li>
+<a id="pgfId-1036606"></a>If there is a connection to a diffusion area through current and lower layers, a violation occurs when the CAR is greater than the <code>ANTENNACUMSIDEAREARATIO</code>.</li><li>
+<a id="pgfId-1038777"></a>If there is a connection to a diffusion area through current and lower layers, and <code>ANTENNACUMDIFFAREA</code> is not specified for an output or inout pin, the value is <code>0</code>. </li></ul>
+
+
+
+<h3>
+<a id="pgfId-1040341"></a>Cut L<a id="CutProcessAntennaModelExamples"></a>ayer Process Antenna Model Examples</h3>
+
+<ul><li>
+<a id="pgfId-1040344"></a><strong>Example 1</strong> <br />
+<a id="pgfId-1040345"></a>To create the following process antenna rule for a cut layer <em>via1</em>:<br /><span class="indent-as-level2">
+<a id="pgfId-1040346"></a><t-times>
+cut_area / (gate_area + 2.0 x diff_area) &lt;= 10</t-times>
+ </span><br />
+<a id="pgfId-1040347"></a>Cut layers should include the following information:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1040348">
+<a id="pgfId-1040348"></a>ANTENNAGATEPLUSDIFF 2.0 ;</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1040349">
+<a id="pgfId-1040349"></a>ANTENNADIFFAREARATIO 10 ;</pre></span></li><li>
+<a id="pgfId-1040350"></a><strong>Example 2</strong> <br />
+<a id="pgfId-1040351"></a>Assume the following process antenna rule:<br /><span class="indent-as-level2">
+<a id="pgfId-1040352"></a><t-times>
+cut_area x PWL(diff_area) / gate_area &lt;= 10</t-times>
+ </span><br />
+<a id="pgfId-1040353"></a>This rule uses a cumulative model with diffusion area reduction function, where: <ul><li>
+<a id="pgfId-1040354"></a><t-times>
+PAR = (cut_area x diffReduceFactor) / gate_area &lt;= 10</t-times>
+ </li><li>
+<a id="pgfId-1040355"></a><t-times>
+diffReduceFactor</t-times>
+ = 1.0 for diff_area &lt; 0.1μm<sup>2</sup> </li><li>
+<a id="pgfId-1040356"></a><t-times>
+diffReduceFactor</t-times>
+ = 0.2 for diff_area &gt;= 0.1 μm<sup>2</sup> </li></ul><br />
+<a id="pgfId-1040357"></a>Cut layers should include the following information:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1040358">
+<a id="pgfId-1040358"></a>ANTENNAAREADIFFREDUCEPWL ( ( 0.0 1.0 ) ( 0.0999 1.0 ) ( 0.1 0.2 ) </pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1040359">
+<a id="pgfId-1040359"></a>    ( 1000.0 0.2 ) ) ;</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1040360">
+<a id="pgfId-1040360"></a>ANTENNACUMDIFFAREARATIO 10 ;</pre></span></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1040342"></a>For examples of models that use the <code>ANTENNACUMROUTINGPLUSCUT</code> and the <code>ANTENNAAREAMINUSDIFF</code> rules, see the examples below in &#8220;Routing Layer Process Antenna Models.&#8221; </p>
+
+<h3>
+<a id="pgfId-1040085"></a><strong></strong><a id="84083"></a>Routing Layer Process Antenna Model Examples<a id="RoutingProcessAntennaModelExamples"></a></h3>
+
+<p>
+<a id="pgfId-1040091"></a>The following process antenna rule examples use the topology shown in <a href="PAE.html#41645">Figure&#160;B-20</a>. In this figure, there are two polysilicon gates (G1, G2), one diffusion connection (D1), contacts (C), and via (<em>V1</em>, <em>V2</em>) and metal (<em>M1</em>, <em>M2</em>, <em>M3</em>) shapes. Note that <em>M1,2</em> is one LEF <code>PIN</code>, and <em>M1,3</em> is a different LEF <code>PIN</code>. The other metal is routing. </p>
+
+<p><strong>Figure B-20
+<a id="pgfId-1040170"></a><a id="41645"></a></strong></p>
+<div class="webflare-div-image">
+<img width="668" height="213" src="images/PAE-37.gif" /></div>
+
+<p>
+<a id="pgfId-1040196"></a>The following area values are also used for the examples:</p>
+<table class="webflareTable" id="#id1040171">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040173"></a>G1 = 1.0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040175"></a>D1 = 0.5</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040177"></a>M2,1 = 4.0</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040179"></a>G2 = 2.0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040181"></a>M1,1 = 1.0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040183"></a>M2,2 = 5.0</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040185"></a>All Cs = 0.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040187"></a>M1,2 = 2.0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040189"></a>M3,1 = 6.0</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040191"></a>All Vs = 0.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040193"></a>M1,3 = 3.0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040195"></a>M3,2 = 9.0</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1040197"></a><strong>Example 1</strong></p>
+<p>
+<a id="pgfId-1040198"></a>The following process antenna rule combines cut area and metal area into one cumulative rule:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1040199"></a><t-times>
+ratio = (metal _area + 10 x cut_area) / gate_area</t-times>
+ </p>
+<ul><li>
+<a id="pgfId-1040200"></a>The cumulative ratio &lt;= 1000 for diffusion &lt; 0.1, and &lt;= 4000 for diffusion &gt;= 0.1</li><li>
+<a id="pgfId-1040201"></a>The single layer ratio &lt;= 500 for diffusion &lt; 0.1, and &lt;= 1500 for diffusion &gt;= 0.1</li></ul>
+
+<p>
+<a id="pgfId-1040202"></a>Every routing layer should include the following information:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040203"></a>ANTENNACUMROUTINGPLUSCUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040204"></a>ANTENNACUMDIFFAREARATIO ( ( 0.0 1000 ) ( 0.0999 1000 ) ( 0.1 4000 ) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1040205"></a>( 1000.0 4000 ) ) ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040206"></a>ANTENNADIFFAREARATIO ( ( 0.0 5000 ) ( 0.0999 500 ) ( 0.1 1500 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1040207"></a>( 1000.0 1500 ) ) ;</pre>
+
+<p>
+<a id="pgfId-1040208"></a>Every cut layer should include the following information:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040209"></a>ANTENNAAREAFACTOR 10 ; #10.0 x cut area</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040210"></a>ANTENNACUMROUTINGPLUSCUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040211"></a>ANTENNACUMDIFFAREARATIO ( ( 0.0 1000 ) ( 0.0999 1000 ) ( 0.1 4000 ) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1040212"></a>( 1000.0 4000 ) ) ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040213"></a>ANTENNADIFFAREARATIO ( ( 0.0 5000 ) ( 0.0999 500 ) ( 0.1 1500 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1040214"></a>( 1000.0 1500 ) ) ;</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040215"></a><code>ANTENNAAREARATIO</code> and <code>ANTENNACUMAREARATIO</code> are not required because the <code>*DIFFAREARATIO</code> statements are checked, even if diff_area is equal to 0. </div>
+<p>
+<a id="pgfId-1040216"></a>For gate <code>G1</code>, the PARs and CARs are computed as follows:</p>
+<ol><li>
+<a id="pgfId-1040217"></a><t-times>
+CAR(C,G1) = 10 x area(C1) / area(G1) = 10 x 0.1 / 1.0 = 1.0</t-times>
+ <br />
+<a id="pgfId-1040218"></a>The polysilicon and contact cut layer and shapes are not normally visible in LEF and DEF. If the contact cut area should be included, its CAR value should be included with LEF <code>PIN A</code>, using appropriate <code>ANTENNA</code> statements. The <em>M1</em> <code>PIN</code> area should not be included because <em>M1</em> area is a <code>PIN</code> shape in the LEF and will be added in by tools reading LEF. Therefore, there should be two antenna statements for LEF <code>PIN A</code>, either:<pre class="webflare-pre-block webflare-courier-new" id="#id1040219">
+<a id="pgfId-1040219"></a>ANTENNAGATEAREA 1.0 LAYER M1 ;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1040220">
+<a id="pgfId-1040220"></a>ANTENNAMAXCUTCAR 1.0 LAYER C ;</pre>
+<a id="pgfId-1040221"></a>or:<pre class="webflare-pre-block webflare-courier-new" id="#id1040222">
+<a id="pgfId-1040222"></a>ANTENNAGATEAREA 1.0 LAYER M1 ;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1040223">
+<a id="pgfId-1040223"></a>ANTENNAMAXAREACAR 1.0 LAYER M1 ;</pre>
+<a id="pgfId-1040224"></a>Because the <em>M1</em> <code>PIN</code> area is not included in the <code>MAXAREACAR</code> value, both of sets of statements give the same results. For more details, see <a href="PAE.html#CalculateHierDesign">&#8220;Calculations for Hierarchical Designs.&#8221;</a> <br />
+<a id="pgfId-1040226"></a>Similarly, the LEF <code>PIN B</code> should have values, such as either:<pre class="webflare-pre-block webflare-courier-new" id="#id1040227">
+<a id="pgfId-1040227"></a>ANTENNAGATEAREA 2.0 LAYER M1 ;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1040228">
+<a id="pgfId-1040228"></a>ANTENNADIFFAREA 0.5 LAYER M1 ;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1040229">
+<a id="pgfId-1040229"></a>ANTENNAMAXCUTCAR 1.0 LAYER C ; #only C2 affects G2; C3 does not</pre>
+<a id="pgfId-1040230"></a>or: <pre class="webflare-pre-block webflare-courier-new" id="#id1040231">
+<a id="pgfId-1040231"></a>ANTENNAGATEAREA 2.0 LAYER M1 ;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1040232">
+<a id="pgfId-1040232"></a>ANTENNADIFFAREA 0.5 LAYER M1 ;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1040233">
+<a id="pgfId-1040233"></a>ANTENNAMAXAREACAR 1.0 LAYER M1 ; #only C2 affects G2; C3 does not</pre></li><li>
+<a id="pgfId-1040234"></a><t-times>
+PAR(M1,G1) = area(M1,2) / area(G1) = 2 / 1 = 2.0</t-times>
+ </li><li>
+<a id="pgfId-1040235"></a><t-times>
+CAR(M1,G1) = PAR(M1,G1) + PIN A&#8217;s CAR(C,G1) 
+PIN A&#8217;s CAR(C,G1) = ANTENNAMAXCUTCAR for LAYER C = 1.0 
+= 2.0 + 1.0 = 3.0</t-times>
+</li><li>
+<a id="pgfId-1040236"></a><t-times>
+diode_area = 0, single-layer PWL(0) = 500,</t-times>
+ check <t-times>
+PAR(M1,G1) = 2.0 &lt;= 500,
+cum-layer PWL(0) = 1000,</t-times>
+ therefore check <t-times>
+CAR(M1,G1) = 3.0 &lt;= 1000 </t-times>
+</li><li>
+<a id="pgfId-1040237"></a><t-times>
+PAR(V1,G1) = 10 x area(V1,2 + V1,3) / area(G1) = 10 x 0.2 / (1) = 2.0</t-times>
+ </li><li>
+<a id="pgfId-1040238"></a><t-times>
+CAR(V1,G1) = PAR(V1,G1) + CAR(M1,G1) = 2.0 + 3.0 = 5.0</t-times>
+ </li><li>
+<a id="pgfId-1040239"></a><t-times>
+diode_area = 0, single-layer PWL(0) = 500,</t-times>
+ check <t-times>
+PAR(V1,G1) = 2.0 &lt;= 500,
+cum_layer PWL(0) = 1000,</t-times>
+ therefore check <t-times>
+CAR(V1,G1) = 5.0 &lt;= 1000</t-times>
+ </li><li>
+<a id="pgfId-1040240"></a><t-times>
+PAR(M2,G1) = area(M2,1 + M2,2) / area(G1 + G2) = (4+5) / (1 + 2) = 3.0</t-times>
+ </li><li>
+<a id="pgfId-1040241"></a><t-times>
+CAR(M2,G1) = PAR(M2,G1) + CAR(V1,G1) = 3.0 + 5.0 = 8.0</t-times>
+ </li><li>
+<a id="pgfId-1040242"></a><t-times>
+diode_area = 0.5, single-layer PWL(0.5) = 1500,</t-times>
+ check <t-times>
+PAR(M2,G1) = 3.0 &lt;= 1500,
+cum_layer PWL(0.5) = 4000,</t-times>
+ therefore check <t-times>
+CAR(M2, G1) = 8.0 &lt;= 4000</t-times>
+</li><li>
+<a id="pgfId-1040243"></a><t-times>
+PAR(V2,G1) = 10 x area(V2,1 + V2,2) / area(G1 + G2) = 10 x 0.2 / (1 + 2) = 0.67</t-times>
+ </li><li>
+<a id="pgfId-1040244"></a><t-times>
+CAR(V2,G1) = PAR(V2,G1) + CAR(M2,G1) = 0.67 + 8.0 = 8.67</t-times>
+ </li><li>
+<a id="pgfId-1040245"></a><t-times>
+diode_area = 0.5, single-layer PWL(0.5) = 1500,</t-times>
+ check <t-times>
+PAR(V2,G1) = 0.67 &lt;= 1500, 
+cum_layer PWL(0.5) = 4000,</t-times>
+ therefore check <t-times>
+CAR(V2, G1) = 8.67 &lt;= 4000</t-times>
+</li><li>
+<a id="pgfId-1040246"></a><t-times>
+PAR(M3,G1) = area(M3,1 + M3,2) / area(G1 + G2) = (6 + 9) / (1 + 2) = 5</t-times>
+ </li><li>
+<a id="pgfId-1040247"></a><t-times>
+CAR(M3,G1) = PAR(M3,G1) + CAR(V2,G1) = 5 + 8.67 = 12.34</t-times>
+ </li><li>
+<a id="pgfId-1040248"></a><t-times>
+diode_area = 0.5, single-layer PWL(0.5) = 1500,</t-times>
+ check <t-times>
+PAR(M3,G1) = 5 &lt;= 1500,
+cum_layer PWL(0.5) = 4000,</t-times>
+ therefore check <t-times>
+CAR(M3,G1) = 13.67 &lt;= 4000</t-times>
+ </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1040249"></a><strong>Example 2</strong> </p>
+<p>
+<a id="pgfId-1040250"></a>The following cumulative rule is the same as the rule in Example 1, except it also subtracts the diff_area factor. Only the cumulative model is used.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1040251"></a><t-times>
+ratio = [(metal_area + 10 x cut_area) - (100 x diff_area)] / gate_area</t-times>
+ </p>
+<p>
+<a id="pgfId-1040252"></a>Every routing layer should include the following information:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040253"></a>ANTENNACUMROUTINGPLUSCUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040254"></a>ANTENNAAREAMINUDIFF 100.0 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040255"></a>ANTENNACUMDIFFAREARATIO 1000 ;</pre>
+
+<p>
+<a id="pgfId-1040256"></a>Every cut layer should include the following information:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040257"></a>ANTENNAAREAFACTOR 10 ;&#160;&#160;#10.0 x cut area</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040258"></a>ANTENNACUMROUTINGPLUSCUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040259"></a>ANTENNAAREAMINUDIFF 100.0 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040260"></a>ANTENNACUMDIFFAREARATIO 1000 ;</pre>
+
+<p>
+<a id="pgfId-1040261"></a>For gate <code>G1</code>, the PARs and CARs are computed as follows:</p>
+<ol><li>
+<a id="pgfId-1040262"></a><t-times>
+CAR(C,G1) = 10 x area(C1) / area(G1) = 10 x 0.1 / 1.0 = 2.0</t-times>
+ <br />
+<a id="pgfId-1040263"></a>This value is on the LEF <code>PIN</code>, as mentioned in Example 1.</li><li>
+<a id="pgfId-1040264"></a><t-times>
+PAR(M1,G1) = area(M1,2) / area(G1) - (100 x diff_area) = (2 / 1) - (100 x 0) = 2.0</t-times>
+ </li><li>
+<a id="pgfId-1040265"></a><t-times>
+CAR(M1,G1) = PAR(M1,G1) + PIN A&#8217;s CAR(C,G1)</t-times>
+ 
+<t-times>
+PIN A&#8217;s CAR(M1) = ANTENNAMAXAREACAR for LAYER M1 = 1.0</t-times>
+ 
+ <t-times>
+= 2.0 + 1.0 = 3.0</t-times>
+ </li><li>
+<a id="pgfId-1040266"></a>Check <t-times>
+CAR(M1,G1) = 3.0 &lt;= 1000</t-times>
+</li><li>
+<a id="pgfId-1040267"></a><t-times>
+PAR(V1,G1) = [10 x area(V1,2 + V1,3) - (100 x diff_area)] / area(G1)</t-times>
+ 
+<t-times>
+= [(10 x .2) - (100 x 0)] / (1) = 2.0</t-times>
+ </li><li>
+<a id="pgfId-1040268"></a><t-times>
+CAR(V1,G1) = PAR(V1,G1) + CAR(M1,G1) = 2.0 + 3.0 = 5.0 </t-times>
+</li><li>
+<a id="pgfId-1040269"></a>Check <t-times>
+CAR(V1,G1) = 5.0 &lt;= 1000 </t-times>
+</li><li>
+<a id="pgfId-1040270"></a><t-times>
+PAR(M2,G1) = [area(M2,1 + M2,2) - (100 x area(D1))] / area(G1 + G2)</t-times>
+ 
+ <t-times>
+= [(4 + 5) - (100 x 0.5) / (1 + 2) = -13.67</t-times>
+ </li><li>
+<a id="pgfId-1040271"></a><t-times>
+CAR(M2,G1) = PAR(M2,G1) + CAR(V1,G1) = -13.67 + 5.0 = -8.67</t-times>
+, truncate to 0</li><li>
+<a id="pgfId-1040272"></a>Check <t-times>
+CAR(M2,G1) = 0 &lt;= 1000 </t-times>
+</li><li>
+<a id="pgfId-1040273"></a><t-times>
+PAR(V2,G1) = [(10 x area(V2,1 + V2,2)) - (100 x area(D1)] / area(G1 + G2)</t-times>
+ 
+<t-times>
+= [(10 x 0.2) - (100 x 0.5)] / (1 + 2) = -16.0</t-times>
+ </li><li>
+<a id="pgfId-1040274"></a><t-times>
+CAR(V2,G1) = PAR(V2,G1) + CAR(M2,G1) = -16.0 + 0 = -16.0</t-times>
+, truncate to 0 </li><li>
+<a id="pgfId-1040275"></a>Check <t-times>
+CAR(V2,G1) = 0 &lt;= 1000 </t-times>
+</li><li>
+<a id="pgfId-1040276"></a><t-times>
+PAR(M3,G1) = [area(M3,1 + M3,2) - (100 x area(D1))] / area(G1 + G2)</t-times>
+ 
+<t-times>
+= [(6 + 9) - (100 x 0.5)] / (1 + 2) = -11.67</t-times>
+ </li><li>
+<a id="pgfId-1040277"></a> <t-times>
+CAR(M3,G1) = PAR(M3,G1) + CAR(V2,G1) = -11.67 + 0 = -11.67</t-times>
+, truncate to 0 </li><li>
+<a id="pgfId-1040278"></a>Check <t-times>
+CAR(M3,G1) = 0 &lt;= 1000</t-times>
+ </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1040279"></a><strong>Example 3</strong> </p>
+<p>
+<a id="pgfId-1040280"></a>The following cumulative rule for metal layers includes a diffusion area factor added into the denominator of the ratio:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1040281"></a>Single layer: <t-times>
+metal_area / (gate_area + 2.0 x diff_area) &lt;= 1000</t-times>
+ </p>
+<p class="webflare-indent1">
+<a id="pgfId-1040282"></a>Cumulative for the layer: <t-times>
+metal_area / (gate_area + 2.0 x diff_area) &lt;= 5000</t-times>
+ </p>
+<p>
+<a id="pgfId-1040283"></a>Every metal layer should include the following information:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040284"></a>ANTENNAPLUSGATEDIFF 2.0 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040285"></a>ANTENNADIFFAREARATIO 1000 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040286"></a>ANTENNACUMDIFFAREARATIO 5000 ;</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040287"></a>The via area is ignored in this example. If an independent via model is needed, similar statements should be added to the via layers, which would be computed separately.</div>
+<p>
+<a id="pgfId-1040288"></a>For gate <code>G1</code>, the PARs and CARs are computed as follows:</p>
+<ol><li>
+<a id="pgfId-1040289"></a><t-times>
+PAR(M1,G1) = area(M1,2) / area(G1) = 2.0 / 1 = 2</t-times>
+ </li><li>
+<a id="pgfId-1040290"></a><t-times>
+CAR(M1,G1) = PAR(M1,G1) = 2</t-times>
+ </li><li>
+<a id="pgfId-1040291"></a>Check <t-times>
+PAR(M1,G1) = 2 &lt;= 1000,
+</t-times>
+check <t-times>
+CAR(M1,G1) = 2 &lt;= 5000</t-times>
+ </li><li>
+<a id="pgfId-1040292"></a><t-times>
+PAR(M2,G1) = area(M2,1 + M2,2) / [area(G1 + G2) + 2 x area(D1)] 
+= (4 + 5) / [(1 + 2) + 2 x 0.5] = 2.25</t-times>
+ </li><li>
+<a id="pgfId-1040293"></a><t-times>
+CAR(M2,G1) = CAR(M1,G1) + PAR(M2,G1) = 2 + 2.25 = 4.25</t-times>
+ </li><li>
+<a id="pgfId-1040294"></a>Check <t-times>
+PAR(M1,G1) = 2.25 &lt;= 1000, 
+</t-times>
+check<t-times>
+ CAR(M1,G1) = 4.25 &lt;= 5000</t-times>
+ </li><li>
+<a id="pgfId-1040295"></a><t-times>
+PAR(M3,G1) = area(M3,1 + M3,2) / [area(G1 + G2) + 2 x area(D1)] 
+ = (6 + 9) / [(1 + 2) + 2 x 0.5] = 3.75 </t-times>
+</li><li>
+<a id="pgfId-1040296"></a><t-times>
+CAR(M3,G1) = PAR(M3,G1) + CAR(M2,G1) = 3.75 + 4.25 = 8.0</t-times>
+ </li><li>
+<a id="pgfId-1040297"></a>Check <t-times>
+PAR(M1,G1) = 3.75 &lt;= 1000, 
+</t-times>
+check <t-times>
+CAR(M1,G1) = 8.0 &lt;= 5000</t-times>
+ </li></ol>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1040299"></a><strong>Example 4</strong><a id="32550"></a> </p>
+<p>
+<a id="pgfId-1040300"></a>Assume a cumulative rule that includes a diffusion area reduction value and a routing ratio of 1000. The reduction value is 1.0 if the diff_area is less than 0.1, 0.2 if the diff_area equals 0.1, and decreases linearly to 0.1 if the diff_area equals 1.0. The reduction value remains 0.1 if the diff_area is greater than 1.0. </p>
+<p>
+<a id="pgfId-1040301"></a>Every metal layer should include the following information:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040302"></a>ANTENNAAREADIFFREDUCEPWL ( ( 0.0 1.0 ) ( 0.0999 1.0 ) ( 0.1 0.2 )( 1.0 0.1 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1040303"></a>( 1000.0 0.1 ) ) ;&quot; ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040304"></a>ANTENNACUMDIFFAREARATIO 1000 ;</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040305"></a>The via area is ignored in this example. If an independent via model is needed, similar statements should be added to the via layers, which would be computed separately.</div>
+<p>
+<a id="pgfId-1040306"></a>For gate <code>G1</code>, the PARs and CARs are computed as follows:</p>
+<ol><li>
+<a id="pgfId-1040307"></a>Initial<t-times>
+ PAR(M1,G1) = area(M1,2) / area(G1) = 2.0 / 1 = 2</t-times>
+ </li><li>
+<a id="pgfId-1040308"></a><t-times>
+diode_area = 0, PWL(0) = 1.0,</t-times>
+ therefore initial<t-times>
+ PAR(M1,G1) </t-times>
+is multiplied by 1.0<t-times />
+to give <t-times>
+PAR(M1,G1) = 2 x 1 = 2</t-times>
+ </li><li>
+<a id="pgfId-1040309"></a><t-times>
+CAR(M1,G1) = PAR(M1,G1) = 2</t-times>
+ </li><li>
+<a id="pgfId-1040310"></a>Check <t-times>
+CAR(M1,G1) &lt;= 1000</t-times>
+, therefore check <t-times>
+2 &lt;= 1000</t-times>
+ </li><li>
+<a id="pgfId-1040311"></a>Initial <t-times>
+PAR(M2,G1) = area(M2,1 + M2,2) / area(G1 + G2) = (4 + 5) / (1 + 2) = 3</t-times>
+ </li><li>
+<a id="pgfId-1040312"></a><t-times>
+diode_area = 0.5, PWL(0.5) = 0.155,</t-times>
+ therefore initial <t-times>
+PAR(M2,G1)</t-times>
+ is multiplied by 1.0 
+to give <t-times>
+PAR(M2,G1) = 3 x 0.155 = 0.465</t-times>
+ </li><li>
+<a id="pgfId-1040313"></a><t-times>
+CAR(M2,G1) = CAR(M1,G1) + PAR(M2,G1) = 2 + 0.465 = 2.465</t-times>
+ </li><li>
+<a id="pgfId-1040314"></a>Check <t-times>
+CAR(M2,G1) &lt;= 1000</t-times>
+, therefore check <t-times>
+2.465 &lt;= 1000</t-times>
+ </li><li>
+<a id="pgfId-1040315"></a>Initial <t-times>
+PAR(M3,G1) = area(M3,1 + M3,2) / area(G1 + G2) = (6 + 9) / (1 + 2) = 5</t-times>
+ </li><li>
+<a id="pgfId-1040316"></a><t-times>
+diode_area = 0.5, PWL(0.5) = 0.155, therefore initial PAR(M3,G1) is multiplied by 0.155
+ to give PAR(M3,G1) = 5 x 0.1555 = 0.775</t-times>
+ </li><li>
+<a id="pgfId-1040317"></a><t-times>
+CAR(M3,G1) = PAR(M3,G1) + CAR(M2,G1) = 0.775 + 2.465 = 3.24</t-times>
+ </li><li>
+<a id="pgfId-1040318"></a>Check <t-times>
+CAR(M3,G1) &lt;= 1000</t-times>
+, therefore check <t-times>
+3.24 &lt;= 1000</t-times>
+ </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1040081"></a></p>
+
+<h3>
+<a id="pgfId-1038786"></a>Example Using the Antenna Keywords</h3>
+
+<p>
+<a id="pgfId-1038787"></a>The following example is a portion of a LEF file that shows the antenna keywords for a process that has cumulative area ratio damage for metal and cut layers. </p>
+<p>
+<a id="pgfId-1038835"></a>Assume you have the following antenna rules for your process:</p>
+<ol><li>
+<a id="pgfId-1038788"></a>A maximum cumulative metal to gate area ratio of 1000</li><li>
+<a id="pgfId-1038789"></a>If a diode of greater than .1 microns is connected to the metal, the maximum metal ratio is: ratio = diode_area x 2000 + 5000</li><li>
+<a id="pgfId-1038790"></a>A maximum cumulative via to gate area ratio of 20</li><li>
+<a id="pgfId-1038791"></a>If a diode of greater than .1 microns is connected to the via, the maximum via ratio is: ratio = diode_area x 200 + 100</li></ol>
+
+
+
+<p>
+<a id="pgfId-1038792"></a>The corresponding LEF file would include:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038793"></a>LAYER M1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038794"></a>  TYPE ROUTING ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038795"></a>  ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038796"></a>  ANTENNACUMAREARATIO <code>1000</code> ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038797"></a>  ANTENNACUMDIFFAREARATIO </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038798"></a>       PWL ( ( 0 1000 ) ( 0.099 1000 ) ( 0.1 5200 ) ( 100 205000 ) ) ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038799"></a>END M1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038800"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038801"></a>LAYER VIA1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038802"></a>  TYPE CUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038803"></a>  ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038804"></a>  ANTENNACUMAREARATIO 20 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038805"></a>  ANTENNACUMDIFFAREARATIO </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038806"></a>       PWL ( ( 0 20 ) ( 0.099 20 ) ( 0.1 120 ) ( 100 20100 ) ) ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038807"></a>END VIA1</pre>
+
+<p>
+<a id="pgfId-1038808"></a>A typical standard cell that has only <em>M1</em> pins and routing inside of it would have:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038809"></a>MACRO INV1X</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038810"></a>  CLASS CORE ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038811"></a>  ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038812"></a>  PIN IN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038813"></a>    DIRECTION INPUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038814"></a>    ANTENNAGATEAREA .5 LAYER M1 ; # connects to 0.5 μm^2 poly gate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038815"></a>    ANTENNAPARTIALMETALAREA 1.0 LAYER M1 ; # has 1.0 μm^2 <em>M1</em> area. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038816"></a>           # Note that it should not include the <em>M1</em> pin area, just the <em>M1</em> routing</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038817"></a>           # area that is not included in the <code>PIN</code> shapes. In many cases, all of the</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1039470"></a>           # <em>M1</em> routing is included in the PIN, so this value is <code>0</code>, and not in the</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1039472"></a>           # LEF at all.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038818"></a>    ANTENNAMAXAREACAR 10.0 LAYER M1 ; # has 10.0 cumulative ratio so far.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038819"></a>           # This value can include area from internal poly routing if poly routing</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038820"></a>           # damage is accumulated with the metal layers. It does not include</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038821"></a>           # the area of the <em>M1</em> pin area, just the <em>M1</em> routing area that is not</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038822"></a>           # included in the PIN shapes. If poly damage is not included, and all</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1039473"></a>           # of the <em>M1</em> routing is included in the PIN, this value will be 0, and </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1039474"></a>           # not in the LEF at all.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038823"></a>    ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038824"></a>  END IN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038825"></a>  PIN OUT</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038826"></a>    DIRECTION OUTPUT ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038827"></a>    ANTENNADIFFAREA .2 LAYER M1 ; # connects to 0.2 μm^2 difusion area </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038828"></a>    ANTENNAPARTIALMETALAREA 1.0 LAYER M1 ; # has 1.0 μm^2 <em>M1</em> area</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038829"></a>    # No ANTENNAMAXAREACAR value because no internal poly gate is connected</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038830"></a>    ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038831"></a>  END OUT</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038832"></a>END INV1X</pre>
+<h2>
+<a id="pgfId-1036656"></a><a id="67180"></a>Using Antenna Diode Cells</h2>
+
+<p>
+<a id="pgfId-1038838"></a>Routers generally use one of two methods to fix process antenna violations:</p>
+<ul><li>
+<a id="pgfId-1036658"></a>Change the routing by breaking the metal layers into smaller pieces</li><li>
+<a id="pgfId-1036659"></a>Insert antenna diode cells to discharge the current</li></ul>
+
+
+<h3>
+<a id="pgfId-1036661"></a><a id="22723"></a>Changing the Routing</h3>
+
+<p>
+<a id="pgfId-1036662"></a>One method routers use to fix antenna violations is to limit the charge that is collected through the metal nodes exposed to the plasma. To do this, it goes up one layer or pushes the routing down one layer whenever the process antenna ratio exceeds the ratio set in the LEF file. </p>
+<p>
+<a id="pgfId-1036664"></a>The router changes the routing by disconnecting nets with antenna violations and making the connections to higher metal layers instead. It does not make the connections to lower layers. This method works because the top metal layer always completes the connection from the gate to the output drain area of the driver, which is a diode that provides a discharge path.</p>
+
+<h3>
+<a id="pgfId-1036670"></a><a id="12486"></a>Inserting Antenna Diode Cells</h3>
+
+<p>
+<a id="pgfId-1038847"></a>The second method routers use to repair antenna violations is to insert antenna diode cells in the design. The electrical charges on the metal that connects to the diodes is then discharged through the diode diffusion layer and substrate. The router inserts the diode cells automatically.</p>
+<p>
+<a id="pgfId-1038848"></a>The following example shows a LEF definition of an antenna diode cell, with the <code>CLASS</code> <code>CORE</code> <code>ANTENNACELL</code> and <code>ANTENNADIFFAREA</code> defined:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038849"></a>MACRO antenna1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038850"></a>    CLASS CORE ANTENNACELL ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038851"></a>    ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038852"></a>    PIN ANT1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038853"></a>        AntennaDiffArea 1.0 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038854"></a>        PORT</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038855"></a>        LAYER metal1 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038856"></a>        RECT  0.190 2.380 0.470 2.660 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038857"></a>        END</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038858"></a>    END ANT1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038859"></a>END antenna1</pre>
+<h2>
+<a id="pgfId-1036735"></a><a id="93564"></a>Using DiffUseOnly</h2>
+
+<p>
+<a id="pgfId-1036736"></a>LEF defines only one value for <code>ANTENNAAREAFACTOR</code> and one value for <code>ANTENNASIDEAREAFACTOR</code>, with or without <code>DIFFUSEONLY</code>, per layer. If you specify more than one antenna area or side area factor for a layer, only the last one is used. The <code>AREAFACTOR</code> value lets you scale the value of the metal area. If you use the <code>DIFFUSEONLY</code> keyword, only metal attached to diffusion is scaled. </p>
+<p>
+<a id="pgfId-1038964"></a>Suppose you have the following LEF file:</p>
+
+<p>
+<a id="pgfId-1038950"></a></p>
+<div class="webflare-div-image">
+<img width="669" height="279" src="images/PAE-38.gif" /></div>
+<p><strong>Figure B-21
+<a id="pgfId-1037592"></a><a id="68042"></a></strong></p>
+<p>
+<a id="pgfId-1036766"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="147" src="images/PAE-39.gif" /></div>
+
+<p>
+<a id="pgfId-1036767"></a>In the figure,</p>
+<ul><li>
+<a id="pgfId-1036768"></a>The input pin <code>H01</code> of <code>GATE_M2_M3</code> connects the metal wires to <em>metal1</em>, <em>metal2</em>, and <em>metal3</em> in sequence. </li><li>
+<a id="pgfId-1036770"></a>The <code>ANTENNAAREAFACTOR 1.2 DIFFUSEONLY</code> and <code>ANTENNASIDEAREAFACTOR 1.4</code> <code>DIFFUSEONLY</code> apply to <em>metal3</em> routing.</li><li>
+<a id="pgfId-1036771"></a>Prior to <em>metal3</em> fabrication, there is no path to the diffusion diode. This causes the default factor of <code>1.0</code> to apply to the <em>metal1</em> and <em>metal2</em> segments shown when calculating PARs. </li></ul>
+
+
+
+<h2>
+<a id="pgfId-1036921"></a><a id="21069"></a><a id="10961"></a>C<a id="CalculateHierDesign"></a>alculations for Hierarchical Designs</h2>
+
+<p>
+<a id="pgfId-1036922"></a>The following section illustrates computation of antenna ratios for hierarchical designs.</p>
+
+<h3>
+<a id="pgfId-1036923"></a>LEF and DEF Keywords for Hierarchical Designs</h3>
+<p>
+<a id="pgfId-1036948"></a></p>
+<table class="webflareTable" id="#id1036924">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1036926">
+<a id="pgfId-1036926"></a>If the keyword
+ends with ...</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1036928">
+<a id="pgfId-1036928"></a>It refers to ...</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1036930">
+<a id="pgfId-1036930"></a>Examples</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1036932"></a><code>area<br />sideArea</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1036936"></a>Drawn area or side area of the metal wires. Measured in square microns. </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1036939"></a><code>ANTENNAPARTIALCUTAREA<br />ANTENNAPARTIALMETALAREA<br />ANTENNAPARTIALMETALSIDEAREA<br />ANTENNAPINDIFFAREA<br />ANTENNAPINGATEAREA<br />ANTENNAPINPARTIALCUTAREA</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1036941"></a><code>CAR</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1036943"></a>Relationship the router is calculating</p>
+<p>
+<a id="pgfId-1036945"></a><code>CAR</code> is used in keywords for cumulative antenna ratio.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1036947"></a><code>ANTENNAMAXAREACAR<br />ANTENNAMAXCUTCAR<br />ANTENNAMAXSIDEAREACAR<br />ANTENNAPINMAXAREACAR<br />ANTENNAPINMAXCUTCAR<br />ANTENNAPINMAXSIDEAREACAR</code></p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1036950"></a>Design Example</h3>
+
+<p>
+<a id="pgfId-1036951"></a><a href="PAE.html#73458">Figure&#160;B-22</a> represents a macro block. This block can be a custom hard block or part of a bottom-up hierarchical flow. The resulting PAE values will be the same in either case. In the example,</p>
+<ul><li>
+<a id="pgfId-1036952"></a>Gates <code>G</code><code><sub>1</sub></code>, <code>G</code><code><sub>2</sub></code>, <code>G</code><code><sub>3</sub></code>, and <code>G</code><code><sub>4</sub></code> are the same size.</li><li>
+<a id="pgfId-1036953"></a>Node <code>N</code><code><sub>1,3</sub></code> is larger than node <code>N</code><code><sub>1,2</sub></code>.</li><li>
+<a id="pgfId-1036954"></a>Vias (cuts) are all the same size.</li><li>
+<a id="pgfId-1036955"></a>The I/O pin is on <em>metal3</em>.</li><li>
+<a id="pgfId-1036956"></a>The area of diffusion for <code>D1</code> is <span class="webflare-courier-new" style="white-space:pre"><em>area</em></span><code>(Diff</code><code><sub>1</sub></code>).</li><li>
+<a id="pgfId-1036957"></a>The area of diffusion for <code>D2</code> is <span class="webflare-courier-new" style="white-space:pre"><em>area</em></span><code>(Diff</code><code><sub>2</sub></code>).</li><li>
+<a id="pgfId-1036958"></a>The area of the cut layer that connects node <code>N</code><code><sub>3,1</sub></code> and node <code>N</code><code><sub>4,2</sub></code> is <span class="webflare-courier-new" style="white-space:pre"><em>area</em></span><code>(N</code><code><sub>C34,1</sub></code><code>)</code>.</li><li>
+<a id="pgfId-1038976"></a>Any damage from the poly layer or poly-to-metal1 via is ignored.<br /><strong class="webflare-fig-line-height">Figure B-22
+<a id="pgfId-1038228"></a><a id="73458"></a></strong>
+<a id="pgfId-1037099"></a><div class="webflare-div-image">
+<img width="668" height="271" src="images/PAE-40.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1037100"></a>Relevant Metal Areas</em></h4>
+
+<ul><li>
+<a id="pgfId-1037102"></a>The relevant metal area for PAE calculations is the partial metal drawn area and side area connected directly to the I/O pin on the inside of the macro on the specified layer. </li><li>
+<a id="pgfId-1037103"></a>Only the same metal layer as the I/O pin or above is needed for PAR calculations in hierarchical designs.<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1037104"></a>
+Do not include the drawn area or side area of the I/O pin in the area calculations for the block, because the router includes these areas in the calculations for the upper level. Only the internal routing area that is not part of the I/O pin should be included.</div></li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1037105"></a>For the design in the figure above, you must specify values for the following metal areas in the LEF file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037106"></a>ANTENNAPARTIALMETALAREA <code><em>area</em></code>(N<code><sub>3,2</sub></code>) LAYER Metal3 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037107"></a>ANTENNAPARTIALMETALAREA <code><em>area</em></code>(N<code><sub>4,2</sub></code>) LAYER Metal4 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037108"></a>ANTENNAPARTIALMETALSIDEAREA <code><em>sideArea</em></code>(N<code><sub>3,2</sub></code>) LAYER Metal3 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037109"></a>ANTENNAPARTIALMETALSIDEAREA <code><em>sideArea</em></code>(N<code><sub>4,2</sub></code>) LAYER Metal4 ;</pre>
+
+<p>
+<a id="pgfId-1037110"></a>You do not need to specify an <code>ANTENNAPARTIALMETALAREA</code> or <code>ANTENNAPARTIALSIDEMETALAREA</code> for any layer lower than <em>metal3</em> because the I/O pin is on <em>metal3</em>; that is, there is no connection outside the block until <em>metal3</em> is processed.</p>
+
+<h4><em>
+<a id="pgfId-1037113"></a>Relevant Gate, Diffusion, and Cut Areas</em></h4>
+
+<ul><li>
+<a id="pgfId-1037115"></a>The relevant gate and diffusion areas are the gate and diffusion areas that connect directly to the I/O pin on the specified layer or are electrically connected to the pin through lower layers.</li><li>
+<a id="pgfId-1037117"></a>The relevant partial cut area is above the current pin layer and inside the macro on the specified layer.</li></ul>
+
+<p>
+<a id="pgfId-1037118"></a>For the design in the figure above, you must specify values for the following gate, diffusion, and cut areas in the LEF file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037119"></a>ANTENNAGATEAREA <code><em>area</em></code>(G<code><sub>2</sub></code> + G<code><sub>3</sub></code> + G<code><sub>4</sub></code>) LAYER Metal3 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037120"></a>ANTENNADIFFAREA <code><em>area</em></code>(Diff<code><sub>1</sub></code>) LAYER Metal3 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037121"></a>ANTENNADIFFAREA <code><em>area</em></code>(Diff<code><sub>1</sub></code> + Diff<code><sub>2</sub></code>) LAYER Metal4 ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037122"></a>ANTENNAPARTIALCUTAREA <code><em>area</em></code>(N<code><sub>34,2</sub></code>) LAYER <code>Via34</code> ;</pre>
+<h4><em>
+<a id="pgfId-1037123"></a>Calculating the CAR</em></h4>
+
+<p>
+<a id="pgfId-1037124"></a>Use the following keywords to calculate the actual CAR on the I/O pin layer or above. </p>
+<ul><li>
+<a id="pgfId-1037125"></a>The relevant maximum CAR value of the drawn and side areas are from the metal layer that is on or below the I/O pin layer.</li><li>
+<a id="pgfId-1037126"></a>The relevant maximum CAR value of the cut layer is from the cut layer that is immediately above the I/O pin layer.</li></ul>
+
+<p>
+<a id="pgfId-1039224"></a>For the example in <a href="PAE.html#73458">Figure&#160;B-22</a>, the keywords and calculations for <em>metal3</em> and <em>via34</em> would be:</p>
+
+<p>
+<a id="pgfId-1039447"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="198" src="images/PAE-41.gif" /></div>
+<h4><em>
+<a id="pgfId-1037132"></a>Sample <a id="26461"></a>LEF File for a Bottom-Up Hierarchical Design</em></h4>
+
+<p>
+<a id="pgfId-1038887"></a>For a macro block like that shown in <a href="PAE.html#73458">Figure&#160;B-22</a>, you should have the following pin information in your LEF file, ignoring <code>SIDEAREA</code> values:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038888"></a>PIN example</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038889"></a>    ANTENNAGATEAREA 0.3 LAYER METAL3 ; # area of G<sub>2</sub> + G<sub>3</sub> + G<sub>4</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038890"></a>    ANTENNADIFFAREA 1.0 LAYER METAL3 ; # area of D<sub>1</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038891"></a>    ANTENNAPARTIALMETALAREA 10.0 LAYER METAL3 ; # area of N<sub>3,2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038892"></a>    ANTENNAMAXAREACAR 100.0 LAYER METAL3 ; # max CAR of N<sub>3,2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038893"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038894"></a>    ANTENNAPARTIALCUTAREA 0.1 LAYER VIA34 ; # area of N<sub>34,2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038895"></a>    ANTENNAMAXCUTCAR 5.0 LAYER VIA34 ; # max cut CAR of N<sub>34,2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038896"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038897"></a>    ANTENNAGATEAREA 0.3 LAYER METAL4 ; # area of G<sub>2</sub> + G<sub>3</sub> + G<sub>4</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038898"></a>    ANTENNADIFFAREA 2.0 LAYER METAL4 ; # area of D<sub>1</sub> + D<sub>2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038899"></a>    ANTENNAPARTIALMETALAREA 12.0 LAYER METAL4 ; # area of N<sub>4,2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038900"></a>    ANTENNAMAXAREACAR 130.0 LAYER METAL4 ; # max CAR of N<sub>4,2</sub> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038901"></a>END example</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1034468"></a></pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Examples.html" id="prev" title="Examples">Examples</a></em></b><b><em><a href="lefdef6manIX.html" id="nex" title="Index">Index</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2022, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
