@@ -1,0 +1,106 @@
+
+<html><head><title>Customer Library Browser Integration</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="TopicTags" content="TRUE" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sumehta" />
+<meta name="CreateDate" content="2023-10-25" />
+<meta name="CreateTime" content="1698259428" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes SKILL functions that interface with Virtuoso Studio design environment applications" />
+<meta name="DocTitle" content="Virtuoso Studio Design Environment SKILL Reference" />
+<meta name="DocType" content="SKILL Reference" />
+<meta name="FileTitle" content="Customer Library Browser Integration" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="skdfref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-25" />
+<meta name="ModifiedTime" content="1698259428" />
+<meta name="NextFile" content="dm_re_CIW_Menu_Customization.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="dm_re_Library_Synchronization_Functions.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Studio Design Environment SKILL Reference -- Customer Library Browser Integration" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="api reference" />
+<meta name="prod_feature" content="Design Environment Infrastructure" />
+<meta name="prod_subfeature" content="SKILL API" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="skdfrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="skdfrefTOC.html">Contents</a></li><li><a class="prev" href="dm_re_Library_Synchronization_Functions.html" title="Library Synchronization Functions">Library Synchronization Functi ...</a></li><li style="float: right;"><a class="viewPrint" href="skdfref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="dm_re_CIW_Menu_Customization.html" title="CIW Menu Customization">CIW Menu Customization</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Studio Design Environment SKILL Reference<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a name="Filename:re_Customer_Library_Browser_Integration" title="Customer Library Browser Integration"></a><h3>
+<a name="pgfId-2255819"></a><a name="IntegratingYourOwnLibraryBrowser"></a>Customer Library Browser Integration</h3>
+
+<p>
+<a name="pgfId-2255820"></a>The function <em>ddserv</em> supports the integration of a custom Library Browser thus replacing the default Library Browser, <em>libSelect</em>. While integrating your own Library Browser in DFII, you must consider the following:</p>
+<ul><li>
+<a name="pgfId-2255821"></a><em>Invocation</em> - The default DFII Library Browser is a separate process from DFII. Therefore, DFII manages the execution of the default Library Browser as well as communicates with it. This process is simplified if your custom Library Browser resides within the DFII process, for example, as a form or a <em>dag </em>browser. Any initialization or invocation of the custom Library Browser should be made in the replacement functionality that would be registered for <code>ddsSyncWithForm</code>.</li><li>
+<a name="pgfId-2255822"></a><em>Replay</em> - As you execute commands, they are recorded to the DFII <code>.log</code> file. You can then turn around and use the log file to replay the session. Because of the asynchronous nature of external processes, <em>ddserv </em>cannot replay the synchronizations with the DFII Library Browser. The <em>ddsSync</em> functions will do nothing if the session is in replay. However, if your custom Library Browser resides within the DFII process, it can synchronized to work if the session is in replay.</li><li>
+<a name="pgfId-2255823"></a><em>Indirect Recursion </em>- Some forms synchronized to the Library Browser may have callbacks on the registered form fields. Some of these callbacks may call <code>ddsUpdateSyncWithForm</code> to ensure that the Library Browser selections match what you may have typed in. This could lead to the Library Browser updating the form fields with its current selections, the form field callbacks firing off, which would then try to synchronize the Library Browser with its values. You must take care in either the interface layer or the Library Browser itself to avoid having the form and the Library Browser continually trying to update each other.</li><li>
+<a name="pgfId-2255824"></a><em>Refresh </em>- The custom Library Browser should react to the creation and deletion of libraries, cells, and views. There are respective Design Data Procedural Interface (<em>ddpi</em>) triggers available from which you can perform the Library Browser update.</li></ul>
+
+
+
+<p>
+<a name="pgfId-2255825"></a>To plug in a different Library Browser, you need to implement and register to <em>ddserv</em> the replacement functionality for <code>ddsSyncWithForm</code>, <code>ddsUpdateSyncWithForm</code>, <code>ddsEndSyncWithForm</code>, and <code>ddsGetCurrentLib</code>. You do the following:</p>
+<ul><li>
+<a name="pgfId-2255826"></a>You register your routines that interface to your Library Browser with <em>ddserv</em>. </li><li>
+<a name="pgfId-2255827"></a>When a custom Library Browser is so registered, the four routines <code>ddsSyncWithForm</code>, <code>ddsUpdateSyncWithForm</code>, <code>ddsEndSyncWithForm</code>, and <code>ddsGetCurrentLib</code> will invoke the registered functionality rather than interfacing with the default DFII library browser. No application code has to make any changes as their existing calls to the <em>ddserv</em> routines will buffer them from what Library Browser is being used. </li><li>
+<a name="pgfId-2255828"></a>You may un-register your custom Library Browser at any time and register it again. This is for completeness and can assist in debugging (saves from having to exit the system if there are problems with the custom Library Browser integration).</li></ul>
+
+
+
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=CIW Menu Customization
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="dm_re_Library_Synchronization_Functions.html" id="prev" title="Library Synchronization Functions">Library Synchronization Functi ...</a></em></b><b><em><a href="dm_re_CIW_Menu_Customization.html" id="nex" title="CIW Menu Customization">CIW Menu Customization</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

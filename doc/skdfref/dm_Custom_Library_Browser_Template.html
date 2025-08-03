@@ -1,0 +1,233 @@
+
+<html><head><title>Custom Library Browser Template</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sumehta" />
+<meta name="CreateDate" content="2023-10-25" />
+<meta name="CreateTime" content="1698259430" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes SKILL functions that interface with Virtuoso Studio design environment applications" />
+<meta name="DocTitle" content="Virtuoso Studio Design Environment SKILL Reference" />
+<meta name="DocType" content="SKILL Reference" />
+<meta name="FileTitle" content="Custom Library Browser Template" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="skdfref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-25" />
+<meta name="ModifiedTime" content="1698259430" />
+<meta name="NextFile" content="dm_dmb_Compatibility_Functions_.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="dm_re_ddsWhatsNew.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Studio Design Environment SKILL Reference -- Custom Library Browser Template" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="api reference" />
+<meta name="prod_feature" content="Design Environment Infrastructure" />
+<meta name="prod_subfeature" content="SKILL API" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="skdfrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="skdfrefTOC.html">Contents</a></li><li><a class="prev" href="dm_re_ddsWhatsNew.html" title="ddsWhatsNew">ddsWhatsNew</a></li><li style="float: right;"><a class="viewPrint" href="skdfref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="dm_dmb_Compatibility_Functions_.html" title="dmb Compatibility Functions">dmb Compatibility Functions</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Studio Design Environment SKILL Reference<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:Custom_Library_Browser_Template" title="Custom Library Browser Template"></a><h2>
+<a id="pgfId-2257581"></a><a id="17545"></a>Custom Library Browser Template</h2>
+
+<p>
+<a id="pgfId-2257582"></a>The following may be used as a template for a custom Library Browser integration (<code>browser</code> in this template refers to the Library Browser). </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257583"></a>;;***************************************************************************<br />;;   The sample syncronization routines for the sample browser integration.<br />;;         1998 Cadence Design systems, Inc. - All Rights Reserved.<br />;;<br />;; The code below is for example only and is not intended for production<br />;; usage by customers. Users integrating their own custom browsers with DFII<br />;; may use this file as a template for their own integration.<br />;;<br />;; The sample browser uses the prefix &quot;dsb&quot; for DAG-Simple-Browser. This<br />;; browser only supports the expansion of a library, its cells, and views of<br />;; a selected cell. Category display is not supported. There is no intention<br />;; of extending the capabilities of this browser any further nor to make the<br />;; source available except for what is listed here.<br />;;***************************************************************************<br />
+;; The following global variable is used to designate when the browser is
+;; doing a selection of a library, cell, or cellview. When &#39;t, the code will
+;; know not to try re-expand itself in case the form currently in sync has
+;; field callbacks that call ddsUpdateSyncWithForm (which ends up calling
+;; the dsbUpdateBrowser routine below).
+
+dsbvIsSelecting = nil</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257584"></a>
+;;***************************************************************************
+;; dsbSyncForm - This is the routine registered via ddsRegCustomLibSelect
+;; to syncronize a form to the dsb. It takes the same arguments as the
+;; ddsSyncWithForm routine. From this call until the dsbEndFormSync routine
+;; is called, the browser will seed or be seeded from the given form
+;; fields. Applications are required to call ddsEndSyncWithForm when they
+;; are done with a browser otherwise the user may experience strange
+;; browser behavior.
+;;
+;; dsb does not support the filtering of cellviews by viewType so the
+;; viewTypes arg from ddsSyncWithForm is ignored. If viewType filtering
+;; were to be supported, the browser would only display those cellviews
+;; whose viewType were in the given list. To get a cellview&#39;s viewType,
+;; you would call ddGetObj to get the master file in the cellview, and
+;; then ddMapGetFileViewType to get the viewType. For example,
+;;
+;;&#160;&#160;&#160;&#160; id = ddGetObj(lib cell view &quot;*&quot;) ; &#39;*&#39; gets the master file<br />;;&#160;&#160;&#160;&#160; viewType = ddMapGetFileViewType(id)<br />;;
+;; Some forms within DFII only syncronize the library field so it is the
+;; only required field from ddsSyncWithForm. Some forms only syncronize the
+;; library and cell fields (e.g., the CDF editor). This routine and the
+;; updateBrowser routine must be aware of this.
+;;***************************************************************************
+
+procedure( dsbSyncForm(form action libField
+&#160;&#160;&#160;&#160;           cellField viewField _viewTypes &quot;rssggl&quot;)<br /> prog((fn)<br />
+&#160;&#160;&#160;&#160; ;; Verify that the specified fields exist on the given form.<br />  ;; This is extra precaution against callers passing in misstyped<br />  ;; field names. We also check that if a viewField is given, a<br />  ;; valid cellField is also given.<br />
+&#160;&#160;&#160;&#160; fn = &quot;dsbSyncForm&quot;<br />  unless(get(form libField)<br />    warn(&quot;%s: %L not a field on form %L\n&quot; fn libField form-&gt;hiFormSym)<br />    return()<br />  )<br />  when(cellField &amp;&amp; !get(form cellField)<br />    warn(&quot;%s: %L not a field on form %L\n&quot; fn cellField form-&gt;hiFormSym)<br />  )<br />  when(viewField &amp;&amp; !get(form viewField)<br />    warn(&quot;%s: %L not a field on form %L\n&quot; fn viewField form-&gt;hiFormSym)<br />  )<br />  when(viewField &amp;&amp; !cellField<br />    warn(&quot;%s: cellField required when specifying a viewField\n&quot; fn)<br />    return()<br />  )<br />
+&#160;&#160;&#160;&#160; ;; Validate the browser action. If the browser action is one of<br />  ;; &#39;open, &#39;place, or &#39;other and the user has set the corresponding<br />  ;; ddserv environment variable to &#39;nil, the routine will return<br />  ;; at this point. If the user specifies a value of &#39;t, the code<br />  ;; continues on and opens the browser. This control allows some<br />  ;; specific applications to support bringing up the browser when<br />  ;; specific commands are invoked.<br />
+&#160;&#160;&#160;&#160; unless(ddsBrowserAction(action)<br />    return(t)<br />  )<br />
+&#160;&#160;&#160;&#160; ;; Open the browser and save the form and field symbols.<br />  ;; Then call the update routine to expand the browser to anything<br />  ;; the user may have entered in these fields on the form.<br />  ;;<br />  ;; dsbvBrowser is a global variable that contains all the<br />  ;; information for the dsb. It is only defined/bound when the<br />  ;; browser is open; it does not exist otherwise.<br />
+&#160;&#160;&#160;&#160; dsbOpenBrowser()<br />  dsbvBrowser-&gt;form = form<br />  dsbvBrowser-&gt;lib  = libField<br />  dsbvBrowser-&gt;cell = cellField<br />  dsbvBrowser-&gt;view = viewField<br />  dsbUpdateBrowser()<br />  return(t)<br /> )<br />)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257585"></a>
+;;***************************************************************************
+;; dsbEndFormSync - Terminates syncronization between the browser and the
+;; form. This is called when ddsEndSyncWithForm is called. When the browser
+;; is closed, the dsbvBrowser variable is purged and marked unbound; this
+;; clears any form and field information as well so it is not necessary to
+;; explicitly do it here. If the form and field information were stored
+;; differently, we would clear out the information to signify the browser
+;; wasn&#39;t sync&#39;d to any form.
+;;
+;; This and the other routines below only act if a) there is a browser
+;; open and b) there is a form syncronized to it.
+;;***************************************************************************
+
+procedure( dsbEndFormSync()
+&#160;&#160;&#160;&#160;when( boundp(&#39;dsbvBrowser) &amp;&amp; dsbvBrowser-&gt;form
+&#160;&#160;&#160;&#160; dsbCloseBrowser()<br /> )<br /> t<br />)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257586"></a>
+;;***************************************************************************
+;; dsbGetCurrentLib - Returns the current library selected in the browser.
+;; This is called when ddsGetCurrentLib is called. The browser code sets
+;; the dsbvCurrentLib global variable whenever the library selection
+;; changes. This is possible because only 1 library can be expanded at any
+;; given time.
+;;***************************************************************************
+
+procedure( dsbGetCurrentLib()
+&#160;&#160;&#160;&#160;when( boundp(&#39;dsbvBrowser) &amp;&amp; dsbvBrowser-&gt;form
+&#160;&#160;&#160;&#160; dsbvCurrentLib<br /> )<br />)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257587"></a>
+;;***************************************************************************
+;; dsbUpdateBrowser - This is the workhorse routine that expands/updates the
+;; browser with the values from the registered form fields. Some apps only
+;; register the lib or lib &amp; cell fields.
+;;***************************************************************************
+
+procedure( dsbUpdateBrowser()
+&#160;&#160;&#160;&#160;cond(
+&#160;&#160;&#160;&#160; ;;<br />  ;; If there isn&#39;t a browser around or there isn&#39;t a form registred<br />  ;; or we got here because the browser did a selection and a call-<br />  ;; back for the form is doing an update, we return.<br />  ;;<br />  (!boundp(&#39;dsbvBrowser) || !dsbvBrowser-&gt;form || dsbvIsSelecting<br />   t<br />  )<br />  ;;<br />  ;; Some apps (more historical from the 4.3.4 days) call the update<br />  ;; routine in their cancel callbacks. Since the form should be<br />  ;; going away, there really isn&#39;t anything to do as the next thing<br />  ;; that should happen is a ddsEndSyncWithForm call.<br />  ;;<br />  (hiIsInFieldCancel()<br />   t<br />  )<br />  ;;<br />  ;; Get any lib/cell/view values from the respective form fields.<br />  ;; The assumption has always been (from 4.3.4) that these fields<br />  ;; are string fields. If other types of fields were to be supported,<br />  ;; the code below would have to be able to process them.<br />  ;;<br />  ;; The routine dsbExpandFromForm is a special routine that expands<br />  ;; the browser to a given lib/cell/view. If all three values are<br />  ;; &#39;nil, it only expands the libraries pruning back the display<br />  ;; if it has to. A different browser may have to have a different<br />  ;; behavior, but isolating it to a single function call helps<br />  ;; keep it modular.<br />  ;;<br />  (t<br />   let( (tool lib cell view cellF viewF)<br />    tool = dsbvBrowser<br />    lib  = get(tool-&gt;form tool-&gt;lib)-&gt;value<br />    when( lib<br />        lib = (when (lib &amp;&amp; lib != &quot;&quot;) lib)<br />     <br />     when( tool-&gt;cell &amp;&amp; (cellF = get(tool-&gt;form tool-&gt;cell))<br />      cell = (when (cellF-&gt;value &amp;&amp; cellF-&gt;value != &quot;&quot;)<br />          cellF-&gt;value)<br />     )<br />
+&#160;&#160;&#160;&#160;    when( cell &amp;&amp; tool-&gt;view &amp;&amp;<br />       (viewF = get(tool-&gt;form tool-&gt;view))<br />      view = (when (viewF-&gt;value &amp;&amp; viewF-&gt;value != &quot;&quot;)<br />          viewF-&gt;value)<br />     )<br />
+&#160;&#160;&#160;&#160;    dsbExpandFromForm(tool lib cell view)<br />    )<br />   )<br />   t<br />  )<br /> )<br />)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257588"></a>
+;;***************************************************************************
+;; dsbServeSelect - This routine is called by the browser code whenever a
+;; library, cell, or cellview is selected. It is listed here along with the
+;; others as an example. It&#39;s purpose is complimentary to the above
+;; dsbUpdateBrowser routine; it fills in the registered form fields with
+;; the selection in the browser.
+;;
+;; The variable dsbvIsSelecting is first set to &#39;t before updating the
+;; form field value. In the case where the form field has a callback that
+;; calls ddsUpdateSyncWithForm, the update routine above will not try to
+;; expand the form again since it was already expanded by the user. This
+;; variable is reset once the fields have been updated.
+;;
+;; The code below is specific to the dsb but conceptually, it gets
+;; the current library, cell, and cellview selections and sets the
+;; respective form field values.
+;;***************************************************************************
+
+procedure( dsbServeSelect(obj fromWhere &quot;ws&quot;)
+&#160;&#160;&#160;&#160;let( (tool node libF cellF viewF tmp)
+&#160;&#160;&#160;&#160; tool = dsbvBrowser<br />  when(obj &amp;&amp; tool-&gt;form<br />   dsbvIsSelecting = t<br />   caseq( fromWhere<br />    (lib<br />     libF = get(tool-&gt;form tool-&gt;lib)<br />     libF-&gt;value = obj-&gt;name<br />     when( (cellF = get(tool-&gt;form tool-&gt;cell))<br />      node = dsbGetExpandNode(tool-&gt;expandPath<br />            tool-&gt;cellClass)<br />      unless(node<br />       dsbGetExpandNode(tool-&gt;expandPath<br />                tool-&gt;cellviewClass)<br />      )<br />      cellF-&gt;value = (if node node-&gt;name &quot;&quot;)<br />     )<br />     when( (tool-&gt;view &amp;&amp; (viewF = get(tool-&gt;form tool-&gt;view)))<br />      node = dsbGetExpandNode(tool-&gt;expandPath<br />              tool-&gt;cellviewClass)<br />      unless(node<br />       dsbGetExpandNode(tool-&gt;expandPath<br />                tool-&gt;cellviewClass)<br />      )<br />      viewF-&gt;value = (if node node-&gt;name &quot;&quot;)<br />     )<br />    )<br />    (cell<br />     tmp  = dsbiGetLibParent(obj)<br />     libF = get(tool-&gt;form tool-&gt;lib)<br />     libF-&gt;value = tmp-&gt;name<br />     when( (cellF = get(tool-&gt;form tool-&gt;cell))<br />      cellF-&gt;value = obj-&gt;name<br />     )<br />    )<br />    (view<br />     tmp  = dsbiGetLibCellview(obj)<br />     libF = get(tool-&gt;form tool-&gt;lib)<br />     libF-&gt;value = car(tmp)<br />     when( (cellF = get(tool-&gt;form tool-&gt;cell))<br />      cellF-&gt;value = cadr(tmp)<br />     )<br />     when( (viewF = get(tool-&gt;form tool-&gt;view))<br />      viewF-&gt;value = caddr(tmp)<br />     )<br />    )<br />   )<br />   dsbvIsSelecting = nil<br />  )<br /> )<br />)</pre>
+
+<p>
+<a id="pgfId-2257590"></a>T<a id="browserSync"></a>he following is a form example exercising the browser synchronization.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-2257591"></a>;;
+;; This file contains a command that takes library, cell, view, and
+;; mode values and performs an open using deOpen. The associated form
+;; also contains a &#39;Browse&#39; button to exercise the custom library
+;; browser integration although it will also work with DFII&#39;s default
+;; browser as well.
+;;
+procedure(myOpen()
+&#160;&#160;&#160;&#160;if( boundp(&#39;myOpenForm) &amp;&amp; hiIsForm(myOpenForm) then
+&#160;&#160;&#160;&#160; hiSetCurrentField(myOpenForm &#39;libName)<br /> else<br />  let((itemL)<br />   itemL = tconc(itemL list(hiCreateStringField(<br />    ?name     &#39;libName<br />    ?prompt    &quot;Library&quot;<br />    ?value    &quot;&quot;<br />    ?callback    &quot;myOpenLibCB()&quot;<br />   ) 5:0 200:30 60))<br />   itemL = tconc(itemL list(hiCreateStringField(<br />    ?name    &#39;cellName<br />    ?prompt    &quot;Cell&quot;<br />    ?value    &quot;&quot;<br />    ?callback    &quot;myOpenCellCB()&quot;<br />      ) 5:30 200:30 60))<br />      itemL = tconc(itemL list(hiCreateStringField(<br />    ?name    &#39;viewName<br />    ?prompt    &quot;View&quot;<br />    ?value    &quot;&quot;<br />    ?callback    &quot;myOpenViewCB()&quot;<br />      ) 5:60 200:30 60))<br />      itemL = tconc(itemL list(hiCreateRadioField(<br />    ?name    &#39;mode<br />    ?prompt    &quot;Mode&quot;<br />    ?choices    &#39;(&quot;edit&quot; &quot;read&quot;)<br />    ?value    &quot;read&quot;<br />      ) 5:90 200:30 60))<br />      itemL = tconc(itemL list(hiCreateFormButton(<br />    ?name    &#39;browse<br />    ?buttonText    &quot;Browse&quot;<br />    ?callback    &quot;myOpenBrowseCB()&quot;<br />      ) 5:120 60:25))<br />
+&#160;&#160;&#160;&#160;     hiCreateAppForm(<br />    ?name     &#39;myOpenForm<br />    ?formTitle     &quot;Open Cellview&quot;<br />    ?fields     car(itemL)<br />    ?help     &quot;&quot;<br />    ?buttonLayout     &#39;OKCancelApply<br />    ?formType     &#39;nonOptions<br />    ?callback     &#39;(&quot;myOpenCB(&#39;ok)&quot; &quot;myOpenCB(&#39;cancel)&quot;)<br />    ?unmapAfterCB     t<br />      )<br />  )<br /> )<br />
+&#160;&#160;&#160;&#160;ddsSyncWithForm(myOpenForm &#39;open &#39;libName &#39;cellName &#39;viewName)
+&#160;&#160;&#160;&#160;hiDisplayForm(myOpenForm)
+)
+
+procedure( myOpenBrowseCB()
+&#160;&#160;&#160;&#160;ddsSyncWithForm(myOpenForm &#39;browse &#39;libName &#39;cellName &#39;viewName)
+)
+
+procedure( myOpenLibCB()
+&#160;&#160;&#160;&#160;let( (form libN)
+&#160;&#160;&#160;&#160; form  = myOpenForm<br />  libN  = form-&gt;libName-&gt;value<br />
+&#160;&#160;&#160;&#160; hiHighlightField(form &#39;cellName hicBackground)<br />  hiHighlightField(form &#39;viewName hicBackground)<br />  when( libN != &quot;&quot; &amp;&amp; ddGetObj(libN)<br />   hiHighlightField(form &#39;libName hicBackground)<br />  )<br />  ddsUpdateSyncWithForm()<br /> )<br />)
+
+procedure( myOpenCellCB()
+&#160;&#160;&#160;&#160;let( (form libN cellN)
+&#160;&#160;&#160;&#160; form  = myOpenForm<br />  libN  = form-&gt;libName-&gt;value<br />  cellN = form-&gt;cellName-&gt;value<br />
+&#160;&#160;&#160;&#160; hiHighlightField(form &#39;libName hicBackground)<br />  hiHighlightField(form &#39;viewName hicBackground)<br />  when( libN != &quot;&quot; &amp;&amp; cellN != &quot;&quot; &amp;&amp; ddGetObj(libN cellN)<br />   hiHighlightField(form &#39;cellName hicBackground)<br />  )<br />  ddsUpdateSyncWithForm()<br /> )<br />)
+
+procedure( myOpenViewCB()
+&#160;&#160;&#160;&#160;let( (form libN cellN viewN)
+&#160;&#160;&#160;&#160; form  = myOpenForm<br />  libN  = form-&gt;libName-&gt;value<br />  cellN = form-&gt;cellName-&gt;value<br />  viewN = form-&gt;viewName-&gt;value<br />
+&#160;&#160;&#160;&#160; hiHighlightField(form &#39;libName hicBackground)<br />  hiHighlightField(form &#39;cellName hicBackground)<br />  when( libN != &quot;&quot; &amp;&amp; cellN != &quot;&quot; &amp;&amp; viewN != &quot;&quot; &amp;&amp;<br />    ddGetObj(libN cellN viewN)<br />   hiHighlightField(form &#39;viewName hicBackground)<br />  )<br />  ddsUpdateSyncWithForm()<br /> )<br />)
+
+procedure( myOpenCB(okOrCan &quot;s&quot;)
+&#160;&#160;&#160;&#160;prog( (form fspec libN cellN viewN id vType)
+
+&#160;&#160;&#160;&#160; when(eq(okOrCan &#39;cancel)<br />   ddsEndSyncWithForm()<br />   return()<br />  )<br />  form  = myOpenForm<br />  libN  = form-&gt;libName-&gt;value<br />  cellN = form-&gt;cellName-&gt;value<br />  viewN = form-&gt;viewName-&gt;value<br />  cond(<br />   (libN == &quot;&quot;<br />    hiSetCallbackStatus(form nil)<br />    hiSetCurrentField(form &#39;libName)<br />    hiHighlightField(form &#39;libName hicError)<br />    myOpenDBox(&quot;Need Library Name&quot; &quot;enter a library name.&quot;)<br />    return()<br />   )<br />   (cellN == &quot;&quot;<br />    hiSetCallbackStatus(form nil)<br />    hiSetCurrentField(form &#39;cellName)<br />    hiHighlightField(form &#39;cellName hicError)<br />    myOpenDBox(&quot;Need Cell Name&quot; &quot;enter a cell name.&quot;)<br />    return()<br />   )<br />   (viewN == &quot;&quot;<br />    hiSetCallbackStatus(form nil)<br />    hiSetCurrentField(form &#39;viewName)<br />    hiHighlightField(form &#39;viewName hicError)<br />    myOpenDBox(&quot;Need View Name&quot; &quot;enter a view name.&quot;)<br />    return()<br />   )<br />   (!ddGetObj(libN cellN viewN)<br />    hiSetCallbackStatus(form nil)<br />    hiSetCurrentField(form &#39;viewName)<br />    hiHighlightField(form &#39;viewName hicError)<br />    myOpenDBox(&quot;Not Found&quot;<br />     sprintf(nil strcat(&quot;Cellview &#39;%s/%s/%s&#39; does not exist.\n&quot;<br />          &quot;check your entries.&quot;)<br />          libN cellN viewN))<br />    return()<br />   )<br />  )<br />  hiSetCallbackStatus(form t)<br />  hiFormUnmap(form)<br />  ddsEndSyncWithForm()<br />
+&#160;&#160;&#160;&#160; fspec = list(nil<br />        &#39;libName     libN<br />        &#39;cellName     cellN<br />        &#39;viewName     viewN<br />        &#39;viewType     nil<br />        &#39;accessMode     form-&gt;mode-&gt;value)<br />
+&#160;&#160;&#160;&#160; return( deOpen(fspec nil) )<br /> )<br />)
+
+procedure( myOpenDBox(banner msg &quot;tt&quot;)
+&#160;&#160;&#160;&#160;hiDisplayAppDBox(
+&#160;&#160;&#160;&#160; ?name     &#39;myDBox<br />  ?dboxBanner     banner<br />  ?dboxText     msg<br />  ?dialogType     hicErrorDialog<br />  ?buttonLayout     &#39;Close<br /> )<br />)</pre>
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="dm_re_ddsWhatsNew.html" id="prev" title="ddsWhatsNew">ddsWhatsNew</a></em></b><b><em><a href="dm_dmb_Compatibility_Functions_.html" id="nex" title="dmb Compatibility Functions">dmb Compatibility Functions</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
