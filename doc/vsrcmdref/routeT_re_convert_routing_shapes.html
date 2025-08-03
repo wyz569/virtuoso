@@ -1,0 +1,211 @@
+
+<html><head><title>convert_routing_shapes</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-10-17" />
+<meta name="CreateTime" content="1697541423" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use Virtuoso Space-based Router Tcl commands" />
+<meta name="DocTitle" content="Virtuoso Space-based Router Command Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="convert_routing_shapes" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vsrcmdref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-17" />
+<meta name="ModifiedTime" content="1697541423" />
+<meta name="NextFile" content="routeT_re_create_derived_vias.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="routeT_re_collapse_shape_term.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Space-based Router Command Reference -- convert_routing_shapes" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Automatic Space-Based Routing Tcl Interface" />
+<meta name="prod_subfeature" content="Routing Commands" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vsrcmdrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vsrcmdrefTOC.html">Contents</a></li><li><a class="prev" href="routeT_re_collapse_shape_term.html" title="collapse_shape_term">collapse_shape_term</a></li><li style="float: right;"><a class="viewPrint" href="vsrcmdref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="routeT_re_create_derived_vias.html" title="create_derived_vias">create_derived_vias</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Space-based Router Command Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_convert_routing_shapes" title="convert_routing_shapes"></a><h3>
+<a id="pgfId-1108709"></a><a id="42071"></a>c<a id="marker-1108708"></a>onvert_routing_shapes</h3>
+<a id="pgfId-1108710"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+convert_routing_shapes
+-set <code><em>d_setObj</em></code> 
+{-to_regular [ true | false ]} | {-to_special [ true | false ] [-to_trunk [ true | false ]]}
+[ -persistent [ true | false ] ] 
+[ -verbose [ true | false ] ] </pre>
+<h4>
+<a id="pgfId-1328814"></a>Description</h4>
+
+<p>
+<a id="pgfId-1108711"></a>Converts special (<em>shape term</em>) shapes to regular <em>route</em> shapes to permit editing, and converts regular route shapes that were created in the current session to special shape terms. You can convert individual shapes (segments and vias), entire routes, or nets. The converted shapes will automatically revert to their original state before saving, unless you make them persistent.</p>
+<p>
+<a id="pgfId-1108712"></a>Special nets from DEF are loaded as shape terms, which are not editable and do not participate in most routing-related operations. Special net route segments and vias are typically on the <code>wire:pin</code> and <code>via:pin</code> purposes, respectively. Regular route segments and vias are on the <code>wire:detail</code> and <code>via:detail</code> purposes, respectively. When routing is converted, the purposes are changed correspondingly. If the original purpose of a shape is not one of these purposes, its purpose will not be changed. For example, the purpose for shapes on the <code>blockage</code> purpose will not be changed.</p>
+
+<h4><em>
+<a id="pgfId-1108713"></a>Converting Special to Regular</em></h4>
+
+<p>
+<a id="pgfId-1108714"></a>Since pre-existing special nets are not editable, if you need to make any changes to them, such as adding tie-offs to power connections, you must convert them to regular route shapes to make them editable. To keep the regular route shapes when saving, you must make the conversion persistent, otherwise, the converted routing shapes will automatically revert to shape terms before saving. </p>
+
+<h4><em>
+<a id="pgfId-1108715"></a>Converting Regular to Special</em></h4>
+
+<p>
+<a id="pgfId-1108716"></a>Only new routing created during the current session can be converted to special shape terms. Routing data read in from an OpenAccess database cannot be converted. In addition, Space-based Router and Chip Optimizer cannot automatically revert from special to regular in <em>One Shape Term Per Net</em> mode. To convert from regular to special, then revert back to regular, you must use one of the following methods:</p>
+<ul><li>
+<a id="pgfId-1108720"></a>With <em>Multiple Shape Terms Per Net</em> mode (<code>db.one_shape_term_per_net</code> is <code>false</code>), load the design, convert to special, then auto revert back to regular on save.</li><li>
+<a id="pgfId-1108721"></a>With <em>One Shape Term Per Net</em> mode (<code>db.one_shape_term_per_net</code> is <code>true</code>), load the design, convert to special, then manually convert back to regular persistently before saving.</li></ul>
+
+
+<h4>
+<a id="pgfId-1108722"></a>Arguments</h4>
+<table class="webflareTable" id="#id1108723">
+<tbody><tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1108725"></a><code>-persistent [ true | false ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108729"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108731"></a>When <code>true</code>, the conversion of shapes will persist when saved. </p>
+<p>
+<a id="pgfId-1108732"></a>Default: Conversion will automatically revert before saving, except when converting from regular to special in One Shape Term per Net mode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108734"></a><code>-set</code> <span class="webflare-courier-new" style="white-space:pre"><em>d_setObj</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108736"></a>Converts shapes, routes and nets in the given set. If the set is not given, the selected set is used.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1108738"></a><code>-to_regular [ true | false ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108742"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108744"></a>Converts shape terms to route shapes. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1108746"></a><code>-to_special [ true | false ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108750"></a><code></code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108752"></a>Converts route shapes created in the session to special shape terms.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1320900"></a><code>-to_trunk [ true | false ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1320890"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1320934"></a>Marks special (<em>shape term</em>) shapes as trunks.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1319896"></a><code>-verbose [ true | false ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108754"></a><code></code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1108756"></a>When <code>true</code>, outputs to the transcript area information on each shape, route, and net that is converted, plus run times.</p>
+<p>
+<a id="pgfId-1108757"></a>Default: <code>false</code></p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1108759"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1108760"></a>The following commands change <code>netA</code>, that was read in from DEF as a special net, from shape terms to editable regular routes.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1108761"></a>set NET_A [find_net -name netA -ignore_case true -no_wildcard false ]<br />convert_routing_shapes -set $NET_A -to_regular true</pre>
+<h4><em>
+<a id="pgfId-1330096"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1330088"></a><a href="routeT.html#44073">Design Configuration Commands</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="routeT_re_collapse_shape_term.html" id="prev" title="collapse_shape_term">collapse_shape_term</a></em></b><b><em><a href="routeT_re_create_derived_vias.html" id="nex" title="create_derived_vias">create_derived_vias</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

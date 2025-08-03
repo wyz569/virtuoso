@@ -1,0 +1,340 @@
+
+<html><head><title>create_pg_fill</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-10-17" />
+<meta name="CreateTime" content="1697541412" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use Virtuoso Space-based Router Tcl commands" />
+<meta name="DocTitle" content="Virtuoso Space-based Router Command Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="create_pg_fill" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vsrcmdref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-17" />
+<meta name="ModifiedTime" content="1697541412" />
+<meta name="NextFile" content="optimizeT_re_create_step_via.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="optimizeT_re_create_net_fill.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Space-based Router Command Reference -- create_pg_fill" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Automatic Space-Based Routing Tcl Interface" />
+<meta name="prod_subfeature" content="Optimization Commands" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vsrcmdrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vsrcmdrefTOC.html">Contents</a></li><li><a class="prev" href="optimizeT_re_create_net_fill.html" title="create_net_fill">create_net_fill</a></li><li style="float: right;"><a class="viewPrint" href="vsrcmdref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="optimizeT_re_create_step_via.html" title="create_step_via">create_step_via</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Space-based Router Command Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_create_pg_fill" title="create_pg_fill"></a><h3>
+<a id="pgfId-1822632"></a><a id="44994"></a>c<a id="marker-1822631"></a>reate_pg_fill</h3>
+<a id="pgfId-1867298"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+create_pg_fill 
+[ -set <code><em>d_setObj</em></code> | -nets <strong>{</strong><code><em>s_netName&#8230;</em></code><strong>}</strong> ] 
+[ -all | -region <strong>{</strong><code><em>f_xlo</em></code> <code><em>f_ylo</em></code> <code><em>f_xhi</em></code> <code><em>f_yhi</em></code><strong>}</strong> ] 
+[ -layer <strong>{</strong><code><em>s_layerName&#8230;</em></code><strong>}</strong> ] 
+[ -lock_via_layers <strong>{</strong><code><em>s_layerName</em></code> <code><em>&#8230;</em></code><strong>}</strong> ] 
+[ -connections [ true | false ] ] 
+[ -connections_type [all | via | same_layer] ] 
+[ -keep_simple_connections [ true | false ] ] 
+[ -silent | -verbose ] 
+[ -threads <code><em>i_threads</em></code> ] </pre>
+<h4>
+<a id="pgfId-1867299"></a>Description</h4>
+
+<p>
+<a id="pgfId-1822634"></a>Creates fill shapes connected to power and ground nets to improve IR drop while also increasing metal density. This command performs the following:</p>
+<ul><li>
+<a id="pgfId-1822635"></a>Inserts the maximum number of stripes as possible in the preferred routing direction on each given layer, respecting all the existing power/ground spacing and width constraints:<ul><li>
+<a id="pgfId-1822636"></a><code>pgFillWidth</code> is the width of the power/ground fill stripes to insert. A small width is recommended to minimize the impact on the timing. If <code>pgFillWidth</code> is not defined, two times <code>minWidth</code> is used.</li><li>
+<a id="pgfId-1822637"></a><code>minPgFillSpacing</code> is the minimum spacing between two power/ground fill stripes. If <code>minPgFillSpacing</code> is not defined, the first defined value is used from the following: <code>minSameNetSpacing*2</code> or <code>minSpacing*2</code>. </li><li>
+<a id="pgfId-1822638"></a><code>minPgFillSignalSpacing</code> is the minimum spacing between power/ground fill stripes and signal nets. If <code>minPgFillSignalSpacing</code> is not defined, two times <code>minSpacing</code> is used.</li><li>
+<a id="pgfId-1822639"></a><code>minPgFillClockSpacing</code> is the minimum spacing between power/ground fill stripes and clock nets. If <code>minPgFillClockSpacing</code> is not defined, <code>minPgFillSignalSpacing</code> is used.</li><li>
+<a id="pgfId-1822640"></a><code>minPgFillPgSpacing</code> is the minimum spacing between power/ground fill stripes and existing power/ground nets. If <code>minPgFillPgSpacing</code> is not defined, <code>minPGFillSignalSpacing</code> is used.</li><li>
+<a id="pgfId-1822641"></a><code>minPgFillFloatingFillSpacing</code> is the minimum spacing between power/ground fill stripes and existing floating fill shapes. If <code>minPgFillFloatingFillSpacing</code> is not set, then <code>minPgFillSpacing</code> is used.</li><li>
+<a id="pgfId-1822642"></a><code>minPgFillBoundarySpacing</code> is the minimum spacing between power/ground fill stripes and the design boundary. If <code>minPgFillBoundarySpacing</code> is not defined, then <code>minBoundaryInteriorHalo</code> is used, and if neither is defined, then the default is 0.</li></ul></li><li>
+<a id="pgfId-1822643"></a>Connects all stripes to the given power/ground nets (<code>-nets</code> or <code>-set</code>).</li><li>
+<a id="pgfId-1822644"></a>Removes all fill shapes with less than two connections because these shapes will not help to improve the IR drop (<code>-connections true -keep_simple_connections false</code>).</li></ul>
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1822645"></a>The <code>create_pg_fill</code> command does not consider metal density requirements. Following this command, run <code>check_density</code> to verify the metal density, and <code>create_fill</code> to add additional fill shapes as needed. </p>
+
+<h4>
+<a id="pgfId-1822652"></a>Arguments</h4>
+<table class="webflareTable" id="#id1822653">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822655"></a><code>-all</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822657"></a>Processes the entire design. This is the default.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1822661"></a><code>-connections [ true | false ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822667"></a>  </p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822669"></a>(Default) If <code>true</code>, connects the created fill stripes to the nets specified by <code>-nets</code> or <code>-set</code>, and all remaining floating fill stripes are removed. </p>
+<p>
+<a id="pgfId-1822670"></a>If <code>false</code>, creates as many floating fill stripes as possible.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1822674"></a><code>-connections_type [all | via | same_layer]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822680"></a><code>&#160;&#160;</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822682"></a>Specifies how power/ground fill shapes can be connected to power/ground rails. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822686"></a><code>&#160;&#160;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822688"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822690"></a>Both via and same-layer connections are used. This is the default.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822692"></a><code>&#160;&#160;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822694"></a><code>same_layer</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822696"></a>Connects fill stripes directly to same-layer power rails.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822698"></a><code>&#160;&#160;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822700"></a><code>via</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822702"></a>Uses vias to connect fill stripes to power rails.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1822704"></a><code>-keep_simple_connections [ true | false ] ]</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822710"></a>  </p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822712"></a>(Applies only with <code>-connections</code> <code>true</code>) If <code>false</code>, removes fill stripes that do not help to improve IR drop (stripes that are floating/unconnected or with fewer than two connections). </p>
+<p>
+<a id="pgfId-1822713"></a>Default: <code>false</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1850897"></a><code>-layer </code><strong>{</strong><span class="webflare-courier-new" style="white-space:pre"><em>s_layerName&#8230;</em></span><strong>}</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822717"></a><code> </code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822719"></a>Specifies the layers to process. By default, all routing layers are processed. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1822723"></a><code>-lock_via_layers </code><strong>{</strong><span class="webflare-courier-new" style="white-space:pre"><em>s_layerName&#8230;</em></span><strong>}</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822729"></a>  </p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822731"></a>Prevents this command from adding vias on the specified cut layers. By default, all via layers can be used.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822735"></a><code>-nets </code><strong>{</strong><span class="webflare-courier-new" style="white-space:pre"><em>s_netName&#8230;</em></span><strong>}</strong></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822737"></a>Connect added fill stripes to the given nets. Specified power/ground nets must be listed in the <code>SPECIALNETS</code> section of the DEF file. If several nets are given, Space-based Router and Chip Optimizer attempts to connect to the nets in the order they are given in the list. If neither <code>-nets</code> nor -<code>set</code> is given, Space-based Router and Chip Optimizer attempts to connect to all power and ground nets.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1822747"></a><code>-region </code><strong>{</strong><span class="webflare-courier-new" style="white-space:pre"><em>f_xlo</em></span><code> </code><span class="webflare-courier-new" style="white-space:pre"><em>f_ylo</em></span><code> </code><span class="webflare-courier-new" style="white-space:pre"><em>f_xhi</em></span><code> </code><span class="webflare-courier-new" style="white-space:pre"><em>f_yhi</em></span><strong>}</strong> </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822753"></a>  </p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822755"></a>Specifies the boundary of the area to process, given the lower-left and upper-right coordinates.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822759"></a><code>-set </code><span class="webflare-courier-new" style="white-space:pre"><em>d_setObj</em></span></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822761"></a>Connects fill stripes to nets in the set. Specified power/ground nets must be listed in the <code>SPECIALNETS</code> section of the DEF file. There is no control on the net priorities to connect the stripes. If neither <code>-nets</code> nor -<code>set</code> is given, Space-based Router and Chip Optimizer attempts to connect to all power and ground nets.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822768"></a><code>-silent</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822770"></a>Outputs only essential messages.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822774"></a><code>-threads </code><span class="webflare-courier-new" style="white-space:pre"><em>i_threads</em></span></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822776"></a>Specifies the number of threads or processors to use in parallel to run this command. By default, if multi-threading has been enabled (<a href="systemT_re_enable_multithreading.html#85815">enable_multithreading</a>), the session threads are used, otherwise, one processor is used.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1822819"></a><code>-verbose</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1822821"></a>Outputs additional messages.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1822825"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1822826"></a>The following commands set power/ground fill constraints for layer <code>M3</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1822827"></a>set_layer_constraint -constraint pgFillWidth -layer M3 -Value 0.1<br />set_layer_constraint -constraint minPgFillSpacing -layer M3 -Value 0.2<br />set_layer_constraint -constraint minPgFillSignalSpacing -layer M3 -Value 0.3<br />set_layer_constraint -constraint minPgFillClockSpacing -layer M3 -Value 0.6<br />set_layer_constraint -constraint minPgFillPgSpacing -layer M3 -Value 0.4<br />set_layer_constraint -constraint minPgFillBoundarySpacing -layer M3 -Value 0.5</pre>
+
+<p>
+<a id="pgfId-1822828"></a>The following figure shows fill stripes added to an area and the power-to-fill and fill-to-fill connections. Some fill stripes are interrupted by existing signal wires that are outlined in black. By default and when -<code>connections</code> is set <code>true</code>, the added fill stripes with only one connection to the power net will be removed as indicated in the figure. This example uses via connections only (<code>-connections_type via</code>).</p>
+
+<p>
+<a id="pgfId-1869054"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="628" src="images/optimizeT-7.gif" /></div>
+<h4><em>
+<a id="pgfId-1869235"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1869239"></a><a href="optimizeT.html#73445">Optimize Commands</a></p>
+<p>
+<a id="pgfId-1822980"></a><a href="optimizeT_re_create_fill.html#85406">create_fill</a></p>
+<p>
+<a id="pgfId-1869278"></a><a href="editT_re_delete_fill.html#37522">delete_fill</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="optimizeT_re_create_net_fill.html" id="prev" title="create_net_fill">create_net_fill</a></em></b><b><em><a href="optimizeT_re_create_step_via.html" id="nex" title="create_step_via">create_step_via</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

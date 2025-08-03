@@ -1,0 +1,182 @@
+
+<html><head><title>ECO Routing</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-10-17" />
+<meta name="CreateTime" content="1697541398" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use Virtuoso Space-based Router Tcl commands" />
+<meta name="DocTitle" content="Virtuoso Space-based Router Command Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="ECO Routing" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vsrcmdref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-17" />
+<meta name="ModifiedTime" content="1697541398" />
+<meta name="NextFile" content="eco_routeT_Routing_the_ECO_Changes.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="eco_routeT_re_get_changed_area.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Space-based Router Command Reference -- ECO Routing" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Automatic Space-Based Routing Tcl Interface" />
+<meta name="prod_subfeature" content="ECO Routing Commands" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vsrcmdrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vsrcmdrefTOC.html">Contents</a></li><li><a class="prev" href="eco_routeT_re_get_changed_area.html" title="get_changed_area">get_changed_area</a></li><li style="float: right;"><a class="viewPrint" href="vsrcmdref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="eco_routeT_Routing_the_ECO_Changes.html" title="Routing ECO Changes">Routing ECO Changes</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Space-based Router Command Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:ECO_Routing" title="ECO Routing"></a><h2>
+<a id="pgfId-1041590"></a><a id="79130"></a>ECO Routing </h2>
+
+<p>
+<a id="pgfId-1087309"></a>ECO routing completes partial routes while maintaining the existing wire segments as much as possible and is useful in cases such as the following:</p>
+<ul><li>
+<a id="pgfId-1087348"></a>The initial routing is completed and minor changes have been made to a design.Cadence Space-based Router and Chip Optimizer User Guide</li><li>
+<a id="pgfId-1087301"></a>The design has general spacing or connectivity violations.</li></ul>
+
+<p>
+<a id="pgfId-1041591"></a>The following sections in this topic describe how the ECO commands can be used to perform netlist changes and commands to use to finish routing:</p>
+
+<h3>
+<a id="pgfId-1041621"></a><a id="63850"></a>Buffer Insertion</h3>
+
+<p>
+<a id="pgfId-1041622"></a>In this example, ECO commands are used to buffer a net. The net <code>n1</code> is a two-pin net from pin (<code>I1</code>, <code>Y</code>) to pin (<code>I2</code>, <code>A</code>). In this case, the pins are named as instance-pin pairs. The added buffer <code>B</code> will be an instance of master <code>MB</code>. The output pin of <code>MB</code> is <code>Y</code> and the input pin is <code>A</code>. The <code>POWR</code> and <code>GRND</code> pins of the new instance are connected to <code>VDD</code> and <code>VSS</code>, respectively.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041623"></a>set eco [eco_begin]<br />eco_create_instance -eco_control $eco -cell MB -view abstract -lib libname -name B -origin {x y}<br />eco_create_net -eco_control $eco -name n2<br />eco_disconnect_inst_term -eco_control $eco -inst_name I2 -term_name A<br />eco_connect_inst_term -eco_control $eco -inst_name B -term_name A -net_name n1<br />eco_connect_inst_term -eco_control $eco -inst_name B -term_name Y -net_name n2<br />eco_connect_inst_term -eco_control $eco -inst_name I2 -term_name A -net_name n2<br />eco_connect_inst_term -eco_control $eco -inst_name B -term_name POWR -net_name VDD<br />eco_connect_inst_term -eco_control $eco -inst_name B -term_name GRND -net_name VSS</pre>
+
+<p>
+<a id="pgfId-1041631"></a>The netlist change is graphically shown in the following figure.</p>
+
+<p>
+<a id="pgfId-1041693"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="212" src="images/eco_routeT-4.gif" /></div>
+
+<p>
+<a id="pgfId-1041694"></a>The following figure shows an example of a buffer that is added to a net using these commands. </p>
+
+<p>
+<a id="pgfId-1041747"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="356" src="images/eco_routeT-5.gif" /></div>
+<h3>
+<a id="pgfId-1041749"></a><a id="61684"></a>Copying Routes</h3>
+
+<p>
+<a id="pgfId-1041753"></a>In the previous section, <a href="eco_routeT_ECO_Routing.html#63850">Buffer Insertion</a>, little was done to the routes present in net <code>n1</code>. The net was disconnected from pin (<code>I2</code>, <code>A</code>), but all route segments and vias would still be present. Ideally, if the buffer is inserted in an already-routed net, it would be useful if the original net <code>n1</code> would be split near the buffer. This operation can be simulated with the command sequence:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041754"></a>eco_copy_implementation -eco_control $eco -from_net n1 -to_net n2<br />eco_repair_net -eco_control $eco -name n1<br />eco_repair_net -eco_control $eco -name n2</pre>
+
+<p>
+<a id="pgfId-1041755"></a>When these commands are issued in the example, the routes in net <code>n1</code> are copied to net <code>n2</code>, the connectivity is updated, and the nets <code>n1</code> and <code>n2</code> are trimmed appropriately by the <code>eco_repair_net</code> command. </p>
+<p>
+<a id="pgfId-1041756"></a>The following figure shows how nets are routed when the copy/repair commands are not used. </p>
+
+<p>
+<a id="pgfId-1041806"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="297" src="images/eco_routeT-6.gif" /></div>
+
+<p>
+<a id="pgfId-1041807"></a>Guides are created (1) between the terminals for the new net <code>n2</code>, and (2) from the closest point of the existing net <code>n1</code> to its new terminal on the new buffer. This creates a steiner in <code>n1</code>, dividing <code>n1</code> into two routes. The route to the disconnected <code>n1</code> terminal is discarded and the guides are routed without changes to the remaining route.</p>
+<p>
+<a id="pgfId-1041808"></a>In contrast, the following figure shows the same two nets when copy/repair commands are used.</p>
+
+<p>
+<a id="pgfId-1041860"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="302" src="images/eco_routeT-7.gif" /></div>
+
+<p>
+<a id="pgfId-1041861"></a>In this case, the route from net <code>n1</code> is copied to the new net <code>n2</code>. The <code>eco_repair_net</code> command updates the connectivity, creating guides from the closest points on the nets to the new terminals. The routes to the disconnected terminals for both nets are discarded. The guides are routed, and the nets are trimmed where needed. This results in a more direct connection between terminals for <code>n1</code>, compared with the previous example which did not use copy/repair.</p>
+
+<h3>
+<a id="pgfId-1041863"></a><a id="81092"></a>Buffer Deletion</h3>
+
+<p>
+<a id="pgfId-1041864"></a>In the previous example, a buffer was added to net <code>n1</code> and a new net <code>n2</code> was created. In this example, the buffer and <code>n2</code> will be removed, and net <code>n1</code> will be restored to its original state.</p>
+
+<p>
+<a id="pgfId-1041929"></a></p>
+<div class="webflare-div-image">
+<img width="685" height="235" src="images/eco_routeT-8.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041930"></a>set eco [eco_begin]<br />eco_copy_implementation -eco_control $eco -from_net n2 -to_net n1<br />eco_disconnect_inst_term -eco_control $eco -inst_name B -term_name A<br />eco_disconnect_inst_term -eco_control $eco -inst_name B -term_name Y<br />eco_disconnect_inst_term -eco_control $eco -inst_name I2 -term_name A<br />eco_disconnect_inst_term -eco_control $eco -inst_name B -term_name POWR<br />eco_disconnect_inst_term -eco_control $eco -inst_name B -term_name GRND<br />eco_connect_inst_term -eco_control $eco -inst_name I2 -term_name A -net_name n1<br />
+eco_destroy_net -eco_control $eco -name n2
+eco_destroy_instance -eco_control $eco -name B
+
+eco_repair_net -eco_control $eco -name n1</pre>
+
+<p>
+<a id="pgfId-1041931"></a>In the first step, the implementation of net <code>n2</code> is copied to net <code>n1</code>. It is expected that the merged net will combine the routes from both <code>n2</code> and <code>n1</code>. The net connectivity is established, and net <code>n2</code> and the buffer are destroyed. The new net <code>n1</code> is repaired and then routed. </p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1041932"></a>
+<code>eco_destroy_net</code> will remove all routes in the net but cannot remove terminals. In order to remove the net, you must disconnect terminals from the net before using <code>eco_destroy_net</code>.</div>
+<h3>
+<a id="pgfId-1041934"></a><a id="10373"></a>Instance Remastering</h3>
+
+<p>
+<a id="pgfId-1041935"></a>In this example, instance <code>I1</code> is remastered, changing the master from <code>A</code> to <code>B</code>. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041936"></a>set eco [eco_begin]<br />eco_remaster_instance -eco_control $eco -lib mlib -cell B -view abstract -name I1<br />eco_move_instance -eco_control $eco -name I -origin {$x $y}</pre>
+
+<p>
+<a id="pgfId-1041937"></a>Since remastered instances often do not match the footprint of the original instance, remastered instances might need to be moved to a legal location. This can be done with the <code>eco_move_instance</code> command. </p>
+<p>
+<a id="pgfId-1041941"></a>Space-based Router does not check the location of the instance placement.</p>
+
+<h4><em>
+<a id="pgfId-1093085"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1093105"></a><a href="eco_routeT_Routing_the_ECO_Changes.html#88562">Routing ECO Changes</a></p>
+<p>
+<a id="pgfId-1093115"></a><a href="eco_routeT_Saving_the_ECO_Changes.html#42894">Saving ECO Changes</a></p>
+<p>
+<a id="pgfId-1093121"></a><a href="eco_routeT_Undoing_ECO_Changes.html#61804">Undoing ECO Changes</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="eco_routeT_re_get_changed_area.html" id="prev" title="get_changed_area">get_changed_area</a></em></b><b><em><a href="eco_routeT_Routing_the_ECO_Changes.html" id="nex" title="Routing ECO Changes">Routing ECO Changes</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

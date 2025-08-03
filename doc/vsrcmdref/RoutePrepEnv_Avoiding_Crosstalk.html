@@ -1,0 +1,124 @@
+
+<html><head><title>Avoiding Crosstalk</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-10-17" />
+<meta name="CreateTime" content="1697541422" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use Virtuoso Space-based Router Tcl commands" />
+<meta name="DocTitle" content="Virtuoso Space-based Router Command Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Avoiding Crosstalk" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vsrcmdref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-17" />
+<meta name="ModifiedTime" content="1697541422" />
+<meta name="NextFile" content="RoutePrepEnv_Shielding_Group_of_Nets.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="RoutePrepEnv_Classifying_Neighbor_Nets.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Space-based Router Command Reference -- Avoiding Crosstalk" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="task" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Routing Environment" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vsrcmdrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vsrcmdrefTOC.html">Contents</a></li><li><a class="prev" href="RoutePrepEnv_Classifying_Neighbor_Nets.html" title="Classifying Neighbor Nets">Classifying Neighbor Nets</a></li><li style="float: right;"><a class="viewPrint" href="vsrcmdref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="RoutePrepEnv_Shielding_Group_of_Nets.html" title="Shielding Group of Nets">Shielding Group of Nets</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Space-based Router Command Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:Avoiding_Crosstalk" title="Avoiding Crosstalk"></a><h2>
+<a id="pgfId-1126175"></a><a id="85699"></a><a id="Avoiding_Crosstalk"></a>Avoiding Crosstalk</h2>
+
+<p>
+<a id="pgfId-1126176"></a>To avoid crosstalk between nets, specify nets in one group that must be routed at a distance from the nets in a second group, and set the <code>crossTalkNeighborIndex</code> group-to-group constraint to 2. Alternatively, the same group of noisy nets can be given for both net groups, as is done in the <a href="RoutePrepEnv_Avoiding_Crosstalk.html#75377">Crosstalk Control Example</a>, so that the conduit router will try to avoid assigning any pair of the given nets as immediate neighbors on adjacent tracks.</p>
+<p>
+<a id="pgfId-1126180"></a>For example: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1126181"></a># Create the net groups as type &#39;cross_talk&#39;<br />create_group -name group1 -set $selNetsSetA -type cross_talk<br />create_group -name group2 -set $selNetsSetB -type cross_talk<br />
+# Create a constraint group for bad neighbors
+create_constraint_group -name bad_neighbor 
+set_constraint -constraint crossTalkNeighborIndex -IntValue 2 -group bad_neighbor
+
+# Assign the bad neighbor constraint group to the two net groups
+assign_group_group -net_group1 group1 -net_group2 group2 -group_group_spec bad_neighbor</pre>
+<h3>
+<a id="pgfId-1126187"></a><a id="75377"></a>Crosstalk Control Example</h3>
+
+<p>
+<a id="pgfId-1126188"></a>In the following example, two net groups are created: a group of noisy nets and a group of power nets. The <code>crossTalkNeighborIndex</code> is set to make the conduit router prefer to route the each noisy net next to a power stripe, while also avoiding routing noisy nets immediately next to each other. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1126189"></a># create a group of nets<br />set selNetsSet [find_name -name {someNets}]<br />create_group -name noisyNets -set $selNetsSet -type cross_talk<br />
+# create a group for power
+set pwr_set2 [find_net -name {VDD}]
+create_group -name pwrNets -set $pwr_set2 -type cross_talk
+
+# Create a constraint group for encouraged coupling/parallelism
+create_constraint_group -name prefer_neighbor 
+set_constraint -constraint crossTalkNeighborIndex -IntValue 0 -group prefer_neighbor</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1126190"></a>
+# Create a constraint group for discouraged coupling/parallelism
+create_constraint_group -name bad_neighbor 
+set_constraint -constraint crossTalkNeighborIndex -IntValue 2 -group bad_neighbor</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1126191"></a>
+# Create the preferred relationship between the noisy nets and VDD
+assign_group_group -net_group1 noisyNets -net_group2 pwrNets -group_group_spec prefer_neighbor
+
+# Create the unpreferred relationship between all nets in the noisyNets group
+assign_group_group -net_group1 noisyNets -net_group2 noisyNets -group_group_spec bad_neighbor</pre>
+<p>
+<a id="pgfId-1126208"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="276" src="images/RoutePrepEnv-8.gif" /></div>
+<p>
+<a id="pgfId-1347365"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="280" src="images/RoutePrepEnv-9.gif" /></div>
+<h4><em>
+<a id="pgfId-1347373"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1347377"></a><a href="RoutePrepEnv.html#74538">Preparing the Routing Environment</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="RoutePrepEnv_Classifying_Neighbor_Nets.html" id="prev" title="Classifying Neighbor Nets">Classifying Neighbor Nets</a></em></b><b><em><a href="RoutePrepEnv_Shielding_Group_of_Nets.html" id="nex" title="Shielding Group of Nets">Shielding Group of Nets</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

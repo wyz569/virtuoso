@@ -1,0 +1,95 @@
+
+<html><head><title>Setting Net Priorities</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-10-17" />
+<meta name="CreateTime" content="1697541422" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use Virtuoso Space-based Router Tcl commands" />
+<meta name="DocTitle" content="Virtuoso Space-based Router Command Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Setting Net Priorities" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vsrcmdref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-17" />
+<meta name="ModifiedTime" content="1697541422" />
+<meta name="NextFile" content="RoutePrepEnv_Hard_and_Soft_Spacing_Rules.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="RoutePrepEnv_Creating_Fences.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Space-based Router Command Reference -- Setting Net Priorities" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="task" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Routing Environment" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vsrcmdrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vsrcmdrefTOC.html">Contents</a></li><li><a class="prev" href="RoutePrepEnv_Creating_Fences.html" title="Creating Fences">Creating Fences</a></li><li style="float: right;"><a class="viewPrint" href="vsrcmdref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="RoutePrepEnv_Hard_and_Soft_Spacing_Rules.html" title="Hard and Soft Spacing Rules">Hard and Soft Spacing Rules</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Space-based Router Command Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:Setting_Net_Priorities" title="Setting Net Priorities"></a><h2>
+<a id="pgfId-1047290"></a><a id="75296"></a>Setting Net Priorities</h2>
+
+<p>
+<a id="pgfId-1047291"></a>Use net priorities to more directly route critical nets or any given net. There are eleven levels of priority with 0 as the lowest priority and 10 as the highest priority. Net priorities can be set in DEF and by some data translation utilities. Unless you know that there are previously set net priorities that you want to keep, it is advisable to reset all net priorities prior to setting a few. The priority is relative, therefore, setting a net priority to 10 does nothing more than setting it to 1 over a default of 0. You can set net priorities for all nets, a given net, or nets in a set.</p>
+<p>
+<a id="pgfId-1047311"></a>To reset the net priority for all nets, use</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1047312"></a>set_net_priority -all -priority 0</pre>
+
+<p>
+<a id="pgfId-1047313"></a>To set the net priority to 1 for all nets whose names begin with <code>data_input_bus</code>, use</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1047321"></a>replace_set -set1 [find_net -name {data_input_bus*} -ignore_case true -no_wildcard false ] -set2 [get_selection_set]<br />set_net_priority -set [get_selection_set] -priority 1</pre>
+
+<p>
+<a id="pgfId-1105344"></a>The global router, conduit router, and detail router will honor net priorities. Nets with priorities greater than zero will be sorted and the nets with the highest priority will be routed first, thereby placing them close to their <em>ideal</em> position. During conduit routing, priority on nets with long segments will be more effective than priority on short nets because the primary goal of the conduit router is to track assign long route segments. Short segments are better handled by the detail router. At each of these three stages of routing&#8212;global, conduit, and detail&#8212;priority nets are routed first, followed by all other nets. Priority nets, if set judiciously, should maintain their <em>ideal </em>topology through the routing flow. However, priority nets can be rerouted in order to cleanly complete other connections. </p>
+<p>
+<a id="pgfId-1105349"></a>If a net is <em>long</em> due to some other constraint, you can apply your own formula to determine when the routing of a net is unacceptable and then re-route it using <code>global_route -mode eco</code>. Use <code>report_net_stats</code> and the Net Manager to determine the quality of the length of the net.</p>
+
+<h4><em>
+<a id="pgfId-1347872"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1347876"></a><a href="RoutePrepEnv.html#74538">Preparing the Routing Environment</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="RoutePrepEnv_Creating_Fences.html" id="prev" title="Creating Fences">Creating Fences</a></em></b><b><em><a href="RoutePrepEnv_Hard_and_Soft_Spacing_Rules.html" id="nex" title="Hard and Soft Spacing Rules">Hard and Soft Spacing Rules</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
