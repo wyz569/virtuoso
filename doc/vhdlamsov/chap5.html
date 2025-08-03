@@ -1,0 +1,194 @@
+
+<html><head><title>Mixed-Signal Value Conversions</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="shubh" />
+<meta name="CreateDate" content="2022-04-18" />
+<meta name="CreateTime" content="1650345141" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="This book contains overview information about VHDL-AMS for AMS Designer." />
+<meta name="DocTitle" content="Cadence VHDL-AMS Overview" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Mixed-Signal Value Conversions" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-3.3.1" />
+<meta name="Keyword" content="vhdlamsov" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2022-04-18" />
+<meta name="ModifiedTime" content="1650345141" />
+<meta name="NextFile" content="appA.html" />
+<meta name="Group" content="Analog Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification" />
+<meta name="PrevFile" content="chap4.html" />
+<meta name="c_product" content="Xcelium" />
+<meta name="Product" content="Xcelium" />
+<meta name="ProductFamily" content="Xcelium" />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2022 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence VHDL-AMS Overview -- Mixed-Signal Value Conversions" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="22.09" />
+<meta name="SpaceKey" content="vhdlamsov2209" />
+<meta name="webflare-version" content="2.2" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vhdlamsovTOC.html">Contents</a></li><li><a class="prev" href="chap4.html" title="VHDL-AMS Language Elements">VHDL-AMS Language Elements</a></li><li style="float: right;"><a class="viewPrint" href="vhdlamsov.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appA.html" title="Standard Packages Supported">Standard Packages Supported</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence VHDL-AMS Overview<br />Product Version 22.09, April 2022</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>5
+<a id="pgfId-1036274"></a></h1>
+<h1>
+<a id="pgfId-1036275"></a><hr />
+Mixed-Signal Value Conversions<hr />
+</h1>
+
+<p>
+<a id="pgfId-1035846"></a>The analog extensions of the VHDL-AMS language introduce some complexities not present in a digital only language. Because values in the analog domain are continuous and values in the digital domain are discrete, converting across domains now involves issues of both the translation of values and the timing of the exchange. </p>
+<p>
+<a id="pgfId-1035922"></a>In the digital domain, it is the signals and variables that contain dynamic data values. These objects are assigned values in processes and change at discrete times. In the analog domain, the terminals and quantities are the objects containing values. The values of these objects are continuous functions with respect to time. These differences mean that when you model a mixed signal system, you must consider the mechanism for exchanging values between digital and analog.</p>
+<p>
+<a id="pgfId-1035947"></a>The method you use to exchange values across domains depends on whether the value is being converted from an analog value to a digital value or from a digital value to an analog value.</p>
+
+<h2>
+<a id="pgfId-1035849"></a>Analog to Digital Conversion</h2>
+
+<p>
+<a id="pgfId-1035850"></a>You can, from a digital context, sample an analog value at various time points and convert the sampled value to a digital value, or you can monitor an analog value and use the value to trigger an event based on a threshold crossing. The following sections illustrate these approaches.</p>
+
+<h3>
+<a id="pgfId-1035946"></a>Sampling Analog Values</h3>
+
+<p>
+<a id="pgfId-1035851"></a>You can directly use the value of an analog-valued quantity in an assignment statement of a digital process. For example, the following model of a flip-flop uses a clock to determine when to sample the quantity <code>q</code>. The value of the quantity <code>q</code> then determines the new digital value of <code>out</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035852"></a>library ieee;  use ieee.math_real.all;<br />library ncvhdl_lib;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036372"></a>ENTITY sampler IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036374"></a>END sampler;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036376"></a>ARCHITECTURE behavior_sampler OF sampler IS
+&#160;&#160;&#160;&#160;signal clk : bit;
+&#160;&#160;&#160;&#160;signal output : bit;
+&#160;&#160;&#160;&#160;QUANTITY q&#160;&#160; : real;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036378"></a> -- Source constants<br /> constant thresh : real := 3.4;<br /> constant amplitude : REAL := 2.0 * thresh;<br /> constant frequency : REAL := 0.16 * 0.1e9&#160;&#160;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036364"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036366"></a> clock: process(clk)<br /> BEGIN<br />  clk &lt;= not clk after 10 ns;<br /> END PROCESS clock;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036380"></a> flipflop: PROCESS (clk) <br /> BEGIN<br />  if (clk = &#8217;1&#8217;) then<br />   if (q &gt; thresh) then<br />    output &lt;= &#8217;1&#8217;;<br />   else<br />    output &lt;= &#8217;0&#8217;;<br />   end if;<br />  end if;<br /> END PROCESS flipflop; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036368"></a> -- sin source<br /> q == amplitude * sin(2.0 * MATH_PI * frequency * now);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036370"></a>END behavior_sampler;</pre>
+<h3>
+<a id="pgfId-1035863"></a>Using Analog Values to Trigger a Digital Event</h3>
+
+<p>
+<a id="pgfId-1035864"></a>You can also use the <code>&#8217;above</code> attribute to trigger a digital event based on analog changes. The expression <code>Q&#8217;above(E)</code> represents a boolean-valued signal that is true when the value of <code>Q</code> is greater than the value of the expression <code>E</code> and is false otherwise. You can use the <code>Q&#8217;above(E)</code> signal in a process sensitivity list or in a <code>wait</code> statement to trigger the execution of a digital process.</p>
+<p>
+<a id="pgfId-1035865"></a>For example, in the following model of an inverter the statement</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035996"></a>wait on v_in&#8217;above(threshold)</pre>
+
+<p>
+<a id="pgfId-1035997"></a>ensures that the value of <code>output</code> changes only when the value of the analog signal crosses the <code>threshold</code> value.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035866"></a>inverter: process is
+&#160;&#160;&#160;&#160;constant threshold : real := 2.5;
+begin
+&#160;&#160;&#160;&#160;if (v_in &gt; threshold) then
+&#160;&#160;&#160;&#160; output &lt;= &#39;0&#39;;<br /> else<br />  output &lt;= &#39;1&#39;;<br /> end if;<br /> wait on v_in&#8217;above(threshold);<br />end process inverter;</pre>
+<h2>
+<a id="pgfId-1035876"></a>Digital to Analog Conversion</h2>
+
+<p>
+<a id="pgfId-1035877"></a>Simultaneous statements can directly access digital signals. For example, if you have a bit-valued signal <code>S</code> and an across quantity <code>Q</code> you can legally use a simultaneous statement like the following:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035878"></a>Q == real(S) * maxval;</pre>
+
+<p>
+<a id="pgfId-1035879"></a>Unfortunately, the above statement introduces a discontinuity into quantity <code>Q</code> whenever signal <code>S</code> changes value. As a result, you need to use the <code>S&#8217;ramp</code> or <code>S&#8217;slew</code> attributes to smooth the transitions. Avoiding discontinuities allows the simulator to run much more efficiently.</p>
+<p>
+<a id="pgfId-1036230"></a>For example, the following example converts the digital signal <code>clk</code> to the analog quantity <code>analog_out</code>, and uses the <code>s&#8217;ramp</code> attribute to smooth the output.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036249"></a>library ieee;  use ieee.math_real.all;<br />library ncvhdl_lib;<br />use ncvhdl_lib.std_decls.all;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036606"></a>entity v_source is<br />end entity v_source;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036608"></a>architecture behavior of v_source is
+&#160;&#160;&#160;&#160;constant maxv : real := 3.5;
+&#160;&#160;&#160;&#160;signal rclk : real := 0.0;
+&#160;&#160;&#160;&#160;signal clk : bit := &#8217;0&#8217;;
+&#160;&#160;&#160;&#160;terminal t1: electrical;
+&#160;&#160;&#160;&#160;quantity analog_out across analog_curr through t1;
+begin
+&#160;&#160;&#160;&#160;clock: process is
+&#160;&#160;&#160;&#160;begin
+&#160;&#160;&#160;&#160; if (clk = &#8217;0&#8217;) then<br />   wait for 3 ns;<br />   rclk &lt;= maxv;<br />   clk &lt;= &#8217;1&#8217;;<br />  else<br />   wait for 3 ns;<br />   rclk &lt;= 0.0;<br />   clk &lt;= &#8217;0&#8217;;<br />  end if;<br /> end process clock;<br /> analog_out == rclk&#8217;ramp(1.0e-9);<br />end architecture behavior;</pre>
+
+<p>
+<a id="pgfId-1036713"></a>Notice, in the following figure, how using the <code>S&#8217;ramp</code> attribute results in a ramp, rather than a step function, on the <code>analog_out</code> signal.</p>
+
+<p>
+<a id="pgfId-1036722"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="271" src="images/chap5-2.gif" /></div>
+<h2>
+<a id="pgfId-1035881"></a>Break Statement</h2>
+
+<p>
+<a id="pgfId-1035882"></a>Signal or variable changes in a process sometimes cause discontinuities in the analog part of a design. If this happens in your design, you need to ensure that your digital code runs a <code>break</code> statement whenever a process introduces a discontinuity.</p>
+<p>
+<a id="pgfId-1035883"></a>There are two types of <code>break</code> statements: concurrent and sequential.</p>
+<p>
+<a id="pgfId-1036084"></a>The following example illustrates how to use a concurrent <code>break</code> statement. When the switch turns on or off (that is when <code>sw</code> changes value) the conversion process introduces a discontinuity into the <code>v_out</code> signal. To announce the discontinuity, the concurrent break statement runs whenever there is an event on the signal <code>sw</code>. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036267"></a>library ieee;  use ieee.math_real.all;<br />library ncvhdl_lib;<br />use ncvhdl_lib.std_decls.all;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036800"></a>entity v_source is<br />end entity v_source;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036802"></a>architecture behavior of v_source is
+&#160;&#160;&#160;&#160;signal sw : bit := &#8217;0&#8217;;
+&#160;&#160;&#160;&#160;quantity v_out : real := 0.0;
+begin
+&#160;&#160;&#160;&#160;if (sw = &#8217;0&#8217;) use
+&#160;&#160;&#160;&#160; v_out == 0.0;<br /> else<br />  v_out == 5.0;<br /> end use;<br /> toggle: process is<br /> begin<br />  sw &lt;= not sw after 5 ns;<br />  wait on sw;<br /> end process toggle;<br /> break on sw;<br />end architecture behavior;</pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap4.html" id="prev" title="VHDL-AMS Language Elements">VHDL-AMS Language Elements</a></em></b><b><em><a href="appA.html" id="nex" title="Standard Packages Supported">Standard Packages Supported</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2022, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
