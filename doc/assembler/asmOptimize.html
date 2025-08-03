@@ -1,0 +1,1391 @@
+
+<html><head><title>Circuit Optimization</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-10-28" />
+<meta name="CreateTime" content="1698506687" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the features of Virtuoso ADE Assembler" />
+<meta name="DocTitle" content="Virtuoso ADE Assembler User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Circuit Optimization" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="assembler" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-28" />
+<meta name="ModifiedTime" content="1698506687" />
+<meta name="NextFile" content="vvoSensitivityAnalysis.html" />
+<meta name="Order" content="0" />
+<meta name="Group" content="ADE Assembler" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="asmDocuments.html" />
+<meta name="c_product" content="Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Analog Design Environment" />
+<meta name="ProductFamily" content="Virtuoso Analog Design Environment" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso ADE Assembler User Guide -- Circuit Optimization" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="assemblerIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="assemblerTOC.html">Contents</a></li><li><a class="prev" href="asmDocuments.html" title="Working with Documents and Datasheets">Working with Documents and Dat ...</a></li><li style="float: right;"><a class="viewPrint" href="assembler.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="vvoSensitivityAnalysis.html" title="Sensitivity Analysis">Sensitivity Analysis</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso ADE Assembler User Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>24
+<a id="pgfId-1099036"></a></h1>
+<h1>
+<a id="pgfId-1099038"></a><hr />
+<a id="45385"></a>Circuit Optimization<hr />
+</h1>
+
+<p>
+<a id="pgfId-1040700"></a>You can parameterize a design for sizing and optimization using variables. In addition, you can also use a parameterization flow in ADE Assembler. To use this flow, you can parameterize a design and set specifications, then perform a local or global optimization and backannotate the results of the optimization.</p>
+<p>
+<a id="pgfId-1041455"></a>This chap<a id="Optimization"></a>ter covers the following tasks:</p>
+<ul><li>
+<a id="pgfId-1041844"></a><a href="asmOptimize.html#45805">Parameterizing the Design</a></li><li>
+<a id="pgfId-1041849"></a><a href="asmOptimize.html#66794">Setting Up Specifications</a></li><li>
+<a id="pgfId-1103199"></a><a href="asmOptimize.html#46956">Running Optimization</a></li><li>
+<a id="pgfId-1103207"></a><a href="asmOptimize.html#96441">Sizing Over Corners</a></li><li>
+<a id="pgfId-1049579"></a><a href="asmOptimize.html#15811"></a><a href="asmOptimize.html#80378">Performing Manual Tuning</a></li></ul>
+
+
+
+
+
+<h2>
+<a id="pgfId-1103242"></a><a id="45805"></a>Parameterizing the <a id="optimizationParameterization"></a>Design<a id="marker-1103241"></a></h2>
+
+<p>
+<a id="pgfId-1041616"></a>When you parameterize the design for optimization, you capture the critical device relationships in the circuit. For example, the input transistors of an opamp must be matched, and the transistors of a current mirror must be ratioed. In order to run optimization, you must define a range of legal values for optimization for each transistor that is the &#8220;master&#8221; in a matching relationship.</p>
+<p>
+<a id="pgfId-1041658"></a>To begin parameterizing the design.</p>
+
+<ul><li>
+<a id="pgfId-1041633"></a>Choose <em>Window &#8212; Assistants &#8212; Variables and Parameters</em>.<br />
+<a id="pgfId-1041637"></a>The Variables and Parameters pane appears.<br />
+<a id="pgfId-1066763"></a><div class="webflare-div-image">
+<img src="images/panePSC.gif" /></div></li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1041456"></a><a id="44594"></a>Matching Devices and Device <a id="deviceMatch"></a>Properties<a id="marker-1042152"></a></h3>
+
+<p>
+<a id="pgfId-1041756"></a>You have three options for matching. You can match all device properties for a device, or you can match only specific properties. You can also ratio-match. When you&#8217;re finished specifying device relationships, you can define legal values for device properties.</p>
+
+<h4>
+<a id="pgfId-1041660"></a>Matching Devices</h4>
+
+<p>
+<a id="pgfId-1041757"></a>To match devices:</p>
+<ol><li>
+<a id="pgfId-1041738"></a>Select the devices you want to match in the schematic.<br />
+<a id="pgfId-1041739"></a>The devices are listed on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1041740"></a>In the Parameters tab, select the device you want as the &#8220;master device.&#8221; The master device is the device that all the other selected devices will match.</li><li>
+<a id="pgfId-1041677"></a>Click the <em>Match</em> <em>Parameters</em> <img src="images/iconMatchParameters.gif" />
+ button.<br />
+<a id="pgfId-1068811"></a>The matched parameters appear in the lower half of the Parameters tab of the Variables and Parameters assistant pane. </li></ol>
+
+
+
+
+<p>
+<a id="pgfId-1041940"></a>You can now modify the values of matched parameters to vary them during the optimization process.</p>
+
+<h4>
+<a id="pgfId-1041759"></a>Matching Device Properties</h4>
+
+<p>
+<a id="pgfId-1066858"></a>To match specific device properties:</p>
+<ol><li>
+<a id="pgfId-1066860"></a>In the schematic, click the devices for which you want to match properties.<br />
+<a id="pgfId-1066901"></a>As you click, each device and its parameters appear on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1066855"></a>Ensure that <em>Default</em> is selected in the drop-down list on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1066845"></a>Click the + sign next to a device with whose properties you want to match the properties of other devices.<br />
+<a id="pgfId-1066846"></a>The list of properties for the device appears, as well as the schematic value of each property.<br />
+<a id="pgfId-1066975"></a><div class="webflare-div-image">
+<img width="380" height="391" src="images/asmOptimize-4.gif" /></div></li><li>
+<a id="pgfId-1041817"></a>Select the property you want to match.</li><li>
+<a id="pgfId-1041764"></a>Click the <em>Match</em> <em>Parameters</em> <img src="images/iconMatchParameters.gif" />
+ button.<br />
+<a id="pgfId-1067026"></a>The matched parameters appear in the lower half of the Parameters tab. <br />
+<a id="pgfId-1067065"></a><div class="webflare-div-image">
+<img src="images/parametersMatch.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1041932"></a>You can now modify the values of matched parameters to vary them during the optimization process.</p>
+
+<h4>
+<a id="pgfId-1041867"></a><a id="17106"></a>Ratio-Matching Device <a id="ratioMatch"></a>Properties</h4>
+
+<p>
+<a id="pgfId-1041868"></a>To ratio-match specific device properties:</p>
+<ol><li>
+<a id="pgfId-1067100"></a>In the schematic, click the devices for which you want to ratio-match properties.<br />
+<a id="pgfId-1067101"></a>As you click, each device and its parameters appear on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1067102"></a>Ensure that <em>Default</em> is selected in the drop-down list on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1067103"></a>Click the + sign next to a device with whose parameters you want to ratio-match the parameters of other devices.<br />
+<a id="pgfId-1067088"></a><div class="webflare-div-image">
+<img src="images/vpaParamInstDisp.gif" /></div></li><li>
+<a id="pgfId-1041897"></a>Select the parameters you want to ratio-match.</li><li>
+<a id="pgfId-1041880"></a>Click the <em>Ratio Matched Parameters</em> <img src="images/iconRatioMatchedParameters.gif" />
+ button.<br />
+<a id="pgfId-1041915"></a>ADE Assembler automatically ratios the parameters based on the lowest value.<br />
+<a id="pgfId-1067180"></a>The ratio-matched parameters appear in the lower half of the Parameters tab. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1067194"></a>You can now modify the values of ratio-matched parameters to vary them during the optimization process.</p>
+
+<h3>
+<a id="pgfId-1041678"></a>Defining Values for Optimization</h3>
+
+<p>
+<a id="pgfId-1041687"></a>To define a legal range of values for devices:</p>
+<ol><li>
+<a id="pgfId-1067230"></a>In the schematic, click the devices for which you want to specify values.<br />
+<a id="pgfId-1067231"></a>As you click, each device and its parameters appear on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1067232"></a>Ensure that <em>Default</em> is selected in the drop-down list on the upper half of the Parameters tab of the Variables and Parameters assistant pane.</li><li>
+<a id="pgfId-1067255"></a>Click the + sign next to a device whose parameters you want to modify for optimization.<br />
+<a id="pgfId-1041724"></a>The list of parameters for the device appears, as well as the schematic value of each property.<br />
+<a id="pgfId-1067274"></a><div class="webflare-div-image">
+<img src="images/vpaParamInstDisp.gif" /></div></li><li>
+<a id="pgfId-1041737"></a>Click the value for the parameters you want to modify and type a range or list of values. Specify ranges in the format <code>MIN:STEP:MAX</code>. You can separate a list of values with either commas or spaces.<br />
+<a id="pgfId-1068938"></a>The modified parameters appear in the lower half of the Parameters tab.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1041659"></a><a id="66794"></a>Setting Up <a id="specSetup"></a>Specifications<a id="marker-1042153"></a></h2>
+
+<p>
+<a id="pgfId-1041462"></a>When you set specifications on outputs, you establish the performance specifications that ADE Assembler must meet during synthesis. These specifications are used as benchmarks for candidate circuit quality during optimization.</p>
+<p>
+<a id="pgfId-1044266"></a>You can set up general specifications, area constraint specifications and operating region specifications. For more information, see the following topics:</p>
+<ul><li>
+<a id="pgfId-1075998"></a><a href="asmOptimize.html#89155">General Specifications</a></li><li>
+<a id="pgfId-1076023"></a><a href="asmOptimize.html#85859">Device Area Constraint Specifications</a></li></ul>
+
+
+<h3>
+<a id="pgfId-1044267"></a><a id="89155"></a>General Specifications<a id="generalSpec"></a></h3>
+
+<p>
+<a id="pgfId-1044268"></a>For each specification, you specify an objective, or performance constraint, then specify a target value for that specification.</p>
+
+<h4>
+<a id="pgfId-1041590"></a><a id="10671"></a>Objective <a id="specObjectives"></a>Types</h4>
+
+<p>
+<a id="pgfId-1041463"></a>There are five types of objectives:</p>
+<ul><li>
+<a id="pgfId-1041464"></a>open-ended</li><li>
+<a id="pgfId-1041465"></a>close-ended</li><li>
+<a id="pgfId-1041466"></a>range</li><li>
+<a id="pgfId-1041467"></a>tolerance</li><li>
+<a id="pgfId-1041468"></a>info</li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1041469"></a>An open-ended specification is when you choose either minimize (min) or maximize (max), then specify an ideal value. For an open-ended specification, ADE Assembler tries to continually improve upon the ideal value. So, if the ideal value for the <em>ugf</em> specification is maximize to 1e+8, 3e+8 is better than 2e+8.</p>
+<p>
+<a id="pgfId-1041470"></a>A close-ended specification is when you specify a target value, then specify that the resulting specification must be greater than (&gt;) or less than (&lt;) that target value. For a close-ended specification, ADE Assembler attempts to meet the target value, and exceeding the target is no better than meeting the target. So, if the target value for <em>ugf</em> is &gt;1e+8, 3e+8 is no better than 2e+8.</p>
+<p>
+<a id="pgfId-1041471"></a>You can also specify a range specification, in which you specify both an upper and a lower boundary for the target value. For a tolerance (tol) specification, you specify a target value and an allowable percentage deviation.</p>
+<p>
+<a id="pgfId-1101095"></a>The optimizer treats the range and tolerance specs as closed-ended unless all the specifications are met. When all the specifications are met, range and tolerance are treated as open-ended. When all the specifications are met and the <code>all specs met</code> stopping criteria has not been specified, the optimizer continues to prefer the values closer to the midpoint of the range or tolerance target value.</p>
+<p>
+<a id="pgfId-1041472"></a>You can specify an info specification when you want to see the value of a measurement, but do not want that specification to affect sizing.</p>
+<p>
+<a id="pgfId-1041473"></a>Design specifications might include specifying an open loop gain maximized with an acceptable value of 60dB, or a settling time &lt; 15ns.</p>
+
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1044261"></a>
+You can also specify area goals. For more information, see <a href="asmOptimize.html#85859">Device Area Constraint Specifications</a>.</div>
+<h4>
+<a id="pgfId-1042433"></a><a id="77096"></a>Specification <a id="specWeights"></a>Weights</h4>
+
+<p>
+<a id="pgfId-1042434"></a>ADE Assembler supports weighing on specifications, that is, the ability to put particular emphasis on one or more specifications. You may use weighing if you have certain important specifications, and it is imperative that ADE Assembler meet those specifications, even at the expense of other specifications. Or, if you have run ADE Assembler without any specification weights, and you have one particular specification that is not being met, you can put emphasis on that specification in order to ensure that ADE Assembler meets it.</p>
+<p>
+<a id="pgfId-1042435"></a>To set specification weighing, you specify a positive integer as the &#8220;weight.&#8221; ADE Assembler multiplies the cost function for that specification by the integer specified for the weight. Because this specification is now &#8220;x&#8221; times more important than other specifications, it changes the way ADE Assembler searches the design space. ADE Assembler will put particular stress on meeting that specification, even at the expense of specifications weighted at &#8220;1.&#8221; This discrepancy is especially true of specifications that are minimized or maximized, because ADE Assembler is already working harder to optimize the value for that specification.</p>
+<p>
+<a id="pgfId-1042436"></a>In general, ADE Assembler is able to find a working solution without specification weighing. As a result, Cadence advises that you run ADE Assembler first with all specifications weights set to &#8220;1.&#8221; If ADE Assembler is repeatedly unable to meet a particular specification, you can put more emphasis on meeting that specification using specification weighing.</p>
+
+<h4>
+<a id="pgfId-1041525"></a><a id="41157"></a>Setting Up Specifications</h4>
+
+<p>
+<a id="pgfId-1044287"></a>To set up specifications:</p>
+<ol><li>
+<a id="pgfId-1041559"></a><a id="41031"></a>In the Outputs Setup tab, double-click the <em>Spec</em> column in the row for the output for which you want to set up specifications.<br />
+<a id="pgfId-1041564"></a>A drop-down list of objectives appears.<br />
+<a id="pgfId-1044114"></a><div class="webflare-div-image">
+<img src="images/outputs_fieldsel.gif" /></div></li><li>
+<a id="pgfId-1041565"></a>Choose an objective from the drop-down list.<br />
+<a id="pgfId-1041579"></a>For more information on the types of objectives, see <a href="asmOptimize.html#10671">Objective Types</a>.</li><li>
+<a id="pgfId-1041591"></a>Select the field next to the drop-down list.</li><li>
+<a id="pgfId-1041596"></a><a id="15889"></a>Enter a target value in the field.<br />
+<a id="pgfId-1044115"></a><div class="webflare-div-image">
+<img src="images/outputs_val.gif" /></div></li><li>
+<a id="pgfId-1041607"></a><a id="30614"></a>(Optional) Specify a weight for the specification in the Weight column.<br />
+<a id="pgfId-1042524"></a>For more information on weights, see <a href="asmOptimize.html#77096">Specification Weights</a>.</li><li>
+<a id="pgfId-1101533"></a>Repeat <a href="asmOptimize.html#41031">step 1</a> through <a href="asmOptimize.html#30614">step 5</a> for all outputs for which you want to set specifications.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1101534"></a>Maximizing Operating Region Specification </em></h4>
+
+<p>
+<a id="pgfId-1101553"></a>To maximize an operating point specification:</p>
+<ul><li>
+<a id="pgfId-1101747"></a>Create the expression as normal ADE Assembler output specification.</li><li>
+<a id="pgfId-1101762"></a>Perform the optimization. </li></ul>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1101557"></a>In this case, the special operating region type of specification is not used because the individual expressions are considered to pass the specification when the constraint is met. For example, if you define an expression, <code>vgs-vth maximize 20m</code>, it is considered pass for all the values above <code>20m</code>.</div>
+<p>
+<a id="pgfId-1101561"></a>The special operating region specification performs the following tasks:</p>
+<ul><li>
+<a id="pgfId-1101562"></a>Provides a single specification that determines pass or fail of operating region.</li><li>
+<a id="pgfId-1101563"></a>Folds a long list of individual expressions into a single specification.</li><li>
+<a id="pgfId-1101564"></a>Provides methods to simplify adding operating region constraints to multiple devices.</li><li>
+<a id="pgfId-1101648"></a>Selects devices on schematic and apply constraints to multiple devices at the same time or selects devices by using master or model.</li><li>
+<a id="pgfId-1101568"></a>Provides reusable constraints, which are a set of named expressions that can be loaded from file and applied to selected devices </li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1101697"></a>If you want to maximize the operating region for a small number of devices, you can create expressions as normal output specifications. For a large number of devices, you can create close-ended expressions as part of the special operating region specification.</p>
+
+<h3>
+<a id="pgfId-1101537"></a><a id="85859"></a>Device Area Constraint Specifications<a id="areaGoals"></a></h3>
+
+<p>
+<a id="pgfId-1047550"></a>You can specify area constraint specifications for use in optimization runs. For each device, you can either manually specify an area formula, or use a CDF parameter to set default area formulas for devices. For more information about using a CDF parameter to set default area formulas, see <a href="asmOptimize.html#83013">Setting Default Area Formulas</a>.</p>
+
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1044432"></a>
+You can add multiple area constraint specifications for a test if you want to set different specifications for some devices.</div>
+
+<p>
+<a id="pgfId-1047056"></a>For more information, see the following topics:</p>
+<ul><li>
+<a id="pgfId-1047073"></a><a href="asmOptimize.html#83013">Setting Default Area Formulas</a></li><li>
+<a id="pgfId-1047092"></a><a href="asmOptimize.html#77511">Setting Up Area Constraint Specifications</a></li><li>
+<a id="pgfId-1047102"></a><a href="asmOptimize.html#33907">Modifying an Area Constraint Specification</a></li><li>
+<a id="pgfId-1047113"></a><a href="asmOptimize.html#48018">Copying a Device Formula</a></li><li>
+<a id="pgfId-1047124"></a><a href="asmOptimize.html#92658">Including Devices in the Area Constraint Specification</a></li><li>
+<a id="pgfId-1047135"></a><a href="asmOptimize.html#84164">Excluding Devices from the Area Constraint Specification</a></li><li>
+<a id="pgfId-1047186"></a><a href="asmOptimize.html#37499">Deleting Devices with Area Formulas</a></li></ul>
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1044293"></a><a id="83013"></a>Setting Default Area Formulas</h4>
+
+<p>
+<a id="pgfId-1046805"></a>You can specify default area formulas for devices using the <code>AreaFormula</code> CDF parameter. </p>
+<p>
+<a id="pgfId-1047755"></a>If you want to use a different CDF parameter name for specifying default area formulas, specify the parameter name using the <span class="webflare-courier-new" style="white-space:pre"><em>defAreaProp</em></span> environment variable in one of the following ways:</p>
+<ul><li>
+<a id="pgfId-1046872"></a>In the CIW, enter the following:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1046873">
+<a id="pgfId-1046873"></a>envSetVal(&quot;adexl.gui&quot; &quot;defAreaProp&quot; &#39;string &#8220;&lt;myParamName&gt;&#8221;)</pre></li><li>
+<a id="pgfId-1046874"></a>In your <code>.cdsenv</code> file, enter the following:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1046875">
+<a id="pgfId-1046875"></a>adexl.gui defAreaProp string &#8220;&lt;myParamName&gt;&#8221;</pre></li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1047254"></a>For more information about CDF parameters, see the <h-hot>Component Description Format User Guide</h-hot><a id="marker-1047787"></a>.</p>
+
+<h4>
+<a id="pgfId-1044296"></a><a id="77511"></a>Setting Up Area Constraint Specifications</h4>
+
+<p>
+<a id="pgfId-1046730"></a>To set up area constraint specifications, do the following:</p>
+<ol><li>
+<a id="pgfId-1044299"></a>On Outputs Setup tab, click the <em>Add new output</em> <img src="images/iconAddNewOutput.gif" />
+ button.</li><li>
+<a id="pgfId-1044317"></a>In the drop-down list, select a test and choose <em>Area Specification</em>.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1046695"></a>
+You can also right-click a test name in the Outputs Setup tab and choose <em>Add Area Specification</em> to set up area constraint specifications for that test.</div>
+<a id="pgfId-1044318"></a>The Area Constraint Specification form appears.<br />
+<a id="pgfId-1044320"></a><div class="webflare-div-image">
+<img src="images/area.gif" /></div></li><li>
+<a id="pgfId-1044319"></a><a id="48006"></a>Specify a device name for which you want to add an area formula:<ul><li>
+<a id="pgfId-1044324"></a>Select a device in the schematic. To do this, click the <em>Select</em> button to display the schematic window. Select the device in the schematic window and press the <em>Esc</em> key. The device name is displayed in the <em>Devices</em> field.</li><li>
+<a id="pgfId-1044325"></a>Enter the device name in the <em>Devices</em> field.</li></ul></li><li>
+<a id="pgfId-1044326"></a>Click <em>Add</em> to add the device to the list.</li><li>
+<a id="pgfId-1044331"></a><a id="21246"></a>Select the <em>Formula</em> field for the device and enter an area formula.<br />
+<a id="pgfId-1044334"></a>You must enter an arithmetic combination of valid CDF parameters that are specified for the device.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1044362"></a>
+You can use the <a href="asmOptimize.html#matchArea">Copy Formula</a> button to copy area formulas from one device to another.</div></li><li>
+<a id="pgfId-1044336"></a>Repeat <a href="asmOptimize.html#48006">step 3</a> through <a href="asmOptimize.html#21246">step 5</a> for any other devices you want to include in the area constraint specification.</li><li>
+<a id="pgfId-1046974"></a>Click the <em>Add Devices with Default Formulas </em>check box to add all instances in the design for which default formulas are specified using the <code>AreaFormula</code> CDF parameter. For more information, see <a href="asmOptimize.html#83013">Setting Default Area Formulas</a>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1044341"></a>You can modify any default formula by selecting the <em>Formula</em> field and typing a new area formula.</div><ffi2-fig-frame-in-2 id="#id1047299">
+<a id="pgfId-1047299"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img src="images/areaWithFormula.gif" /></div></li><li>
+<a id="pgfId-1047046"></a>To include a device in the area constraint specification, select the <em>Enable</em> check box for the device. De-select the <em>Enable</em> check box for the devices you do not want to include in the area constraint specification.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1047047"></a>All devices with default area formulas are included by default, while any devices for which you manually entered area formulas are not.</div></li><li>
+<a id="pgfId-1044339"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1044378"></a>The area constraint specification is displayed in the Outputs Setup tab. <br />
+<a id="pgfId-1044415"></a><div class="webflare-div-image">
+<img src="images/area_goal.gif" /></div>
+<a id="pgfId-1044421"></a>The area constraint specification is assigned the name <code>area_</code><span class="webflare-courier-new" style="white-space:pre"><em>seqNum</em></span>, where <span class="webflare-courier-new" style="white-space:pre"><em>seqNum</em></span> is <code>0</code> (zero) for the first area constraint specification you add. You can double-click the <em>Name</em> field and modify the name.</li><li>
+<a id="pgfId-1047475"></a>Set up specifications for the area constraint specification. For more information, see <a href="asmOptimize.html#41157">Setting Up Specifications</a>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1044297"></a><a id="33907"></a>Modifying an Area Constraint Specification</h4>
+
+<p>
+<a id="pgfId-1045595"></a>To modify an existing area constraint specification:</p>
+<ol><li>
+<a id="pgfId-1045596"></a>In the Outputs Setup tab, double-click the <em>Details</em> field for the area constraint specification.<br />
+<a id="pgfId-1045616"></a>The Area Constraint Specification form appears.</li><li>
+<a id="pgfId-1046474"></a>Modify the area constraint specification as required.</li></ol>
+
+
+
+<h4>
+<a id="pgfId-1045594"></a><a id="48018"></a>Copying a Device Formula<a id="matchArea"></a></h4>
+
+<p>
+<a id="pgfId-1044350"></a>To copy the area formula from one device to another:</p>
+<ol><li>
+<a id="pgfId-1044351"></a>Select the device from which you are copying the formula.</li><li>
+<a id="pgfId-1044352"></a>Control-click the device to which you want to copy the formula.</li><li>
+<a id="pgfId-1047398"></a>Click <em>Copy Formula</em>.</li></ol>
+
+
+
+<h4>
+<a id="pgfId-1047454"></a><a id="92658"></a>Including Devices in the Area Constraint Specification</h4>
+<ul><li>
+<a id="pgfId-1047455"></a>To include a device in the area constraint specification, select the <em>Enable</em> check box.</li></ul>
+
+<p>
+<a id="pgfId-1047456"></a>To include more than one device at once:</p>
+<ol><li>
+<a id="pgfId-1044571"></a>Select the devices you want to include.</li><li>
+<a id="pgfId-1044579"></a>Right-click and choose <em>Enable</em>.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1047386"></a>
+You can enable all devices by right-clicking and choosing <em>Enable All</em>.</div></li></ol>
+
+
+
+<h4>
+<a id="pgfId-1047388"></a><a id="84164"></a>Excluding Devices from the Area Constraint Specification</h4>
+<ul><li>
+<a id="pgfId-1047389"></a>To exclude a device from the area constraint specification, deselect the <em>Enable</em> check box.</li></ul>
+
+<p>
+<a id="pgfId-1047439"></a>To exclude more than one device at once:</p>
+<ol><li>
+<a id="pgfId-1047441"></a>Select the devices you want to exclude.</li><li>
+<a id="pgfId-1047442"></a>Right-click and choose <em>Disable</em>.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1046649"></a>
+You can disable all devices by right-clicking and choosing <em>Disable All</em>.</div></li></ol>
+
+
+
+<h4>
+<a id="pgfId-1044615"></a><a id="37499"></a>Deleting Devices with Area Formulas</h4>
+
+<p>
+<a id="pgfId-1044619"></a>To delete devices and their area formulas:</p>
+<ol><li>
+<a id="pgfId-1044620"></a>Select one or more devices.</li><li>
+<a id="pgfId-1044626"></a>Right-click and choose <em>Delete</em>.</li></ol>
+
+
+<h3>
+<a id="pgfId-1103539"></a><a id="17870"></a><a id="15910"></a>Specifying How Much Optimization Data to <a id="optionsMenuSave"></a>Save<a id="marker-1103538"></a></h3>
+
+<p>
+<a id="pgfId-1103541"></a>To specify the number of <h-hot><a href="asmOptimize.html#designPoints">design points</a></h-hot> for which you want to save simulation data, do the following:</p>
+<ol><li>
+<a id="pgfId-1103542"></a>In the ADE Assembler session window, choose <em>Options &#8211; Save</em>.<br />
+<a id="pgfId-1103543"></a>The Save Options form appears.<br />
+<a id="pgfId-1103547"></a><div class="webflare-div-image">
+<img width="532" height="620" src="images/asmOptimize-17.gif" /></div></li><li>
+<a id="pgfId-1103549"></a>In the <em>Design Points per Optimization Run</em><a id="designPointsPerOptimizationRun"></a> group box, select one of the following radio buttons:<br />
+<a id="pgfId-1103565"></a><table class="webflareTable webflareTableIndent" id="#id1103550">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1103552">
+<a id="pgfId-1103552"></a>Radio Button</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1103554">
+<a id="pgfId-1103554"></a>Description</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103556"></a><em>Save all design points</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103559"></a>Saves data from all <h-hot><a href="asmOptimize.html#designPoints">design points</a></h-hot> </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103561"></a><em>Save best</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103564"></a>Saves data from the specified number of best <h-hot><a href="asmOptimize.html#designPoints">design points</a></h-hot></p>
+</td>
+</tr>
+</tbody></table></li><li>
+<a id="pgfId-1103567"></a><a id="setupResultsDB"></a>(Optional) In the <em>Results DB</em> group box, either type the directory path where you want the program to write your setup and results database information in the <em>Results DB location</em> field, or do the following:<ol><li>
+<a id="pgfId-1103568"></a>Click <em>Browse</em>.</li><li>
+<a id="pgfId-1103569"></a>On the form that appears, navigate to and select the directory where you want the program to write your setup and results database information.</li></ol><br />
+<a id="pgfId-1103570"></a>The program writes setup and results database information to <span class="webflare-courier-new" style="white-space:pre"><em>libraryName</em></span><code>/</code><span class="webflare-courier-new" style="white-space:pre"><em>cellName</em></span><code>/adexl</code> in the specified directory.<br />
+<a id="pgfId-1103571"></a>If you do not specify a setup and results database location, the program writes this information to <span class="webflare-courier-new" style="white-space:pre"><em>libraryName</em></span><code>/</code><span class="webflare-courier-new" style="white-space:pre"><em>cellName</em></span><code>/adexl</code> for the current test. If your design library is set up as read-only, you can use this field to specify a writable location.</li><li>
+<a id="pgfId-1103572"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1103573"></a>The program applies the settings you specified.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1103574"></a>See also</p>
+<ul><li>
+<a id="pgfId-1103578"></a><a href="asmOptimize.html#80207">Data Points&#8212;Definition</a> </li><li>
+<a id="pgfId-1103774"></a><a href="asmOptimize.html#58608">Design Points&#8212;Definition</a> </li><li>
+<a id="pgfId-1103776"></a><a actuate="user" class="URL" href="../assembler/asmGettingStarted.html#resultsDBlocation" show="replace" xml:link="simple">Specifying Results Database Location</a> </li></ul>
+
+
+
+<h3>
+<a id="pgfId-1103780"></a><a id="80207"></a>Data <a id="dataPoints"></a>Points&#8212;Definition<a id="marker-1103779"></a></h3>
+
+<p>
+<a id="pgfId-1103590"></a>A data point represents one simulation run with one set of parameter values and corners setup. For example, if you sweep <em>CAP</em> (a global variable) from <code>600p</code> to <code>800p</code> with a step value of <code>3</code>, you will have three data points. If you sweep more than one variable, each unique combination of values constitutes one data point. If you have two corners for temperature at <code>0</code> and <code>30</code> in addition to the <em>CAP</em> sweep through three values, you will have six data points:</p>
+
+<p>
+<a id="pgfId-1103648"></a></p>
+<table class="webflareTable" id="#id1103591">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103593"></a>Data Point</p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103595"></a></p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103597"></a><em>CAP</em></p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103599"></a>Corner Temperature</p>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<cbr-cell-right id="#id1103601">
+<a id="pgfId-1103601"></a>1</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103603"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103605"></a><code>600p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103607"></a><code>0</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<cbr-cell-right id="#id1103609">
+<a id="pgfId-1103609"></a>2</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103611"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103613"></a><code>700p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103615"></a><code>0</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<cbr-cell-right id="#id1103617">
+<a id="pgfId-1103617"></a>3</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103619"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103621"></a><code>800p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103623"></a><code>0</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<cbr-cell-right id="#id1103625">
+<a id="pgfId-1103625"></a>4</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103627"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103629"></a><code>600p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103631"></a><code>30</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<cbr-cell-right id="#id1103633">
+<a id="pgfId-1103633"></a>5</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103635"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103637"></a><code>700p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103639"></a><code>30</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<cbr-cell-right id="#id1103641">
+<a id="pgfId-1103641"></a>6</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103643"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103645"></a><code>800p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103647"></a><code>30</code></p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1103652"></a><a id="designPoints"></a><a id="58608"></a>Design Points&#8212;Definition<a id="marker-1103651"></a></h3>
+
+<p>
+<a id="pgfId-1103654"></a>A design point consists of the set of <h-hot><a href="asmOptimize.html#dataPoints">data points</a></h-hot> that represents one sweep value across all corners. For example, if you have two corners for temperature at <code>0</code> and <code>30</code>, and a sweep of <em>CAP</em> (a global variable) through three values (<code>600p</code>, <code>700p</code>, <code>800p</code>), each sweep across both corners constitutes a design point.</p>
+
+<p>
+<a id="pgfId-1103712"></a></p>
+<table class="webflareTable" id="#id1103655">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103657"></a>Design Point</p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103659"></a></p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103661"></a><em>CAP</em></p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103663"></a>Corner Temperatures</p>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="2">
+<cbr-cell-right id="#id1103665">
+<a id="pgfId-1103665"></a>1</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103667"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103669"></a><code>600p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103671"></a><code>0</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103675"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103677"></a><code>600p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103679"></a><code>30</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="2">
+<cbr-cell-right id="#id1103681">
+<a id="pgfId-1103681"></a>2</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103683"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103685"></a><code>700p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103687"></a><code>0</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103691"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103693"></a><code>700p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103695"></a><code>30</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="2">
+<cbr-cell-right id="#id1103697">
+<a id="pgfId-1103697"></a>3</cbr-cell-right>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103699"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103701"></a><code>800p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103703"></a><code>0</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103707"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103709"></a><code>800p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1103711"></a><code>30</code></p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1103713"></a>How Top Ten Best Design Points are Calculated Using Running Over Corners?</em></h4>
+
+<p>
+<a id="pgfId-1103714"></a>The optimizer treats range and tolerance specs as closed-ended unless all specs are met. If all specs are met, range and tolerance are treated as open-ended and optimization attempts to find values that are closer to the target yield.</p>
+<p>
+<a id="pgfId-1103715"></a>The design point that has the yield value closer to the target yield is considered as the best point and placed at the top of the table. For example, consider the following case where target yield is 1.443, point A has yield value=1.267, and point B has yield value=1.265. In this case, point A is the best point because it is closer to the target than point B.</p>
+<p>
+<a id="pgfId-1103716"></a>Points are also ordered in terms of the total error generated for all specs for each point. The point that has lesser error value is considered as the best point. </p>
+<p>
+<a id="pgfId-1103717"></a>Total error in point A = 1.332 <br />Total error in point B = 1.452 </p>
+<p>
+<a id="pgfId-1103718"></a>Clearly, point A is better than point B. You can calculate the total error of all the specs in a point by summing the absolute value of the result minus the target.</p>
+<p>
+<a id="pgfId-1103719"></a>Points for which tolerance spec is passed are treated as equally good points unless all the specs are passed. You can compute the total error considering only those values for which the tolerance specs fail. You can also check how many specs are failed for each point. If some points have more failures as compared to the others, then those points are placed towards the end of the best points list.</p>
+<p>
+<a id="pgfId-1103720"></a>For example, below list shows the total number of failures and total error for 10 design points that are arranged in best to worst order:</p>
+<ol><li>
+<a id="pgfId-1103721"></a>Number of failures = 4, Total sum of failing difference from target = 6.09u </li><li>
+<a id="pgfId-1103722"></a>Number of failures = 4, Total sum of failing difference from target = 9.06u</li><li>
+<a id="pgfId-1103723"></a>Number of failures = 5, Total sum of failing difference from target = 5.65u </li><li>
+<a id="pgfId-1103724"></a>Number of failures = 5, Total sum of failing difference from target = 5.773u </li><li>
+<a id="pgfId-1103725"></a>Number of failures = 5, Total sum of failing difference from target = 5.787u </li><li>
+<a id="pgfId-1103726"></a>Number of failures = 5, Total sum of failing difference from target = 5.799u </li><li>
+<a id="pgfId-1103727"></a>Number of failures = 5, Total sum of failing difference from target = 5.844u </li><li>
+<a id="pgfId-1103728"></a>Number of failures = 5, Total sum of failing difference from target = 5.849u </li><li>
+<a id="pgfId-1103729"></a>Number of failures = 5, Total sum of failing difference from target = 5.882u </li><li>
+<a id="pgfId-1103730"></a>Number of failures = 5, Total sum of failing difference from target = 5.936u </li></ol>
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1103731"></a>Notice that the first two points have a larger total, but they have 4 failures as compared to other points that have 5 failures. It has been concluded from this example that number of passes overrides the total number of errors while calculating the best design points.</p>
+
+<h4>
+<a id="pgfId-1103732"></a>Error Conditions</h4>
+
+<p>
+<a id="pgfId-1103733"></a>ADE Assembler shows error messages in the following situations:</p>
+<ul><li>
+<a id="pgfId-1103734"></a>NFS file intermittent problem. </li><li>
+<a id="pgfId-1103735"></a>File permission changes to read-only when write permission was expected/required.</li><li>
+<a id="pgfId-1103736"></a>File has been deleted manually.</li></ul>
+
+
+<p>
+<a id="pgfId-1103737"></a>The errors displayed are:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103738"></a>ERROR: Encountered the following problem with the results database engine:</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103739"></a>SQL statement: </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103740"></a>Error code: 1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103741"></a>Description: unable to open database file.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103742"></a>The results database uses SQL statements internally.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103743"></a>Contact Cadence Customer Support to report the problem.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103744"></a>ERROR: Received a database engine error: unable to open database file All runs have been stopped because ADE Assembler can no longer guarantee the correctness of results written to the results database. The results tab corresponding to this run has been closed. Common reasons for this error:</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103745"></a>1. Physical disk full or quota limit reached.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103746"></a>2. The results database file has been deleted or is no longer writable.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103747"></a>3. File system internal I/O error.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1103748"></a>ERROR: ADE Assembler session has recovered from a serious error: &#39;unable to open database file&#39; and may become unstable. Save your work and restart the session.</pre>
+
+<p>
+<a id="pgfId-1103411"></a></p>
+
+<h2>
+<a id="pgfId-1097375"></a><a id="46956"></a><a id="95733"></a>Running <a id="runOptimization"></a>Optimization<a id="marker-1097374"></a></h2>
+
+<p>
+<a id="pgfId-1097387"></a>You have three options for optimization:</p>
+<p>
+<a id="pgfId-1097450"></a><h-hot><a href="asmOptimize.html#localOptimization">Local optimization</a></h-hot> runs the schematic design, then deterministically improves that design. Local optimization is useful if:</p>
+<ul><li>
+<a id="pgfId-1097267"></a>You have a starting design that you want to improve.</li><li>
+<a id="pgfId-1097268"></a>A design meets specifications at the nominal corner but not across all corners.</li><li>
+<a id="pgfId-1097269"></a>Models in a PDK have changed just enough to cause the design to no longer meet all specifications.</li></ul>
+
+
+<p>
+<a id="pgfId-1097466"></a>Local optimization searches the design space only around the specified point, so ADE Assembler may not locate the best point possible to meet the design specifications. In addition, local optimization does not guarantee small perturbations to your variable values.</p>
+<p>
+<a id="pgfId-1097468"></a>Unlike local optimization, <h-hot><a href="asmOptimize.html#globalOptimization">global optimization</a></h-hot> efficiently searches over all of the variables defined to find a good solution for your design.</p>
+
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1097420"></a>
+If you have a large number of corners, you may want to run Size Over Corners instead of running global or local optimization. For more information, see <a href="asmOptimize.html#96441">Sizing Over Corners</a>.</div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1101034"></a>To perform an optimization, ensure that the design meets the following requirements:</div>
+<ul><li style="list-style-type: none;background-image: none;"><ul><li>
+<a id="pgfId-1101048"></a>Specification targets are defined </li><li>
+<a id="pgfId-1101055"></a>Specification output expressions are scalar results and do not include waveforms.</li></ul></li></ul>
+
+
+<h4>
+<a id="pgfId-1043737"></a><a id="48873"></a>Understanding Cond<a id="conditionalEval"></a>itional Evaluation</h4>
+
+<p>
+<a id="pgfId-1043746"></a>As ADE Assembler is running the simulations for each design point, it may encounter a point where the first simulation run is not as good as the current best design point. In this case, ADE Assembler will not run any remaining simulations in order to more quickly and effectively reach a solution. This type of evaluation is called conditional evaluation, and may result in only partially-evaluated points.</p>
+<p>
+<a id="pgfId-1043750"></a>When sizing a design with conditional evaluation set, ADE Assembler follows the following procedure:</p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1043757"></a></p>
+<div class="webflare-div-image">
+<img src="images/condevalflow.gif" /></div>
+
+<p>
+<a id="pgfId-1043751"></a>The &#8220;No&#8221; case results in a partially-evaluated point.</p>
+
+<h3>
+<a id="pgfId-1114246"></a>Algorithms of Local Optimization</h3>
+
+<p>
+<a id="pgfId-1097129"></a>You can perform local optimization by using any of the four algorithms: <em>Brent-Powell</em>, <em>Hooke-Jeeves</em>, <em>BFGS</em>, and <em>Conjugate Gradient</em>. You can consider the following points while making a choice of an algorithm to be used to run local optimization:</p>
+<ul><li>
+<a id="pgfId-1099284"></a>The <em>BFGS</em> and <em>Conjugate Gradient</em> algorithms are gradient-based algorithms. These methods do well when gradient information is available, that is, when specification measurements return more than two or three states and they do not result in evaluation errors.<br />
+<a id="pgfId-1099301"></a>BFGS uses second order Hessian Matrix to search local optimum, which is much more efficient than Conjugate Gradient if the performance space is closer to quadratic. Therefore, it is recommended to use the BFGS algorithm in cases where performance gradient can be calculated and design variables are naturally continuous.</li><li>
+<a id="pgfId-1104556"></a>The <em>Brent-Powell</em> algorithm searches in a fine grid around the starting point. Use the Brent-Powell option if your starting point is already close (e.g. only a few specifications not met). With this type, ADE Assembler should find the local minimum around the selected point, but it may also quit once that local minimum is found and then miss a more optimal solution in the local design space. Because it only runs one point at a time, ADE Assembler is slow with this option, and it runs the least number of points on average.</li><li>
+<a id="pgfId-1096967"></a>The type <em>Hooke-Jeeves</em> algorithm searches in bigger steps, but it can miss a local minimum that might have been found by the fine option. Use the <em>Hooke-Jeeves</em> option if your time is limited and the starting point is not as close. With this option, ADE Assembler is less likely to quit prematurely, but it also may miss a local minimum that the <em>Brent-Powell</em> option would have found. With the <em>Hooke-Jeeves</em> option, ADE Assembler runs more points, but it is faster on multiple computers than when running with the <em>Brent-Powell</em> option because of parallel points.</li></ul>
+
+
+
+
+<h2>
+<a id="pgfId-1068533"></a><a id="96275"></a>Running a Local <a id="localOptimization"></a>Optimization<a id="marker-1114290"></a></h2>
+
+<p>
+<a id="pgfId-1099229"></a>To run local optimization:</p>
+<ol><li>
+<a id="pgfId-1041995"></a>From the <em>Select a Run Mode</em> drop-down list on the Run toolbar, choose <em>Local Optimization</em>.</li><li>
+<a id="pgfId-1044125"></a>Click <em>Simulation Options</em> <img src="images/optionsIcon.gif" />
+ to specify optimization options.<br />
+<a id="pgfId-1042059"></a>The Local Optimization Options form appears.<br />
+<a id="pgfId-1042168"></a><div class="webflare-div-image">
+<img src="images/localopt.gif" /></div></li><li>
+<a id="pgfId-1042058"></a>From the <em>Algorithm</em> drop-down list, select the algorithm for local optimization.<br />
+<a id="pgfId-1062237"></a>The following algorithms are supported:<ul><li>
+<a id="pgfId-1062251"></a>Conjugate Gradient</li><li>
+<a id="pgfId-1062301"></a>Brent-Powell</li><li>
+<a id="pgfId-1062290"></a>Hooke-Jeeves</li><li>
+<a id="pgfId-1097121"></a>BFGS</li></ul></li><li>
+<a id="pgfId-1043759"></a>Select an evaluation type by selecting one of the following radio buttons:<ul><li>
+<a id="pgfId-1043760"></a>Full</li><li>
+<a id="pgfId-1043761"></a>Conditional</li></ul><br />
+<a id="pgfId-1100741"></a>For more information on conditional evaluation, see <a href="asmOptimize.html#48873">Understanding Conditional Evaluation</a>.</li><li>
+<a id="pgfId-1100744"></a>In the <em>Starting State</em> drop-down list, select a setup state that defines a set of fixed values for each global variable or device parameter that uses a range of values in the active setup. This drop-down list can contain the following values:<a id="StartingPoint"></a><ul><li>
+<a id="pgfId-1108162"></a><code>Automatic</code>: It refers to the default way in which the values for parameters and global variables are set for a starting point. The parameters with range values are replaced with their values in the schematic. Parameters with scalar values or a reference to another parameter remain unchanged. Global variables with range values are replaced with the mid-point of the given range. <br />
+<a id="pgfId-1109924"></a>If the value of a parameter in the schematic is out of the optimization value range, the actual value used for the starting point is changed to a value from the optimization range. For example, if a parameter is set to a range of <code>100u:10u:200u</code>, but the value of this parameter in the schematic is <code>20u</code>, the starting point would be set to <code>20u</code>. However, for the actual optimization run, the value of this parameter would be set to <code>100u</code>.<br />
+<a id="pgfId-1108228"></a>When you select this value, ADE Assembler internally creates a state named <code>automaticStartingPoint</code>, which replaces each parameter and global variable range as described above. <code>automaticStartingPoint</code> is visible in the Load State form, <em>Setup States</em> tree in the Data View assistant, and the <em>Setup State</em> field in the Variables and Parameters assistant. ADE Assembler does not allow you to save any changes in <code>automaticStartingPoint</code> because they would be overridden whenever you choose <code>Automatic</code> as a starting state. To reuse and customize <code>automaticStartingPoint</code>, you can load the state, modify the parameters or global variables and save those in another state, which you can choose in the <em>Starting State</em> drop-down list for the next optimization run.</li><li>
+<a id="pgfId-1108164"></a>Names of the setup states you created, if any, to save the values of variables and parameters. For details, refer to <a href="asmParameterization.html#35407">Saving Parameters and Global Variables to a Saved State</a>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1114310"></a>A saved stated to be used as a starting point should not have sweep values in variables and parameters.</div></li><li>
+<a id="pgfId-1108156"></a>A setup state named <code>ref_point_migrated</code>, which was created if your cellview earlier used a reference point. If it exists, it is automatically selected.</li></ul></li><li>
+<a id="pgfId-1100750"></a>If desired, select the criteria for the duration of time for which the local optimization should run. You can select one or more of the following:<ul><li>
+<a id="pgfId-1042011"></a>To run only until all goals are met, select the <em>All Specs Met</em> check box.</li><li>
+<a id="pgfId-1042012"></a>To set a time limit for the run, select the <em>Time Limit</em> check box and enter a value in minutes.</li><li>
+<a id="pgfId-1042013"></a>To set a limit in the number of points run, select the <em>Point Limit</em> check box and enter the number of points. </li></ul></li><li>
+<a id="pgfId-1042014"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1067747"></a>Click the <em>Run Simulation</em> <img src="images/iconRunSimulation.gif" />
+ button on the Run toolbar to optimize the circuit.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1041974"></a><a id="37684"></a>Running a Global <a id="globalOptimization"></a>Optimization<a id="marker-1042156"></a></h3>
+
+<p>
+<a id="pgfId-1042150"></a>To run a global optimization:</p>
+<ol><li>
+<a id="pgfId-1042075"></a>From the <em>Select a Run Mode</em> drop-down list on the Run toolbar, choose <em>Global Optimization</em>.</li><li>
+<a id="pgfId-1043714"></a>Click <em>Simulation Options</em> <img src="images/optionsIcon.gif" />
+ to specify optimization options.<br />
+<a id="pgfId-1042080"></a>The Global Optimization form appears.<br />
+<a id="pgfId-1043690"></a><div class="webflare-div-image">
+<img src="images/globalopt.gif" /></div></li><li>
+<a id="pgfId-1043691"></a>Select an evaluation type by selecting one of the following radio buttons:<ul><li>
+<a id="pgfId-1043695"></a>Full</li><li>
+<a id="pgfId-1043696"></a>Conditional</li></ul><br />
+<a id="pgfId-1044152"></a>For more information on conditional evaluation, see <a href="asmOptimize.html#38101">Viewing the Variable Data from Optimization Results</a>.</li><li>
+<a id="pgfId-1100546"></a>If you want to speci<a id="StartingPoint1"></a>fy a starting point for the simulation run, select the <em>Use Starting Point</em> check box in the <em>Other Options</em> panel. </li><li>
+<a id="pgfId-1110402"></a>In the <em>Starting State</em> drop-down list, select a setup state that defines a set of fixed values for each global variable or device parameter that uses a range of values in the active setup. For more details, refer to <a href="asmOptimize.html#StartingPoint">Starting State</a>.</li><li>
+<a id="pgfId-1044156"></a>If desired, select criteria for the length of time local optimization should run.<br />
+<a id="pgfId-1044157"></a>You can select one or more of the following:<ul><li>
+<a id="pgfId-1042086"></a>To run only until all goals are met, select the <em>All Specs Met</em> check box.</li><li>
+<a id="pgfId-1042087"></a>To set a time limit for the run, select the <em>Time Limit</em> check box and enter a value in minutes.</li><li>
+<a id="pgfId-1042088"></a>To set a limit in the number of points run, select the <em>Point Limit</em> check box and enter the number of points. </li><li>
+<a id="pgfId-1042105"></a>To stop sizing when no improvement is seen for a certain number of points, select the <em>No Improvement with Points</em> check box and enter the number of points. </li><li>
+<a id="pgfId-1043658"></a>To continue exploring the design space for a better solution even all specifications are met, select the <em>Points After All Specs Met</em> check box and enter the number of points to explore.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1043788"></a>
+You cannot select both the <em>All Specs Met</em> and <em>Points After All Specs Met</em> check boxes, as these two options are mutually exclusive.</div></li></ul></li><li>
+<a id="pgfId-1067716"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1067730"></a>Click the <em>Run Simulation</em> <img src="images/iconRunSimulation.gif" />
+ button on the Run toolbar to optimize the circuit.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1067721"></a><a id="38101"></a>Viewing the Variable Data from Optimization <a id="VariableDisplayAssistant"></a>Results<a id="marker-1067720"></a></h3>
+
+<p>
+<a id="pgfId-1110791"></a>The <em>Optimization</em> results view displays all the possible design points for which simulation can be run. The starting point is highlighted in blue and the simulation continues for the remaining points until the stopping criteria is met. After the stopping criteria is met, the simulation for the remaining points is canceled.</p>
+<p>
+<a id="pgfId-1111150"></a>In the following example, the design point with <code>AVDD=2</code> is the starting point. Next, ADE Assembler runs simulation for the point with <code>AVDD=1.4</code> where the stopping criteria is met, and therefore, the simulation for the point with <code>AVDD=2.2</code> is canceled.</p>
+
+<p>
+<a id="pgfId-1111224"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="527" src="images/asmOptimize-25.gif" /></div>
+
+<p>
+<a id="pgfId-1114367"></a>The optimization results view hides certain outputs, for example, expressions resulting in waveforms, which are not related to the spec. In this case, it shows the number of output rows displayed out of the total number of output rows, <code>29/4</code>5 in this example, above the table.</p>
+<p>
+<a id="pgfId-1042622"></a>The Variable Display assistant also displays, for a selected design point, the minimum and maximum values for each variable. During optimization, this assistant shows the values for the current best point found, while after optimization, the assistant displays the values for the best point found during the optimization process.</p>
+<p>
+<a id="pgfId-1042609"></a>In addition, ADE Assembler also displays the current variable values for the selected point, and, through a status bar, shows how far from the minimum and maximum values the current value is. A min or max value in red indicates that the current value is pushing the minimum or maximum and may need adjustment for synthesis to be completely successful.</p>
+<p>
+<a id="pgfId-1042637"></a>To display the Variable Display Assistant:</p>
+
+<ul><li>
+<a id="pgfId-1042638"></a>Choose <em>Window &#8211; Assistants &#8211; Variable Display</em>.<br />
+<a id="pgfId-1042639"></a>The Variable Display Assistant appears.<br />
+<a id="pgfId-1042654"></a><div class="webflare-div-image">
+<img src="images/varDisplayAsst.gif" /></div><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1042644"></a>
+You can view more details about the variable, including the lib, cell, and view, by selecting the <em>More Details</em> check box.</div></li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1046061"></a><a id="15811"></a></p>
+
+<h2>
+<a id="pgfId-1097475"></a><a id="96441"></a>Sizing Over <a id="sizeOverCorners"></a>Corners</h2>
+
+<p>
+<a id="pgfId-1046064"></a>While you can always size with all corners enabled using local or global optimization, it may not be efficient to do so with a large number of corners. </p>
+<p>
+<a id="pgfId-1046065"></a>The Sizing Over Corners feature is an intelligent algorithm designed to optimize the test benches over a large number of corners. It does this by running a single point over all user-defined corners, determining the worst-case corners, using the worst-case corners for optimization and improving those corners on each iteration.</p>
+<p>
+<a id="pgfId-1046066"></a>You can either provide a starting point, or ADE Assembler performs an initial global optimization on a specific corner and uses its best point as the starting point for the run. ADE Assembler simulates all corners to determine the worst case performance corners for each goal. ADE Assembler then resizes, taking into account the identified worst case performance corners. This process repeats until the stopping criteria for your size over corner run are met&#8212;either until all goals are met, or until it has run through the specified number of iterations or time limit.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1068618"></a>If the run stops due to the number of iterations or time limit being met, a final corner simulation is run if the last history children item for the run is related to sizing/optimization.</div>
+<p>
+<a id="pgfId-1068623"></a>Figure <a href="asmOptimize.html#39664">24-1</a> illustrates the sizing over corners flow.</p>
+
+<p><strong>Figure 24-1
+<a id="pgfId-1068625"></a><a id="39664"></a>Flow for Sizing Over Corners</strong></p>
+<p>
+<a id="pgfId-1046076"></a></p>
+<div class="webflare-div-image">
+<img src="images/flowSizeOverCorners.gif" /></div>
+
+<p>
+<a id="pgfId-1046077"></a>To size over corners, do the following:</p>
+<ol><li>
+<a id="pgfId-1046078"></a>From the <em>Run</em> menu, select <em>Size Over Corners</em>.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1046079"></a>
+Alternatively, select <em>Size Over Corners</em> in the <em>Select a Run Mode </em>drop-down list on the Run toolbar, then click the <em>Simulation Options</em> <img src="images/iconSimulationOptions.gif" />
+ button on the Run toolbar.</div>
+<a id="pgfId-1046089"></a>The Size Over Corners form appears.<br />
+<a id="pgfId-1046093"></a><div class="webflare-div-image">
+<img src="images/SOC1.gif" /></div></li><li>
+<a id="pgfId-1046094"></a>From the <em>Algorithm</em> drop-down list on the Basic tab, select the algorithm for sizing over corners.<br />
+<a id="pgfId-1046095"></a>The default algorithm is <em>Global Optimization</em>.</li><li>
+<a id="pgfId-1100766"></a>In the <em>Starting Point</em> panel, select one of the following options to specify a starting point for the simulation run: <ul><li>
+<a id="pgfId-1100769"></a><em>Use Starting State</em>&#8212;Select this option if you have created a setup state and want to use that as the starting point for the run. To use the setup state as the starting point for the optimization, select a setup state that defines a set of fixed values for every global variable or parameter that defines a range of values in the active setup.<br />
+<a id="pgfId-1110491"></a>For information about the possible values of this list, refer to <a href="asmOptimize.html#StartingPoint">Starting State</a>.</li><li>
+<a id="pgfId-1104390"></a><em>No (Runs Initial Global Optimization)</em>&#8212;Select this option if you do not have a starting state to be used as a starting point for sizing. When this option is selected, ADE Assembler performs an initial global optimization on the corner specified in the <em>Corner</em> drop-down list and uses its best point as the starting point for the run. If you select <em>No (Runs Initial Global Optimization)</em>, ensure that:</li><li>
+<a id="pgfId-1046224"></a>The specified corner is not disabled in the Run Summary pane.<br />
+<a id="pgfId-1046225"></a>For more information, see the <a actuate="user" class="URL" href="../Explorer/chap6.html#disableNomCornerAll" show="replace" xml:link="simple">Disabling and Enabling the Nominal Corner</a>.</li><li>
+<a id="pgfId-1046226"></a>For tests that are enabled in the Data View pane, the specified corner is not disabled in the Corners Setup form.<br />
+<a id="pgfId-1046110"></a>For more information, see <a actuate="user" class="URL" href="../Explorer/chap6.html#disableNomCornerSpecific" show="replace" xml:link="simple">Disabling and Enabling the Nominal Corner for Specific Tests</a>.</li></ul></li><li>
+<a id="pgfId-1046112"></a>In the <em>Evaluation</em> group box, select one of the following evaluation types for the sizing run:<ul><li>
+<a id="pgfId-1046113"></a>Full</li><li>
+<a id="pgfId-1046114"></a>Conditional</li></ul><br />
+<a id="pgfId-1046117"></a>For more information on conditional evaluation, see <a href="asmOptimize.html#48873">Understanding Conditional Evaluation</a>.</li><li>
+<a id="pgfId-1046119"></a>Select the <em>Recommended</em> option under <em>Stopping Criteria</em> to use the recommended criteria for the length of time size over corners should run. The recommended criteria are:<ul><li>
+<a id="pgfId-1046120"></a>Three sizing iterations</li><li>
+<a id="pgfId-1046121"></a>3000 points run per iteration</li></ul><br />
+<a id="pgfId-1046122"></a>If you want to modify these defaults, select the <em>Custom</em> option, then select one or more of the following stopping criteria:<ul><li>
+<a id="pgfId-1046123"></a>To set a time limit for the run, select the <em>Time Limit (minutes)</em> check box and enter a value in minutes.</li><li>
+<a id="pgfId-1046124"></a>To specify the number of sizing iterations, select the <em>No. of Iterations</em> check box and enter the number in the field.</li><li>
+<a id="pgfId-1046125"></a>To specify the maximum number of points processed per iteration, select the <em>Max Points per Iteration</em> check box and enter the number of points in the field.</li><li>
+<a id="pgfId-1046126"></a>To stop the process early if the sizing results in no improvement, select the <em>Stop Iteration Early if No Improvement</em> check box. This option is applied to each optimization iteration. This stopping criteria is similar to the <em>No Improvement with Points</em> stopping criteria for the Global Optimization run mode for which the user also specifies the number of points. In the case of iterative run modes, the number of points is calculated as <code>Max Points per Iteration / 3</code>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1046127"></a>If all goals are met prior to the stopping criteria being reached, ADE Assembler will stop the sizing run.</div></li></ul></li><li>
+<a id="pgfId-1046128"></a>(Optional) By default, the Size Over Corners run is automatically stopped when all the goals are met. If the test outputs have minimize or maximize specs defined for them, you can choose to automatically run the local optimization after the best design point is found. This helps in getting better results for these types of specifications. <br />
+<a id="pgfId-1099669"></a>For this, open the Advanced tab.<br />
+<a id="pgfId-1099673"></a><div class="webflare-div-image">
+<img src="images/SOC2.gif" /></div>
+<a id="pgfId-1099654"></a>Select the <em>Run Local Optimization After All Spec Met</em> option. This specifies that local optimization needs to be run after all the specs are met. The other options on this tab are used by the local optimization run. If required, change the default values.</li><li>
+<a id="pgfId-1099608"></a>Click <em>OK</em> to save the changes and close the Size Over Corners form.</li><li>
+<a id="pgfId-1046132"></a>Click the <em>Run Simulation</em> <img src="images/iconRunSimulation.gif" />
+ button on the Run toolbar.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1046042"></a>ADE Assembler runs through iterations of sizing and corner sweeping until your stopping criteria are met.</p>
+
+<h2>
+<a id="pgfId-1103299"></a><a id="80378"></a>Performing Manual Tu<a id="manualTuning"></a>ning</h2>
+
+<p>
+<a id="pgfId-1103300"></a>While parameterizing a design, you can tune your design by varying the values of parameters, running multiple simulations and then comparing results. You can do this by using the Manual Tuning run mode. </p>
+<p>
+<a id="pgfId-1103301"></a>Some of the important points related to the Manual Tuning run mode are as follows:</p>
+<ul><li>
+<a id="pgfId-1103302"></a>You run the <em>Single Run, Sweeps and Corners</em>, Monte Carlo, Global Optimization, and Local Optimization run modes multiple times.<br />
+<a id="pgfId-1103303"></a>Currently, the Manual Tuning run mode is not supported in the Improve Yield, Sensitivity Analysis, High Yield Estimation, Create Worst Case Corners, Size Over Corners run modes.</li><li>
+<a id="pgfId-1103304"></a>Every time you tune the design parameters and run a simulation, results are appended to the same history checkpoint. This is as compared to the other run modes in which the results of every simulation run are saved in a new checkpoint.</li><li>
+<a id="pgfId-1103305"></a>You can compare the results data in a single table and plot specifications across design points run in different simulations. Therefore, manual tuning, when used with design parameterization, helps you tune your design without changing the schematic.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1103306"></a>To run manual tuning:</p>
+<ol><li>
+<a id="pgfId-1103307"></a>In the ade assembler view of your design, from the Select a Run Mode drop-down list on the Run toolbar, choose <em>Manual Tuning</em>.</li><li>
+<a id="pgfId-1103311"></a>Click the <em>Run Simulation</em> <img src="images/iconRunSimulation.gif" />
+ button on the Run toolbar.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1103315"></a>The color of the <em>Run Simulation</em> button changes to yellow <img src="images/iconRunSim_yellow.gif" />
+. This indicates that the Manual Tuning run mode has started.</div>
+<a id="pgfId-1103316"></a>Now, you can tune or vary the values of design parameters and run multiple simulations to obtain the desired results.</li><li>
+<a id="pgfId-1103317"></a>In the Data View or the Variables and Parameters assistant, specify values for the design parameters.</li><li>
+<a id="pgfId-1103318"></a>From the Select a Run Mode drop-down list on the Run toolbar, choose <em>Single Run, Sweeps and Corners</em>.</li><li>
+<a id="pgfId-1103322"></a>Click the <em>Run Simulation</em> <img src="images/iconRunSim_yellow.gif" />
+ button on the Run toolbar to start the <em>Single Run, Sweeps and Corners</em> run.<br />
+<a id="pgfId-1103323"></a>The simulation results are displayed on the <em>Results</em> tab, as shown below.<br />
+<a id="pgfId-1103327"></a><br /><div class="webflare-div-image">
+<img src="images/ManualTuning01.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1103328"></a>The default name of the Results tab indicates the interactive run number in the Manual Tuning run mode. For example, in the figure shown above, the first single, sweep, corner run in the manual tuning run mode is named as <code>ManualTuning.0.Interactive.0</code>.</div></li><li>
+<a id="pgfId-1103329"></a>If required, change the value of parameters to tune your design and again click the <em>Run Simulation</em> <img src="images/iconRunSim_yellow.gif" />
+ button on the Run toolbar to start a new<em> Single Run, Sweeps and Corners</em> simulation run.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1103333"></a>The results of the subsequent simulation runs are appended on top of the Results tab already open for the previous run, as shown below. </div>
+<a id="pgfId-1103337"></a><br /><div class="webflare-div-image">
+<img src="images/ManualTuning02.gif" /></div>
+<a id="pgfId-1103338"></a>In the other run modes, results of every next simulation run are displayed on a new tab. Also, the name of the Results tab has also changed to <code>ManualTuning.0.Interactive.1</code>.<br />
+<a id="pgfId-1103339"></a>At the end of the second simulation run, the Results tab contains all the design points run during the <code>Interactive.0</code> and <code>Interactive.1</code> runs.</li><li>
+<a id="pgfId-1103340"></a>Compare the results of the two simulation runs. <br />
+<a id="pgfId-1103341"></a>You can also plot the results of all the simulations run in a manual tuning run. For that, in the Results tab, right-click a specification and choose <em>Plot Across Design Points</em>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1103342"></a>When you plot results across different design points, data is plotted for all the points of the two runs, as shown below. </div>
+<a id="pgfId-1103346"></a><br /><div class="webflare-div-image">
+<img src="images/ManualTuning04.gif" /></div></li><li>
+<a id="pgfId-1103347"></a>(Optional) If the desired results are not obtained, you might choose to further tune the design parameters and run more simulations till you get the best design point. </li><li>
+<a id="pgfId-1103348"></a>After the desired results are obtained, sort the design points to view the best or the worst point. If the best point meets the specifications, you can save the values used for that point so that they can be reused later. To do this, right-click the gray row on top of that design point and choose <em>Save variable and parameter values to Setup State</em>. <br />
+<a id="pgfId-1103352"></a><br /><div class="webflare-div-image">
+<img src="images/ManualTuning05.gif" /></div>
+<a id="pgfId-1103353"></a>ADE Assembler creates a state by using the names of the simulation run and the design point ID. For example, for the design point 44 shown above, the tool creates a state named <code>ManualTuning.0.Interactive.1.PointID.44</code> and saves the values of variables and design parameters in that state.<br />
+<a id="pgfId-1103357"></a><br /><div class="webflare-div-image">
+<img src="images/ManualTuning06.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1103358"></a>You can use this saved state in the future to load the values of variables and parameters. For more details, see <a actuate="user" class="URL" href="../adexl/adexlParameterization.html#firstpage" show="replace" xml:link="simple">Working with Global Variables</a>.</div></li><li>
+<a id="pgfId-1103363"></a>Click <em>Stop Simulation</em> <img src="images/iconStopSimulation.gif" />
+ on the <em>Run</em> toolbar to exit the Manual Tuning run mode.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1103370"></a>Important Notes</em></h4>
+
+<ul><li>
+<a id="pgfId-1103371"></a>If you do not exit the Manual Tuning run mode and close the ADE Assembler GUI, the currently running Manual Tuning is not stopped. When you open a new ADE Assembler session, the Run Simulation button is yellow in color and you can continue with the same Manual Tuning run that was running earlier. If you want that the currently running Manual Tuning run should stop when the ADE Assembler GUI is closed, set the <code>stopManualTuningOnSessionExit</code> environment variable to <code>t</code>.</li><li>
+<a id="pgfId-1103372"></a>The results of Manual Tuning are saved in a single database. You can view the results of all the child histories of a manual tuning run together by using the <em>View Results</em> command in the right-click menu of a parent or child Manual Tuning history.</li><li>
+<a id="pgfId-1103373"></a>It is not possible to delete a specific child history or the simulation data for a specific child history. Therefore, on the Data View pane, the right-click menu commands, <em>Delete</em> and <em>Delete Simulation Data</em>, are not available for the child histories of a Manual Tuning run.</li><li>
+<a id="pgfId-1103374"></a>The Design Points field displays a count of unique design points that are visited by the optimizer. With multiple tests and corners, multiple simulations are run for each design point. During optimization, the optimizer assigns a unique point ID numbers to all the design points. The optimizer may visit the design point or set of design parameters twice or more. In this case, the optimizer assigns a new ID number to the design point every time it is visited. This is called a cache-hit because the results for this point already exist in the database and simulator does not need to re-simulate this design point. When the design points are visited more than once, you may notice a greater point ID number than the total number of unique design points that are simulated (see the figure below). In case of a single test and no corners, the number of simulations equals the count of design points.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1042250"></a></p>
+
+<div class="webflare-div-image">
+<img width="648" height="413" src="images/asmOptimize-42.gif" /></div>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="asmDocuments.html" id="prev" title="Working with Documents and Datasheets">Working with Documents and Dat ...</a></em></b><b><em><a href="vvoSensitivityAnalysis.html" id="nex" title="Sensitivity Analysis">Sensitivity Analysis</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

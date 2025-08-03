@@ -1,0 +1,2191 @@
+
+<html><head><title>Running Fault Simulations</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-10-28" />
+<meta name="CreateTime" content="1698506666" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the features of Virtuoso ADE Assembler" />
+<meta name="DocTitle" content="Virtuoso ADE Assembler User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Running Fault Simulations" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="assembler" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-28" />
+<meta name="ModifiedTime" content="1698506666" />
+<meta name="NextFile" content="asmSetupLibrary.html" />
+<meta name="Order" content="0" />
+<meta name="Group" content="ADE Assembler" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="asmAssertions.html" />
+<meta name="c_product" content="Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Analog Design Environment" />
+<meta name="ProductFamily" content="Virtuoso Analog Design Environment" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso ADE Assembler User Guide -- Running Fault Simulations" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="assemblerIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="assemblerTOC.html">Contents</a></li><li><a class="prev" href="asmAssertions.html" title="Performing Circuit and Device Checks">Performing Circuit and Device  ...</a></li><li style="float: right;"><a class="viewPrint" href="assembler.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="asmSetupLibrary.html" title="Working with the Setup Library Assistant">Working with the Setup Library ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso ADE Assembler User Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>14
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Running Fault Simulations<hr />
+</h1>
+
+<p>
+<a id="pgfId-1158145"></a>As a part of the <h-hot><a actuate="user" class="URL" href="../legatoRel/legatoRelGettingStarted.html" show="replace" xml:link="simple">Legato™ Reliability Solution</a></h-hot>, fault simulations in ADE Assembler provides the capability to run defect-oriented tests on analog IC designs. These tests allow you to evaluate the ability to eliminate a die with manufacturing defects and resulting test escapes that cause field failures. It can also be used to optimize wafer test, reducing the number of tests required to achieve the target defect coverage by eliminating over-testing and potentially reducing the number of tests. <a id="axlFsaPane"></a></p>
+<p>
+<a id="pgfId-1181133"></a>A typical fault analysis consists of fault injection, fault analysis, and test optimization for better fault coverage. Analog fault analysis provides the capability to estimate fault coverage by generating a detection matrix. In addition, it can be used as part of functional safety analysis. </p>
+<p>
+<a id="pgfId-1224362"></a>Some faults are more likely to occur than others; therefore, a test that detects the more likely faults will have a higher coverage than the one that detects the less likely faults. You can calculate the defect coverage using the likelihood-weighted sum of the detected faults divided by the likelihood-weighted sum of all simulated faults. </p>
+<p>
+<a id="pgfId-1181135"></a>The defect detection matrix can be obtained by comparing the faulty simulation results with nominal (faultless) data. You can further optimize the test to improve the defect coverage based on the defect detection matrix.</p>
+<p>
+<a id="pgfId-1159122"></a>In functional safety applications, fault detection is tracked for both functional and diagnostic (checker) modules but reported separately. Functional safety report can be generated based on assert violations of fault analysis results.</p>
+<p>
+<a id="pgfId-1158574"></a>The following sections in this chapter provides details on how to use ADE Assembler for these purposes:</p>
+<ul><li>
+<a id="pgfId-1101685"></a><a href="asmFSA.html#83177">Prerequisites</a></li><li>
+<a id="pgfId-1157697"></a><a href="asmFSA.html#99114">Preparing the Setup for Fault Simulation</a></li><li>
+<a id="pgfId-1157715"></a><a href="asmFSA.html#99162">Injecting Faults in a Design</a></li><li>
+<a id="pgfId-1172172"></a><a href="asmFSA.html#92933">Creating Fault Groups</a></li><li>
+<a id="pgfId-1220888"></a><a href="asmFSA.html#82133">Previewing Faults in a Fault Group</a></li><li>
+<a id="pgfId-1157760"></a><a href="asmFSA.html#12709">Setting up Run Options for a Fault Simulation</a></li><li>
+<a id="pgfId-1157800"></a><a href="asmFSA.html#48586">Running a Fault Simulation</a></li><li>
+<a id="pgfId-1157818"></a><a href="asmFSA.html#12068">Viewing Results of Fault Simulation</a></li><li>
+<a id="pgfId-1238549"></a><a href="asmFSA.html#12816">Automatic Fault Dropping Using a Run Plan</a></li><li>
+<a id="pgfId-1214135"></a><a href="asmFSA.html#37816">Merging Results from Multiple Fault Simulations</a></li><li>
+<a id="pgfId-1157836"></a><a href="asmFSA.html#35593">Running Functional Safety Checks</a></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-video">
+<a id="pgfId-1190809"></a>
+You can view at <a actuate="user" class="URL" href="https://support.cadence.com/apex/ArticleAttachmentPortal?id=a1O0V000009112WUAQ&amp;pageName=ArticleContent&amp;sq=005d0000001T48sAAC_2018812152612136" show="replace" xml:link="simple">Performing Fault Simulation in Virtuoso ADE Assembler using Legato Reliability Solution</a>.</div>
+<h2>
+<a id="pgfId-1101147"></a><a id="83177"></a>Prerequisites</h2>
+
+<p>
+<a id="pgfId-1192876"></a>Ensure that you have set the path to the required simulator as indicated by the table given below.</p>
+
+<p>
+<a id="pgfId-1193192"></a></p>
+<table class="webflareTable" id="#id1193193">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1193195">
+<a id="pgfId-1193195"></a>Design </span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1193197">
+<a id="pgfId-1193197"></a>Analysis Type</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1193199">
+<a id="pgfId-1193199"></a>Simulator</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1193201"></a>Analog</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1193203"></a>Direct Fault Analysis </p>
+<p>
+<a id="pgfId-1193394"></a>Transient Fault Analysis</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1193205"></a>Spectre 19.1 ISR7 or higher versions</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1193420"></a>Mixed-Signal</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1193482"></a>Direct Fault Analysis</p>
+<p>
+<a id="pgfId-1193422"></a>Transient Fault Analysis</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1193424"></a>AMS Flex flow with a combination of Xcelium 19.03 s006 and Spectre 19.1 ISR7, or higher versions</p>
+</td>
+</tr>
+</tbody></table>
+<h2>
+<a id="pgfId-1101731"></a><a id="99114"></a><a id="81983"></a>Preparing the Setup for F<a id="prepFSA"></a>ault Simulation</h2>
+
+<p>
+<a id="pgfId-1120350"></a>Before running a fault simulation, do the following in the ADE Assembler setup:</p>
+<ul><li>
+<a id="pgfId-1160189"></a><strong>Ensure that the transient analysis is enabled</strong> for the tests in ADE Assembler.<br />
+<a id="pgfId-1160438"></a><div class="webflare-div-image">
+<img width="595" height="351" src="images/asmFSA-3.gif" /></div></li><li>
+<a id="pgfId-1160338"></a><strong>Specify time steps for the transient analysis</strong>.<br />
+<a id="pgfId-1160534"></a>On the Choosing Analysis form, click <em>Options</em> for the <em>tran</em> analysis. <br />
+<a id="pgfId-1160727"></a>The Transient Options form is displayed. On the <em>Fault</em> tab of this form, specify the fault points as a list of specific time points or as a sweep set with start-step-stop time point values.<br />
+<a id="pgfId-1186766"></a><div class="webflare-div-image">
+<img width="631" height="735" src="images/asmFSA-4.gif" /></div>
+<a id="pgfId-1160538"></a>The fault time points specified in this form are applied to the test for which you are editing the analysis options. If you do not specify fault times at the test level, the values specified on the <a href="asmFSA.html#FSArunOptions">run options</a> form for Fault Simulation are used.</li><li>
+<a id="pgfId-1160966"></a><strong>Create fault expressions in the Outputs Setup tab</strong> of the maestro view by setting the output type of an expression as <code>faultexpr</code>. <br />
+<a id="pgfId-1190541"></a>If required, you can change the type of expressions from <code>faultexpr</code> to <code>expr</code> at any time.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1161014"></a>Expressions identified as fault expressions are not restricted to be evaluated only for the results without faults. These expressions can be evaluated for any result with or without fault. </div></li><li>
+<a id="pgfId-1160388"></a><strong>Set the run mode as Fault Simulation</strong>.</li><li>
+<a id="pgfId-1161399"></a><strong>Set up the faults to be checked using the Fault Setup assistant</strong>. For more details, refer to <a href="asmFSA.html#55682">Setting up Faults</a>. </li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1102543"></a><a id="55682"></a>Setting u<a id="setupFaults"></a>p Faults</h3>
+
+<p>
+<a id="pgfId-1161600"></a>You can set up faults by using the Fault Setup assistant in ADE Assembler. </p>
+<p>
+<a id="pgfId-1161692"></a>To open the fault setup, do any one of the following:</p>
+<ul><li>
+<a id="pgfId-1201010"></a>Select the <code>Fault Simulation</code> workspace from the Workspace Configuration drop-down list.</li><li>
+<a id="pgfId-1161707"></a>Choose <em>Window &#8212; Assistants &#8212; Fault Setup</em>.<br />
+<a id="pgfId-1103771"></a>The <em>Fault Setup</em> Assistant appears to the right of the <em>Outputs Setup</em> pane.<br />
+<a id="pgfId-1103883"></a><div class="webflare-div-image">
+<img width="958" height="437" src="images/asmFSA-5.gif" /></div></li></ul>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1161739"></a>To prepare t<a id="axlDUTLCVSelectForm0"></a>he setup in the Fault Setup assistant:</p>
+<ol><li>
+<a id="pgfId-1162003"></a>Specify the DUT library, cell, and view for which you plan to run fault analysis simulation.<br />
+<a id="pgfId-1162104"></a>To do this, in the Fault Setup assistant, double-click the value cell for <em>DUT Library/Cell/View</em>.<br />
+<a id="pgfId-1162371"></a>The Select DUT Library / Cell / View form is displayed.<br />
+<a id="pgfId-1162375"></a><div class="webflare-div-image">
+<img width="647" height="456" src="images/asmFSA-6.gif" /></div>
+<a id="pgfId-1162005"></a>Select the library, cell, and view to which this fault setup has to be applied.<br />
+<a id="pgfId-1181465"></a><strong>Important Points to Note:</strong><ul><li>
+<a id="pgfId-1183585"></a>Other fields on the assistant remain disabled until you select the DUT.</li><li>
+<a id="pgfId-1181499"></a>Ensure that the selected DUT is not a top-level design.</li><li>
+<a id="pgfId-1162527"></a>Ensure that the selected DUT is used by all tests enabled for the simulation run.</li><li>
+<a id="pgfId-1182368"></a>If you change the DUT later after configuring the faults, you can retraverse the design to reflect the changes in the Fault Setup assistant.</li><li>
+<a id="pgfId-1191734"></a>To simplify the fault simulation setup, ADE Assembler assumes that multiple tests in a maestro view are used only for one DUT. Even if you use multiple tests for simulating the design, they share the fault setup and the results also show a combined view for all tests. If you want to work on different DUTs, it is recommended to create multiple maestro cellviews.</li><li>
+<a id="pgfId-1194456"></a>If your test setup contains config sweeps, all swept cellviews use the common fault list created for the design specified in the <em>DUT Library/Cell/View</em> field of the Fault Setup assistant. The fault list is created using the base configuration, which includes the design setup assuming no config sweep is defined. You need to ensure that the swept cellviews use the same device under test so that the fault list remains accurate for all runs. Depending on the changes in the config sweep, you might find that some faults are not simulated for a swept cellview. For example, if you replace a block by a behavioral block, in that case, all faults inside that block become invalid.</li></ul></li><li>
+<a id="pgfId-1191946"></a>Ensure that the local variables for the enabled test do not contain sweep values. Local sweeps are currently not supported by fault simulation.</li><li>
+<a id="pgfId-1161924"></a>Specify faults to be injected into the design, which is the DUT selected in <strong>step 1</strong>.<br />
+<a id="pgfId-1163186"></a>There are three ways in which you can specify the faults to be injected in the DUT:<ul><li>
+<a id="pgfId-1163369"></a><a href="asmFSA.html#87573">Using Fault Rules</a></li><li>
+<a id="pgfId-1163373"></a><a href="asmFSA.html#95230">Creating Individual Faults</a></li><li>
+<a id="pgfId-1163377"></a><a href="asmFSA.html#13944">Using Fault Files</a></li></ul></li><li>
+<a id="pgfId-1162703"></a>(Optional) Create fault groups to group the faults that you would like to use together in a simulation.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1162847"></a>By default, all rules and individual faults defined in the <em>Rules and Individual Faults</em> tree in the Fault Setup assistant are used. To run any other group in the simulation run, select the name of that group from the <em>Fault Group to Run</em> drop-down list on the top of the Fault Setup assistant.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1202223"></a>The rules format has changed from IC 6.1.8 ISR8. If your maestro cellview contains fault rules created before this release, remove those manually and recreate new faults.</div>
+
+<h2>
+<a id="pgfId-1236018"></a>Specifyin<a id="_maeFaultPrefForm0"></a>g Global Preferences for Fault Setup</h2>
+
+<p>
+<a id="pgfId-1167852"></a>Before defining a fault to be injected, verify that the global or default options to be used for different types of faults have the required values. These global preferences can be specified on the Virtuoso ADE Fault Setup Global Preferences form. </p>
+<p>
+<a id="pgfId-1171122"></a>To open the Virtuoso ADE Fault Setup Global Preferences form:</p>
+<ul><li>
+<a id="pgfId-1171204"></a>Click (<img width="29" height="27" src="images/asmFSA-7.gif" />
+) on the toolbar of the Fault Setup assistant.</li></ul>
+<p>
+<a id="pgfId-1190096"></a>The Virtuoso ADE Fault Setup Global Preferences form is displayed. </p>
+
+<p>
+<a id="pgfId-1167856"></a></p>
+<div class="webflare-div-image">
+<img width="673" height="447" src="images/asmFSA-8.gif" /></div>
+
+<p>
+<a id="pgfId-1221636"></a>Configure your preferences on the different tabs of this form:</p>
+<ul><li>
+<a id="pgfId-1221811"></a><em>General</em>: Provides options to configure general display options for fault preview that is displayed on the <a href="asmFSA.html#faultRulesForm">Fault Rules</a> form.</li><li>
+<a id="pgfId-1221813"></a><em>Rule/Individual Faults</em>: Provides options to the default resistance value for each type of fault, and the names of the ground and supply net to which a fault will be stuck.</li><li>
+<a id="pgfId-1221849"></a><em>Weighting</em>: Provides options to specify the following weight options for fault rules. Spectre calculates the weighted likelihood for each fault based on its ratio to the total weights within the block. This tab contains the following options: <ul><li>
+<a id="pgfId-1222320"></a><em>Default Weight Expression</em>: An <a href="asmFSA.html#weight_expr">expression</a> to define the default fault weighting function to be used for a fault rule. This is the default value that is displayed in the <em>Weight Expression</em> field on the Fault Rule Setup form. <br />
+<a id="pgfId-1227907"></a>The default value is 1, which indicates that all faults have the same weight. </li><li>
+<a id="pgfId-1222338"></a><em>Default Weight Factor</em>: A value that specifies the likelihood for all faults in a given fault block. This is the default value that is displayed in the <em>Weight Factor</em> field on the Fault Rule Setup form. <br />
+<a id="pgfId-1227916"></a>The default value is 1.</li><li>
+<a id="pgfId-1222348"></a><em>Default Extra options</em>: Any other Spectre option to specify the weight of a fault block.</li><li>
+<a id="pgfId-1222388"></a><em>Individual Fault&#8211;Default Weights</em>: The default weight to be assigned to an individual fault.</li><li>
+<a id="pgfId-1236118"></a><em>Apply Fault Collapsing to</em>: Specifies the level at which fault collapsing can be enabled. You can choose one of the following:<ul><li>
+<a id="pgfId-1236226"></a><em>All fault rules</em>: Enables or disables fault collapsing globally for all fault rules. </li><li>
+<a id="pgfId-1236228"></a><em>Rule Specific</em>: Allows you to control fault collapsing at rule level. This enables the <em>Enable Fault Collapse</em> check box on the Fault Rules form.</li><li>
+<a id="pgfId-1236209"></a><em>None</em>: Disables fault collapsing globally for all fault rules.</li></ul></li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1101737"></a><a id="99162"></a>Injecting Faults<a id="injectFaults"></a> in a Design </h2>
+
+<p>
+<a id="pgfId-1104297"></a>You can inject either <code>Bridge</code>, <code>Open</code> or <code>Stuck-at</code> faults into the design. The Fault Setup Assistant provides the following methods to specify the faults to be injected:</p>
+<ul><li>
+<a id="pgfId-1104892"></a><a href="asmFSA.html#87573">Using Fault Rules</a></li><li>
+<a id="pgfId-1104894"></a><a href="asmFSA.html#95230">Creating Individual Faults</a></li><li>
+<a id="pgfId-1104871"></a><a href="asmFSA.html#13944">Using Fault Files</a></li><li>
+<a id="pgfId-1211668"></a><a href="asmFSA.html#12378">Importing Fault Rules from Other Cellviews</a></li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1104664"></a><a id="87573"></a>Using Fault <a id="usingFaultRules"></a>Rules</h3>
+
+<p>
+<a id="pgfId-1104877"></a>Fault rules provide a quick way to create faults for multiple instances or nets that meet the given criteria. To define the rules for fault creation, use the <h-hot><a href="asmFSA.html#faultRulesForm">Fault Rules</a></h-hot> form.</p>
+<p>
+<a id="pgfId-1105965"></a>To create faults based on fault rules, perform the following steps:</p>
+<ol><li>
+<a id="pgfId-1163773"></a>In the Fault Setup assistant, expand the <em>Rules and individual faults</em> tree.</li><li>
+<a id="pgfId-1164958"></a>Right-click <em>Fault Rules,</em> and choose the <em>Add Bridge</em>, <em>Add Open</em>, <em>Add Stuck-at</em>, or <em>Add Custom</em> command depending on the type of fault for which you are defining the rule.<br />
+<a id="pgfId-1164932"></a><div class="webflare-div-image">
+<img width="510" height="352" src="images/asmFSA-9.gif" /></div>
+<a id="pgfId-1106297"></a>The Fault <a id="faultRulesForm"></a>Rules form is displayed.<br />
+<a id="pgfId-1106655"></a><div class="webflare-div-image">
+<img width="641" height="774" src="images/asmFSA-10.gif" /></div>
+<a id="pgfId-1163875"></a>By default, the rule is defined by using the * wildcard in the <em>Instances</em> and <em>Pin Names</em> fields.</li><li>
+<a id="pgfId-1164232"></a>Modify the values in the <em>Fault Rule Setup</em> section to define the rules or criteria for fault creation. For example, you can specify the names of instances as <code>/I3 /I3/I4</code>, and pin names as <code>D S</code>.<br />
+<a id="pgfId-1165278"></a>See <a href="asmFSA.html#10693">Fault Rules Form</a> for mode information.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1227954"></a>
+The values displayed in the <em>Weight Expression</em> and <em>Weight Factor</em> fields are taken from the Weight tab of the <a href="asmFSA.html#_maeFaultPrefForm0">Virtuoso ADE Fault Setup Global Preferences</a> form</div></li><li>
+<a id="pgfId-1165045"></a>In the <em>Fault Rule Preview</em> section, click <em>Refresh </em>to view the list of possible faults that can be created using the rule defined in this form.<br />
+<a id="pgfId-1194884"></a>When you click <em>Refresh</em>, ADE Assembler runs Spectre info analysis that generates a fault list based on the instances, devices, and pins specified by the criteria defined by the given rules. A progress bar indicates the completion status of the info analysis.<br />
+<a id="pgfId-1194888"></a><div class="webflare-div-image">
+<img width="669" height="123" src="images/asmFSA-12.gif" /></div>
+<a id="pgfId-1200653"></a>When the info analysis is complete, the resulting list of faults is shown in the <em>Faults</em> table at the bottom of this form. The total count of faults is displayed in the <em>Fault Count</em> field.<br />
+<a id="pgfId-1228106"></a><div class="webflare-div-image">
+<img width="669" height="326" src="images/asmFSA-13.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1200657"></a>While identifying all faults based on the specified rule, Spectre info analysis uses <a href="asmFSA.html#faultCollapse">fault collapsing</a> or the <a href="asmFSA.html#weight_expr">weight expression</a> to calculate the absolute fault, which is the likelihood count of a fault. This absolute weight value is displayed in the <em>Absolute Weight</em> field in the preview table. ADE Assembler uses this value later for fault normalization while <a href="asmFSA.html#_maeFaultPreview">generating fault preview</a> before simulation.</div></li><li>
+<a id="pgfId-1164331"></a>Review the list of faults. If required, edit the rules again and click <em>Refresh </em>(<img width="29" height="27" src="images/asmFSA-14.gif" />
+) in the <em>Preview</em> section to review the list of possible faults. <br />
+<a id="pgfId-1182091"></a>You can configure the type of information to be displayed in the <em>Faults</em> table by clicking <em>Configure preview settings</em>, and selecting or deselecting an option. <br />
+<a id="pgfId-1189837"></a><div class="webflare-div-image">
+<img width="669" height="262" src="images/asmFSA-15.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1190218"></a>You can also configure the columns to be displayed by using the options on the <em>General</em> tab of the <a href="asmFSA.html#_maeFaultPrefForm0">Virtuoso ADE Fault Setup Global Preferences</a> form shown below.</div>
+<a id="pgfId-1190222"></a><div class="webflare-div-image">
+<img width="665" height="448" src="images/asmFSA-16.gif" /></div></li><li>
+<a id="pgfId-1164497"></a>When the fault rule setup and the resulting faults are final, click <em>OK</em> to close the form.<br />
+<a id="pgfId-1164705"></a>The rule is added to the <span class="webflare-courier-new" style="white-space:pre"><em>&lt;fault-type&gt;</em></span> tree within the <em>Rules and individual faults</em> tree.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1164574"></a>
+A rule can be edited or deleted later by using the <em>Edit</em> and <em>Delete</em> commands from the context-sensitive menu of that rule. To delete multiple faults at a time, press the <code>Ctrl</code> key and select the faults to be deleted, right-click and choose <em>Delete</em>.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1106424"></a><a id="10693"></a>Fault<a id="faultRulesForm"></a> Rules Form </h3>
+<p>
+<a id="pgfId-1165429"></a></p>
+<table class="webflareTable" id="#id1258828">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1165436">
+<a id="pgfId-1165436"></a>Form Field</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1165438">
+<a id="pgfId-1165438"></a>Description</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165440"></a><em>Type</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165442"></a>Type of fault to be injected. Either <code>Bridge</code>, <code>Open (Terminal-Based)</code>, <code>Stuck-at</code>, or <code>Custom</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165444"></a><em>Bridge Resistance (ohm)</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165446"></a>Resistance between two nodes of a bridge fault.</p>
+<p>
+<a id="pgfId-1202060"></a>Default value: <code>100</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1221564"></a><em>Weight Expression</em><a id="weight_expr"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1224443"></a>An expression that defines the likelihood of faults for a block during fault generation. The likelihood of a fault occurrence can be based on the circuit element area, proximity of the adjacent interconnect, length of the interconnect, or other factors.</p>
+<p>
+<a id="pgfId-1235069"></a>In ADE Assembler, you can define a weight expression using device parameters. For example, <code>w*l.</code></p>
+<p>
+<a id="pgfId-1224580"></a>Default value: <code>1</code></p>
+<p>
+<a id="pgfId-1235187"></a>When the parameters are not specified or contain multiple types of devices or models, weight expressions may not be evaluated for some of the models. In such situations, the expression can result into 0. To avoid this, you can use the <code>fmin</code> function in weight expressions.</p>
+<p>
+<a id="pgfId-1235452"></a>Example: <code>fmin(w*l, 1e-12)</code></p>
+<p>
+<a id="pgfId-1235491"></a>In this example, <code>fmin</code> prevents the weight from becoming zero if the fault instance does not have parameters <code>w</code> or <code>l</code>. If <code>w*l</code> cannot be evaluated, <code>1e-12</code> will be assigned as the weight value.</p>
+<p>
+<a id="pgfId-1235453"></a>Similarly, <code>fmax</code> limits the values of weight expressions. For example, <code>fmax(0.1, 0.001*r)</code>. In this example, <code>fmax</code> clamps the maximum resistance which is used as weighting function.</p>
+<p>
+<a id="pgfId-1223290"></a>For information about fault weighting and its usefulness in the calculation of coverage report, see <h-hot><a actuate="user" class="URL" href="../spectreuser/chap7.html#weighted_likelihood" show="replace" xml:link="simple">Weighted Likelihood Calculation</a></h-hot> in <em>Spectre Classic Simulator, Spectre APS, Spectre X, and Spectre XPS User Guide</em>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1221568"></a><em>Weight Factor</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1224600"></a>A value that defines the weighting factor for a given block or rule. Weight factor is used for the normalization of faults across fault bocks or rules when faults in a particular fault block have very high or very low likelihood as compared to the faults in other fault blocks.</p>
+<p>
+<a id="pgfId-1224595"></a>Default value: <code>1</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1250189"></a>Rule Name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1250195"></a>Name to be assigned to the fault rule. This rule name prefixed with the default prefix for each rule type is shown in the rule summary shown in the Fault Setup assistant.</p>
+<p>
+<a id="pgfId-1250196"></a>For example: <code>RB_myRule(/I4 * where * on * with res = 100)</code></p>
+<p>
+<a id="pgfId-1250197"></a>Default value: &quot;&quot;</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1220984"></a><em>Open Resistance (ohm)</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1220986"></a>Resistance between two nodes of an open fault.</p>
+<p>
+<a id="pgfId-1220987"></a>Default value: <code>10k</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1246637"></a><em>Stuck At Net</em><a id="stuckAt"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1246640"></a>Name of the net to be used to short the terminals of the specified devices. This field is available only for stuck-at faults.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1259987"></a><em>Custom Type</em><a id="customFaults"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1259989"></a>Type of custom fault to be inserted. These custom faults can be available in text files or in schematics.</p>
+<p>
+<a id="pgfId-1260070"></a>Possible values are:</p>
+
+<ul><li>
+<a id="pgfId-1260098"></a><em>Custom Insert</em>: Generates custom faults of fault subcircuit to be inserted at specific terminals of the given devices. For example, a custom fault of subcircuit to be inserted at the drain, gate, and source terminals of bsim4 devices.</li><li>
+<a id="pgfId-1260391"></a><em>Custom Open</em>: Generates custom open faults of fault subcircuit to be inserted at specific terminals of the given devices. For example, a custom open fault of subcircuit to be inserted at the drain, gate, and source terminals of bsim4 devices.</li><li>
+<a id="pgfId-1260100"></a><em>Custom Replace</em>: Generates custom faults of fault subcircuit to replace specific devices. For example, a custom fault of subcircuit to replace bsim4 devices.</li></ul>
+
+
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1259996"></a><em>Fault Custom</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1259998"></a>Name of the subcircuit to be used to insert custom faults.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1256900"></a><em>Design Hierarchy Filter</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1256902"></a>This section contains settings that are used to filter devices on which faults are to be injected.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1252448"></a><em>Use Netlist Syntax</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1252450"></a>Specifies whether to use the netlist format for instance names. For example, <code>I0.I2</code></p>
+<p>
+<a id="pgfId-1252451"></a>By default, this check box is not selected and you can specify the instance names in the schematic syntax. </p>
+<p>
+<a id="pgfId-1252452"></a>When using the netlist syntax, you can specify only one instance in the <em>Instance</em> field. When using the schematic syntax, you can specify multiple instance names.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1166036"></a><em>Fault Extract</em><a id="extract"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1221449"></a>Specifies where to inject layout-based faults.</p>
+<p>
+<a id="pgfId-1252546"></a>Possible Values:</p>
+
+<ul><li>
+<a id="pgfId-1252564"></a><code>spf</code>: Generates a fault list that is compatible with the post-layout netlist. </li><li>
+<a id="pgfId-1252571"></a><code>sch</code>: Generates a fault list that is compatible with the schematic netlist.</li><li>
+<a id="pgfId-1252577"></a><code>no</code>: Layout-based fault list is not generated. This is the default value.</li></ul>
+
+
+<p>
+<a id="pgfId-1252854"></a>If you choose <code>spf</code> or <code>sch</code>, ensure that you have specified at least one DSPF file in the Simulation Files Setup form for the test.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1263278"></a>When this field is set to sch or spf, an additional field <em>Fault Layer</em> is displayed in the <em>Design Hierarchy Filter</em> section of this form.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165448"></a><em>Instance</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165450"></a>Name of an instance below which you want to inject the faults. Either specify the name of an instance or use the <code>*</code> wildcard to inject faults for all instances in the design hierarchy for which the other rules specified on this form are also met.</p>
+<p>
+<a id="pgfId-1188769"></a>When the <em>Use Netlist Syntax</em> check box is deselected, you can select an instance from the schematic by clicking (...) to the right of this field. You can also use the wildcards to specify instance names in netlist syntax.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1194626"></a><em>Exclude Instances</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1194628"></a>A space-separated list of instance paths that you want to exclude while injecting faults in the given design hierarchy.</p>
+<p>
+<a id="pgfId-1195259"></a>You cannot use the <code>*</code> wildcard to specify multiple instance paths.</p>
+<p>
+<a id="pgfId-1221179"></a>When the <em>Use Netlist Syntax</em> check box is deselected, you can select one or more instances from the schematic by clicking (...) to the right of this field. You can also use the wildcards to specify instance names in netlist syntax.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165452"></a><em>Exclude Subcircuits</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165454"></a>A space-separated list of subcircuit names that you want to exclude while injecting faults in the given design hierarchy. </p>
+<p>
+<a id="pgfId-1195354"></a>You can use all wildcards in subcircuit names.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1253157"></a><em>Minimum Capacitance</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1253214"></a>Specifies the minimum capacitance an extracted parasitic capacitor must have to be identified as a short defect.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1253160"></a>This field is visible only when the <em>Type</em> field is set to <code>Bridge</code> or <code>Stuck-at</code> and <em>Fault Extract</em> is <code>sch</code> or <code>spf</code>.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1253162"></a><em>Minimum Resistance</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1253266"></a>Specifies the minimum resistance an extracted segment resistor must have to be identified as an open defect.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1253267"></a>This field is visible only when the <em>Type</em> field is set to <code>Open</code> and <em>Fault Extract</em> is <code>sch</code> or <code>spf</code>.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1256435"></a><em>Fault Level</em><a id="level"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<headingrunin id="#id1256492">
+<a id="pgfId-1256492"></a>Defines the hierarchical level of the design to be considered during the fault list generation. By default, Spectre generates faults in subcircuits at all levels of the design.
+</headingrunin></td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1263419"></a><em>Fault Layer</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<headingrunin id="#id1263450">
+<a id="pgfId-1263450"></a>Specifies the layer number of the layers on which layout-based faults are to be identified. 
+<headingrunin id="#id1263543">
+<a id="pgfId-1263543"></a>Possible values are:
+
+<ul><li>
+<a id="pgfId-1263565"></a><code>0</code>: Identifies faults on all layers including the connectivity between layers. </li><li>
+<a id="pgfId-1263586"></a><code>[x y ...]</code>:Identifies faults on the specified layers</li><li>
+<a id="pgfId-1263628"></a><code>[(x,y)]</code>: Identifies faults for all the layers in the given range excluding the connectivity between layers in both cases. </li></ul>
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1263677"></a>This field is visible only when the <em>Fault Extract</em> field is set to <code>sch</code> or <code>spf</code>.</div>
+
+</headingrunin></headingrunin></td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1165456"></a><em>Fault Insertion Restrictions</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1256788"></a><em></em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1256790"></a>This section contains settings that define restrictions to be applied while faults.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165464"></a><em>Fault Devices</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165466"></a>A space-separated list of fault devices on which you want to inject faults. You can use the * wildcard to specify multiple device names matching the given criteria.</p>
+<p>
+<a id="pgfId-1198070"></a>By default the field is set to <code>*</code>, which means that the faults are to be injected on all the devices in the specified design hierarchy. It is mandatory to provide a value in this field.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165468"></a><em>Pin Names</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1195938"></a>A space-separated list of pin names on which you want to inject faults.</p>
+<p>
+<a id="pgfId-1165470"></a>If you want to inject faults on all pins of the specified instances, specify <code>*</code> in this field. It is mandatory to provide a value in this field.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1260915"></a>This field is not available when custom faults with type <em>Custom Replace</em> are inserted.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1236406"></a><em>Enable IEEE 2427 Mode</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1236408"></a>Enables the IEEE 2427 mode for Spectre <code>info</code> analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1201875"></a><em>Enable Fault Collapse</em><a id="faultCollapse"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1201877"></a>Enables fault collapsing to remove equivalent faults. When you enable fault collapsing, Spectre collapses each set of equivalent faults within a fault rule into one and assigns an absolute weight, which is a summation of the absolute weight assigned to each equivalent fault collapsed into it. For more details on fault collapsing, refer to <h-hot><a actuate="user" class="URL" href="../spectreuser/chap7.html#fault_weight" show="replace" xml:link="simple">Fault Collapsing and Weighting Function</a></h-hot>.</p>
+<p>
+<a id="pgfId-1246381"></a>This check box is enabled only when the <em>Apply fault collapsing to</em> setting on the <h-hot><a href="asmFSA.html#_maeFaultPrefForm0">Virtuoso ADE Fault Setup Global Preferences</a></h-hot> form is set to <em>Rule Specific</em>. That means you can enable or disable fault collapsing at a rule level only if allowed at the global level. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1165472"></a><em>Extra Options</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1166285"></a>Additional options to be used by the Spectre <code>info</code> analysis that is run to inject faults.</p>
+<p>
+<a id="pgfId-1195520"></a>Ensure that the options are written in a format supported by Spectre.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1104744"></a><a id="95230"></a>Creating Individual Faults</h3>
+
+<p>
+<a id="pgfId-1104881"></a>If you want to create a fault with unique settings, instead of using fault rules, you can create individual faults of type bridge, open, or stuck-at. </p>
+<ul><li>
+<a id="pgfId-1247442"></a><a href="asmFSA.html#54946">Creating Individual Bridge Faults</a></li><li>
+<a id="pgfId-1247451"></a><a href="asmFSA.html#52011">Creating Individual Open Faults</a></li><li>
+<a id="pgfId-1247051"></a><a href="asmFSA.html#91311">Creating Individual Stuck-at Faults</a></li><li>
+<a id="pgfId-1261430"></a><a href="asmFSA.html#95459">Creating Custom Faults</a></li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1247042"></a><a id="54946"></a>Creating Individual Bridge Faults</h4>
+
+<p>
+<a id="pgfId-1140116"></a>To create an individual bridge fault:</p>
+<ol><li>
+<a id="pgfId-1172936"></a>Expand <em>Individual Faults</em> in the Fault Setup assistant.</li><li>
+<a id="pgfId-1115333"></a>Right-click <em>Bridge</em> and choose <em>Add Bridge</em>.<br />
+<a id="pgfId-1172987"></a>Alternatively, right-click <em>Individual Faults</em> and choose <em>Add Bridge</em>.<br />
+<a id="pgfId-1166988"></a>The schematic of the design is displayed.<br />
+<a id="pgfId-1116321"></a><div class="webflare-div-image">
+<img width="1089" height="483" src="images/asmFSA-17.gif" /></div></li><li>
+<a id="pgfId-1166981"></a>Select two nets for the bridge.<br />
+<a id="pgfId-1167149"></a>A bridge fault is defined to be added between the selected nets.<br />
+<a id="pgfId-1153961"></a><br /><div class="webflare-div-image">
+<img width="612" height="391" src="images/asmFSA-18.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1173135"></a>By default, the fault uses the default resi<a id="modifyIndividualFaultsForm"></a>stance value and weight factor specified on the <a href="asmFSA.html#_maeFaultPrefForm0">Virtuoso ADE Fault Setup Global Preferences form</a>. You can modify the resistance value for a fault rule by using the <em>Modify Individual Fault </em>command in the context-sensitive menu of a fault. This command opens the Modify Individual Fault form that you can use to modify the resistance value or the weight of the selected fault.</div>
+<a id="pgfId-1173139"></a><div class="webflare-div-image">
+<img width="612" height="126" src="images/asmFSA-19.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1247096"></a><a id="52011"></a>Creating Ind<a id="axlCreateOpenFaultNetSplit"></a>ividual Open Faults</h4>
+
+<p>
+<a id="pgfId-1247097"></a>To create an individual open fault:</p>
+<ol><li>
+<a id="pgfId-1247098"></a>Expand <em>Individual Faults</em> in the Fault Setup assistant.</li><li>
+<a id="pgfId-1247099"></a>Right-click <em>Open</em> and choose <em>Add Open</em>.<br />
+<a id="pgfId-1247100"></a>Alternatively, right-click <em>Individual Faults</em> and choose <em>Add Open</em>.<br />
+<a id="pgfId-1247101"></a>The schematic of the design is displayed.</li><li>
+<a id="pgfId-1168412"></a>Click a net on the schematic.<br />
+<a id="pgfId-1247177"></a>The Individual Open Defect form is displayed. This form displays a list of pins through which the selected net is connected to the instances in the design. <br />
+<a id="pgfId-1173401"></a><div class="webflare-div-image">
+<img width="687" height="467" src="images/asmFSA-20.gif" /></div></li><li>
+<a id="pgfId-1154876"></a>Using the arrows, move the terminals to the <em>Left</em> or <em>Right</em> list to define the placement of the open fault. <br />
+<a id="pgfId-1247196"></a>The fault will be injected in such a way that the terminals listed in the <em>Left</em> list are on the left and the terminals listed in the <em>Right</em> list are on the right of the open resistor is injected on the selected net. The Individual Open Defect form lets you customize the cut set of the net.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1247233"></a><a id="91311"></a>Creating Individual Stuck-at Faults</h4>
+
+<p>
+<a id="pgfId-1247234"></a>To create an individual stuck-at fault:</p>
+<ol><li>
+<a id="pgfId-1247235"></a>Expand <em>Individual Faults</em> in the Fault Setup assistant.</li><li>
+<a id="pgfId-1247236"></a>Right-click <em>Stuck-at</em> and choose <em>Add Open</em>.<br />
+<a id="pgfId-1247237"></a>Alternatively, right-click <em>Individual Faults</em> and choose <em>Add Stuck-at</em>.<br />
+<a id="pgfId-1247238"></a>The schematic of the design is displayed.</li><li>
+<a id="pgfId-1247239"></a>Click a net that you want to use for the stuck-at fault.<br />
+<a id="pgfId-1247205"></a>A new fault is created by using the selected net. The resistance value used for this fault is taken from the <a href="asmFSA.html#_maeFaultPrefForm0">Virtuoso ADE Fault Setup Global Preferences</a> form.</li></ol>
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1261448"></a><a id="95459"></a>Creating Custom Faults</h3>
+
+<p>
+<a id="pgfId-1261480"></a>You can create the following types of custom faults:</p>
+<ul><li>
+<a id="pgfId-1261683"></a>Custom insertion: In this type, a customized subcircuit instance is connected to the nodes specified in the fault setup. The following example shows that a fault instance is inserted into the nominal circuit by not connecting <code>n1</code> and <code>n2</code>.<br />
+<a id="pgfId-1261687"></a><div class="webflare-div-image">
+<img width="635" height="325" src="images/asmFSA-21.gif" /></div></li><li>
+<a id="pgfId-1261583"></a>Custom replacement: In this type, a specific device or subcircuit instance is replaced by a custom subcircuit. The order and number of terminals should match in the two.<br />
+<a id="pgfId-1261794"></a>In the following example, an instance is replaced by the highlighted fault subcircuit.<br />
+<a id="pgfId-1261798"></a><div class="webflare-div-image">
+<img width="635" height="325" src="images/asmFSA-22.gif" /></div></li><li>
+<a id="pgfId-1261823"></a>Custom open: In this type, a node is split into two nodes and a custom subcircuit fault is inserted. The custom open subcircuit must have two terminals. While inserting the custom subcircuit, the first terminal of the custom subcircuit is connected to the original node while the second terminal is connected to the new node.<br />
+<a id="pgfId-1261945"></a>In the following example, an instance with two terminals is inserted between the original node <code>n1</code> and the new node <code>X</code>.<br />
+<a id="pgfId-1262177"></a><div class="webflare-div-image">
+<img width="635" height="306" src="images/asmFSA-23.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1261949"></a>Subcircuits for Custom Faults</h4>
+
+<p>
+<a id="pgfId-1262222"></a>You can specify subcircuits to be used in custom faults in the following two ways:</p>
+<ul><li>
+<a id="pgfId-1262326"></a>In a model file, as shown in the following example:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1262412">
+<a id="pgfId-1262412"></a>subckt faultRC n1 n2</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1262413">
+<a id="pgfId-1262413"></a>r1 (n1 n2) resistor r=100</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1262414">
+<a id="pgfId-1262414"></a>c1 (n1 n2) capacitor c=100f</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1262408">
+<a id="pgfId-1262408"></a>ends faultRC</pre>
+<a id="pgfId-1262624"></a>To use the custom faults from model files, you can add those model files in the Model Libraries Setup form.<br />
+<a id="pgfId-1262628"></a><div class="webflare-div-image">
+<img width="635" height="286" src="images/asmFSA-24.gif" /></div></li><li>
+<a id="pgfId-1262655"></a>A subcircuit in the schematic as shown in the following example:<br />
+<a id="pgfId-1262659"></a><div class="webflare-div-image">
+<img width="635" height="470" src="images/asmFSA-25.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1261542"></a>Fault Setup for Custom Faults</h4>
+
+<p>
+<a id="pgfId-1262693"></a>Similar to the other types of faults, specify fault injection rules on the Fault Rules form. The following form fields are specific to custom faults:</p>
+<ul><li>
+<a id="pgfId-1263067"></a><em>Custom Type</em>: Type of the custom fault. </li><li>
+<a id="pgfId-1263163"></a><em>Fault Custom</em>: Name of the subcircuit to be used to insert custom faults.</li></ul>
+
+
+<h4><em>
+<a id="pgfId-1261538"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1263195"></a>The <h-hot><a href="asmFSA.html#faultRulesForm">Fault Rules</a></h-hot> form</p>
+<p>
+<a id="pgfId-1262808"></a></p>
+
+<h3>
+<a id="pgfId-1104796"></a><a id="13944"></a>Using Fault Files</h3>
+
+<p>
+<a id="pgfId-1104885"></a>You can import the faults defined in a text file directly into the fault setup. All faults imported from the fault file are added to a group in the setup. For more details, refer to <a href="asmFSA.html#81488">Importing Faults from a File into a Group</a>.</p>
+
+<h3>
+<a id="pgfId-1206423"></a><a id="12378"></a>Importing Fault<a id="importFaults"></a> Rules from Other Cellviews</h3>
+
+<p>
+<a id="pgfId-1206419"></a>If the fault rules defined in another cellview are relevant for the testbench in the current cellview, you can import the rules from those cellviews by using the <h-hot><a actuate="user" class="URL" href="../assembler/asmWorkingSetup.html#formImportSetup" show="replace" xml:link="simple">Import Setup</a></h-hot> form. </p>
+<p>
+<a id="pgfId-1209416"></a>If the destination cellview does not contain any fault rule, the complete set of fault rules are imported from the source cellview. However, if the destination cellview contains fault rules, the value of the <em>Operation</em> field on the Import Setup form defines how the rules from the source and destination cellviews are used. </p>
+<p>
+<a id="pgfId-1211726"></a>The following rules describe the import mechanism.</p>
+<table class="webflareTable" id="#id1209947">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1209949">
+<a id="pgfId-1209949"></a>Value</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1209951">
+<a id="pgfId-1209951"></a>Rules</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1209953"></a><em>Retain</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1210514"></a>If the names of imported rules do not match the rules already defined in the destination cellview, they are copied.</li><li>
+<a id="pgfId-1210506"></a>If the names of imported rules conflict with the rules already defined in the destination cellview, the rules from the source are not copied.</li></ul>
+
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1209957"></a><em>Merge</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1209959"></a>All fault rules from the source cellview are copied to the destination cellview. </li><li>
+<a id="pgfId-1210869"></a>If the names of imported rules conflict with the rules already defined in the destination cellview, the imported rules are used. The existing rules are overwritten.</li><li>
+<a id="pgfId-1211027"></a>All unique existing fault rules are retained in the destination.</li></ul>
+
+
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1209961"></a><em>Overwrite</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1211140"></a>All fault rules are removed from the destination cellview.</li><li>
+<a id="pgfId-1211123"></a>All fault rules from the source cellview are copied to the destination cellview. </li><li>
+<a id="pgfId-1211220"></a>The fault rules in the destination cellview and the source cellview are the same.</li></ul>
+
+
+
+</td>
+</tr>
+</tbody></table>
+
+<h3>
+<a id="pgfId-1253540"></a>Setting Up Fault Rules for Layout-based Faults</h3>
+
+<p>
+<a id="pgfId-1253728"></a>Layout-based fault rules are useful when you want to inject faults that consider parasitics from DSPF files. To create rules for layout-based faults:</p>
+<ol><li>
+<a id="pgfId-1255050"></a>In the Simulation Files Setup form, specify the paths to the DSPF files extracted from the layout.</li><li>
+<a id="pgfId-1254167"></a>In the Fault Rules form, choose a fault type in the <em>Type</em> field.</li><li>
+<a id="pgfId-1254292"></a>Enter specifications for the fault rule in the <em>Fault Model</em> section.</li><li>
+<a id="pgfId-1254386"></a>From the <em>Fault Extract</em> drop-down list, select one of the following values:<ul><li>
+<a id="pgfId-1254570"></a><code>sch</code>: Injects faults that are compatible with the schematic-based netlist</li><li>
+<a id="pgfId-1254580"></a><code>spf</code>: Injects faults that are compatible with the layout-based netlist</li></ul><br />
+<a id="pgfId-1254573"></a>Depending on the fault type, a new field is displayed in the <em>Design Hierarchy Filter</em> section. When the <em>Type</em> field is set to <code>Bridge</code> or <code>Stuck-at</code>, the field is named <em>Minimum Capacitance</em>. When the <em>Type</em> field is set to <code>Open</code>, the field is named <em>Minimum Resistance</em>. </li><li>
+<a id="pgfId-1254717"></a>Enter a valid value in the <em>Minimum Capacitance</em> or <em>Minimum Resistance</em> field.</li><li>
+<a id="pgfId-1255479"></a>Complete the rule setup and close the form.<br />
+<a id="pgfId-1255714"></a>A new fault rule is created and added to the Fault Setup assistant.</li></ol>
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1255572"></a>If required, create more fault rules for other fault types. If you want to use the rules injected by multiple rules in a simulation, create a new group and add the fault rules to that. The tool calculates a unique set of faults and shows the count in the Add to Fault Groups form. Choose a group name and click <em>OK</em>.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1255889"></a>You cannot include rules for layout-based faults and schematic-based faults in the same group. Fault sampling too does not work for layout-based faults.</div>
+
+<h4><em>
+<a id="pgfId-1256160"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1256179"></a><a href="asmFSA.html#99162">Injecting Faults in a Design</a></p>
+<p>
+<a id="pgfId-1256189"></a><a href="asmFSA.html#92933">Creating Fault Groups</a></p>
+<p>
+<a id="pgfId-1256198"></a><a href="asmFSA.html#10693">Fault Rules Form</a></p>
+
+<h2>
+<a id="pgfId-1101747"></a><a id="92933"></a>Creating Fa<a id="createFaultGrps"></a>ult Groups</h2>
+
+<p>
+<a id="pgfId-1131456"></a>If you want to use some fault rules together on a design hierarchy, you can bundle them together in fault groups.</p>
+<p>
+<a id="pgfId-1250543"></a>By default, the fault simulation is run for the faults specified in the <em>Rules and Individual Faults</em> tree in the Fault Setup assistant. This is indicated by the green highlight in this assistant. If you want to consider any other fault group for the simulation run, select the name of that fault group from the <em>Fault Group to Run</em> drop-down list.</p>
+<p>
+<a id="pgfId-1131995"></a>To create a fault group:</p>
+<ol><li>
+<a id="pgfId-1132176"></a>In the Fault Setup assistant, expand the <em>Fault Groups</em> tree and click <em>Click to add</em>.<br />
+<a id="pgfId-1131743"></a><div class="webflare-div-image">
+<img width="613" height="338" src="images/asmFSA-26.gif" /></div>
+<a id="pgfId-1170508"></a>A new item is added to the tree and the group name field becomes editable.</li><li>
+<a id="pgfId-1170514"></a>Type a name to be used for the group, and press <code>Enter</code>.<br />
+<a id="pgfId-1170692"></a>A new group is created with the given name and its fault count is set to <code>0</code>. This group is also added to the <em>Fault Group to Run</em> drop-down list.</li></ol>
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1253324"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1253343"></a><a href="asmFSA.html#14271">Adding Faults to Fault Groups</a></p>
+
+<h3>
+<a id="pgfId-1250624"></a>Creating a Fault Gr<a id="faultgroupcopy"></a>oup by Copying An Existing Group</h3>
+
+<p>
+<a id="pgfId-1250711"></a>You can also create a fault group by copying an existing group. The newly created group gets the faults from the source group. You can modify it by adding or removing faults.</p>
+<p>
+<a id="pgfId-1250937"></a>To create a copy of a fault group:</p>
+<ul><li>
+<a id="pgfId-1250980"></a>Right-click the fault group and choose <em>Create Fault Group Copy</em>.</li></ul>
+<p>
+<a id="pgfId-1251074"></a>A copy of the group is saved with the default name in the format <span class="webflare-courier-new" style="white-space:pre"><em>source-group-name_</em></span>copy_<span class="webflare-courier-new" style="white-space:pre"><em>incremental-num</em></span>. You can rename it as required.</p>
+<p>
+<a id="pgfId-1251233"></a>The status of the new fault group is same as that of the source group name. </p>
+
+<h2>
+<a id="pgfId-1173974"></a><a id="14271"></a>Adding Faults to Fa<a id="addToGroup"></a>ult Groups</h2>
+
+<p>
+<a id="pgfId-1224898"></a>At a given point of time, there can be many faults and fault rules defined in the Fault Setup assistant. You can include a similar set of faults in a group to manage them together or to run simulation for all faults grouped together. </p>
+<p>
+<a id="pgfId-1224896"></a></p>
+
+<div class="webflare-div-image">
+<img width="654" height="241" src="images/asmFSA-27.gif" /></div>
+
+<p>
+<a id="pgfId-1203124"></a>You can add faults to a fault group in two ways:</p>
+<ul><li>
+<a id="pgfId-1203498"></a>From the fault defined in the Fault Setup assistant</li><li>
+<a id="pgfId-1203506"></a>From the results of a fault simulation</li></ul>
+
+<p>
+<a id="pgfId-1174080"></a>To add faults defined in the Fault Setup assistant to a fault group, perform the following steps:</p>
+<ol><li>
+<a id="pgfId-1174152"></a>Select one or more fault rules or individual faults to be added to the group.</li><li>
+<a id="pgfId-1174186"></a>Right-click and choose <em>Add to Fault Group</em>.<br />
+<a id="pgfId-1251363"></a>If no fault list is generated for the selected fault rules or their fault list is not up to date, the tool shows a message to prompt you whether you want to generate the fault list before adding the rule to the fault group. Click <em>Yes</em> if you want to continue.<br />
+<a id="pgfId-1251669"></a>If you are sure that you want to always generate fault list in such cases, set the <a href="appEnvVars.html#68615">suppressAddToFaultGroupsPrompt</a> environment variable to <code>t</code>.<br />
+<a id="pgfId-1174251"></a>The Add to Fault Group(s) form is displayed.<br />
+<a id="pgfId-1174248"></a><div class="webflare-div-image">
+<img width="662" height="471" src="images/asmFSA-28.gif" /></div>
+<a id="pgfId-1191103"></a>In the<em> Unique faults being added</em> field, the form displays the total count of unique faults resulting from the rules in different groups.</li><li>
+<a id="pgfId-1174447"></a>Hold the <code>Ctrl</code> key and select the names of groups in the <em>Groups</em> list. </li><li>
+<a id="pgfId-1174616"></a>Click OK. <br />
+<a id="pgfId-1174628"></a>The faults are added to the selected groups. <br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1253388"></a>If you have rules for layout-based faults, you cannot group them together with schematic-based faults in a fault group.</div><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1132692"></a>
+If you have created fault groups, ensure that in the <em>Fault Group to Run</em> drop-down list, you select the group that you want to use for the simulation run. The selected group is highlighted in green. You can also preview the list of faults included in a fault group. For more details, refer to <a href="asmFSA.html#82133">Previewing Faults in a Fault Group</a>.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1185686"></a><a id="81488"></a>Importing Faults from a File into a Group</h3>
+
+<p>
+<a id="pgfId-1185730"></a>You can import the faults defined in a text file directly into the fault setup. All faults imported from the fault file are added to a group in the setup. </p>
+<p>
+<a id="pgfId-1185409"></a>To import the faults from a file, perform the steps given below.</p>
+<ol><li>
+<a id="pgfId-1117204"></a>In the Fault Setup assistant, expand the <em>Fault Groups</em> tree.</li><li>
+<a id="pgfId-1184655"></a>Click <em>Click to add</em> and specify a name for the fault group that will contain the faults imported from the fault file.<br />
+<a id="pgfId-1184871"></a>The faults imported from the fault file are added to this fault group.</li><li>
+<a id="pgfId-1184801"></a>Right-click on the newly added fault group and choose <em>Import Fault File</em> from the context-sensitive menu.</li><li>
+<a id="pgfId-1168922"></a>In the Choose Fault Files form, browse the required CSV file path, and click <em>Open</em>.</li><li>
+<a id="pgfId-1169087"></a>The specified CSV file containing the faults is added to the setup.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1185011"></a>The faults given in the fault file are read and their count is reflected in the fault group. The fault group is also added to the <em>Fault Group to Run</em> drop-down list.</div></li></ol>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1184439"></a>The fault file is required to be written in a specific CSV format that is read by ADE Assembler. The following example shows the format to be used:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1184618"></a><strong>Name,Type,From,To,OpenTerminals,Net,Resistance<br /></strong>B1,Bridge,gnd!,/&lt;dutInst&gt;/I10/vdd!,,,100<br />OT1,Open,,,/&lt;dutInst&gt;/I27:B,/&lt;dutInst&gt;/net21,10K<br />ON1,Open,,,/&lt;dutInst&gt;/I5/M3:G,/&lt;dutInst&gt;/clk,10K<br />S1,StuckAt,/&lt;dutInst&gt;/net44,/&lt;dutInst&gt;/I2/vddd!,,,100</pre>
+<h3>
+<a id="pgfId-1248881"></a>Deleting Fault Rules and <a id="deleteFaultGrps"></a>Fault Groups</h3>
+
+<p>
+<a id="pgfId-1248934"></a>To delete fault rules,</p>
+<ol><li>
+<a id="pgfId-1249012"></a>Select one or more fault rules.</li><li>
+<a id="pgfId-1249070"></a>Right-click and choose <em>Delete</em>.<br />
+<a id="pgfId-1249109"></a>The tool displays a message with a list of selected fault rules seeking confirmation for deletion.</li><li>
+<a id="pgfId-1249225"></a>Click <em>OK</em> to proceed with deletion.</li></ol>
+
+
+
+<p>
+<a id="pgfId-1249056"></a>Similarly, to delete fault groups, select one or more fault groups, right-click, and choose <em>Delete Fault Group</em> from the context menu.</p>
+
+<h3>
+<a id="pgfId-1225741"></a><a id="98276"></a>Specifying Fau<a id="samplingOptions"></a>lt Sampling Options and Auto Stop Criteria </h3>
+
+<p>
+<a id="pgfId-1233611"></a>When the fault universe consists of a large number of faults, it is practically impossible to run simulations for all the faults. You can choose to run simulation for a subset of faults or apply a stopping criteria to automatically stop simulations after a specific coverage criteria is met.</p>
+
+<h4>
+<a id="pgfId-1244111"></a>Specifying Fault Sampling Options</h4>
+
+<p>
+<a id="pgfId-1243862"></a>Sampling helps in selecting a subset with fewer faults that can represent the whole fault universe. This helps in estimating the overall coverage with very less simulations.</p>
+<p>
+<a id="pgfId-1225847"></a>In ADE Assembler, you can use the following sampling methods supported by Spectre:</p>
+<ul><li>
+<a id="pgfId-1231783"></a>random</li><li>
+<a id="pgfId-1231785"></a>randomuniform</li><li>
+<a id="pgfId-1231777"></a>randomweighted</li><li>
+<a id="pgfId-1231823"></a>weightsorted</li></ul>
+
+
+
+<p>
+<a id="pgfId-1231840"></a>For details and guidance on these sampling methods, see Fault Selection and Sampling in <h-hot><a actuate="user" class="URL" href="../spectreuser/chap7.html#fault_sampling" show="replace" xml:link="simple">Spectre Classic Simulator, Spectre APS, Spectre X, and Spectre XPS User Guide</a></h-hot>.</p>
+<p>
+<a id="pgfId-1225987"></a>To specify sampling options for fault analysis:</p>
+<ol><li>
+<a id="pgfId-1226166"></a>Click <em>Sample the faults</em> on the Fault Setup assistant toolbar.<br />
+<a id="pgfId-1226168"></a><br /><div class="webflare-div-image">
+<img width="668" height="87" src="images/asmFSA-29.gif" /></div>
+<a id="pgfId-1226359"></a>The Sampling and Stop Criteria Settings form is displayed.<br />
+<a id="pgfId-1232123"></a><div class="webflare-div-image">
+<img width="668" height="501" src="images/asmFSA-30.gif" /></div></li><li>
+<a id="pgfId-1226168"></a>Select <em>Enable Sampling</em>.</li><li>
+<a id="pgfId-1232134"></a>Choose a <a href="asmFSA.html#samplingOptions">sampling method</a> from the <em>Sampling Method</em> drop-down list.</li><li>
+<a id="pgfId-1226449"></a>In the <em>Perform Sampling By</em> field, choose one of the following options to specify how you want to choose samples: <ul><li>
+<a id="pgfId-1226765"></a><em>Number</em>: Uses a specific number of faults. This is selected by default. <br />
+<a id="pgfId-1233472"></a>If you choose to perform sampling by number, specify the number of random samples to be selected in the <em>Number of Samples</em> field. </li><li>
+<a id="pgfId-1226852"></a><em>Ratio</em>: Uses a percentage or ratio of the possible samples. <br />
+<a id="pgfId-1233505"></a>If you choose to perform sampling by ratio, the <em>Sample Ratio (%) </em>field is enabled. Specify the percentage of the samples to be selected.</li></ul></li><li>
+<a id="pgfId-1227022"></a>In the <em>Seed Value</em> field, specify the seed value to be used as the starting point for random sample generation.</li><li>
+<a id="pgfId-1230813"></a>If the sampling method is <em>randomuniform</em> or <em>randomweighted</em>, sampling is performed by replacement, which means that a selected fault is retained in the sampling pool and may be sampled again. With this method, the number of faults simulated can be fewer than the number of samples selected. Therefore, fault detection is done at a specific confidence level. The default confidence level is 97%, but you can change it in the <em>Confidence Value (%)</em> field. </li><li>
+<a id="pgfId-1227078"></a>Click <em>OK</em> to save the sampling options and close the form.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1228879"></a>The sampling options specified on this form are used to generate samples of faults used for simulation. The <h-hot><a href="asmFSA.html#_maeFaultPreview">Fault Group Preview</a></h-hot> form also shows the sampling information and an effective list of faults.</p>
+<p>
+<a id="pgfId-1232861"></a>F<a id="wald"></a>or the <em>randomuniform</em> or <em>randomweighted</em> sampling methods, Spectre internally uses the Clopper-Pearson formula to estimate the confidence interval when the sampling based simulation is finished. After the results are displayed in the <em>Faults</em> results view, you can change the value in the <em>Confidence (%)</em> field or the confidence interval calculation formula in the <em>Interval Option</em> drop-down list on the toolbar and check the confidence interval.</p>
+
+<p>
+<a id="pgfId-1233224"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="204" src="images/asmFSA-31.gif" /></div>
+
+<p>
+<a id="pgfId-1257738"></a>Spectre supports two approaches for confidence interval calculation with the given confidence level:</p>
+<ul><li>
+<a id="pgfId-1257874"></a>Clopper-Pearson formula: This formula is recommended when fault sampling with replacement is performed. Therefore, when using this formula, use the default value yes for the <code>faultsamplereplace</code> option.</li><li>
+<a id="pgfId-1257829"></a>Wald formula: This formula is recommended when fault sampling is done without replacement. When using this formula, specify <code>faultsamplereplace=no</code> in the <em>additionalParams</em> field on the <em>Misc</em> tab of the Transient Options form, as shown below.<br />
+<a id="pgfId-1258493"></a><br /><div class="webflare-div-image">
+<img width="633" height="405" src="images/asmFSA-32.gif" /></div></li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1233208"></a>For more details about these approaches, see <h-hot><a actuate="user" class="URL" href="../spectreuser/chap7.html#conf_interval" show="replace" xml:link="simple">Calculating Confidence Interval for Different Sampling Methods</a></h-hot>.</p>
+
+<h4>
+<a id="pgfId-1244147"></a>Specifying Automatic Stopping Criteria</h4>
+
+<p>
+<a id="pgfId-1243729"></a>To specify auto stop criteria:</p>
+<ol><li>
+<a id="pgfId-1243763"></a>In the Sampling and Stop Criteria Settings form, select <em>Enable AutoStop</em>.</li><li>
+<a id="pgfId-1243823"></a>Specify a percentage value in the <em>Target Coverage (%)</em> field. When the given percentage of total faults are run, ADE Assembler stops simulating the remaining points.</li><li>
+<a id="pgfId-1244351"></a>(Optional) Select <em>Use Confidence Limit</em> to use the confidence limit instead of coverage target as a criteria for automatic stopping. Use this option when you selected the <code>randomuniform</code> or <code>randomweighted</code> sampling method.</li><li>
+<a id="pgfId-1244570"></a>Click <em>OK</em> to save the options and close the form.</li></ol>
+
+
+
+<p>
+<a id="pgfId-1244706"></a>In the next simulation run, ADE Assembler considers the settings specified on this form and automatically stops the simulation when the specified criteria is met. For example, if you specify the target coverage percentage as 60%, ADE Assembler stops the simulation after 60% points are run. For the remaining points, the results are shown as canceled in the <code>Detail</code> or <code>Detail-Transpose</code> view. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1245865"></a>Sometimes, auto stopping might lead to a slightly higher percentage in the results. For example, you set the coverage target as 75%, the final coverage might be shown as 77%. This can happen because by the time calculations are done and the simulation actually stops, more faults get executed in parallel resulting into a higher coverage.</div>
+
+<h3>
+<a id="pgfId-1101748"></a><a id="82133"></a>Previewing F<a id="_maeFaultPreview"></a>aults in a Fault Group</h3>
+
+<p>
+<a id="pgfId-1225332"></a>Fault preview helps in viewing the final list of faults the tool will use to run simulation for the selected fault group. </p>
+<p>
+<a id="pgfId-1101749"></a>To preview the list of faults included in a fault group, do this:</p>
+<ol><li>
+<a id="pgfId-1198626"></a>Select the name of the fault group in the <em>Fault Group to Run</em> drop-down list on top of the Fault Setup assistant. </li><li>
+<a id="pgfId-1198632"></a>Click <em>Preview all faults for fault group selected to run </em>(<img width="30" height="26" src="images/asmFSA-33.gif" />
+) on the Faults Setup assistant.<br />
+<a id="pgfId-1227150"></a>ADE Assembler runs the Spectre info analysis to identify the fault list and if enabled, applies the <a href="asmFSA.html#samplingOptions">sampling options</a> to arrive at the final list of fault samples in the <em>Faults</em> table.<br />
+<a id="pgfId-1231715"></a>It then displays the list in the Fault Group Preview window.<br />
+<a id="pgfId-1199648"></a><div class="webflare-div-image">
+<img width="649" height="693" src="images/asmFSA-34.gif" /></div></li></ol>
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1245440"></a>Key Points to Observe</em></h4>
+
+<ul><li>
+<a id="pgfId-1229475"></a>If the select group is <code>Rules/Ind. Faults</code>, the <em>Faults</em> table shows a combination of all the faults defined by the rules and the individual faults defined in the assistant.</li><li>
+<a id="pgfId-1230082"></a>When multiple fault rules are enabled, the weights of faults are normalized across all fault rules to ensure that the relative weight of a fault looks reasonable when compared to other faults from other rules. In the example given below, the fault <code>RB1_brige_115</code> has an absolute weight of 8 in the Fault Rule Setup form, where its weight changes to 0.00771after normalization. <br />
+<a id="pgfId-1229481"></a><div class="webflare-div-image">
+<img width="649" height="602" src="images/asmFSA-35.gif" /></div></li><li>
+<a id="pgfId-1229987"></a>When the <code>randomuniform</code> or <code>randomweighted</code> sampling methods are used, you may observe that the number of faults in the list are less than the sampled faults. This is because in the replacement method, it is possible to choose a sample more than once, but it is not simulated multiple times. In this case, the fault preview shows a mismatch in the sampled faults and fault count, as shown below.<br />
+<a id="pgfId-1229991"></a><div class="webflare-div-image">
+<img width="668" height="495" src="images/asmFSA-36.gif" /></div></li><li>
+<a id="pgfId-1230063"></a>When the <code>randomuniform</code> sampling method is used, the <em>Normalized Weight</em> column in the <em>Faults</em> table is blank. This is because Spectre does not consider weighted likelihood with this sampling method. For more details, refer to <a actuate="user" class="URL" href="../spectreuser/chap7.html#fault_sampling" show="replace" xml:link="simple">Fault Selection and Sampling</a> in <em>Spectre Classic Simulator, Spectre APS, Spectre X, and Spectre XPS User Guide</em>.</li><li>
+<a id="pgfId-1245504"></a>If the faults are imported from a fault file, they are prefixed with <code>EXT_</code> to indicate that these are imported from an external source, and all details for each fault are displayed in the <em>Fault</em> column. Other columns remain blank. An example of the imported faults is shown below.<br />
+<a id="pgfId-1199259"></a><div class="webflare-div-image">
+<img width="668" height="403" src="images/asmFSA-37.gif" /></div></li><li>
+<a id="pgfId-1186273"></a>You can configure the list of columns to be displayed in the <em>Faults</em> table, click <img width="30" height="26" src="images/asmFSA-38.gif" />
+ and customize the display settings according to your preferences.</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1220268"></a>Probing Faul<a id="probe"></a>ts in a Schematic</h4>
+
+<p>
+<a id="pgfId-1220305"></a>While previewing faults in the Fault Group Preview form, you can also probe them in the schematic view of the design.</p>
+<p>
+<a id="pgfId-1220456"></a>To probe a fault in the schematic:</p>
+<ol><li>
+<a id="pgfId-1220502"></a><a href="asmFSA.html#_maeFaultPreview">Preview</a> the fault list for the group.</li><li>
+<a id="pgfId-1220297"></a>In the Fault Group Preview form, right-click a fault and choose <em>Open fault in design</em>.<br />
+<a id="pgfId-1220600"></a>ADE Assembler opens the schematic in a new tab and highlights the device with the fault.<br />
+<a id="pgfId-1236757"></a><div class="webflare-div-image">
+<img width="668" height="616" src="images/asmFSA-39.gif" /></div></li></ol>
+
+
+
+
+
+<h3>
+<a id="pgfId-1220604"></a>Clearing F<a id="clearCache"></a>ault Cache</h3>
+
+<p>
+<a id="pgfId-1236788"></a>After modifying the fault rules or individual faults, you need to re-evaluate the fault universe by running the rules again. To clear the fault cache and re-validate the faults before generating the fault preview, click <img width="27" height="23" src="images/asmFSA-40.gif" />
+ on the toolbar of the Fault Setup assistant. After clearing the cache, you can run the <em>Preview Faults</em> command to regenerate the fault list. </p>
+
+<h3>
+<a id="pgfId-1202311"></a>Modifying<a id="modifyfaultgroup"></a> Fault Groups</h3>
+
+<p>
+<a id="pgfId-1202352"></a>You can modify a fault group by removing the faults not required for that group. To remove faults from a fault group:</p>
+<ol><li>
+<a id="pgfId-1202307"></a><a href="asmFSA.html#_maeFaultPreview">Preview</a> the fault list for the group.</li><li>
+<a id="pgfId-1202583"></a>In the Fault Group Preview form, select the faults to be removed.<br />
+<a id="pgfId-1202659"></a>You can hold the <em>Ctrl</em> key and click faults for multiple selection.</li><li>
+<a id="pgfId-1202662"></a>Right-click and choose <em>Delete</em>.<br />
+<a id="pgfId-1202877"></a><div class="webflare-div-image">
+<img width="668" height="494" src="images/asmFSA-41.gif" /></div>
+<a id="pgfId-1202781"></a>The selected faults from removed from the preview.</li><li>
+<a id="pgfId-1202835"></a>Click <em>Save</em> to save the changes in the fault group. <br />
+<a id="pgfId-1202913"></a>The fault count for this fault group is updated on this form as well as in the Fault Setup assistant.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1101750"></a><a id="12709"></a>Setting up R<a id="FSArunOptions"></a>un Options for a Fault Simulation</h2>
+
+<p>
+<a id="pgfId-1133854"></a>Before running a fault simulation, spefcify the run options to be used. For this, click Simulation Options in the ADE Assembler toolbar. </p>
+
+<p>
+<a id="pgfId-1177297"></a></p>
+<div class="webflare-div-image">
+<img width="649" height="408" src="images/asmFSA-42.gif" /></div>
+
+<p>
+<a id="pgfId-1159597"></a>You can select from the two methods given on the Fault Simulation run options form. These methods use two different fault analysis engines provided by Spectre&#8211;direct fault analysis and transient fault analysis. These engines provide a trade-off between accuracy and performance.</p>
+
+<h4>
+<a id="pgfId-1127674"></a>Direct Fault Analysis</h4>
+
+<p>
+<a id="pgfId-1127701"></a>In the direct fault analysis, faults are injected at the beginning of each analysis type, such as dc, ac, or transient. This mode provides the most accurate results. However, when there is a large number of faults in the design hierarchy, the simulations might take long to complete.</p>
+
+<h4>
+<a id="pgfId-1128028"></a>Transient Fault Analysis</h4>
+
+<p>
+<a id="pgfId-1128057"></a>In the transient fault analysis, a circuit with fault is simulated together with the test points specified on the time axis. Spectre starts regular transient analysis till the time reaches the test point. Then, at each test point, the following actions are performed:</p>
+<ul><li style="list-style-type: none;background-image: none;"><ul><li>
+<a id="pgfId-1128456"></a>Fault-free transient state is saved</li><li>
+<a id="pgfId-1128496"></a>A fault is injected into the circuit</li><li>
+<a id="pgfId-1128535"></a>With fault-free state used as the initial condition, transient fault simulation is continued with regular time step control and accuracy settings</li><li>
+<a id="pgfId-1128682"></a>The result is saved and the database is cleaned when all fault solutions are found</li></ul></li></ul>
+
+
+
+<p>
+<a id="pgfId-1172197"></a>Fault-free transient simulation is restored and continues till the next test time point.</p>
+
+<h3>
+<a id="pgfId-1101751"></a> Run Options for Direct Fault Analysis</h3>
+
+<p>
+<a id="pgfId-1134605"></a>As explained earlier, this Direct Fault Analysis is used to inject faults in the beginning of each analysis type and considers them for the entire run. It provides most accurate results, but should be avoided for large designs.</p>
+
+<p>
+<a id="pgfId-1134981"></a></p>
+<div class="webflare-div-image">
+<img width="644" height="335" src="images/asmFSA-43.gif" /></div>
+
+<p>
+<a id="pgfId-1189597"></a><em>Run Nominal Simulation &#8212; </em>Specifies whether to perform a nominal (fault free) analysis before fault analysis.</p>
+<p>
+<a id="pgfId-1134926"></a><em>Extra Options &#8212; </em>Specifies additional options for the selected fault analysis. You can specify a space-separated list of <code>option-value</code> pair of options for that are currently not available in ADE Assembler, but are available in Spectre. </p>
+<p>
+<a id="pgfId-1184117"></a>The options specified in the <em>Extra Options</em> field are added to the sweep statement for the direct fault analysis. These options are not validated or processed by ADE Assembler. They are directly added to the netlist. Ensure that these are specified in the correct format. </p>
+<p>
+<a id="pgfId-1247569"></a>To use any extra options for the transient analysis statement:</p>
+<ol><li>
+<a id="pgfId-1247804"></a>Expand <em>Analyses</em> for the test in the Data View assistant.</li><li>
+<a id="pgfId-1247885"></a>Double-click <em>tran</em> to open the Choosing Analysis form.<br />
+<a id="pgfId-1247960"></a>The <em>tran</em> analysis is selected and the form shows options for this analysis.</li><li>
+<a id="pgfId-1247940"></a>Click <em>Options</em> to open the Transient Options form.</li><li>
+<a id="pgfId-1248086"></a>Specify additional options in the <em>additionalParams</em> field on the <em>Misc</em> tab. An example is shown below.<br />
+<a id="pgfId-1247712"></a><div class="webflare-div-image">
+<img width="664" height="464" src="images/asmFSA-44.gif" /></div></li></ol>
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1101752"></a> Run Options for Tr<a id="TFARunOptions"></a>ansient Fault Analysis</h3>
+
+<p>
+<a id="pgfId-1101753"></a>Transient fault analysis injects and considers faults only at specific test points and given lead times on the time axis. For the other time values, a fault-free state of circuit is used. This method produces results very fast, but with limited accuracy.</p>
+
+<p>
+<a id="pgfId-1135993"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="473" src="images/asmFSA-45.gif" /></div>
+
+<p>
+<a id="pgfId-1135955"></a>The description of each field is given below.</p>
+<p>
+<a id="pgfId-1136558"></a>Section: <em>Simulation Method for Transient Fault Analysis</em></p>
+<ul><li>
+<a id="pgfId-1136627"></a><em>linear &#8212; </em>Fastest method with limited accuracy as it simulates one time step at the test point and runs only one Newton iteration.</li><li>
+<a id="pgfId-1136638"></a><em>maxiters &#8212; </em>Integrates the time step at the test point taking multiple Newton iterations until the results converge to a commonality or the specified number of maximum iterations are covered.</li><li>
+<a id="pgfId-1136650"></a><em>onestep &#8212; </em>Works like <em>maxiters</em>, except that it steps back one time step if the simulation results do not converge and continues the Newton iterations until a solution is found.</li><li>
+<a id="pgfId-1136659"></a><em>leadtime &#8212; </em>An accurate method in which the faults are injected prior to each test point with the lead time, which is specified in the field <em>Lead Time</em>.</li><li>
+<a id="pgfId-1136669"></a><em>testpoint &#8212; </em>Performs Transient Fault Analysis for every time step till the next test point by injecting faults after the previous test point<em>.</em></li><li>
+<a id="pgfId-1136680"></a><em>timezero &#8212; </em>The most accurate method with the longest simulation run time as it injects faults at time zero and performs transient fault analysis for every time step till the next test point.</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1136690"></a>Section: <em>Fault Points Method</em></p>
+<ul><li>
+<a id="pgfId-1136732"></a><em>Start/Step/Stop</em> &#8212; Displays and enables the fields to set the start, step and stop time for transient fault analysis.<ul><li>
+<a id="pgfId-1137964"></a><em>Start</em> &#8211; The first test point or start time </li><li>
+<a id="pgfId-1138066"></a><em>Step</em> &#8211; The time interval between test points</li><li>
+<a id="pgfId-1138072"></a><em>Stop</em> &#8211; The last test point or stop time</li></ul></li><li>
+<a id="pgfId-1136759"></a><em>Fault Time Points</em> &#8212; Displays and enables the <em>Fault Time Points</em> field in which you can specify a space-separated list of time points at which the transient fault analysis is to be performed. <br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1187845"></a>
+These fault time points specified in the run options form for fault simulation are used for all tests in the setup. However, if a particular test contains specific time points in the transient analysis options, the test-specific values take precedence over the global values in the run options.</div></li><li>
+<a id="pgfId-1136779"></a><em>Extra Options</em> &#8212; Specifies additional options for the Transient Fault Analysis. You can specify options that are currently not supported by ADE Assembler, but are supported by Spectre. You can specify a space-separated list of <code>option=value</code> pairs.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1184342"></a>Extra options are not validated or processed by ADE Assembler. Ensure that these are specified in the correct format. </div></li></ul>
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1101754"></a><a id="48586"></a>Running a Fault Simulation</h2>
+
+<p>
+<a id="pgfId-1101755"></a>After injecting the faults and setting the run options, you can run the Fault Simulation by clicking <em>Run Simulation</em> on ADE Assembler toolbar. </p>
+<p>
+<a id="pgfId-1234898"></a>ADE runs Spectre info analysis before every fault simulation run to resolve the fault universe. In this process, Spectre removes all duplicate faults added by different rules.</p>
+<p>
+<a id="pgfId-1157974"></a>Also see: <a href="appEnvVars.html#22675">warnWhenSimsExceed</a></p>
+<p>
+<a id="pgfId-1177588"></a>After the simulation is complete, the <em>Results</em> tab shows the results in <em>Detail</em> view. It is a consolidated report of the fault expressions defined in the tests. For a detailed analysis of results for each fault, open the <em>Fault</em> result view and apply filters as explained in the <a href="asmFSA.html#12068">Viewing Results of Fault Simulation</a> section.</p>
+<p>
+<a id="pgfId-1203808"></a>If there are failures in the simulation results, you can review the netlist or the setup. For more details, refer to the <a href="asmFSA.html#29693">Debugging Results and Troubleshooting Errors</a> section.</p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1182631"></a>
+To improve the performance of the fault analysis, you can distribute the run to multiple jobs by configuring the job policy.</div>
+<h4><em>
+<a id="pgfId-1205934"></a>Related Topic: <a href="asmFSA.html#80041">Running Simulations Using Selected Faults from Results</a></em></h4>
+<h2>
+<a id="pgfId-1101756"></a><a id="12068"></a><a id="37201"></a>Viewing Res<a id="viewResults"></a>ults of Fault Simulation</h2>
+
+<p>
+<a id="pgfId-1177848"></a>The simulation tries to detect the injected faults for each output of type <code>faultexpr</code>, a new output type in ADE Assembler. At each fault point, the simulator evaluates the outputs and calculates the count of detected and undetected faults, as shown in the snapshot of the <code>Detail-Transpose</code> results view given below.</p>
+
+<p>
+<a id="pgfId-1177861"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="464" src="images/asmFSA-47.gif" /></div>
+
+<p>
+<a id="pgfId-1182855"></a>The red and green colors of the cells in the Detail and Detail-Transpose views indicate detected and undetected faults, respectively. Though for a fault simulation, it is considered good when a fault is detected, this color schema has been kept similar to the one used for the results of specifications where red indicates a failure in meeting the defined specification for an output.</p>
+<p>
+<a id="pgfId-1193620"></a>In the <code>Detail</code> view, you can plot graphs for outputs across all design points, as shown below.</p>
+
+<p>
+<a id="pgfId-1193762"></a></p>
+<div class="webflare-div-image">
+<img width="672" height="507" src="images/asmFSA-48.gif" /></div>
+
+<p>
+<a id="pgfId-1204045"></a>The following topics explain how to explore the results of a fault simulation:</p>
+<ul><li>
+<a id="pgfId-1206909"></a><a href="asmFSA.html#35126">Viewing Summary of Fault Simulation Results</a></li><li>
+<a id="pgfId-1206989"></a><a href="asmFSA.html#26056">Customizing the Display of Faults in the Fault View</a></li><li>
+<a id="pgfId-1207157"></a><a href="asmFSA.html#37816">Merging Results from Multiple Fault Simulations</a></li><li>
+<a id="pgfId-1207179"></a><a href="asmFSA.html#80041">Running Simulations Using Selected Faults from Results</a></li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1206914"></a><a id="35126"></a>Viewing Summary of Fault Simulation Results</h3>
+
+<p>
+<a id="pgfId-1177862"></a>You can view the summary of fault results in the <code>Fault</code> results view. By default, this view shows the count of detected or undetected faults found while evaluating the expressions for each test. </p>
+<p>
+<a id="pgfId-1242992"></a>By default, all simulation errors and evaluation errors are considered as undetected faults. You can use the <a href="appEnvVars.html#91009">handleErrorsAs</a> environment variable to ignore the errors or consider them as detected faults. When the errors are ignored, they are not included in the count of detected or undetected errors.</p>
+<p>
+<a id="pgfId-1177863"></a>You can use the various filters or hyperlinks to focus on specific test, expression, or output, or to view faults in the design schematic.</p>
+
+<p>
+<a id="pgfId-1177872"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="222" src="images/asmFSA-49.gif" /></div>
+
+<p>
+<a id="pgfId-1177873"></a>When the setup has multiple tests, you can use the coverage report to identify the useful tests that you can keep and eliminate others. </p>
+<p>
+<a id="pgfId-1178402"></a>For this, select <code>Cumulative</code> in the <em>expr</em> column. The cumulative results for all the expressions evaluated for each test are shown. The <em>detectedCount</em> and <em>undetectedCount</em> columns show the total number of faults detected or undetected for all expressions evaluated for that test.</p>
+<p>
+<a id="pgfId-1178405"></a>The example given below shows that test DCGain detects a total of 47 out of 50 faults (with 94% coverage). Therefore, it gives a better coverage, but at the same time, you need to analyze the undetected faults for this test. It helps to ensure that the undetected fault is not a must item to be detected. If it is, you need to modify the setup to ensure that the fault is detected. </p>
+
+<h3>
+<a id="pgfId-1207013"></a>Exploring Instance that Contain Faults </h3>
+
+<p>
+<a id="pgfId-1178965"></a>The values in the <code>fault</code> view are hyperlinked to further details which are helpful in exploring the detected or undetected faults at the schematic level. For example, the count of detected or undetected faults are hyperlinks to the detailed view of these faults. </p>
+<p>
+<a id="pgfId-1207471"></a>In the detailed view, you can click a fault name to view the design instance where the fault is reported, as shown in the following example:</p>
+<p>
+<a id="pgfId-1206792"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="656" src="images/asmFSA-50.gif" /></div>
+<h3>
+<a id="pgfId-1146661"></a><a id="26056"></a>Customizing the Display of Faults in the Fault View</h3>
+
+<p>
+<a id="pgfId-1147233"></a>You can customize the view of the fault table in the following ways:</p>
+<ul><li>
+<a id="pgfId-1147235"></a><strong>Hide the columns you do not want to see.</strong> For this, use the Hide Column command from the context-sensitive menu of the Fault table.<br />
+<a id="pgfId-1147407"></a>You can use the Show All Columns command to view the hidden columns.<br />
+<a id="pgfId-1147322"></a><div class="webflare-div-image">
+<img width="667" height="162" src="images/asmFSA-51.gif" /></div></li><li>
+<a id="pgfId-1147238"></a><strong>Change the order in which columns are displayed. </strong>For this, select the column you want to move, drag it to the location where you want to place it, and drop it.</li><li>
+<a id="pgfId-1147240"></a><strong>Apply the field or column filters to view the selected fault data.</strong> Columns such as Corner, status, or DC Gain have drop-down filters that you can use to choose a specific value to filter data.<br />
+<a id="pgfId-1147241"></a>Columns such as faultName, dcGain, dcGain2, highValue, and so on, provide enhanced filters where you can type in the filter criteria using specific values and wildcard characters. Specify a criteria and press Enter to view the filtered rows.<br />
+<a id="pgfId-1179494"></a>Note the following important points about the column filters:<ul><li>
+<a id="pgfId-1147245"></a><strong>You can apply filters in multiple columns together. </strong><br />
+<a id="pgfId-1146999"></a>The following example shows how column filters have been used to view all the faults for corner <code>Nominal</code> where status is <code>D</code>, DCGain is <code>D</code> and dcGain is less than 9m.<br /><ffi2-fig-frame-in-2 id="#id1149168">
+<a id="pgfId-1149168"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="1075" height="384" src="images/asmFSA-52.gif" /></div></li><li>
+<a id="pgfId-1149172"></a><strong>You can use numerical comparison operators</strong>, such as &gt; or &lt;.</li><li>
+<a id="pgfId-1147627"></a><strong>You can use filtering options from the context-sensitive menu</strong> of the cell in which you applied a filter. These options are same as the filtering options in other result views.<br /><ffi2-fig-frame-in-2 id="#id1149266">
+<a id="pgfId-1149266"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="683" height="492" src="images/asmFSA-53.gif" /></div></li><li>
+<a id="pgfId-1149235"></a><strong>You can choose filters from the drop-down list.</strong> As shown in the example given below, the list shows available values including the previously used filters and the unique values in that column.<br /><ffi2-fig-frame-in-2 id="#id1149425">
+<a id="pgfId-1149425"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="670" height="249" src="images/asmFSA-54.gif" /></div></li><li>
+<a id="pgfId-1149287"></a><strong>You can clear the previously used filters for a column by using the Clear Search History command </strong>in the context-sensitive menu of that column.</li><li>
+<a id="pgfId-1181013"></a><strong>You can hide the filters</strong> by using the Hide Filters command from the context-sensitive menu of the column headers.<br /><ffi2-fig-frame-in-2 id="#id1149997">
+<a id="pgfId-1149997"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="671" height="252" src="images/asmFSA-55.gif" /></div></li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1146502"></a><a id="26186"></a><a id="58600"></a>Creating a Custom<a id="axlCustomizeFaultFilters"></a> Fault Filter</h4>
+
+<p>
+<a id="pgfId-1150409"></a>By default, the drop-down list to select a fault filter shows the two main types, <code>Coverage</code> and <code>Detail</code>. If required, you can create your own custom fault filters with different criteria and save them so that they can be reused for the same or different results.</p>
+<p>
+<a id="pgfId-1150835"></a>To define and save a custom fault filter, perform the following steps:</p>
+<ol><li>
+<a id="pgfId-1150901"></a>Click <em>Edit or create custom violation filter </em>on the toolbar of the <code>Fault</code> results view to open Customize Fault Filters form.<br />
+<a id="pgfId-1151171"></a><div class="webflare-div-image">
+<img width="618" height="598" src="images/asmFSA-56.gif" /></div></li><li>
+<a id="pgfId-1151092"></a>Specify appropriate values in the following fields of this form.<br />
+<a id="pgfId-1179358"></a><table class="webflareTable" id="#id1151629">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1151197">
+<a id="pgfId-1151197"></a>Field</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1151199">
+<a id="pgfId-1151199"></a>Description</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151201"></a>Filter Name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151203"></a>The name of the custom filter</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151205"></a>Description</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151207"></a>The description for the custom filter</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151209"></a>Shows</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151211"></a>The type of report you want to view</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151213"></a>Available Fields</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151215"></a>The list of fields or columns available in the Fault result view</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151310"></a>Where</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1151312"></a>Specifies the filter criteria. To define this criteria based on the values in a field or column, click the column name in the Available Field list and click the left arrow. The field name is added to the Where field. You can now build an expression to define the filter criteria.</p>
+</td>
+</tr>
+</tbody></table></li><li>
+<a id="pgfId-1101761"></a>Click <code>Save</code> on this form to save these filter settings in a custom file.</li></ol>
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1151795"></a><strong>Important Points to Consider for Custom Filter Syntax:</strong></p>
+<ul><li>
+<a id="pgfId-1151797"></a>Instance and net names must use the simulator namespace, not the schematic namespace. For example, <code>I8.I0.MP1</code>is correct, whereas <code>/I8/I0/MP1</code> is incorrect.</li><li>
+<a id="pgfId-1151799"></a>Query operators are case insensitive</li><li>
+<a id="pgfId-1151801"></a>Strings can be in single or double quotes</li><li>
+<a id="pgfId-1151803"></a>If the field names contain spaces or special characters, they must be enclosed in double quotes.</li><li>
+<a id="pgfId-1180695"></a>Query operators for custom filters support the same SQLite operators that you can use on the <a actuate="user" class="URL" href="../assembler/asmAssertions.html#CVF_Form" show="replace" xml:link="simple">Customize Violation Filters</a> form for Check and Asserts.</li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1207074"></a><a id="37816"></a>Merging Resu<a id="mergeFaultResults"></a>lts from Multiple Fault Simulations</h3>
+
+<p>
+<a id="pgfId-1211755"></a>You can merge the results of multiple fault simulation histories to view the consolidated results in one history. </p>
+<p>
+<a id="pgfId-1212640"></a>This feature saves the time required to rerun simulations in the following scenarios:</p>
+<ul><li>
+<a id="pgfId-1212637"></a>After running a fault simulation, you modify the fault rules or the test setup, or make any other change in the active setup, and run simulation. You can merge the results saved before and after making these changes and view a consolidated report.</li><li>
+<a id="pgfId-1212704"></a>You want to check the fault detection rate by dropping faults in subsequent runs, and then want to merge results of all runs. For more details, refer to <a href="asmFSA.html#75390">Checking Fault Detection Rate</a>.</li></ul>
+
+
+<div class="webflare-information-macro webflare-macro-video">
+<a id="pgfId-1248478"></a>
+You can view a video demonstration of this feature at <a actuate="user" class="URL" href="https://support.cadence.com/apex/ArticleAttachmentPortal?pageName=ArticleContent&amp;id=a1O3w00000AE30tEAD" show="replace" xml:link="simple">Merging Fault Simulation Results</a>.</div>
+
+<p>
+<a id="pgfId-1207133"></a>To merge results of multiple fault simulations:</p>
+<ol><li>
+<a id="pgfId-1207957"></a>Open the history of the fault simulation that you want to update by merging results from other histories into it.</li><li>
+<a id="pgfId-1208171"></a>Open the <em>Fault</em> results view.</li><li>
+<a id="pgfId-1207959"></a>Click <em>Merge Fault Histories</em> on the toolbar of the <em>Results</em> tab.<br />
+<a id="pgfId-1207961"></a><div class="webflare-div-image">
+<img width="668" height="121" src="images/asmFSA-57.gif" /></div></li><li>
+<a id="pgfId-1209185"></a>The Me<a id="mergeHistoryForm"></a>rge Fault History form is displayed. It shows the list of all available histories of fault simulation run for this testbench, as shown in the following example. <br />
+<a id="pgfId-1209189"></a><div class="webflare-div-image">
+<img width="668" height="337" src="images/asmFSA-58.gif" /></div></li><li>
+<a id="pgfId-1207951"></a>Select one or more histories from which you need to merge the results.</li><li>
+<a id="pgfId-1208483"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1212789"></a>The results of all selected histories are merged in the history for which you displayed results. The history name on the <em>Results</em> tab shows the progress of merging.<br />
+<a id="pgfId-1212793"></a><div class="webflare-div-image">
+<img width="668" height="408" src="images/asmFSA-59.gif" /></div>
+<a id="pgfId-1209294"></a>After the merge is successful, the count of detected and undetected faults are updated to reflect the merged data. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1208724"></a>The following example shows the benefit of merging fault simulation results saved for two different tests separately:</p>
+<p>
+<a id="pgfId-1214250"></a>Original Results of <code>FaultSimulation.0</code>:</p>
+
+<p>
+<a id="pgfId-1209049"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="268" src="images/asmFSA-60.gif" /></div>
+
+<p>
+<a id="pgfId-1209053"></a>Results of <code>FaultSimulation.1</code>:</p>
+
+<p>
+<a id="pgfId-1209056"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="307" src="images/asmFSA-61.gif" /></div>
+
+<p>
+<a id="pgfId-1209075"></a>Results of <code>FaultSimulation.1</code> after <code>FaultSimulation.0</code> is merged with it:</p>
+
+<p>
+<a id="pgfId-1214288"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="533" src="images/asmFSA-62.gif" /></div>
+<h4><em>
+<a id="pgfId-1212875"></a>Important Points to Note</em></h4>
+
+<ul><li>
+<a id="pgfId-1212775"></a>After the results are merged in a history, they are saved in the results database of the history. Next time, when you open the same history again, it shows the merged data. </li><li>
+<a id="pgfId-1213029"></a>To check whether a history contains merged data, open its results and click <em>Merge Results</em> on the toolbar of the <em>Results</em> tab. If the results are already merged, the history names are shown as selected.</li><li>
+<a id="pgfId-1213237"></a>To rollback to the original version of a history, that is, to remove the merged data, open the results and click <em>Merge Results</em> on the toolbar of the <em>Results</em> tab. Click <em>Reset</em> on the <a href="asmFSA.html#mergeHistoryForm">Merge Fault History</a> form to deselect all selected histories. ADE Assembler removes the results that were merged from other histories. </li><li>
+<a id="pgfId-1213899"></a>It is possible to remove the merged data for only a few selected histories instead of all histories. In that case, you need to individually deselect the history names on the Merge Fault History form instead of clicking <em>Reset</em>.</li></ul>
+
+
+
+
+<h4><em>
+<a id="pgfId-1257388"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1257409"></a><a href="appEnvVars.html#68435">dropUndetectedSimErrorsInFaultDroppingFlow</a></p>
+<p>
+<a id="pgfId-1257433"></a><a href="appEnvVars.html#91009">handleErrorsAs</a></p>
+<p>
+<a id="pgfId-1257415"></a><a href="appEnvVars.html#24052">handleSimulationErrorsAs</a></p>
+
+<h3>
+<a id="pgfId-1214714"></a><a id="75390"></a>Checking Fa<a id="checkFaultDetection"></a>ult Detection Rate</h3>
+
+<p>
+<a id="pgfId-1216578"></a>Fault simulation runs are generally time consuming because of a large number of faults in the design. Ensuring an effective fault coverage would help in saving time.</p>
+<p>
+<a id="pgfId-1214710"></a>In a multi-test testbench, you can check the fault detection rate for each test by running simulation for each test individually and dropping the faults detected for one test in the fault setup for other tests. You can then merge the results of all tests and review the cumulative report to calculate the effective overall coverage.</p>
+<p>
+<a id="pgfId-1215106"></a>Consider an example testbench with three tests: DCGain, DC-Test, and Swing. The following figure shows the cumulative coverage of faults when a simulation is run with all three tests enabled in this example:</p>
+
+<p>
+<a id="pgfId-1215797"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="178" src="images/asmFSA-63.gif" /></div>
+
+<p>
+<a id="pgfId-1215791"></a>To check the effective coverage of faults:</p>
+<ol><li>
+<a id="pgfId-1215865"></a>Create a new fault group, say <code>undetectedFaultGrp</code>, in the Fault Setup assistant to save all undetected faults.</li><li>
+<a id="pgfId-1230389"></a>Select a test in the Data View assistant and deselect other tests. <br />
+<a id="pgfId-1216085"></a>In the first run, it is recommended to select a test that has the maximum coverage of faults and minimum run time according to your estimate or observation.</li><li>
+<a id="pgfId-1215867"></a>Using the complete fault rule setup that was used for simulation with all tests enabled, run a fault simulation.</li><li>
+<a id="pgfId-1216995"></a>To view the cumulative coverage of faults, open the <code>Fault</code> results view and select <code>Cumulative</code> from the Filter list for the <em>expr</em> column.<br />
+<a id="pgfId-1216299"></a><div class="webflare-div-image">
+<img width="668" height="178" src="images/asmFSA-64.gif" /></div></li><li>
+<a id="pgfId-1230315"></a>Right-click the value in the <code>undetectedCount</code> column and choose <em>Add to Fault Group</em> and then the name of the fault group you created in step 1.<br />
+<a id="pgfId-1218133"></a><div class="webflare-div-image">
+<img width="668" height="190" src="images/asmFSA-65.gif" /></div></li><li>
+<a id="pgfId-1217572"></a>Choose the newly created fault group in the <em>Fault Group to Run</em> drop-down list in the Fault Setup assistant.</li><li>
+<a id="pgfId-1217375"></a>Disable the test already used in steps 2 to 5.</li><li>
+<a id="pgfId-1217654"></a>Select one of the remaining tests and repeat steps 3 to 6. <br />
+<a id="pgfId-1230761"></a>In each iteration, you run fault simulations by selecting one test at a time and using the undetected fault list from the previous runs. In every run, you drop the faults already detected in the test used for the previous simulation run. The next run considers only the undetected faults.</li><li>
+<a id="pgfId-1218409"></a>After the simulation for all tests are complete, merge the results in one history. For details on how to merge faults, refer to <a href="asmFSA.html#37816">Merging Results from Multiple Fault Simulations</a>. </li><li>
+<a id="pgfId-1218414"></a>Select <code>Cumulative</code> from the <em>Expression</em> drop-down list in the Fault results view.<br />
+<a id="pgfId-1218510"></a><div class="webflare-div-image">
+<img width="668" height="257" src="images/asmFSA-66.gif" /></div>
+<a id="pgfId-1216324"></a>Observe the difference in the fault coverage for each test with the initial coverage reported by the run with three tests. <br />
+<a id="pgfId-1218876"></a><div class="webflare-div-image">
+<img width="668" height="307" src="images/asmFSA-67.gif" /></div>
+<a id="pgfId-1218552"></a>The coverage for tests <code>DCGain</code> and <code>Swing</code> are different because by default, a fault is counted as detected for all tests if it is detected by any one of them and it is reflected in the coverage for each test. By dropping the faults detected by one test from the simulations for other tests, you create a unique fault set for each test. <br />
+<a id="pgfId-1219055"></a>The fault set created after fault dropping is as effective as the fault set without fault dropping. In the previous example, the cumulative fault coverage for both cases, with or without fault dropping is same, <code>80.43%</code>.<br />
+<a id="pgfId-1219260"></a><div class="webflare-div-image">
+<img width="668" height="91" src="images/asmFSA-68.gif" /></div>
+<a id="pgfId-1218905"></a>Therefore, it is important to understand that fault dropping is not essential. You can evaluate whether fault dropping improves the run time for your designs or not. <br />
+<a id="pgfId-1242174"></a></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1238449"></a><a id="12816"></a>Automatic Fault Dropp<a id="faultDrop"></a>ing Using a Run Plan</h2>
+
+<p>
+<a id="pgfId-1238471"></a>You can create a run plan using the fault setup to run multiple simulations, one for each test, in a sequence where each subsequent run in the plan uses a reduced list of faults that were not detected in the previous run. This way of dropping faults that are detected by the previous run helps in focusing on fault coverage and also saves time because the simulation is not run for the faults that are already detected.</p>
+
+<h3>
+<a id="pgfId-1243551"></a>Creating a Run Plan for Fault Dropping</h3>
+
+<p>
+<a id="pgfId-1239065"></a>To create a run plan for automatic fault dropping:</p>
+<ol><li>
+<a id="pgfId-1239136"></a>Ensure that the maestro cellview contains multiple tests that refer to the same design under test. Each test can have a different setup.</li><li>
+<a id="pgfId-1239449"></a>In the Data View assistant, select the tests for which you want to run fault simulation.</li><li>
+<a id="pgfId-1242232"></a>Ensure that the selected run mode is <em>Fault Simulation</em>.</li><li>
+<a id="pgfId-1239251"></a>In the Fault Setup assistant, prepare a fault setup using fault rules and individual faults as described in <a href="asmFSA.html#55682">Setting up Faults</a>.</li><li>
+<a id="pgfId-1239405"></a>Click <em>Create Fault Dropping Run Plan</em> on the Fault Setup assistant toolbar. <br />
+<a id="pgfId-1239635"></a>ADE Assembler opens the Run Plan assistant and creates a run plan by using the tests enabled in the Data View assistant.<br />
+<a id="pgfId-1239814"></a><div class="webflare-div-image">
+<img width="643" height="487" src="images/asmFSA-69.gif" /></div>
+<a id="pgfId-1240184"></a>For each run in the plan, ADE Assembler automatically adds a pre-run script and a post-run script to prepare a fault list for the next run in the plan.<br />
+<a id="pgfId-1242837"></a>If a run plan already exists in the Run Plan assistant, runs from that run plan are disabled.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1242718"></a>If only one test is enabled in the setup, the run plan is not created and an error message is displayed.</div></li><li>
+<a id="pgfId-1240235"></a>(Optional) To review the pre- and post-run scripts, right click on any run in the Run Plan assistant and choose <em>Edit Run Conditions</em>. <br />
+<a id="pgfId-1240389"></a>The Add/Edit Run Conditions form is displayed for the run. The path to the scripts is shown in the <em>Pre-Run Script</em> and <em>Post-Run Script</em> fields. You can open the script files to review and if required, modify their contents by using the SKILL functions related to fault simulations. However, it is recommended not to modify these files.<br />
+<a id="pgfId-1240658"></a><div class="webflare-div-image">
+<img width="653" height="528" src="images/asmFSA-70.gif" /></div>
+<a id="pgfId-1240213"></a>For all runs except the first run in the plan, this form also adds a run condition to check the success status of the previous run before starting the next run. <br />
+<a id="pgfId-1240217"></a><div class="webflare-div-image">
+<img width="661" height="313" src="images/asmFSA-71.gif" /></div></li><li>
+<a id="pgfId-1238469"></a>Close the Add/Edit Run Conditions form.</li><li>
+<a id="pgfId-1240850"></a>Click <em>Execute Run</em> on the Run Plan assistant toolbar to start a simulation for the run plan.<br />
+<a id="pgfId-1241085"></a>The <em>Results</em> tab opens the <em>Status</em> results view. This view shows the status of each run in the run plan. <br />
+<a id="pgfId-1241089"></a><div class="webflare-div-image">
+<img width="661" height="271" src="images/asmFSA-72.gif" /></div>
+<a id="pgfId-1241169"></a>The CIW also shows the log for the fault dropping flow. <br />
+<a id="pgfId-1241173"></a><div class="webflare-div-image">
+<img width="661" height="348" src="images/asmFSA-73.gif" /></div>
+<a id="pgfId-1216918"></a>This log indicates the number of simulations saved by dropping faults in the flow. In the above example, the total fault count visible in the Fault Preview form was 10. If all fault points were run for both tests, a total of 10 simulations would have been required. However, the log shows that, fault dropping saved 8 simulations. In addition, this log shows the coverage statistics. These logs are also saved in the <code>_faultDropping.logs</code> file in the current work directory.<br />
+<a id="pgfId-1241456"></a>You can now analyze the detailed results in the <em>Fault</em> results view.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1204068"></a><a id="80041"></a>Running Simulations Using Selected Faults from Results</h3>
+
+<p>
+<a id="pgfId-1204170"></a>Based on your analysis of output values, you might need to run a simulation using only the fault points corresponding to a few selected output values. You can create a fault group for those fault points and run simulation for that group.</p>
+<p>
+<a id="pgfId-1204738"></a>To add faults from simulation results to a fault group:</p>
+<ol><li>
+<a id="pgfId-1205098"></a>Identify a fault group to which you want to add faults.</li><li>
+<a id="pgfId-1204935"></a>Open the <em>Fault</em> or <em>Detail&#8211;Transpose</em> results view.</li><li>
+<a id="pgfId-1204937"></a>Select any cell in the row of the fault that you want to add to a group.<br />
+<a id="pgfId-1204929"></a>To add multiple faults, hold the <em>Ctrl</em> key and select the cells for those faults.</li><li>
+<a id="pgfId-1205310"></a>Right-click any one of the selected cells and choose <em>Add to Fault Group</em>.<br />
+<a id="pgfId-1204074"></a>The Add to Fault Group form appears. The <em>Faults</em> list shows the names of the selected faults, and the <em>Groups</em> list shows the names of available fault groups.<br />
+<a id="pgfId-1205659"></a><div class="webflare-div-image">
+<img width="643" height="508" src="images/asmFSA-74.gif" /></div></li><li>
+<a id="pgfId-1205604"></a>Select the name of a fault group.</li><li>
+<a id="pgfId-1205746"></a>Click <em>OK.</em></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1205761"></a>The faults are added to the group. You can select the group in the <em>Fault Group to Run</em> list on the Fault Setup assistant and then run a simulation.</p>
+
+<h2>
+<a id="pgfId-1193503"></a><a id="29693"></a>Debugging Results and Troubleshooting Errors</h2>
+
+<p>
+<a id="pgfId-1193558"></a>If the design contains dummy devices, Spectre would ignore those because they are not relevant for the functionality of the circuit. However, the devices are still listed in the faults list created by ADE Assembler. This might result into simulation errors. To avoid this, make sure that Spectre does not skip dummy devices.</p>
+
+<h3>
+<a id="pgfId-1193554"></a>Debugging Results</h3>
+
+<p>
+<a id="pgfId-1201765"></a>While debugging simulation results, if you need to access netlist and output log of Spectre info analysis, click <em>Open Info Analysis Results</em> on the toolbar of the Fault Setup assistant.</p>
+<p>
+<a id="pgfId-1201838"></a>This command opens the directory where the netlist and the <code>psf</code> directory of the info analysis is saved.</p>
+
+<p>
+<a id="pgfId-1201769"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="498" src="images/asmFSA-75.gif" /></div>
+
+<p>
+<a id="pgfId-1201519"></a></p>
+
+<h2>
+<a id="pgfId-1169385"></a><a id="35593"></a>Running<a id="generateFuSAReportForm"></a> Functional Safety Checks</h2>
+
+<p>
+<a id="pgfId-1169478"></a>An important reliability check for a device is its functional safety. This check mainly focuses on the effect of a failure during the lifetime of a device. </p>
+<p>
+<a id="pgfId-1169479"></a>To generate this report, you need to have checker blocks in your design to validate the outputs of the functional block. </p>
+
+<p>
+<a id="pgfId-1169488"></a></p>
+<div class="webflare-div-image">
+<img width="664" height="424" src="images/asmFSA-76.gif" /></div>
+
+<p>
+<a id="pgfId-1169489"></a>If the fault detection is enabled for both functional and checker blocks, you can generate a functional safety report that is aligned with the safety classification defined in the ISO 26262 standard, which classifies safe or dangerous, and detected or undetected defects.</p>
+<p>
+<a id="pgfId-1198149"></a>The following diagram describes the various types of functional safety categories defined according to this classification.</p>
+
+<p>
+<a id="pgfId-1169493"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="391" src="images/asmFSA-77.gif" /></div>
+
+<p>
+<a id="pgfId-1169494"></a>To generate the functional safety report, perform the following steps:</p>
+<ol><li>
+<a id="pgfId-1179825"></a>Open the results of a fault simulation.</li><li>
+<a id="pgfId-1179815"></a>Click <em>Generate FSA Report</em> (<img width="28" height="21" src="images/asmFSA-78.gif" />
+) on the toolbar of the <em>Results</em> tab. <br />
+<a id="pgfId-1179873"></a>The Generate FuSA Report form is displayed. </li><li>
+<a id="pgfId-1198504"></a>In the <em>File Name</em> field, specify the file name and path to be used to save the report.</li><li>
+<a id="pgfId-1179810"></a>In the <em>Select Checker Expression</em> list, select the names of the checker expressions you created to check the output of the checker blocks in the design.<br />
+<a id="pgfId-1196202"></a><div class="webflare-div-image">
+<img width="664" height="570" src="images/asmFSA-79.gif" /></div></li><li>
+<a id="pgfId-1196241"></a>In the <em>Failure Mode ID</em> field, specify an integer ID of the failure mode being addressed with this report.</li><li>
+<a id="pgfId-1196306"></a>From the <em>Failure Mode</em> drop-down list, choose one of the following failure modes:<ul><li>
+<a id="pgfId-1196664"></a>SPF: Single Point Failure </li><li>
+<a id="pgfId-1196660"></a>LFC: Latent Fault Continuous</li><li>
+<a id="pgfId-1196652"></a>LFP: Latent Fault Periodic </li></ul><br />
+<a id="pgfId-1196780"></a>Single point failures are faults in a functional or checker module. In this mode, only a single failure, that is either the functional block or the checker block is considered at a time. <br />
+<a id="pgfId-1200058"></a>Latent faults are multiple-point faults where the effect of a faulty checker module is evaluated in the context of a faulty functional module. A common method of calculating latent fault results is to apply all relevant failure modes of the functional module to the input of the checker module and then run fault simulation only on the checker module. <br />
+<a id="pgfId-1200405"></a>Latent faults can be of two types, continuous (LFC) and periodic (LFP).<br />
+<a id="pgfId-1198465"></a>To identify a latent fault of continuous type, the output of the functional module needs to be monitored continuously by means of a continuous detection in the checker block.<br />
+<a id="pgfId-1198457"></a>To identify a latent fault of periodic type, the checker module is periodically turned on and off to monitor the output of the functional block. <br />
+<a id="pgfId-1198468"></a>For more details on these failure modes, refer to <a actuate="user" class="URL" href="../spectreuser/chap7.html#fault_analysis" show="replace" xml:link="simple">Fault Analysis</a>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1196393"></a>The values from the <em>Failure Mode ID</em> and <em>Failure Mode</em> fields are printed at the top of the functional safety report. These are not used in the calculations done for report generation.</div></li><li>
+<a id="pgfId-1249878"></a>In the <em>Confidence Value </em>field, specify a confidence level in percentage.<br />
+<a id="pgfId-1250013"></a>For the <code>randomuniform</code> or <code>randomweighted</code> sampling methods, Spectre internally uses the Clopper-Pearson approach to estimate the confidence interval when the sampling based simulation is finished. The confidence level you specify in this field is used to show the corresponding confidence intervals in the fault detection matrix.<br />
+<a id="pgfId-1249994"></a>For more details about how Spectre calculates confidence interval, see <a actuate="user" class="URL" href="../spectreuser/chap7.html#fault_sampling" show="replace" xml:link="simple">Calculating Confidence Interval for Fault Sampling</a>.</li><li>
+<a id="pgfId-1259065"></a>From the <em>Interval Option </em>drop-down list, choose a formula to be used for confidence interval calculation. Both, <code>Clopper-Pearson Interval</code> and <code>Wald Interval</code> methods are supported.</li><li>
+<a id="pgfId-1180104"></a>Click <em>OK</em>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1179623"></a>The resultant report shows the fault detection matrix for each test followed by an aggregate of detected or undetected, safe and unsafe defects. </p>
+
+<p>
+<a id="pgfId-1169503"></a></p>
+<div class="webflare-div-image">
+<img width="664" height="528" src="images/asmFSA-80.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1183195"></a>The functional safety report shows the fault detection matrix for only those tests for which outputs of type <code>faultexpr</code> are specified.</div>
+<p>
+<a id="pgfId-1169401"></a>For details about this report, refer to <h-hot><a actuate="user" class="URL" href="../spectreuser/chap7.html#fault_analysis" show="replace" xml:link="simple">Functional Safety Report</a></h-hot>.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="asmAssertions.html" id="prev" title="Performing Circuit and Device Checks">Performing Circuit and Device  ...</a></em></b><b><em><a href="asmSetupLibrary.html" id="nex" title="Working with the Setup Library Assistant">Working with the Setup Library ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
