@@ -1,0 +1,219 @@
+
+<html><head><title>Setting Up Licensing on Cloud</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="anshikag" />
+<meta name="CreateDate" content="2023-04-05" />
+<meta name="CreateTime" content="1680693795" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Cadence License Manager" />
+<meta name="DocTitle" content="Cadence License Manager" />
+<meta name="DocType" content="Installation" />
+<meta name="FileTitle" content="Setting Up Licensing on Cloud" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="license" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-04-05" />
+<meta name="ModifiedTime" content="1680693795" />
+<meta name="NextFile" content="Distributed_and_Heterogeneous_Installations.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools," />
+<meta name="PrevFile" content="Restarting_License_Server.html" />
+<meta name="c_product" content="Cadence Shared Tools," />
+<meta name="Product" content="Cadence Shared Tools," />
+<meta name="ProductFamily" content="Cadence Shared Tools," />
+<meta name="ProductVersion" content="22.01" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence License Manager -- Setting Up Licensing on Cloud" />
+<meta name="Version" content="22.01" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="license1212" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.030" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="licenseTOC.html">Contents</a></li><li><a class="prev" href="Restarting_License_Server.html" title="Restarting_License_Server">Restarting_License_Server</a></li><li style="float: right;"><a class="viewPrint" href="license.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Distributed_and_Heterogeneous_Installations.html" title="Distributed_and_Heterogeneous_Installations">Distributed_and_Heterogeneous_ ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Cadence License Manager<br />Product Version 22.01, April 2023</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <div style="width: 100%; font-size: 32px; text-align: left;               font-weight: bold;">5</div>
+<h1 style="margin: 4px 0 4px;"><span>Setting Up Licensing on Cloud</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>This secti<span style="">on describes how to complete the setup and installation for running license server on Amazon Elastic Compute Cloud (Amazon EC2),&#160;Google Compute Engine (GCE), and Microsoft Azure.&#160;</span></p>
+
+<p>It includes the following topics:</p>
+
+<p></p>
+<div class="toc-macro rbtoc1680693770497">
+<ul class="toc-indentation">
+<li><a href="#SettingUpLicensingonCloud-SoftwareRequirements(onLinux)">Software Requirements (on Linux)</a></li>
+<li><a href="#SettingUpLicensingonCloud-CloudLicenseServerUseModel">Cloud License Server Use Model</a></li>
+<li><a href="#SettingUpLicensingonCloud-SettingUpVPCandENIonAmazonEC2">Setting Up VPC and ENI on Amazon EC2</a></li>
+<li><a href="#SettingUpLicensingonCloud-GeneratingaLicenseforAmazonEC2">Generating a License for Amazon EC2</a></li>
+<li><a href="#SettingUpLicensingonCloud-MigratingAmazonENIInstances">Migrating Amazon ENI Instances</a></li>
+<li><a href="#SettingUpLicensingonCloud-GeneratingaLicenseforGCE">Generating a License for GCE</a></li>
+<li><a href="#SettingUpLicensingonCloud-GeneratingaLicenseforMicrosoftAzure">Generating a License for Microsoft Azure</a></li>
+</ul>
+</div>
+<h2 id="SettingUpLicensingonCloud-SoftwareRequirements(onLinux)">Software Requirements (on Linux)</h2>
+<ul><li><code>lsb-core</code> is required to run Flexera utilities, like lmutil and lmstat, as well as the server (<code>lmgrd</code>). On Red Hat instances, you can use <code>redhat-lsb-core</code></li><li>Update <code>glibc</code> to version 2.14 or above</li><li>Latest version of the License Server is&#160;SftShrTools 22.01-s002</li></ul><h2 id="SettingUpLicensingonCloud-CloudLicenseServerUseModel">Cloud License Server Use Model</h2>
+<ul><li>The following image illustrates the cloud license server use model&#160;<span style="">on Amazon EC2</span>:</li></ul><p style="margin-left: 30.0px;"><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/309100939/309100972.png" data-linked-resource-container-id="309100939" data-linked-resource-container-version="24" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="2019-11-04_14-44-17.png" data-linked-resource-id="309100972" data-linked-resource-type="attachment" data-linked-resource-version="2" data-unresolved-comment-count="0" src="attachments/309100939/309100972.png" width="800" /></span></p>
+<ul><li><span style="">The following image illustrates the cloud license server use model&#160;<span style="">on Google Compute Engine</span>:</span></li></ul><p style="margin-left: 30.0px;"><span style=""><strong><span style=""><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/309100939/309100976.png" data-linked-resource-container-id="309100939" data-linked-resource-container-version="24" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="2019-11-04_14-47-47.png" data-linked-resource-id="309100976" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/309100939/309100976.png" width="800" /></span></span></strong></span></p>
+<p style="margin-left: 30.0px;"><br /></p>
+<ul><li><span style="">The following image illustrates the cloud license server use model&#160;<span>on Microsoft Azure</span>:</span><br /><span style=""><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/309100939/310426715.bmp" data-linked-resource-container-id="309100939" data-linked-resource-container-version="24" data-linked-resource-content-type="image/bmp" data-linked-resource-default-alias="microsoftAzureusemodel.bmp" data-linked-resource-id="310426715" data-linked-resource-type="attachment" data-linked-resource-version="2" data-unresolved-comment-count="0" src="attachments/309100939/310426715.bmp" width="800" /></span><br /></span></li></ul><h2 id="SettingUpLicensingonCloud-SettingUpVPCandENIonAmazonEC2"><span style="">Setting Up VPC and ENI on Amazon EC2</span></h2>
+
+<p>Cadence requires a MAC address from an elastic network interface (ENI) to generate a License File.</p>
+
+<p>Perform&#160; the following steps to set up the ENI:</p>
+<ol><li>Set up the virtual private cloud (VPC) for the cloud environment within which the license server and clients will reside. Refer to <a class="external-link" href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-getting-started.html" rel="nofollow">Getting Started with Amazon VPC</a>&#160;<span style="letter-spacing: 0.0px;">and <a class="external-link" href="https://docs.aws.amazon.com/vpc/latest/userguide/default-vpc.html" rel="nofollow">Default VPC and Default Subnets</a> on the Amazon documentation website for more information.&#160;</span></li><li>Create an ENI and attach it&#160;to the Amazon web services (AWS) instance that will be used as the server within this VPC. Refer to&#160;<a class="external-link" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html" rel="nofollow">Elastic Network Interfaces</a>&#160;on the Amazon documentation website for more information.</li></ol><h2 id="SettingUpLicensingonCloud-GeneratingaLicenseforAmazonEC2">Generating a License for Amazon EC2</h2>
+
+<p>Perform the following steps:</p>
+<ol><li>
+<p>&#160;Once the ENI is created, run the <code>mfp</code> tool with the <code>-cl aws</code> option to determine the MAC address to use as host ID, as shown below:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /></colgroup><tbody><tr><td class="confluenceTd">
+<p><code>[ec2-user@ip-172-17-33-91 ~]$ ./mfp -cl aws</code></p>
+
+<p><code>Host name: ip-172-17-33-91.us-west-2.compute.internal</code><br /><code>Domain name: us-west-2.compute.internal</code><br /><code>Running mfp with Amazon EC2 cloud option</code></p>
+
+<p><code>2 hostids found for this machine</code><br /><code>Please pick which of the following macs you would like to use. Enter a n umber from 1 to 2</code></p>
+
+<p><code>1. 0a:3e:a3:f9:80:7e</code><br /><code>2. 0a:d5:e1:5b:10:16</code><br /><code>1</code></p>
+
+<p><br /><code>Generating text file: mfp_out.txt with this information<br />Generating XML file: mfp_out.xml with this information</code><br /><code>Please forward these files to Cadence Design Systems.</code></p>
+</td>
+</tr>
+</tbody></table></div>
+
+<p>Following is an example of the&#160;<code style="letter-spacing: 0.0px;">mfp</code>&#160;output generated on an Amazon EC2 instance:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /></colgroup><tbody><tr><td class="confluenceTd">
+<p><code>HostName=<a class="external-link" href="https://ip-172-17-33-91.us" rel="nofollow">ip-172-17-33-91.us</a>-west-2.compute.internal</code><br /><code>DomainName=us-west-2.compute.internal</code><br /><code>IPAddress=172.17.33.91</code><br /><code>CloudType=Amazon EC2</code><br /><code>UniqueID=eni-54f24455</code><br /><code>MAC=0a:3e:a3:f9:80:7e</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>~</code><br /><code>&quot;mfp_out.txt&quot; 6L, 178C</code></p>
+</td>
+</tr>
+</tbody></table></div>
+</li><li>
+<p>Send the <code>mfp_out.txt</code> and <code>mfp_out.xml</code> files that are generated to a Cadence representative to generate the license.</p>
+</li></ol><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p><span style="">Before starting the license server, </span></p>
+<ul><li><span style="">Ensure</span>&#160;that the ports for the license server and vendor daemon allow incoming connections.</li><li>The port used for vendor daemon (<code>cdslmd</code>) is randomly assigned. To assign a specific port, make the following change to your license file,<br /><strong>from</strong>:&#160;DAEMON cdslmd ./cdslmd<br /><strong>to</strong>:&#160;DAEMON cdslmd ./cdslmd PORT=6820&#160;</li><li>Allow outgoing traffic to <a class="external-link" href="https://update1.cadence.com" rel="nofollow">update1.cadence.com</a> on port 443 or 80.</li><li>Set the appropriate EC2 security group to control access to the license server and daemon ports. The related commands are listed on the <a class="external-link" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#eni_security_group" rel="nofollow">Changing the Security Group</a> page on the Amazon documentation website.</li></ul>
+<p>Although multiple ENIs can be attached to the same AWS instance, you should not run two instances of the license server on the same instance.</p>
+</div>
+</div>
+<h2 id="SettingUpLicensingonCloud-MigratingAmazonENIInstances"><span style="">Migrating Amazon ENI Instances</span></h2>
+
+<p><span style="">Once license file is created with the ENI mac address, it works as a regular license file created with MAC addresses during the lifetime of the instance which uses the ENI.&#160;</span>&#160;If the server needs to be hosted on a different Amazon instance,&#160;detach the ENI&#160;from the old instance and attach it to the new instance. Methods to detach and attach ENI are described on the following pages on the Amazon documentation website:</p>
+<ul><li>
+<p><a class="external-link" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#detach_eni" rel="nofollow">Detaching a Network Interface from an Instance</a></p>
+</li><li><a class="external-link" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#attach_eni_launch" rel="nofollow">Attaching a Network Interface When Launching an Instance</a></li><li><a class="external-link" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#attach_eni_running_stopped" rel="nofollow">Attaching a Network Interface to a Stopped or Running Instance</a></li></ul><h2 id="SettingUpLicensingonCloud-GeneratingaLicenseforGCE">Generating a License for GCE</h2>
+
+<p><span style=""><span style="">On Google Compute Engine, Cadence uses the instance ID for secondary verification. Hence, license server can be run only on the instance for which the license file is generated.</span></span></p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>If the license server needs to be moved to another instance, a rehost, that is, a regeneration of license file with the&#160;<code>mfp</code>&#160;data from the new instance is required.</p>
+</div>
+</div>
+
+<p>Perform the following steps on the GCE instance that will be used to run the server:</p>
+<ol><li>Run the <code>lmhostid</code> command to get the host ID or MAC address that will be used to generate license file.</li><li>
+<p>Run the <code>mfp</code>&#160;tool with the cloud option of GCE, as shown below:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /></colgroup><tbody><tr><td class="confluenceTd">
+<p><code>[hprachi@redhatgcplic01 ~]$ ./mfp -cl gce</code></p>
+
+<p><code>Multiple IP Addresses detected.</code><br /><code> **Use an IP adress that will not change over time.</code><br /><code> IP Addresse(s) are:</code><br /><code> 1) 10.17.192.4</code><br /><code> 2) 10.17.200.4</code></p>
+
+<p><code>Pick an IP Address to use (Type in a number between 1 and 2):1</code></p>
+
+<p><code>Host name: redhatgcplic01</code><br /><code> Domain name: c.cdns-licensing.internal</code><br /><code> Running mfp with Google Compute Engine option</code><br /><code> Found instance id</code></p>
+
+<p><br /><code>Generating text file: mfp_out.txt with this information</code><br /><code>Generating XML file: mfp_out.xml with this information</code><br /><code>Please forward these files to Cadence Design Systems.</code></p>
+</td>
+</tr>
+</tbody></table></div>
+
+<p>Following is an example of the&#160;<code style="letter-spacing: 0.0px;">mfp</code>&#160;output generated for GCE:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /></colgroup><tbody><tr><td class="confluenceTd"><code><span>HostName=redhatgcplic01</span></code><br /><code><span>DomainName=c.cdns-licensing.internal</span></code><br /><code><span>IPAddress=10.17.192.4</span></code><br /><code><span>CloudType=Google GCE</span></code><br /><code><span>UniqueID=1379392967683858313</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>~</span></code><br /><code><span>&quot;mfp_out.txt&quot; 5L, 133C</span></code></td>
+</tr>
+</tbody></table></div>
+</li></ol><p style="margin-left: 30.0px;"><span style="letter-spacing: 0.0px;">3. Provide the lmhostid information and mfp files generated to Cadence for license file generation.&#160;</span></p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>Before starting the license server,</p>
+<ul><li>Ensure that the ports for the license server and vendor daemon allow incoming connections.</li><li>The port used for vendor daemon (cdslmd) is randomly assigned. To assign a specific port, make the following change to your license file,<br /><strong>from</strong>&#160;:&#160;DAEMON cdslmd ./cdslmd<br /><strong>to</strong>:&#160;DAEMON cdslmd ./cdslmd PORT=6820&#160;</li><li>Allow outgoing traffic to&#160;<a class="external-link" href="https://update1.cadence.com/" rel="nofollow">update1.cadence.com</a>&#160;on port 443 or 80</li></ul></div>
+</div>
+<h2 id="SettingUpLicensingonCloud-GeneratingaLicenseforMicrosoftAzure">Generating a License for Microsoft Azure</h2>
+
+<p>Cadence uses the instance ID for secondary verification. Therefore, the license server can be run only on the instance for which the license file has been generated.</p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>If the license server needs to be moved to another instance, a rehost, that is, a regeneration of license file with the&#160;<code>mfp</code>&#160;data from the new instance is required.</p>
+</div>
+</div>
+
+<p><span style="">Perform the following steps on the Microsoft Azure instance that will be used to run the server:</span></p>
+<ol><li>Run the&#160;<code>lmhostid</code>&#160;command to get the host ID or MAC address that will be used to generate license file.</li><li>
+<p>Run the&#160;<code>mfp</code>&#160;tool with the azure cloud option of Microsoft Azure, as shown below:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /></colgroup><tbody><tr><td class="confluenceTd">
+<p><code>[user@LicenseLinTest02 64bit]$ ./mfp -cl azure</code><br /><code>mfp, 12.12-p001</code><br /><code>Copyright &#169; 2012-2018 Cadence Design Systems, Inc. All rights reserved worldwide.</code><br /><code>Host name: LicenseLinTest02</code><br /><code>Domain name: <a class="external-link" href="https://lqjzxlatawcutbr4xiwkpfvhxf.dx.internal.cloudapp.net" rel="nofollow">lqjzxlatawcutbr4xiwkpfvhxf.dx.internal.cloudapp.net</a></code><br /><code>IPAddress: 10.17.31.135</code><br /><code>CloudType: Microsoft Azure</code><br /><code>UniqueID: f8202b22-3fa2-42ec-b816-4463a2761ed2</code><br /><code>Generating text file: mfp_out.txt with this information</code><br /><code>Generating XML file: mfp_out.xml with this information</code><br /><code>Please forward these files to Cadence Design Systems.</code></p>
+</td>
+</tr>
+</tbody></table></div>
+
+<p>Following is an example of the&#160;<code style="letter-spacing: 0.0px;">mfp</code>&#160;output generated for Microsoft Azure:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup><col /></colgroup><tbody><tr><td class="confluenceTd">
+<p><code>[user@LicenseLinTest02 64bit]$ cat mfp_out.txt</code><br /><code>HostName=LicenseLinTest02</code><br /><code>DomainName=<a class="external-link" href="https://lqjzxlatawcutbr4xiwkpfvhxf.dx.internal.cloudapp.net" rel="nofollow">lqjzxlatawcutbr4xiwkpfvhxf.dx.internal.cloudapp.net</a></code><br /><code>IPAddress=10.17.31.135</code><br /><code>CloudType=Microsoft Azure</code><br /><code>UniqueID=f8202b22-3fa2-42ec-b816-4463a2761ed2</code></p>
+</td>
+</tr>
+</tbody></table></div>
+</li></ol><p style="margin-left: 30.0px;"><span>3. Provide the lmhostid information and mfp files generated to Cadence for license file generation.&#160;</span></p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>Before starting the license server,</p>
+<ul><li>Ensure that the ports for the license server and vendor daemon allow incoming connections.</li><li>The port used for vendor daemon (cdslmd) is randomly assigned. To assign a specific port, make the following change to your license file:<br /><strong>from</strong>&#160;:&#160;DAEMON cdslmd ./cdslmd<br /><strong>to</strong>:&#160;DAEMON cdslmd ./cdslmd PORT=6820&#160;</li><li>Allow outgoing traffic to&#160;<a class="external-link" href="https://update1.cadence.com/" rel="nofollow">update1.cadence.com</a>&#160;on port 443 or 80</li></ul></div>
+</div>
+<p style="margin-left: 30.0px;"><span><br /><br /></span></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Restarting_License_Server.html" id="prev" title="Restarting_License_Server">Restarting_License_Server</a></em></b><b><em><a href="Distributed_and_Heterogeneous_Installations.html" id="nex" title="Distributed_and_Heterogeneous_Installations">Distributed_and_Heterogeneous_ ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>
