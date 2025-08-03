@@ -1,0 +1,1052 @@
+
+<html><head><title>Cadence Locking System</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="dishika" />
+<meta name="CreateDate" content="2023-10-24" />
+<meta name="CreateTime" content="1698213821" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use the Cadence application infrastructure" />
+<meta name="DocTitle" content="Cadence Application Infrastructure User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Cadence Locking System" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="caiuser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-24" />
+<meta name="ModifiedTime" content="1698213821" />
+<meta name="NextFile" content="chap11.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="chap9.html" />
+<meta name="c_product" content="Cadence Shared Tools" />
+<meta name="Product" content="Cadence Shared Tools" />
+<meta name="ProductFamily" content="Cadence Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence Application Infrastructure User Guide -- Cadence Locking System" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="caiuserIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="caiuserTOC.html">Contents</a></li><li><a class="prev" href="chap9.html" title="cdsCopy">cdsCopy</a></li><li style="float: right;"><a class="viewPrint" href="caiuser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap11.html" title="Miscellaneous Infrastructure Technologies">Miscellaneous Infrastructure T ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence Application Infrastructure User Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>10
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+<a id="22033"></a>Cadence Locking System<hr />
+</h1>
+
+<p>
+<a id="pgfId-1025838"></a>The Cadence<sup>&#174;</sup> locking system (CLS) is the mechanism used by many Cadence applications to lock files.</p>
+<p>
+<a id="pgfId-1015371"></a>CLS creates a lock file, called Lock-Stake file, when it locks a file for editing. The Lock-Stake file contains information about the application that has locked the file. </p>
+<p>
+<a id="pgfId-1020818"></a>CLS allows applications to steal locks from active processes; however, few applications support this feature. CLS automatically recovers locks that are stranded if an application exits without releasing the locks. </p>
+<p>
+<a id="pgfId-1018211"></a>In addition, CLS provides a user interface for administrative tasks such as releasing all locks in a directory hierarchy.</p>
+
+<h2>
+<a id="pgfId-1020661"></a>Applications on OpenAccess</h2>
+
+<p>
+<a id="pgfId-1020662"></a>Cadence applications on the OpenAccess 2.2 database use OpenAccess locking instead of CLS. OpenAccess locking is compatible with CLS&#8212;the lock file has the same format and file name extension as the file created by CLS, and the same rules are followed while getting locks.</p>
+<p>
+<a id="pgfId-1020686"></a>Virtuoso applications on OpenAccess use both CLS and OpenAccess locking; they use OpenAccess locking to lock database files and CLS to lock other files such as <code>CDS.log</code>. Since the two systems are compatible and they lock different files, conflicts should not arise.</p>
+<p>
+<a id="pgfId-1020709"></a>OpenAccess locking uses a different daemon, <code>oaFSLockD</code>, instead of the CLS boolean daemon <code>clsbd</code> to recover locks. <code>oaFSLockD</code> is run automatically whenever a library is opened. Virtuoso applications on OpenAccess start both daemons. </p>
+<p>
+<a id="pgfId-1020744"></a>You can use the <code>clsAdminTool</code> to search for and release locks created by either system.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1020737"></a>A lock set by a host that runs only non-OpenAccess applications (which start only <code>clsbd</code>) cannot be recovered by a native OpenAccess application and vice versa. This is because each locking system needs to talk to its own boolean daemon to recover locks. In such a case, remove stranded locks manually or with <code>clsAdminTool</code>.</div>
+
+<h3>
+<a id="pgfId-1020711"></a><a id="40750"></a>Installation</h3>
+
+<p>
+<a id="pgfId-1020250"></a>CLS is automatically installed when you install Cadence applications; you do not need to install it separately. </p>
+<p>
+<a id="pgfId-1020329"></a>However, on Windows NT, you should manually set up the Boolean daemon (a component of CLS) as a service after you install Cadence applications.</p>
+<p>
+<a id="pgfId-1020334"></a>You can also customize how the Boolean daemon is started. The daemon must run on every system that runs Cadence applications. You can set up your system to run the Boolean daemon every time the system is started. This procedure is optional, applications that use CLS start the Boolean daemon if it is not already running on the system.</p>
+
+<h4><em>
+<a id="pgfId-1025854"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1025874"></a><a href="chap10.html#12538">Setting Up the Boolean Daemon on Windows NT</a></p>
+<p>
+<a id="pgfId-1025892"></a><a href="chap10.html#27096">Adding the Boolean Daemon to System Startup Files</a></p>
+
+<h2>
+<a id="pgfId-1018953"></a><a id="31406"></a>Boolean Daemon (clsbd)</h2>
+
+<p>
+<a id="pgfId-1017830"></a>The Boolean daemon, called <code>clsbd</code>, is a daemon that runs on all systems on which any Cadence application using Cadence<sup>&#174;</sup> locking system (CLS) is running. The daemon responds to requests from remote systems to determine the status of processes that own Edit locks.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1022598"></a>There is a default timeout of 20 seconds in respect of <code>clsbd</code> connections. This is also the same time period used for Open Access connections.</div>
+<p>
+<a id="pgfId-1017831"></a>When an application wants to lock a file and finds that it is already locked by a process on another system, CLS queries the Boolean daemon running on that system about the status of the process that locked the file. Whether the application can obtain the lock depends on the information CLS receives from the Boolean daemon.</p>
+<ul><li>
+<a id="pgfId-1017832"></a>If the Boolean daemon indicates that the process that locked the file has exited, the application gets the lock. The Lock-Stake file (<span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span><code>.cdslck</code>) is overwritten with information about the new process. </li><li>
+<a id="pgfId-1017833"></a>If the Boolean daemon indicates that the process that locked the file is still active, the application cannot get a lock on the file.</li><li>
+<a id="pgfId-1017834"></a>If the application cannot connect to the Boolean daemon, the process that owns the lock is assumed to be active and the application cannot get a lock on the file.</li></ul>
+
+
+<p>
+<a id="pgfId-1020629"></a>If you do not want CLS to query Boolean daemons on remote hosts (you may not want to query remote hosts if you have firewall access issues, for example), set the following environment variable:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1020630"></a>CLS_DONT_QUERY_REMOTE_HOSTS [<code><em>listOfRemoteHosts</em></code>]</pre>
+
+<p>
+<a id="pgfId-1020633"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>listOfRemoteHosts</em></span> is an optional list of patterns (typically host or domain names), separated by blank spaces, that you do not want CLS to query. For example, if you specify</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1020634"></a>setenv CLS_DONT_QUERY_REMOTE_HOSTS cds00 cadence.com ns.com</pre>
+
+<p>
+<a id="pgfId-1020642"></a>CLS will not query hosts that match <code>cds00</code> or any hosts from the domains <code>cadence.com</code> or <code>ns.com</code>.</p>
+<p>
+<a id="pgfId-1020635"></a>If you do not specify <span class="webflare-courier-new" style="white-space:pre"><em>listOfRemoteHosts</em></span>, CLS will not query any remote hosts.</p>
+<p>
+<a id="pgfId-1020636"></a>When the <code>CLS_DONT_QUERY_REMOTE_HOSTS</code> environment variable is set, if CLS comes across a file locked by a remote host, it always assumes that the process that locked the file is still active. Therefore, CLS cannot get a new lock on the file. In such a case, if you want to lock the file, you need to remove the old lock with the CLS administrative tool.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1017835"></a>When an application wants to lock a file that is locked by a process on its own host, CLS determines the status of the process directly without sending a query to a Boolean daemon.</div>
+
+<h3>
+<a id="pgfId-1025955"></a><a id="12538"></a>Setting Up the Boolean Daemon on Windows NT</h3>
+
+<p>
+<a id="pgfId-1025956"></a>After you install Cadence applications on Windows NT, you should manually set up the Boolean daemon as a service so that Cadence applications can start it. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1025957"></a>You must have administrator privileges for the following procedure.</div>
+<p>
+<a id="pgfId-1025958"></a>To list the Boolean daemon as a service,</p>
+<ol><li>
+<a id="pgfId-1025959"></a>Log on to the Windows NT system as a user with administrator privileges.</li><li>
+<a id="pgfId-1025960"></a>From the <em>Start</em> menu, choose <em>Programs</em> &#8211; <em>Command Prompt</em>.<br />
+<a id="pgfId-1025961"></a>The MS DOS Command Prompt window appears.</li><li>
+<a id="pgfId-1025962"></a>In the MS DOS Command Prompt window, type<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1025963">
+<a id="pgfId-1025963"></a>clsbd.exe -install</pre>
+<a id="pgfId-1025964"></a>The following message appears:<pre class="webflare-pre-block webflare-courier-new" id="#id1025965">
+<a id="pgfId-1025965"></a>CDS Boolean Daemon Installed.</pre></li><li>
+<a id="pgfId-1025966"></a>Close the MS DOS Command Prompt window by typing <code>exit</code>.</li><li>
+<a id="pgfId-1025967"></a>From the <em>Start</em> menu, choose <em>Settings</em> &#8211; <em>Control Panel</em>.</li><li>
+<a id="pgfId-1025968"></a>In the Control Panel window, double-click <em>Services</em>.<br />
+<a id="pgfId-1025969"></a>The Services dialog box appears.</li><li>
+<a id="pgfId-1025970"></a>Confirm that <em>CDS Boolean Daemon</em> is listed as a service.</li><li>
+<a id="pgfId-1025971"></a>In the Services dialog box, click <em>Close</em>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1017837"></a><a id="10867"></a>Location of the Boolean Daemon</h3>
+
+<p>
+<a id="pgfId-1018289"></a>The Boolean daemon is automatically installed when you install Cadence applications.</p>
+<p>
+<a id="pgfId-1018293"></a>The Boolean daemon program, <code>clsbd</code>, is located in the following directory:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017839"></a><code><em>application_install_dir</em></code>/tools/bin/</pre>
+
+<p>
+<a id="pgfId-1018102"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>application_install_dir</em></span> is the directory in which your Cadence application is installed.</p>
+
+<h4><em>
+<a id="pgfId-1026013"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1026002"></a><a href="chap10.html#21770">CLS Administrative Tool</a></p>
+
+<h2>
+<a id="pgfId-1017841"></a><a id="31758"></a>Starting the Boolean Daemon</h2>
+
+<p>
+<a id="pgfId-1018217"></a>The Boolean daemon must run on all systems that run Cadence applications. It is started in several ways.</p>
+<ul><li>
+<a id="pgfId-1017843"></a>You can add the Boolean daemon to a system startup files so that the daemon is run automatically when your system is started.</li><li>
+<a id="pgfId-1017847"></a>Cadence applications that use Cadence<sup>&#174;</sup> locking system (CLS) start the daemon if it is not already running.</li><li>
+<a id="pgfId-1017848"></a>You can start the Boolean daemon directly from the application installation hierarchy, if it is not already running. </li></ul>
+
+
+
+<h3>
+<a id="pgfId-1017853"></a><a id="27096"></a>Adding the Boolean Daemon to System Startup Files</h3>
+
+<p>
+<a id="pgfId-1017854"></a>To add the Boolean daemon to a system startup files, do one of the following:</p>
+<ul><li>
+<a id="pgfId-1018542"></a>For SunOS 5.x, create a <code>/etc/rc2.d/S98clsbd</code> file that contains the following:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1018543">
+<a id="pgfId-1018543"></a>#!/bin/sh
+# Start-up Cadence locking system boolean daemon (clsbd).
+#
+INSTALL_DIR=&#8217;hierarchyPath&#8217;
+if [ -x ${INSTALL_DIR}/tools/bin/clsbd ] ; then
+ ${INSTALL_DIR}/tools/bin/clsbd
+ echo &#8220;Starting Cadence locking system boolean daemon (clsbd).&#8221;
+else
+ echo &#8220;Cadence locking system boolean daemon not started.&#8221;
+fi</pre>
+<a id="pgfId-1018544"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>hierarchyPath</em></span> is the path to your Cadence installation directory.</li><li>
+<a id="pgfId-1017858"></a>For IBM AIX, add the following to the <code>/etc/inittab</code> file:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1017859">
+<a id="pgfId-1017859"></a>INSTALL_DIR=&#8217;hierarchyPath&#8217;
+if [ -x ${INSTALL_DIR}/tools/bin/clsbd ] ; then
+ ${INSTALL_DIR}/tools/bin/clsbd
+ echo &#8220;Starting Cadence locking system boolean daemon (clsbd).&#8221;
+else
+ echo &#8220;Cadence locking system boolean daemon not started.&#8221;
+fi</pre>
+<a id="pgfId-1017860"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>hierarchyPath</em></span> is the path to your Cadence installation directory.</li><li>
+<a id="pgfId-1017861"></a>For HPUX, add the following to the <code>localrc</code> function definition to the <code>/etc/rc</code> file: <br /><pre class="webflare-pre-block webflare-courier-new" id="#id1017862">
+<a id="pgfId-1017862"></a>localrc()
+{
+ ...
+ INSTALL_DIR=&#8217;hierarchyPath&#8217;
+ if [ -x ${INSTALL_DIR}/tools/bin/clsbd ] ; then
+ <italic-variable>
+ 
+${INSTALL_DIR}/tools/bin/clsbd
+  echo &#8220;Starting Cadence locking system boolean daemon (clsbd).&#8221;
+ else
+  echo &#8220;Cadence locking system boolean daemon not started.&#8221;
+ fi
+}</italic-variable></pre>
+<a id="pgfId-1017863"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>hierarchyPath</em></span> is the path to your Cadence installation directory.</li><li>
+<a id="pgfId-1020449"></a>For Linux, create a <code>/etc/rc.d/rc3.d/S98clsbd</code> file that contains the following:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1020515">
+<a id="pgfId-1020515"></a>#!/bin/sh
+# Start-up Cadence locking system boolean daemon (clsbd).
+#
+INSTALL_DIR=&#8217;<code><em>hierarchyPath</em></code>&#8217;
+if [ -x ${INSTALL_DIR}/tools/bin/clsbd ] ; then
+ ${INSTALL_DIR}/tools/bin/clsbd
+ echo &quot;Starting Cadence locking system boolean daemon (clsbd).
+else
+ echo &quot;Cadence locking system boolean daemon not started.&quot;
+fi</pre>
+<a id="pgfId-1018239"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>hierarchyPath</em></span> is the path to your Cadence installation directory.</li><li>
+<a id="pgfId-1020447"></a>For Windows NT:<ol><li>
+<a id="pgfId-1018252"></a>Log in to your system as a user with administrator privileges.</li><li>
+<a id="pgfId-1018254"></a>From the <em>Start</em> menu, choose <em>Settings</em> &#8211; <em>Control Panel</em>.</li><li>
+<a id="pgfId-1018255"></a>In the <em>Control Panel</em> window, double-click <em>Services</em>.<br />
+<a id="pgfId-1018262"></a>The Services dialog box appears.</li><li>
+<a id="pgfId-1018259"></a>In the <em>Service</em> list, select <em>CDS Boolean Daemon</em>.</li><li>
+<a id="pgfId-1018263"></a>Click <em>Startup</em>.<br />
+<a id="pgfId-1018271"></a>The Service dialog box appears.</li><li>
+<a id="pgfId-1018264"></a>In the <em>Startup Type</em> field, select <em>Automatic</em>.</li><li>
+<a id="pgfId-1018272"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1018273"></a>Click <em>Close</em> to close the Services window.</li></ol></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1018241"></a><a id="35823"></a>Starting the CLS Boolean Daemon from the Installation Directory</h3>
+
+<p>
+<a id="pgfId-1017869"></a>To start the CLS Boolean daemon from the application installation directory,</p>
+
+<ul><li>
+<a id="pgfId-1017870"></a>In a UNIX or MS DOS window, type<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1017871">
+<a id="pgfId-1017871"></a><code><em>application_install_dir</em></code>/tools/bin/clsbd</pre>
+<a id="pgfId-1018103"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>application_install_dir</em></span> is the directory in which your Cadence application is installed.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1020356"></a>You can use the following command-line options when you start clsbd:</p>
+<table class="webflareTable" id="#id1024022">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024024"></a><code>-fg</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024026"></a>Runs clsbd in the foreground, instead of in the background.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024028"></a><code>-debug</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024030"></a>Turns on clsbd debug messages that are written to the log file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024032"></a><code>-logfile </code><span class="webflare-courier-new" style="white-space:pre"><em>fileName</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024034"></a>Writes debug messages to the file you specify. The default log file is <code>/tmp/clsbd.</code><span class="webflare-courier-new" style="white-space:pre"><em>userId</em></span><code>.</code><span class="webflare-courier-new" style="white-space:pre"><em>processID</em></span>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1024093"></a><code>-portnum </code><span class="webflare-courier-new" style="white-space:pre"><em>portNumber</em></span></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024036"></a><span class="webflare-courier-new" style="white-space:pre"><em></em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024038"></a>Specifies the port number on which to run clsbd. By default, clsbd uses port 16723 on every system on which it runs. You can use this option if another application is using port 16723 or if a clsbd is already running on that port and you want to run another clsbd. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024040"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024042"></a>If the <code>CLS_PORTNUM</code> environment variable is set, clsbd will use the port number that the variable is set to, regardless of whether you specify the <code>-portnum</code> option.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024044"></a><code>-setuid </code><span class="webflare-courier-new" style="white-space:pre"><em>login</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024046"></a>Changes the user ID of the clsbd process to the login you specify, after clsbd is started. You may need to start clsbd with super-user privileges so that it can change the user ID. This option uses the UNIX <code>setuid</code> command.</p>
+<p>
+<a id="pgfId-1024128"></a>You can also use this option with the <code>-portnum</code> option to run a non-root clsbd process on a privileged port.</p>
+<p>
+<a id="pgfId-1024153"></a>The <code>-setuid</code> option is not available on Windows NT. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024056"></a><code>-install</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024058"></a>Installs the Boolean daemon as a service on Windows NT. This option is only available on Windows NT.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024060"></a><code>-remove</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024062"></a>Removes the Boolean daemon as a service from Windows NT. This option is only available on Windows NT.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024064"></a><code>-version</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1024066"></a>Displays the version number of the Boolean daemon.</p>
+</td>
+</tr>
+</tbody></table>
+
+<h4><em>
+<a id="pgfId-1026147"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1026143"></a><a href="chap10.html#12538">Setting Up the Boolean Daemon on Windows NT</a></p>
+<p>
+<a id="pgfId-1026183"></a><a href="chap10.html#23148">Changing the CLS Boolean Daemon Port Number</a></p>
+
+<h2>
+<a id="pgfId-1017873"></a><a id="23148"></a>Changing the CLS Boolean Daemon Port Number</h2>
+
+<p>
+<a id="pgfId-1017874"></a>If the default port number used by the Boolean daemon is consistently used by another application, you might have to change the Boolean daemon port number. This situation is uncommon.</p>
+<p>
+<a id="pgfId-1017875"></a><code>clsbd</code> uses port number 16723 on every system on which it runs. When <code>clsbd</code> is started, if it finds that this port number is already being used, it checks if another <code>clsbd</code> is running on the system. If another <code>clsbd</code> is running, the new <code>clsbd</code> exits. If another <code>clsbd</code> is not running, the new <code>clsbd</code> exits and displays the following error:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017876"></a>&#8220;Fatal (clsbd): port number <code><em>xxx</em></code> is in use by a program that is not clsbd. Exiting.&#8221;</pre>
+
+<p>
+<a id="pgfId-1017877"></a>If you get this error, close and restart the Cadence application. However, if you get this error repeatedly, you have to set a different port number for the Boolean daemon or for the application that is using the Boolean daemon port number.</p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1018350"></a>
+Because the Boolean daemon is run on all systems that run Cadence applications, if you change the Boolean daemon&#8217;s port number you must change it on every system, regardless of the platform.</div>
+
+<p>
+<a id="pgfId-1018359"></a>To change the Boolean daemon port number,</p>
+<ol><li>
+<a id="pgfId-1017879"></a>Exit all Cadence applications.</li><li>
+<a id="pgfId-1018366"></a>Stop all <code>clsbd</code> processes on all systems.</li><li>
+<a id="pgfId-1018365"></a>Set the following environment variable on every system that runs Cadence applications:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1017880">
+<a id="pgfId-1017880"></a>CLS_PORTNUM <code><em>portNumber</em></code></pre>
+<a id="pgfId-1017881"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>portNumber</em></span> is a port that is not being used.</li><li>
+<a id="pgfId-1018388"></a>Restart Cadence applications.</li></ol>
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1018391"></a>The value of <code>CLS_PORTNUM</code> must be the same on every system that runs Cadence applications on any platform.</div>
+
+<h4><em>
+<a id="pgfId-1026225"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1026207"></a><a href="chap10.html#23791">Troubleshoot Cadence Locking System Problems</a></p>
+
+<h2>
+<a id="pgfId-1026252"></a><a id="16465"></a>Edit Locks</h2>
+
+<p>
+<a id="pgfId-1026253"></a>Cadence<sup>&#174;</sup> locking system (CLS) locks files with Edit locks. An Edit lock on a file signifies that a process is editing the file and prevents other processes from getting an Edit lock simultaneously on the file. However, a process can steal an Edit lock from another process. </p>
+<p>
+<a id="pgfId-1026257"></a>Files remain locked even if the network, or the client or server computer, fails. If the process that holds the lock exits without releasing the lock, the lock is considered stranded. for information about how CLS handles stranded locks, see <a href="chap10.html#19950">Recover Stranded Locks</a>.</p>
+<p>
+<a id="pgfId-1026261"></a>A file can be locked only if its parent directory has <code>write</code> permissions.</p>
+
+<h3>
+<a id="pgfId-1026263"></a><a id="42155"></a>Lock-Stake File</h3>
+
+<p>
+<a id="pgfId-1026264"></a>Edit locks are implemented using Lock-Stake files. The existence of a corresponding Lock-Stake file in the same directory as a file indicates that the file is locked.</p>
+<p>
+<a id="pgfId-1026265"></a>When an application gets an Edit lock on a file, CLS creates the following Lock-Stake file in the same directory as the file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1026266"></a><code><em>filename</em></code><code>.cdslck</code></pre>
+
+<p>
+<a id="pgfId-1026267"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span> is the name of the file that is locked.</p>
+<p>
+<a id="pgfId-1026268"></a>The Lock-Stake file, an ASCII file, contains information about the lock and the process that holds the lock. The Lock-Stake file has the following information:</p>
+<ul><li>
+<a id="pgfId-1026269"></a>Lock-Stake version</li><li>
+<a id="pgfId-1026270"></a>Login name of the user who locked the file</li><li>
+<a id="pgfId-1026271"></a>Host name (including domain name) of the process that locked the file</li><li>
+<a id="pgfId-1026272"></a>Process ID of the process that locked the file</li><li>
+<a id="pgfId-1026273"></a>Time and date when the process was created<br />
+<a id="pgfId-1026274"></a>There are two entries for the time:<ul><li>
+<a id="pgfId-1026275"></a><code>ProcessCreationTime_UTC</code>, the time in Coordinated Universal Time format</li><li>
+<a id="pgfId-1026276"></a><code>ProcessCreationTime_Readable</code>, the time in a readable format</li></ul></li><li>
+<a id="pgfId-1026277"></a>Application that holds the Edit lock</li><li>
+<a id="pgfId-1026278"></a>Type of operating system</li><li>
+<a id="pgfId-1026279"></a>Reason for the Edit lock on the file</li><li>
+<a id="pgfId-1026280"></a>File path used to lock the file</li><li>
+<a id="pgfId-1026281"></a>Time and date when the file was locked</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1026282"></a>The following is a sample <code>.cdslck</code> file:</p>
+
+<div class="webflare-div-image">
+<img width="668" height="442" src="images/chap10-3.gif" /></div>
+
+<p>
+<a id="pgfId-1026301"></a>A file cannot have more than one Edit lock, so it can have only one corresponding Lock-Stake file.</p>
+<p>
+<a id="pgfId-1026302"></a>The Lock-Stake file is automatically deleted by the process that owns it when it releases the Edit lock on the file. You can also delete the Lock-Stake file using the CLS administrative interface.</p>
+
+<h3>
+<a id="pgfId-1026307"></a><a id="33395"></a>Steal Edit Locks</h3>
+
+<p>
+<a id="pgfId-1026308"></a>Applications can steal Edit locks from another process. When a lock is stolen, information about the new owner is added to the Lock-Stake file (<span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span><code>.cdslock</code>). Information about previous owners is retained at the end of the file.</p>
+<p>
+<a id="pgfId-1026309"></a>A few Cadence applications provide this option of stealing locks. See your application&#8217;s documentation for information.</p>
+<p>
+<a id="pgfId-1026310"></a>Applications cannot steal locks in compatibility mode.</p>
+
+<h4><em>
+<a id="pgfId-1026322"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1026350"></a><a href="chap10.html#21770">CLS Administrative Tool</a></p>
+
+<h2>
+<a id="pgfId-1015789"></a><a id="20336"></a>Lock Links</h2>
+
+<p>
+<a id="pgfId-1026688"></a>In this topic, we are discussing locking the symbolic and hard links.</p>
+<ul><li>
+<a id="pgfId-1015790"></a>Lock Symbolic Links<br />
+<a id="pgfId-1015794"></a>Cadence<sup>&#174;</sup> locking system (CLS) handles symbolic links automatically. When an application tries to lock a symbolic link, CLS locks the file to which it is linked. The Lock-Stake file is created in the directory that contains the file. If the file does not exist, CLS displays an error.</li><li>
+<a id="pgfId-1015795"></a>Lock Hard Links<br />
+<a id="pgfId-1015804"></a>CLS does not lock hard links by default. However, you can set your environment to lock hard links. <br />
+<a id="pgfId-1016267"></a>When an application tries to lock a hard link, CLS creates a Lock-Stake file in the directory that contains the hard link, not in the directory that contains the file.<br />
+<a id="pgfId-1016264"></a>Locking hard links is risky because you can get multiple Edit locks simultaneously on a file.</li></ul>
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1016283"></a>Setting Your Environment to Lock Hard Links</h3>
+
+<p>
+<a id="pgfId-1015810"></a>To force CLS to lock hard links,</p>
+
+<ul><li>
+<a id="pgfId-1015811"></a>Set the following environment variable:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1015812">
+<a id="pgfId-1015812"></a><code>CLS_LOCK_HARD_LINKS YES</code></pre><br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1022738"></a>
+If both the hard link and a file point to the same chunk of memory, then the hard link will be locked but the original file will remain intact. However, when an application tries to lock the hard link, CLS creates the Lock-Stake file in the directory associated with one of these file handles (hard link). All the other file handles (other hard links) to the same file space are not protected. Therefore, multiple Cadence locks via the other file handles are not prevented. So, resolving the links is always the better option.</div></li></ul>
+
+
+
+
+<h4><em>
+<a id="pgfId-1027024"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1027020"></a><a href="chap10.html#16465">Edit Locks</a></p>
+<p>
+<a id="pgfId-1027041"></a><a href="chap10.html#19950">Recover Stranded Locks</a></p>
+
+<h2>
+<a id="pgfId-1014191"></a><a id="19950"></a>Recover Stranded Locks</h2>
+
+<p>
+<a id="pgfId-1014253"></a>Stranded locks are locks that remain after the process that owns them has exited. Locks can be stranded if the application or application host exits abnormally, or if the file server is inaccessible.</p>
+<p>
+<a id="pgfId-1014197"></a>Stranded Edit locks are recovered in the following ways:</p>
+<ul><li>
+<a id="pgfId-1017071"></a>The Cadence locking system recovers a stranded Edit lock when a process tries to lock the file that has the stranded Edit lock.<br />
+<a id="pgfId-1017080"></a>When a process wants to lock a file that is already locked, Cadence<sup>&#174;</sup> locking system (CLS) determines the status of the process that owns the Edit lock on the file (if the process is running on another system, CLS sends a query to a Boolean daemon running on that system). If the process that owns the lock has exited, the new process takes over the stranded lock&#8212;the Lock-Stake file (<span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span><code>.cdslck)</code> is overwritten with information about the new process. If the process is active or if its status cannot be determined, the old lock is not modified.</li><li>
+<a id="pgfId-1014198"></a>You can search for and remove both stranded and good Edit locks using the CLS administrative tool (<code>clsAdminTool</code>).<br />
+<a id="pgfId-1021520"></a>The <code>clsAdminTool</code> does not differentiate between stranded locks and non-stranded locks.</li></ul>
+
+
+
+
+<h4><em>
+<a id="pgfId-1026458"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1026478"></a><a href="chap10.html#21770">CLS Administrative Tool</a></p>
+<p>
+<a id="pgfId-1027049"></a><a href="chap10.html#16465">Edit Locks</a></p>
+
+<h2>
+<a id="pgfId-1014258"></a><a id="21770"></a><a id="19338"></a>CLS A<a id="CLSAdmin"></a>dministrative Tool</h2>
+
+<p>
+<a id="pgfId-1020139"></a>The Cadence<sup>&#174;</sup> locking system (CLS) administrative tool lets you view and release locks in any directory hierarchy.</p>
+<p>
+<a id="pgfId-1021503"></a>The <code>clsAdminTool</code> does not differentiate between stranded locks and non-stranded locks.</p>
+<p>
+<a id="pgfId-1016667"></a>With the CLS administrative tool, you can:</p>
+<ul><li>
+<a id="pgfId-1018602"></a>Remove a specific Edit lock</li><li>
+<a id="pgfId-1017427"></a>View all Edit locks in a directory hierarchy</li><li>
+<a id="pgfId-1017418"></a>Remove all Edit locks in a directory hierarchy</li><li>
+<a id="pgfId-1017420"></a>View all Edit locks belonging to a process in a directory hierarchy</li><li>
+<a id="pgfId-1016660"></a>Remove all Edit locks belonging to a process in a directory hierarchy</li><li>
+<a id="pgfId-1021343"></a>View and remove all locks that are in the CLS format and that have the <code>.cdslck</code> extension, regardless of whether they were set by CLS or OpenAccess locking</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1019745"></a>You can use the adminstrative tool interactively (as a shell interface) or in batch mode.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1021509"></a>You need to manually clean up lock stakes as the <code>clsAdminTool</code> automatically recovers any stranded locks. You can however use the <code>clsAdminTool</code> to clean up lock stakes from those libraries that have been, or will be, tarred for transfer (as the hosts that obtained these locks would not exist in the new environment).</div>
+
+<h3>
+<a id="pgfId-1019699"></a><a id="64193"></a>clsAdminTool Commands</h3>
+
+<p>
+<a id="pgfId-1019700"></a>The CLS administrative tool consists of the following commands, which can be used in both interactive mode and batch mode:</p>
+<ul><li>
+<a id="pgfId-1019701"></a><code>ale</code><br /><pre class="webflare-pre-block webflare-courier-new" id="#id1019702">
+<a id="pgfId-1019702"></a>ale <code><em>directoryHierarchy</em></code></pre>
+<a id="pgfId-1019703"></a>Lists all Edit locks in the directory hierarchy you specify. For each edit lock, the following information is provided: the file path, host name, user name of the user who locked the file, process ID, and the time the process was created. </li><li>
+<a id="pgfId-1019707"></a><code>aple</code><br /><pre class="webflare-pre-block webflare-courier-new" id="#id1019708">
+<a id="pgfId-1019708"></a>aple <code><em>directoryHierarchy</em></code> <code><em>hostName</em></code> [<code><em>processID</em></code> [<code><em>processCreationTime</em></code>]]</pre>
+<a id="pgfId-1019709"></a>Lists all Edit locks in the directory hierarchy that match the host name, process ID, and process-creation time that you specify. The <span class="webflare-courier-new" style="white-space:pre"><em>processID</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>processCreationTime</em></span> arguments are optional. However, if you need to specify <span class="webflare-courier-new" style="white-space:pre"><em>processCreationTime</em></span>, you must also specify <span class="webflare-courier-new" style="white-space:pre"><em>processID</em></span>. </li><li>
+<a id="pgfId-1019713"></a><code>are</code><br /><pre class="webflare-pre-block webflare-courier-new" id="#id1019714">
+<a id="pgfId-1019714"></a>are <code><em>directoryHierarchy</em></code></pre>
+<a id="pgfId-1019715"></a>Releases all Edit locks in the directory hierarchy you specify and displays the list of released locks.</li><li>
+<a id="pgfId-1019719"></a><code>apre</code><br /><pre class="webflare-pre-block webflare-courier-new" id="#id1019720">
+<a id="pgfId-1019720"></a>apre <code><em>directoryHierarchy</em></code> <code><em>hostName</em></code> <code><em>processID</em></code> <code><em>processCreationTime</em></code></pre>
+<a id="pgfId-1019721"></a>Releases all Edit locks in a directory hierarchy that match the host name, process ID and process-creation time you specify and displays the list of released locks.</li><li>
+<a id="pgfId-1019725"></a><code>asre</code><br /><pre class="webflare-pre-block webflare-courier-new" id="#id1019726">
+<a id="pgfId-1019726"></a>asre <code><em>filePath</em></code></pre>
+<a id="pgfId-1019657"></a>Removes the Edit lock on the file you specify.</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1019735"></a><a id="39946"></a>Command Arguments</h4>
+<table class="webflareTable" id="#id1026946">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023900"></a><span class="webflare-courier-new" style="white-space:pre"><em>filePath</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023902"></a>Full path to the file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1023950"></a><span class="webflare-courier-new" style="white-space:pre"><em>directoryHierarchy</em></span></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023904"></a><span class="webflare-courier-new" style="white-space:pre"><em></em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023906"></a>The path to the directory hierarchy you want to search for CLS Edit locks.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023908"></a><span class="webflare-courier-new" style="white-space:pre"><em>hostName</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023910"></a>The host of the process that owns the locks. For example:</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023912"></a><code>cds111.cadence.com. </code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023914"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023916"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023918"></a>If you do not provide the domain name, <code>clsAdminTool</code> takes the domain name from the system you are using. If you do not want <code>clsAdminTool</code> to add the domain name, use the <code>-force</code> command or the <code>-force</code> argument to <code>clsAdminTool</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023920"></a><span class="webflare-courier-new" style="white-space:pre"><em>processID&#160;&#160;      </em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023922"></a>The ID of the process that owns the locks.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1023924"></a><span class="webflare-courier-new" style="white-space:pre"><em>processCreationTime</em></span></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023928"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1023930"></a>The time when the process was created.</p>
+<p>
+<a id="pgfId-1026903"></a>You can get this information from the Lock-Stake file, <span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span><code>.cdslck</code>, which is in the same directory as the locked file.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1026932"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1027009"></a><a href="chap10.html#23148">Changing the CLS Boolean Daemon Port Number</a></p>
+
+<h2>
+<a id="pgfId-1019746"></a><a id="96608"></a>Running the CLS Administrative Tool in Interactive Mode</h2>
+
+<p>
+<a id="pgfId-1019747"></a>In interactive mode, the Cadence<sup>&#174;</sup> locking system (CLS) administrative tool is a shell interface that lets you run one command at a time.</p>
+<p>
+<a id="pgfId-1016683"></a>To start the CLS administrative tool in interactive mode,</p>
+
+<ul><li>
+<a id="pgfId-1016688"></a>In a UNIX shell, type<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1016693">
+<a id="pgfId-1016693"></a>clsAdminTool [-noprompt] [-echo] [-force<code>]</code></pre><br /><table class="webflareTable" id="#id1019761">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1019763"></a><code>-noprompt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1019765"></a>The <code>&gt;</code> prompt is not displayed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1019767"></a><code>-echo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1019769"></a>The input is echoed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1019771"></a><code>-force</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1019773"></a>Sets the force mode, which forces <code>clsAdminTool</code> to use a simple host name, that is, a host name without a domain. If <code>clsAdminTool</code> is not in force mode and you do not provide a domain name with the <span class="webflare-courier-new" style="white-space:pre"><em>hostName</em></span> argument of the <code>aple</code> and <code>apre</code> commands, <code>clsAdminTool</code> automatically adds the domain name of the system you are using.<br />
+You can also set the force mode with the <code>force</code> command.</p>
+</td>
+</tr>
+</tbody></table><br />
+<a id="pgfId-1016699"></a>The shell displays the <code>&gt;</code> prompt. You can type <code>clsAdminTool</code> commands at this prompt. </li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1020598"></a>To display the version number of the CLS administrative tool,</p>
+
+<ul><li>
+<a id="pgfId-1020599"></a>In a UNIX shell, type<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1020600">
+<a id="pgfId-1020600"></a>clsAdminTool -version</pre></li></ul>
+
+
+
+<h3>
+<a id="pgfId-1019372"></a>Using the CLS Administrative Tool </h3>
+
+<p>
+<a id="pgfId-1019817"></a>After you start the administrative tool, at the <code>&gt;</code> prompt,</p>
+
+<ul><li>
+<a id="pgfId-1020102"></a>Type one of the following clsAdminTool commands: <code>ale</code>, <code>aple</code>, <code>are</code>, <code>apre</code>, <code>asre</code>.</li></ul>
+
+<p>
+<a id="pgfId-1019980"></a>In addition, you can use the following commands:</p>
+<ul><li>
+<a id="pgfId-1019693"></a><code>force</code><a id="force"></a><br />
+<a id="pgfId-1019366"></a>Sets the force mode, which forces <code>clsAdminTool</code> to use a simple host name, that is, a host name without a domain. For example, <code>cds111</code> is a simple host name, while <code>cds111.cadence.com</code> is not. <br />
+<a id="pgfId-1019559"></a>If <code>clsAdminTool</code> is not in force mode and you do not provide a domain name with the <span class="webflare-courier-new" style="white-space:pre"><em>hostName</em></span> argument of the <code>aple</code> and <code>apre</code> commands, <code>clsAdminTool</code> automatically adds the domain name of the system you are using.<br />
+<a id="pgfId-1019367"></a>You can also set the force mode with the <code>-force</code> argument to <code>clsAdminTool</code>.</li><li>
+<a id="pgfId-1019362"></a><code>help</code><br />
+<a id="pgfId-1016917"></a>Displays a description of <code>clsAdminTool</code> commands.</li><li>
+<a id="pgfId-1019396"></a><code>system</code><br />
+<a id="pgfId-1020134"></a><code>system</code> <span class="webflare-courier-new" style="white-space:pre"><em>commandName</em></span><br />
+<a id="pgfId-1016942"></a>Executes the shell command you specify.</li><li>
+<a id="pgfId-1019394"></a><code>quit</code><br />
+<a id="pgfId-1016943"></a>Exits the <code>clsAdminTool</code> interface.</li><li>
+<a id="pgfId-1017280"></a><code>exit</code><br />
+<a id="pgfId-1017281"></a>Exits the <code>clsAdminTool</code> interface with the return status of the last command used in <code>clsAdminTool</code>. This command is mainly used when <code>clsAdminTool</code> is run from scripts.<br />
+<a id="pgfId-1019256"></a>For example, if you have a file <code>myfile</code>, which contains the following:<pre class="webflare-pre-block webflare-courier-new" id="#id1019257">
+<a id="pgfId-1019257"></a>ale mixSigLib/OpAmp</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1019258">
+<a id="pgfId-1019258"></a>exit</pre>
+<a id="pgfId-1019259"></a>and you use the following command:<pre class="webflare-pre-block webflare-courier-new" id="#id1019260">
+<a id="pgfId-1019260"></a>clsAdminTool &lt; myfile</pre>
+<a id="pgfId-1019261"></a><code>clsAdminTool</code> lists all the locks in the <code>mixSigLib/OpAmp</code> directory hierarchy and then exits.</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1016734"></a><a id="29834"></a>Exiting the CLS Administrative Tool</h3>
+
+<p>
+<a id="pgfId-1016736"></a>To exit the CLS administrative tool</p>
+
+<ul><li>
+<a id="pgfId-1016737"></a>At the <code>&gt;</code> prompt, type<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1016738">
+<a id="pgfId-1016738"></a>quit</pre>
+<a id="pgfId-1016739"></a>The prompt changes from <code>&gt;</code> to the default shell prompt.</li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1020124"></a>Displaying the CLS Administrative Tool Options</h3>
+
+<p>
+<a id="pgfId-1020127"></a>To display the arguments you can use with the <code>clsAdminTool</code> command,</p>
+
+<ul><li>
+<a id="pgfId-1020128"></a>At the UNIX command-line, type:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1020125">
+<a id="pgfId-1020125"></a>clsAdminTool -help</pre></li></ul>
+
+
+
+<h4><em>
+<a id="pgfId-1027065"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1027061"></a><a href="chap10.html#64193">clsAdminTool Commands</a></p>
+
+<h2>
+<a id="pgfId-1019758"></a><a id="44009"></a>Using the CLS Administrative Tool in Batch Mode</h2>
+
+<p>
+<a id="pgfId-1019759"></a>In addition to using the Cadence<sup>&#174;</sup> locking system (CLS) administrative tool interactively in a shell interface, you can run it in batch mode on a UNIX command-line.</p>
+<p>
+<a id="pgfId-1019991"></a>In batch mode, you can use any of the clsAdminTool commands&#8212;<code>ale</code>, <code>aple</code>, <code>are</code>, <code>apre</code>, <code>asre</code>&#8212;as arguments to <code>clsAdminTool</code>. </p>
+<p>
+<a id="pgfId-1019860"></a>To run the administrative tool in batch mode,</p>
+
+<ul><li>
+<a id="pgfId-1020048"></a>At the command-line, type the following command:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1019861">
+<a id="pgfId-1019861"></a>clsAdminTool [-force] -<code><em>Command</em></code> <code><em>commandOptions</em></code></pre>
+<a id="pgfId-1020051"></a>where <code>-</code><span class="webflare-courier-new" style="white-space:pre"><em>Command</em></span> <span class="webflare-courier-new" style="white-space:pre"><em>commandOptions</em></span> is one of the following:<pre class="webflare-pre-block webflare-courier-new" id="#id1020017">
+<a id="pgfId-1020017"></a>-ale <code><em>aleOptions</em></code></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1019863">
+<a id="pgfId-1019863"></a>-aple <code><em>apleOptions</em></code></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1019868">
+<a id="pgfId-1019868"></a>-are <code><em>areOptions</em></code></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1019873">
+<a id="pgfId-1019873"></a>-apre <code><em>apreOptions</em></code></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1019878">
+<a id="pgfId-1019878"></a>-asre <code><em>asreOptions</em></code></pre>
+<a id="pgfId-1019898"></a>For a description of these commands and their options, see <a href="chap10.html#64193">clsAdminTool Commands</a>.<br />
+<a id="pgfId-1019835"></a><code>-force</code> sets the force mode, which forces <code>clsAdminTool</code> to use a simple host name, that is, a host name without a domain. For example, <code>cds111</code> is a simple host name, while <code>cds111.cadence.com</code> is not. If you do not use this argument and you do not provide a domain name with the <span class="webflare-courier-new" style="white-space:pre"><em>hostName</em></span> argument of the <code>aple</code> and <code>apre</code> commands, <code>clsAdminTool</code> automatically adds the domain name of the system you are using.</li></ul>
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1019831"></a>To display the arguments you can use with the <code>clsAdminTool</code> command,</p>
+
+<ul><li>
+<a id="pgfId-1020056"></a>At the command-line, type:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1020057">
+<a id="pgfId-1020057"></a>clsAdminTool -help</pre></li></ul>
+
+
+<p>
+<a id="pgfId-1019950"></a>You can also create aliases for clsAdminTool commands and use the alias to call the command. For example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1019968"></a>alias findLocks &#8220;clsAdminTool -ale .&#8221;</pre>
+
+<p>
+<a id="pgfId-1019973"></a>or</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1019974"></a>alias cleanLocks &#8220;clsAdminTool -are .&#8221;</pre>
+
+<p>
+<a id="pgfId-1020565"></a>To display the version number of clsAdminTool,</p>
+
+<ul><li>
+<a id="pgfId-1020568"></a>At the command-line, type:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1020569">
+<a id="pgfId-1020569"></a>clsAdminTool -version</pre></li></ul>
+
+
+
+<h4><em>
+<a id="pgfId-1027163"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1027188"></a><a href="chap10.html#21770">CLS Administrative Tool</a></p>
+<p>
+<a id="pgfId-1027236"></a></p>
+
+<h2>
+<a id="pgfId-1016504"></a><a id="23791"></a>Troubleshoot Cadence Locking System Problems</h2>
+
+<p>
+<a id="pgfId-1017110"></a><strong>Problem: Application hangs on lock request to a remote system</strong></p>
+<p>
+<a id="pgfId-1020180"></a>For NFS prior to version 4, check whether the network lock daemons <code>lockd</code> and <code>statd</code> are running on the remote system. <code>lockd</code> and <code>statd</code> must always be running on every UNIX system that runs Cadence applications or stores data. Some applications that use read and write locks use the operating system&#8217;s <code>fcntl</code> function, which relies on <code>lockd</code> and <code>statd</code> daemons. (CLS Edit locks no longer use <code>fcntl</code>.) If the daemons are running, but calls to them still hang, verify that you have the latest operating system patches.</p>
+<p>
+<a id="pgfId-1020173"></a><strong>Problem: Locking requests to a Linux machine fail with the following error:</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1020544"></a>&#8220;No locks available&#8221;</pre>
+
+<p>
+<a id="pgfId-1020537"></a>While CLS Edit locks no longer use <code>fcntl</code>, some applications that use read and write locks do use the operating system&#8217;s <code>fcntl</code> function. Locking requests to a Linux machine will fail if the Linux NFS server does not support locking. </p>
+<p>
+<a id="pgfId-1020559"></a>To solve this problem, upgrade your NFS software to a version that supports locking.</p>
+<p>
+<a id="pgfId-1024414"></a><strong>Problem: Failed to obtain lock information on a cellview:</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1024550"></a>&#8220;no data on lock available&#8221;</pre>
+
+<p>
+<a id="pgfId-1024925"></a>This message appears when the SKILL function <code>geGetLockInfo()</code> fails to obtain lock information from the <code>.cdslck</code> file or there is no lock available on a cellview. For more information, see <a href="../skdfref/ge_re_geGetLockInfo.html">geGetLockInfo()</a>.</p>
+<p>
+<a id="pgfId-1017113"></a><strong>Problem: Lock requests fail for files locked by an application running on remote systems</strong></p>
+<p>
+<a id="pgfId-1017114"></a>Check whether the Boolean daemon (<code>clsbd</code>) is running on the remote system on which the application is running. The Boolean daemon must always be running on every system that runs Cadence applications. For more information about how to start it, see <a href="chap10.html#31758">Starting the Boolean Daemon</a>.</p>
+<p>
+<a id="pgfId-1017117"></a><strong>Problem: You cannot start the Boolean daemon or you get the following error: </strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017559"></a>&#8220;Fatal (clsbd): port number <code><em>xxx</em></code> is in use by a program that is not clsbd. Exiting.&#8221;</pre>
+
+<p>
+<a id="pgfId-1017124"></a>Check if another application is using the Boolean daemon&#8217;s port number (16723). If another application is using the port number, you might need to change the Boolean daemon&#8217;s default port number.</p>
+<p>
+<a id="pgfId-1018979"></a><strong>Problem: Your Cadence application does not run and you get the following error:</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018981"></a>*Warning* file /usr/xyz/CDS.log Malformed Lock-Stake file.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018983"></a>Failed to lock log file: /usr/xyz/CDS.log</pre>
+
+<p>
+<a id="pgfId-1018982"></a>This error message indicates that the Lock-Stake file is either empty or corrupted. A Lock-Stake file can be empty if it was created when the disk was full. A Lock-Stake file can be corrupted if it was manually edited or if the application or system exited abnormally.</p>
+<p>
+<a id="pgfId-1018996"></a>Resolve the cause of the problem. If it is safe to remove the lock on the file, remove the Lock-Stake file (<span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span><code>.cdslck</code>) manually or with <code>clsAdminTool</code>.</p>
+<p>
+<a id="pgfId-1022622"></a><strong>Problem: If the machine that a cellview lock is registered to is no longer available, DFII will only inform that the cellview is still locked after a lengthy period of time.</strong></p>
+<p>
+<a id="pgfId-1022642"></a>This situation can arise after several minutes of DFII trying to access the cellview, via an exchange with <code>oaFSLockD</code>, only to inform that the cellview cannot be accessed, and remains locked.</p>
+<p>
+<a id="pgfId-1022671"></a>You can however reduce the time that will be allowed for such an exchange, using the <code>CLS_CLSBD_CONNECT_TIMEOUT</code> environment variable. For example:</p>
+<p>
+<a id="pgfId-1022659"></a><code>setenv CLS_CLSBD_CONNECT_TIMEOUT 5</code></p>
+<p>
+<a id="pgfId-1022694"></a>where, <code>5</code> = 5 seconds.</p>
+
+<h4><em>
+<a id="pgfId-1027450"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1027482"></a><a href="chap10.html#23148">Changing the CLS Boolean Daemon Port Number</a></p>
+<p>
+<a id="pgfId-1027446"></a><a href="chap10.html#21770">CLS Administrative Tool</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap9.html" id="prev" title="cdsCopy">cdsCopy</a></em></b><b><em><a href="chap11.html" id="nex" title="Miscellaneous Infrastructure Technologies">Miscellaneous Infrastructure T ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
