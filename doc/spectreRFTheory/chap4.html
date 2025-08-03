@@ -1,0 +1,199 @@
+
+<html><head><title>Semi-Autonomous Simulation and Small Signal Analysis</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="mzamori" />
+<meta name="CreateDate" content="2023-05-24" />
+<meta name="CreateTime" content="1684919707" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the theory underpinning Spectre Circuit Simulator RF Analysis (Spectre RF)." />
+<meta name="DocTitle" content="Spectre Circuit Simulator RF Analysis Theory" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Semi-Autonomous Simulation and Small Signal Analysis" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreRFTheory" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-24" />
+<meta name="ModifiedTime" content="1684919707" />
+<meta name="NextFile" content="" />
+<meta name="Group" content="SpectreRF" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator RF Analysis Theory -- Semi-Autonomous Simulation and Small Signal Analysis" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreRFTheory231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectreRFTheoryTOC.html">Contents</a></li><li><a class="prev" href="chap3.html" title="Oscillators and Autonomous PSS Analysis">Oscillators and Autonomous PSS ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreRFTheory.pdf">View/Print PDF</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator RF Analysis Theory<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>4
+<a id="pgfId-428099"></a><a id="marker-451721"></a></h1>
+<h1>
+<a id="pgfId-1020886"></a><hr />
+Semi-Autonomous Simulation and Small Signal Analysis<hr />
+</h1>
+
+<p>
+<a id="pgfId-1015930"></a>The semi-autonomous simulation is used to simulate driven oscillators with one or more periodic inputs. Now the algorithms can handle two typical driven oscillator scenarios:</p>
+
+<h3>
+<a id="pgfId-1015931"></a>Oscillator-Mixer co-simulation</h3>
+
+<p>
+<a id="pgfId-1037108"></a>Now we can simulate the oscillator and mixer together in the harmonic balance (HB) analysis. When a mixer is connected to an oscillator, it may introduce some effects to the oscillator, such as change of oscillating frequency and output amplitude drop due to loading effects, etc. Previous harmonic balance methods cannot accurately capture these effects because they cannot simulate the oscillator and mixer together. Using the semi-autonomous technique, we can simulate the oscillator and mixer together, and take the coupling effects between the oscillator and the mixer into consideration, resulting more accurate simulation. After the semi-autonomous simulation, we can perform corresponding semi-autonomous small signal analysis, like HBNOISE.</p>
+
+<h3>
+<a id="pgfId-1041946"></a>Driven oscillator simulation</h3>
+
+<p>
+<a id="pgfId-1041957"></a>Using the semi-autonomous simulation, we can simulate unlock driven oscillators (e.g., the oscillator with a power supply interference). When an oscillator is perturbed, but not locked by an injected periodic signal, its frequency and amplitude will change. The semi-autonomous simulation can handle the perturbed oscillator and give us the new oscillating frequency and waveforms. When the semi-autonomous simulation finishes, we can also perform small signal analysis (HBAC/HBXF/HBNOISE) on the semi-autonomous system, just like a normal multi-tone system.</p>
+<p>
+<a id="pgfId-1041944"></a>The semi-autonomous simulation is a frequency domain simulation technique, and it is implemented in the Harmonic Balance (HB) analysis.</p>
+
+<h2>
+<a id="pgfId-1015933"></a>Initialization</h2>
+
+<p>
+<a id="pgfId-1042035"></a>Now we maintain good consistency between the autonomous PSS simulation and the semi-autonomous simulation. We can use all initialization methods for the autonomous PSS simulation in the semi-autonomous simulation.</p>
+
+<h3>
+<a id="pgfId-1042036"></a>tstab initialization method</h3>
+
+<p>
+<a id="pgfId-1042037"></a>In this method, Spectre runs couple oscillator periods of transient simulation and use the waveforms as the initial guess of the semi-autonomous simulation. The length of the transient simulation is determined by the &quot;tstab&quot; parameter in the HB statement. The user needs to make sure that the &quot;tstab&quot; is long enough to guarantee the oscillation can start properly.</p>
+<p>
+<a id="pgfId-1042038"></a>The user can do one of the following to speedup the oscillation:</p>
+<ol><li>
+<a id="pgfId-1043091"></a>Specify an initial condition to one of the oscillator node (on the tank). For example,  &quot;ic outp=1.0&quot;. </li><li>
+<a id="pgfId-1042003"></a>Apply a pulse or PWL current/voltage source to the oscillator to kick start the oscillation.</li></ol>
+
+<p>
+<a id="pgfId-1042004"></a>It is highly recommended that the first method is used. The second method can prolong the transient simulation, and an over-strong pulse may cause transient convergence problem.</p>
+<p>
+<a id="pgfId-1041997"></a>For a better semi-autonomous convergence, the &quot;tstab&quot; needs to be long enough to make the oscillator settle down the final oscillating mode. The integration method of the tstab simulation is specified by the HB option &quot;tstabmethod&quot;.</p>
+
+<h3>
+<a id="pgfId-1042043"></a>Linear initial condition aided tstab</h3>
+
+<p>
+<a id="pgfId-1042050"></a>A linear Eigenvalue analysis can also be performed on the DC solution of the oscillator circuit to stimulus the tstab transient simulation. Using the linear IC method, the user doesn&#39;t need to specify the stimulus (you cannot use the PWL/Pulse kicker in linear IC, or linear IC will fail), and the tstab time can be reduced dramatically to save the simulation time. The linear IC works well for high Q oscillators, however, it may fail if the oscillator is not LC type, or the circuit is very large and ill-conditioned. </p>
+<p>
+<a id="pgfId-1042051"></a>The linear initial condition method is turned on by the HB option &quot;oscic=lin&quot;. By default, the linear method is not activated. In the semi-autonomous analysis, the &quot;tstab&quot; is always required, even though the &quot;oscic=lin&quot; is specified. &quot;tstab=0&quot; doesn&#39;t work for semi-autonomous simulation now (but we will improve the initialization code to make it work in the future Spectre version). It</p>
+<p>
+<a id="pgfId-1042065"></a>is not recommended to use linear IC for oscillator-mixer simulation in this stage, because the circuit can be very large and the mixer may cause the linear IC method to fail.</p>
+
+<h2>
+<a id="pgfId-1042067"></a>Newton Methods</h2>
+
+<p>
+<a id="pgfId-1042093"></a><a id="_Toc188266638"></a>Just like the autonomous PSS simulation, the semi-autonomous simulation supports both the &quot;onetier&quot; and &quot;twotier&quot; Newton methods. The Newton method can be specified using the &quot;oscmethod&quot; option. Please refer to the autonomous simulation application notes for the detailed explanation of the different Newton methods. We suggest customers to try the &quot;onetier&quot; method first, because the &quot;twotier&quot; semi-autonomous simulation can be slow.</p>
+
+<h2>
+<a id="pgfId-1042094"></a>Use Model</h2>
+
+<p>
+<a id="pgfId-1042095"></a>The semi-autonomous simulation is for oscillators with periodic inputs. Users can use the method to simulate oscillators and mixers together, or simulate oscillators perturbed by periodic external interferences, such as power supply interference.</p>
+
+<h3>
+<a id="pgfId-1042106"></a>PSS simulation for semi-autonomous circuits</h3>
+
+<p>
+<a id="pgfId-1042138"></a>Now we can use the harmonic balance (HB) do semi-autonomous simulation. To activate the method, we need to add two oscillator output terminals in the HB statement. For example:</p>
+<p>
+<a id="pgfId-1042139"></a><code>Hb1 (outp outn) hb funds=[1.1GHz&#160;&#160;&quot;frf&quot;] maxharms=[5 5] tstab=1u</code></p>
+<p>
+<a id="pgfId-1042140"></a>Compared to the driven multi-tone HB, the semi-autonomous statement has two differences:</p>
+<ol><li>
+<a id="pgfId-1042145"></a>The two terminals have to be defined as in autonomous PSS.</li><li>
+<a id="pgfId-1042143"></a>The first entry in &quot;funds&quot; is the initial guess of the oscillator frequency.</li></ol>
+
+
+<h3>
+<a id="pgfId-1042161"></a>Small signal analysis for semi-autonomous circuits</h3>
+
+<p>
+<a id="pgfId-1042162"></a>A following small signal analysis statement will do the small signal analysis for semi-autonomous circuits. For example:</p>
+<p>
+<a id="pgfId-1042175"></a><code>Hbnoise1&#160;&#160;(oscoutp oscoutn) hbpnoise&#160;&#160;start= 1&#160;&#160;stop=1G&#160;&#160;dec=5&#160;&#160;sweeptype=relative relharmvec=[1 0]</code></p>
+
+<h2>
+<a id="pgfId-1042181"></a>Semi-Autonomous Simulation GUI</h2>
+
+<p>
+<a id="pgfId-1042179"></a>You can setup the semi-autonomous simulation in GUI, as shown in the figure below.</p>
+
+<p><strong>Figure 4-1
+<a id="pgfId-1042218"></a>Semi-autonomous simulation form</strong></p>
+<p>
+<a id="pgfId-1042176"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="703" src="images/chap4-2.gif" /></div>
+
+<p>
+<a id="pgfId-1042220"></a>To use the semi-autonomous simulation, you need to: </p>
+<ol><li>
+<a id="pgfId-1042221"></a>Choose &#39;hb&#39; analysis.</li><li>
+<a id="pgfId-1042240"></a>Select &quot;Names&quot; option in the Tones section.</li><li>
+<a id="pgfId-1042245"></a>Select &#39;Oscillator&#39;.</li><li>
+<a id="pgfId-1042251"></a>The tone name of the oscillator is &#39;osc!&#39;, fill in the initial frequency guess for this tone in the <em>Expr</em> field. Click <em>Change</em>.</li><li>
+<a id="pgfId-1043021"></a>Select Decide automatically from the <em>Run Transient?</em> drop-down list. This will cause Spectre to run a transient in the tstab interval until steady-state is reached. Then, a Fourier transform is calculated, and the frequency domain iterations begin.</li><li>
+<a id="pgfId-1043022"></a>Set the harmonics and the oversample factor as required. If <em>Run transient?</em> is set to <em>Decide automatically</em> or <em>Yes</em>, then <em>auto</em> is entered for the number of harmonics in the first tone only. This can be set manually, if desired. The number of harmonics for the rest of the tones must be set manually.</li><li>
+<a id="pgfId-1042269"></a>Click <em>Change</em>.</li><li>
+<a id="pgfId-1043058"></a>Specify the oscillator nodes in the circuit. This node can be any node in the circuit where the oscillations are present.</li></ol>
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1042274"></a><a id="_Toc188266646"></a>Trouble Shooting</h2>
+
+<ol><li>
+<a id="pgfId-1042275"></a>If the oscillator doesn&#39;t oscillate in the semi-autonomous simulation, try to increase the &quot;tstab&quot; time. You can use the parameter &quot;saveinit=yes&quot; to save the tstab waveforms. If the oscillator doesn&#39;t oscillate in the tstab transient simulation, give it a kick using the IC method, or using the linear initial condition (&quot;oscic=lin&quot;).</li><li>
+<a id="pgfId-1042276"></a>The semi-autonomous simulation may have convergence problem for unlock driven oscillators when the perturbation frequency is very low and perturbation amplitude is large. Decreasing the perturbation amplitude will improve the convergence. Increasing the harmonic number of the RF tone also improves the convergence. </li><li>
+<a id="pgfId-1022504"></a>All trouble shooting tricks for the autonomous PSS simulation are also applicable. Please refer to the autonomous PSS application notes.</li></ol>
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3.html" id="prev" title="Oscillators and Autonomous PSS Analysis">Oscillators and Autonomous PSS ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

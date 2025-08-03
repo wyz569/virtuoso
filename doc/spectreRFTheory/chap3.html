@@ -1,0 +1,808 @@
+
+<html><head><title>Oscillators and Autonomous PSS Analysis</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="mzamori" />
+<meta name="CreateDate" content="2023-05-24" />
+<meta name="CreateTime" content="1684919707" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the theory underpinning Spectre Circuit Simulator RF Analysis (Spectre RF)." />
+<meta name="DocTitle" content="Spectre Circuit Simulator RF Analysis Theory" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Oscillators and Autonomous PSS Analysis" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreRFTheory" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-24" />
+<meta name="ModifiedTime" content="1684919707" />
+<meta name="NextFile" content="chap4.html" />
+<meta name="Group" content="SpectreRF" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap2.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator RF Analysis Theory -- Oscillators and Autonomous PSS Analysis" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreRFTheory231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectreRFTheoryTOC.html">Contents</a></li><li><a class="prev" href="chap2.html" title="The Spectre RF Analyses">The Spectre RF Analyses</a></li><li style="float: right;"><a class="viewPrint" href="spectreRFTheory.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap4.html" title="Semi-Autonomous Simulation and Small Signal Analysis">Semi-Autonomous Simulation and ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator RF Analysis Theory<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>3
+<a id="pgfId-428099"></a><a id="marker-451721"></a></h1>
+<h1>
+<a id="pgfId-1020886"></a><hr />
+Oscillators and Autonomous PSS Analysis<hr />
+</h1>
+
+<p>
+<a id="pgfId-1015928"></a>PSS analysis is capable of handling both autonomous (non-driven) and non-autonomous (driven) circuits. Autonomous circuits are time-invariant circuits that have time-varying responses. Thus, autonomous circuits generate non-constant waveforms even though they are not driven by a time-varying stimulus. Driven circuits require some time-varying stimulus to generate a time-varying response. The most common example of an autonomous circuit is an oscillator. Common driven circuits include amplifiers, filters, mixers, etc.</p>
+<p>
+<a id="pgfId-1015929"></a>With driven circuits you specify the analysis period, which must be an integer multiple of the period of the drive signal or signals. Autonomous circuits have no drive signal and you do not know the actual period of oscillation precisely in advance. Instead, you specify an estimate of the oscillation period and PSS analysis computes the precise period along with the periodic solution waveforms.</p>
+<p>
+<a id="pgfId-1015930"></a>When applied to autonomous circuits, PSS analysis requires you to specify a pair of nodes. In fact, this is how PSS analysis determines whether it is being applied to an autonomous or a driven circuit. If the pair of nodes is supplied, PSS assumes the circuit is autonomous; if not, the circuit is assumed to be driven. PSS analysis monitors the potential difference between these two nodes and uses it in the initial transient analysis portion of the autonomous PSS analysis; the signal is used to determine a better estimate of the period.</p>
+
+<h2>
+<a id="pgfId-1015931"></a>Phases of Autonomous PSS Analysis</h2>
+
+<p>
+<a id="pgfId-1015932"></a>A PSS analysis consists of two phases: an initial transient phase, which allows the circuit to be initialized, and the shooting phase, which is where the periodic steady-state solution is computed. The transient phase consists of three intervals. The first starts at <em>t</em><sub>start</sub>, which is normally 0, and continues through the onset of periodicity for the independent sources. The second is an optional stabilization interval, that you specify, whose length is <em>t</em><sub>stab</sub>. The final interval of the transient phase is peculiar to the autonomous PSS analysis. In this phase, the length of which is four times the specified estimate of the oscillation period, the PSS analysis monitors the waveforms in the circuit and develops a better estimate of the oscillation period.</p>
+<p>
+<a id="pgfId-1037046"></a>During the first stage of the transient phase, PSS extracts the fundamental frequency from the set of nodes specified in the PSS statement. During the second stage, the PSS analysis examines all the nets in your design to verify the accuracy of the extracted PSS fundamental frequency. This enhancement improves PSS analysis of circuits with frequency dividers by re-evaluating the PSS fundamental to take into account the frequency division in your circuit.</p>
+<p>
+<a id="pgfId-1037093"></a>After the initial transient phase is complete, the shooting interval begins. In this phase, the circuit is repeatedly simulated over one period while adjusting the length of the period and the initial condition to find the periodic steady-state solution.</p>
+<p>
+<a id="pgfId-1037048"></a>In some cases when an autonomous PSS analysis does not converge after a few iterations, increasing the <code>tstab</code> interval makes convergence faster and easier. Adjusting the <code>tstab</code> interval might improve the starting point for the shooting interval by moving it such that signals are quiescent or changing slowly. This allows strongly nonlinear circuits to converge faster.</p>
+<p>
+<a id="pgfId-1037108"></a>For details of the algorithm for autonomous PSS analysis, see <a href="chap2.html#73684">&#8220;Autonomous PSS Analysis&#8221;</a>.</p>
+
+<h2>
+<a id="pgfId-1015933"></a>Starting the Oscillator</h2>
+
+<p>
+<a id="pgfId-1015934"></a>When applying PSS analysis to oscillators, you need to start the oscillator, just as you would if you were simulating the turn-on transient of the oscillator using transient analysis. <em>The Designer&#8217;s Guide to </em>Spice and Spectre [kundert95] describes in some depth techniques for starting oscillators.</p>
+<p>
+<a id="pgfId-1023688"></a>In summary, there are two techniques for starting oscillators, using initial conditions, or using a brief impulsive stimulus. Initial conditions would be provided for the components of the oscillator&#8217;s resonator. If an impulsive stimulus is used, it should be applied so as to couple strongly into the oscillatory mode of the circuit, and poorly into any other long-lasting modes, such as those associated with bias circuitry.</p>
+<p>
+<a id="pgfId-1023689"></a>Either way, after the trigger is applied to start the oscillator, it is important to allow the oscillator to run for a while before the shooting methods are applied to compute the steady-state result. To do so, specify an additional stabilization interval using the tstab parameter. In practice, an additional stabilization interval often improves convergence, especially when simulating high-Q oscillators.</p>
+
+<h2>
+<a id="pgfId-1015935"></a>Convergence Issues with Autonomous PSS Analysis</h2>
+
+<p>
+<a id="pgfId-1015936"></a>By their very nature, oscillators are quite nonlinear, which can cause convergence problems. If you experience convergence problems with autonomous PSS analysis, you should try one or more of the following suggestions.</p>
+<ul><li>
+<a id="pgfId-1015937"></a>As with non-autonomous PSS analysis, providing a larger value for <em>t</em><sub>stab</sub> generally improves convergence. While not always necessary, you occasionally need to set <em>t</em><sub>stab</sub> to a value equal to or greater than the time needed for the circuit to approximately reach steady-state.</li><li>
+<a id="pgfId-1015938"></a>Assure that whatever method you choose to start your oscillator is effective. It should &#8220;kick&#8221; the oscillator hard enough to start the oscillation and have it respond with a signal level that is between 25% and 100% of the expected final level. Avoid kicking the oscillator so hard that it responds in an unnecessarily nonlinear fashion. Also, try to avoid exciting response modes in the circuit that are unrelated to the oscillation, especially those associated with long time constants.</li><li>
+<a id="pgfId-1015939"></a>Give a better estimate of the period. The simulator uses the estimate of the period you specify to determine how long the initial transient analysis interval is that is used to make a measurement of the oscillation period. If the period you specify is too short, it is not possible to get an accurate estimate of the oscillation period, and this might cause the PSS analysis to fail. Overestimation of the period is not a serious problem because the only penalty is a longer initial transient interval. However, significant overestimation might result in an excessively long simulation time.</li><li>
+<a id="pgfId-1015940"></a>While trapezoidal rule ringing is annoying in transient analysis, in PSS analysis it can cause the shooting iteration to stall before convergence is achieved. You can resolve this problem by changing the <code>method</code> from <code>traponly</code> to either <code>trap</code>, <code>gear2</code>, or <code>gear2only</code>.<br />
+<a id="pgfId-1023702"></a>Generally, using <code>method=traponly</code> is preferred with oscillators because it uses the trapezoidal rule exclusively, which does not exhibit artificial numerical damping like the other available methods [kundert95]. However, with autonomous PSS analysis, exclusive use of the trapezoidal rule can lead to ringing that spans the length of the oscillation period and causes convergence problems. With <code>method</code>=trap, <sup> </sup>Spectre<sup>&#174; </sup>circuit simulator RF analysis (Spectre RF) occasionally takes a backward Euler step which acts to damp the ringing. The other two methods, <code>gear2</code> and <code>gear2only</code>, use Gear&#8217;s backward difference method which is not subject to ringing. Each of these alternatives to <em>traponly</em> avoid trapezoidal rule ringing and the attendant convergence problems at the expense of adding a small amount of artificial numerical damping, which acts to reduce slightly the computed Q of the oscillator.</li><li>
+<a id="pgfId-1015941"></a>Increase the maximum iterations for shooting methods using the <code>maxperiods</code> parameter. Sometimes the analysis might need more than the default number of iterations to converge. This is more likely to occur with high-Q circuits. However, there are situations that prevent convergence regardless of how many iterations are taken. In this case, increasing the iteration limit simply results in the simulator taking longer to fail.</li><li>
+<a id="pgfId-1015942"></a>Sometimes loosening or tightening the tolerance for the linear solver (the <code>tolerance</code> parameter) can solve convergence problems. This tolerance does not affect the accuracy of the final solution.</li><li>
+<a id="pgfId-1015943"></a>If the shooting iteration approaches convergence and then stalls, it might be because the tolerance on the shooting method is too tight. In this case, try loosening <code>steadyratio</code>, which controls how close to periodic the result must be before it is declared to be converged.</li><li>
+<a id="pgfId-1015944"></a>Finally, tightening the normal simulation tolerances (<code>maxstep</code>, <code>reltol</code>, <code>lteratio</code>, <code>errpreset</code>) can help resolve convergence problems in PSS analysis. Avoid using <code>errpreset=liberal</code>.</li></ul>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1015945"></a>Be aware that in order to avoid the equilibrium solution (the one where all waveforms are constant valued) autonomous PSS analysis is constrained to find a result with nonzero amplitude. Thus, if the circuit cannot sustain an autonomous oscillation, and the equilibrium solution is the only solution that exists, PSS analysis fails to converge.</p>
+
+<h2>
+<a id="pgfId-1015946"></a>Phase Noise in Oscillators</h2>
+
+<p>
+<a id="pgfId-1015947"></a>Oscillators exhibit a natural tendency to amplify any noise present near the oscillation frequency. The closer the frequency of the noise is to the oscillation frequency, the greater the amplification. Noise amplified by the oscillator in this manner is referred to as <em>phase noise</em>. Phase noise is extremely important because it is the most significant source of noise in oscillators. In addition, because the phase noise is centered about the oscillation frequency, it can never completely be removed by filtering.</p>
+<p>
+<a id="pgfId-1015948"></a>Phase noise can be understood by recognizing that the phase of an oscillator is arbitrary simply because there is no drive signal present to lock to. Any waveform that is a solution to an oscillator can be shifted in time and still be a solution. If a perturbation causes the phase to be disturbed, there is nothing that acts to restore the phase, so it is free to drift without bound. If the perturbation is random noise, the drift takes the form of a random walk. Furthermore, the closer the frequency of perturbation is to the oscillation frequency, the better it couples to the phase and the greater the magnitude of the drift. The perturbation need not come from random noise. It might also couple into the oscillator from other sources, such as the power supplies.</p>
+
+<p>
+<a id="pgfId-1021823"></a></p>
+<div class="webflare-div-image">
+<img src="images/FeedbackOscilator.gif" /></div>
+
+<p>
+<a id="pgfId-1015950"></a>To better understand this phenomenon, consider the feedback oscillator shown. The loop gain of the oscillator is H(jω). <em>X(jw)</em> is taken to represent some perturbation stimulus and Y(jω) is the response of the oscillator to <em>X</em>. The Barkhausen condition for oscillation states that the effective loop gain equals unity and the phase equals 360 degrees at the oscillation frequency ω0 [clarke-hess]. The gain from the perturbation stimulus to the output is</p>
+<p>
+<a id="pgfId-1041434"></a>Y(jω) / X(jω) = H(jω) / (1 − H(jω)) </p>
+<p>
+<a id="pgfId-1041435"></a>which goes to infinity at the oscillation frequency ω0. When the perturbation stimulus is a noise source, the result is phase noise.</p>
+
+<p>
+<a id="pgfId-1021830"></a></p>
+<div class="webflare-div-image">
+<img src="images/PhaseNoise1.gif" /></div>
+
+<p>
+<a id="pgfId-1015973"></a>The amplification near the oscillation frequency that generates the phase noise is quantified by assuming the loop gain varies smoothly as a function of frequency in this region [razavi96]. If</p>
+<p>
+<a id="pgfId-1041438"></a>ω = ω0 + Δω</p>
+<p>
+<a id="pgfId-1041441"></a>then</p>
+<p>
+<a id="pgfId-1041442"></a>H(jω) ≈ H(jω0) + dH/dω Δω</p>
+<p>
+<a id="pgfId-1041443"></a>and the transfer function becomes</p>
+<p>
+<a id="pgfId-1041444"></a>Y(j(ω0 + Δω)) / X(j(ω0 + Δω)) ≈ (H(j ω0) + dH/dω Δω) / (1 − H(jω0) − dH/dω Δω).</p>
+<p>
+<a id="pgfId-1041445"></a>Because H(jω0) = 1 and dH/dω Δω &lt;&lt; 1 in most practical situations, the transfer function reduces to</p>
+<p>
+<a id="pgfId-1041490"></a>Y(j(ω0 + Δω)) / X(j(ω0 + Δω)) = -1 / (dH/dω Δω) </p>
+<p>
+<a id="pgfId-1041493"></a>Thus, for circuits that contain only white noise sources, the phase noise voltage (or current) is inversely proportional to Δω, while the phase noise power spectral density is proportional 1/Δω2 near the oscillation frequency.</p>
+<p>
+<a id="pgfId-1015974"></a>Phase noise is created by a linear phenomenon, the amplification of noise near the carrier frequency that is a natural consequence of the oscillator&#8217;s complex pole pair on the jω axis at ω0. In addition, practical oscillators are also strongly nonlinear because they operate in compression. Recall that the loop gain of the oscillator must equal 1 at the oscillation frequency. If the loop gain is less than 1, the oscillation eventually dies out. To ensure the oscillator reliably oscillates even with normal variations in component values, the initial loop gain is always designed to be larger than 1, with the understanding that as the amplitude of the oscillation builds the amplifier goes into compression, which reduces the loop gain. The amplitude stabilizes at the point where the effective loop gain is 1. The nonlinear behavior inherent in practical oscillators results in noise folding. Noise mixes with the oscillation signal and its harmonics and get converted up or down in frequency by one or more multiples of the fundamental frequency. Besides the effect noise folding has on the noise level, it also introduces two noteworthy and easily identifiable artifacts.</p>
+<p>
+<a id="pgfId-1015990"></a>First, the phase noise present near the oscillation frequency is mixed up and down, resulting in smaller, but still quite noticeable noise peaks at DC and each harmonic.</p>
+
+<p>
+<a id="pgfId-1021839"></a></p>
+<div class="webflare-div-image">
+<img src="images/PhaseNoise2.gif" /></div>
+
+<p>
+<a id="pgfId-1016002"></a>Second, if there are flicker noise sources present in the circuit, the flicker noise mixes up from low frequencies and results in additional noise near the oscillation frequency and its harmonics. Thus, for circuits that contain flicker noise sources, the noise power spectral density is proportional to 1/Δω3 near the oscillation frequency.</p>
+
+<p>
+<a id="pgfId-1021848"></a></p>
+<div class="webflare-div-image">
+<img src="images/SpectralDensity.gif" /></div>
+
+<p>
+<a id="pgfId-1016003"></a>Phase noise is strongly affected by the <em>Q</em> of the oscillator. The higher the <em>Q</em>, the lower the phase noise. To see this, let <em>H</em>(jω) = <em>A</em>(ω) exp(jF(ω)). Then</p>
+<p>
+<a id="pgfId-1041452"></a>|Y/X|2 = 1 / {Δω2[(dA/dω)2 + (dΦ/dω)2]}.</p>
+<p>
+<a id="pgfId-1041453"></a>Razavi extends the traditional definition of Q to make it more insightful for ring and relaxation oscillators. Open loop<em> Q</em> is</p>
+<p>
+<a id="pgfId-1041454"></a><em>Q </em>= ω0 sqrt{(dA/dω)2 + (dΦ/dω)2} / 2.</p>
+<p>
+<a id="pgfId-1041455"></a>In a resonant oscillator, dA/dω = 0 and so the open loop <em>Q</em> reduces to the traditional definition, <em>Q</em> = ω0 / 2(dΦ/dω). For ring and relaxation oscillators, dA/dω and dΦ/dω are of the same order and this new definition is more appropriate. The open loop <em>Q</em> is a measure of how much the closed-loop system opposes variations in the frequency, as seen with</p>
+<p>
+<a id="pgfId-1041456"></a>|<em>Y/X</em>|2 = (ω0/Δω) / (4<em>Q</em>2)</p>
+
+<h2>
+<a id="pgfId-1016004"></a>Sample Spectre RF Circuits</h2>
+
+<p>
+<a id="pgfId-1016005"></a>The following sections discuss two possible uses for Spectre RF, to simulate</p>
+<ul><li>
+<a id="pgfId-1023710"></a>High-Performance Receivers</li><li>
+<a id="pgfId-1023713"></a>Switched-Capacitor Filters<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1027126"></a>
+The example circuits discussed in this section are for illustrative purposes only. The circuits and netlists are not available.</div></li></ul>
+
+
+
+<h3>
+<a id="pgfId-1016006"></a>Characterizing a High-Performance Receiver</h3>
+
+<p>
+<a id="pgfId-1016007"></a>This receiver was characterized using the sequence of analyses shown in the netlist in Example <a href="chap3.html#54763">3-1</a> [telichevesky96a]. Each analysis, along with its results, is described in the following sections. The analyses were run on an HP 735/125.</p>
+
+<p><strong>Example 3-1
+<a id="pgfId-1016008"></a><strong>Netlist Showing the Analyses Run on the Receiver</strong><a id="54763"></a></strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016009"></a>// compute steady state response to LO only<br />disableRF alter dev=Prf param=type value=dc<br />loAlone pss fund=780MHz</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016010"></a>// compute transfer functions from all sources to output<br />freqResponse (out 0) pxf start=20kHz stop=200MHz lin=50<br />        maxsideband=3</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016011"></a>// compute output &amp; input-referred noise, &amp; noise figure<br />noise pnoise start=2kHz stop=200MHz oprobe=Rl iprobe=Prf<br />        refsideband=1 maxsideband=15</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016012"></a>// compute intermod distortion with LO and 2 input tones<br />enableRF alter dev=Prf param=type value=sine<br />interMod pss fund=10MHz swapfile=&quot;bigjake&quot; outputtype=both</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016013"></a>// compute harmonic distortion with LO and 1 input tone<br />disable2ndRFtone alter dev=Prf param=ampl2 value=0<br />harmDisto pss fund=60MHz harms=30</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016014"></a>// apply second small signal tone to measure intermod<br />interModAC pac start=850MHz sidebands=[-15 -13]</pre>
+
+<p>
+<a id="pgfId-1016015"></a>The large RF circuit shown in <a href="chap3.html#11787">Figure&#160;3-1</a> is an image rejection receiver that consists of a low-noise amplifier, a splitting network, two double-balanced mixers, and broad-band Hilbert transform output filter combined with a summing network that is used to suppress the undesired sideband. A limiter in the LO path is used for controlling the amplitude of the LO.</p>
+
+<p><strong>Figure 3-1
+<a id="pgfId-1021857"></a><a id="11787"></a>Block Diagram for a High-Performance Receiver</strong></p>
+<p>
+<a id="pgfId-1021859"></a></p>
+<div class="webflare-div-image">
+<img src="images/HighPerformanceReceiver.gif" /></div>
+
+<p>
+<a id="pgfId-1021858"></a>The receiver contains 167 bipolar transistors and uses 378 nodes. It is simulated at the circuit level using the Gummel-Poon model for each transistor. It generated 986 equations (largely because of the large number of inductors but also because the internal nodes of the BJTs needed to support their parasitic resistors).</p>
+
+<h4>
+<a id="pgfId-1016063"></a>PSS Analysis</h4>
+
+<p>
+<a id="pgfId-1016064"></a>This analysis computes the steady-state response of the circuit with only the LO applied. This is a necessary step that allows the use of the periodic small-signal analyses later. The <em>alter</em> statement that precedes the PSS analysis is used to disable the RF input.</p>
+<p>
+<a id="pgfId-1021911"></a>Waveforms computed by this analysis are shown in <a href="chap3.html#21953">Figure&#160;3-2</a>. The response of the receiver computed by PSS analysis is l<em>oA</em>l<em>one</em> at the LO input and it appears in the top half Figure <a href="chap3.html#21953">3-2</a>. The response of the receiver at the output appears in the bottom half Figure <a href="chap3.html#21953">3-2</a>.</p>
+
+<p><strong>Figure 3-2
+<a id="pgfId-1021879"></a><a id="21953"></a>Response of the High-Performance Receiver for the PSS Analysis</strong></p>
+<p>
+<a id="pgfId-1021966"></a></p>
+<div class="webflare-div-image">
+<img src="images/ResponseOfReceiver.gif" /></div>
+
+<p>
+<a id="pgfId-1021956"></a>The Spectre RF simulation required about 30 seconds to complete this analysis. The PSS analysis used 200 time points and needed about 25 MB, or about 125 b per equation per time point.</p>
+
+<h4>
+<a id="pgfId-1016144"></a>PXF Analysis</h4>
+
+<p>
+<a id="pgfId-1021990"></a>The results from the PXF analysis <em>freqResponse</em> are shown in <a href="chap3.html#15199">Figure&#160;3-3</a>. Each transfer function from the RF input to the IF output represents a different sideband. Unlike traditional transfer functions as computed by AC analysis, these transfer functions can have inputs and outputs at different frequencies.</p>
+<p>
+<a id="pgfId-1022080"></a>The transfer function from the RF input V<sub>rf</sub> to the output voltageV(out) appears in the top half of Figure <a href="chap3.html#15199">3-3</a>. The bottom half of Figure <a href="chap3.html#15199">3-3</a> is an expanded version of the top that clearly shows the conversion due to the ±1 harmonics of the LO.</p>
+
+<p><strong>Figure 3-3
+<a id="pgfId-1022082"></a><a id="15199"></a>Transfer Function From the Vrf to V(out)</strong></p>
+<p>
+<a id="pgfId-1022086"></a></p>
+<div class="webflare-div-image">
+<img src="images/TransferFunct.gif" /></div>
+
+<p>
+<a id="pgfId-1022017"></a>The X axis is labeled with the input frequency (by setting <code>freqaxis</code> to <code>in</code>), although you can also view the transfer functions versus the output frequency (set <code>freqaxis</code> to <code>out</code>). The output frequency range for all of the transfer functions shown is baseband, which is being swept from 20 kHz to 200 lHz. For example, <em>Vr</em>ƒ(2) is the transfer function from the second upper sideband to baseband, and finally, <em>Vr</em>ƒ(0) is the transfer function from baseband to baseband.</p>
+<p>
+<a id="pgfId-1022018"></a>Consider the dip at 700 MHz in Vrƒ(-1), at which point the receiver exhibits 28 dB of attenuation. This implies that a signal from Vrƒ at -700 MHz mixes with the -1<sup>st </sup>harmonic of the LO and shows up attenuated at the output at</p>
+<p>
+<a id="pgfId-1041459"></a>ƒout = -700 <em>MHz</em> + 780 <em>MHz</em> = 80 MHz</p>
+<p>
+<a id="pgfId-1041460"></a>Similarly, an 800 MHz signal at the input would mix with the 1st harmonic of the LO and would appear at the output at</p>
+<p>
+<a id="pgfId-1041463"></a>ƒout = 800 <em>MHz</em> - 780 MHz = 20 MHz</p>
+<p>
+<a id="pgfId-1041464"></a>amplified by 15 dB. This strong asymmetry in the transfer function on either side of the LO is a clear indication that this receiver is designed to suppress the lower sideband.</p>
+<p>
+<a id="pgfId-1022035"></a><a href="chap3.html#41682">Figure&#160;3-4</a> shows the transfer functions to the output voltage, V(out), from V<sub>lo</sub> and V<sub>cc</sub>. The top half of the figure shows the transfer function to V(out) from the LO input, V<sub>lo</sub>. The bottom half of the figure shows the transfer function to V(out) from the power supply, V<sub>cc</sub>. This shows how sensitive the output is at the specified range of frequencies to noise on the LO or the power supply at various frequencies.</p>
+
+<p><strong>Figure 3-4
+<a id="pgfId-1016147"></a><a id="41682"></a>Transfer Functions From V<sub>lo</sub> and V<sub>cc</sub> to V(out)</strong></p>
+<p>
+<a id="pgfId-1022102"></a></p>
+<div class="webflare-div-image">
+<img src="images/TransferFunct2.gif" /></div>
+
+<p>
+<a id="pgfId-1016338"></a>Spectre RF simulation required 6 minutes to complete this analysis, which contained 50 frequency points, or roughly 7 seconds per point. It reused the 25 MB of memory allocated in the PSS analysis l<em>oA</em>l<em>one</em>.</p>
+
+<h4>
+<a id="pgfId-1016339"></a>PNoise Analysis</h4>
+
+<p>
+<a id="pgfId-1016340"></a>The PNoise analysis is similar to the traditional noise analysis, except it includes the effect of noise moving from one frequency to another as it mixes with the LO and its harmonics. In this case, the noise measured at the output includes contributions from noise generated at frequencies ƒout ± k ƒLO, where k ≤ 15.</p>
+<p>
+<a id="pgfId-1016341"></a>This noise analysis is performed on the detailed periodically varying linearized circuit, and so it includes subtle effects in the calculation. For example, at the points in time where the LO signal is near 0 V, the differential pairs that make up the mixer are balanced and so exhibit a great deal of gain from the LO to the output. Any noise on the LO is greatly magnified at this time. After the LO moves away from 0, the differential pairs saturate and so exhibit a great deal of attenuation from the LO to the output. The faster the LO moves through zero, the less noise is transferred from the LO to the output. This is why switching mixers are preferred over multiplying mixers. This effect is accurately accounted for by the <em>PNoise</em> analysis.</p>
+<p>
+<a id="pgfId-1016342"></a>The output noise, input-referred noise, and the noise figure as computed by the PNoise analysis are shown in <a href="chap3.html#31976">Figure&#160;3-5</a>. The outpupt noise at V(out) and the input-referred noise from V<sub>rf</sub> appear in the top of the figure. The noise figure from V<sub>rf</sub>, assuming 50 W source resistance appears in the bottom of the figure. The flicker or 1/f noise of the devices is clearly visible.</p>
+
+<p><strong>Figure 3-5
+<a id="pgfId-1022148"></a><a id="31976"></a>Output Noise, Input-Referred Noise, and Noise Figure</strong></p>
+<p>
+<a id="pgfId-1022150"></a></p>
+<div class="webflare-div-image">
+<img src="images/OutputNoise.gif" /></div>
+
+<p>
+<a id="pgfId-1022149"></a>Spectre RF simulation required 8 minutes to complete this analysis, which contained 50 frequency points, or roughly 10 seconds per point. It reused the 25 MB of memory allocated in the PSS analysis l<em>oA</em>l<em>one</em>.</p>
+
+<h4>
+<a id="pgfId-1022169"></a>PSS Analysis interMod for Intermodulation Distortion</h4>
+
+<p>
+<a id="pgfId-1016418"></a>To measure the intermodulation distortion of a mixer, you can apply two tones to the input that are relatively close in frequency. The two tones must be co-periodic with each other and with the LO in order to perform a Fourier analysis. The steady-state response is then found, and the mixer is simulated for a time interval equal to the common period of the three input signals.</p>
+<p>
+<a id="pgfId-1022228"></a>In order to compute the steady-state response, you can apply transient analysis until the initial transients decay to negligible levels, or you can apply the PSS analysis. If the transients decay quickly, transient analysis is generally preferred, because it is fast and does not require much memory. Otherwise, PSS analysis is usually preferred.</p>
+<p>
+<a id="pgfId-1016419"></a>In this circuit, the LO frequency is 780 MHz and two 25 mV input signals were applied at 840 MHz and 850 MHz. The PSS analysis period was set to 100 ns. A Fourier analysis was performed and 12 harmonics were requested. The nonperiodicity reported by the Fourier analysis was only 61 nV, indicating that if any transients existed, they were very small. The results are shown in <a href="chap3.html#27899">Table&#160;3-1</a>.</p>
+
+<h4>Table 3-1
+<a id="pgfId-1041546"></a><a id="27899"></a>Output Spectrum as Computed by PSS Analysis</h4>
+<p>
+<a id="pgfId-1041547"></a></p>
+<table class="webflareTable" id="#id1041548">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1041626">
+<a id="pgfId-1041626"></a>Freq</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1041628">
+<a id="pgfId-1041628"></a> Absolute Level</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1041630">
+<a id="pgfId-1041630"></a> Relative Level</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041632"></a>10 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041634"></a> 237.146 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041636"></a> &#8211;52.70 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041638"></a>20 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041640"></a> 51.9117 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041642"></a> &#8211;65.88 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041644"></a>30 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041646"></a> 37.7329 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041648"></a> &#8211;68.65 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041650"></a>40 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041652"></a> 53.1112 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041654"></a> &#8211;65.69 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041656"></a>50 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041658"></a> 223.043 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041660"></a> &#8211;53.22 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041662"></a>60 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041664"></a> 102.192 mV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041666"></a>   0 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041668"></a>70 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041670"></a> 94.0778 mV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041672"></a> &#8211;0.72 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041674"></a>80 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041676"></a> 158.248 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041678"></a> &#8211;56.20 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041680"></a>90 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041682"></a> 23.4351 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041684"></a> &#8211;72.79 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041686"></a>100 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041688"></a> 27.342 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041690"></a> &#8211;71.45 dB</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041692"></a>110 MHz</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041694"></a> 7.80743 μV</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041696"></a> &#8211;82.34 dB</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1022219"></a>The third-order intercept point is computed using simple geometric reasoning [kundert95].</p>
+
+<p>
+<a id="pgfId-1027146"></a></p>
+<table class="webflareTable" id="#id1027147">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p><strong>(3-1)
+<a id="pgfId-1027149"></a><a id="15796"></a></strong></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027151"></a><img width="142" height="63" src="images/chap3-12.gif" /></p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1020854"></a>In Equation <a href="chap3.html#15796">3-1</a>, </p>
+<ul><li>
+<a id="pgfId-1027137"></a><em>V</em><sub>1</sub> is the magnitude of the first fundamental signal at 60 MHz</li><li>
+<a id="pgfId-1027140"></a><em>V</em><sub>3</sub> is the magnitude of the first <em>IM</em><sub>3</sub> term at 50 MHz</li></ul>
+
+<p>
+<a id="pgfId-1027143"></a>Both voltages are measured in dBV.</p>
+<p>
+<a id="pgfId-1022267"></a>From Table <a href="chap3.html#27899">3-1</a>, <em>V</em><sub>1</sub> = &#8211; 19.81 dBV and <em>V</em><sub>3</sub> = &#8211;73.03 dBV, which indicates that the intercept point is 6.8 dBV. To confirm this number, the input amplitude was stepped over a range of values, and the amplitude of the fundamental (at 60 MHz) and the third-order intermodulation term (at 50 MHz) were plotted in Figure <a href="chap3.html#36506">3-6</a>. The curves were extrapolated to compute</p>
+<p>
+<a id="pgfId-1041470"></a><em>IP</em><sub>3 </sub>= 7.1 dB</p>
+<p>
+<a id="pgfId-1022260"></a>In Figure <a href="chap3.html#36506">3-6</a>, the third-order intercept point of the receiver was computed by extrapolating actual measurements at small-signal levels. The measured result is either 6 or 7 dBV depending on whether the upper or lower sidebands are used. The <em>IM</em><sub>3</sub> curves bend up at low levels due to small levels of numerical error generated by the simulator. This problem could be reduced at the expense of longer simulations and increased memory requirements by tightening simulator tolerances.</p>
+
+<p><strong>Figure 3-6
+<a id="pgfId-1022268"></a><a id="36506"></a>Third Order Intercept Point of the Receiver</strong></p>
+<p>
+<a id="pgfId-1022270"></a></p>
+<div class="webflare-div-image">
+<img src="images/InterceptPoint.gif" /></div>
+
+<p>
+<a id="pgfId-1016557"></a>Spectre RF simulation required 15 minutes to complete the analysis. It used roughly 5,000 timesteps. At 125 b per equation per timestep, PSS would require over 600 MB of swap space to run. The computer used had only 1 GB of free disk space. The <code>swapfile</code> parameter of the PSS analysis was used to direct the simulator to use a conventional file rather than virtual memory to hold the periodically varying linear representation of the circuit. It used 430 MB for the swapfile and 40 MB of virtual memory.</p>
+<p>
+<a id="pgfId-1023724"></a>An important thing to keep in mind, especially when reading <a href="chap3.html#52427">&#8220;PSS harmDisto and PAC interModAC for Intermodulation Distortion&#8221;</a>, is that with the approach used in this section, both the simulation time and memory increase in inverse proportion to the difference in frequencies of the two test tones. In this case, the difference was large, and so the problem was tractable. However, if the frequency difference dropped to 1 MHz or below, this approach would have been impractical.</p>
+
+<h4>
+<a id="pgfId-1016559"></a><a id="52427"></a>PSS harmDisto and PAC interModAC for Intermodulation Distortion</h4>
+
+<p>
+<a id="pgfId-1016560"></a>An alterative approach to computing the intermodulation distortion of the receiver is to apply the LO and only one of the two input test tones during the PSS analysis. Apply the second input tone as a small-signal during a PAC analysis. The benefit to this approach is that the simulation interval used during PSS analysis can be much shorter. In this circuit, if only the 840 MHz RF input and the 780 MHz LO are assumed to be large, then the simulation interval is shortened from 100 ns on the previous analysis to 16.67 ns on this one. That is a factor of 6 improvement. Instead of 15 minutes, the analysis takes 2.5 minutes and 93 MB to compute 787 time points. However, so far only enough information is available to compute the receiver&#8217;s harmonic distortion, which is useful in this case because this receiver is broadband. In many cases the receiver is narrow band and so the ability to efficiently compute the intermodulation distortion is very important.</p>
+<p>
+<a id="pgfId-1016561"></a>As a second step, apply a small 850 MHz signal and run PAC analysis. Because only one frequency point is needed from the PAC analysis, it is very efficient, requiring only 47 seconds to compute the perturbation to the PSS solution due to the small 850 MHz RF test signal.</p>
+<p>
+<a id="pgfId-1016562"></a>IP3 is computed using V<sub>L1</sub>, V<sub>S1</sub>, and V<sub>S3</sub>, where V<sub>L1</sub> = &#8211;19.81 dBV is the magnitude at the output of first fundamental-signal at 60 MHz (computed using <em>harmDisto</em>), V<sub>S1 </sub>= 11.46 dBV is the magnitude at the output of the second fundamental-signal at 70 MHz (computed as the -13th sideband from <em>interModAC</em>), and V<sub>S3</sub> = &#8211;42.98 dBV is the IM<sub>3</sub> term at the output at 50 MHz (computed as the -15th sideband from <em>interModAC</em>).</p>
+<p>
+<a id="pgfId-1022289"></a>As shown in Equation <a href="chap3.html#36912">3-2</a>, the third-order intercept point is computed using <a href="chap3.html#15796">Equation&#160;3-1</a>.</p>
+<p>
+<a id="pgfId-1027193"></a>In other words</p>
+
+<p>
+<a id="pgfId-1027156"></a></p>
+<table class="webflareTable" id="#id1027157">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p><strong>(3-2)
+<a id="pgfId-1027159"></a><a id="36912"></a></strong></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027161"></a><img width="281" height="58" src="images/chap3-14.gif" /></p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1016567"></a>The 0.3 dB deviation results primarily because the transfer function changes slightly between 840 MHz and 850 MHz, creating some uncertainty in the previous measurement. This uncertainty can be reduced in this measurement by reducing the frequency difference. It can be eliminated by reducing the frequency difference to zero. There is also a small difference between this result and those computed previously that is caused because there is only one large input tone rather than two. This is usually not significant when computing intercept points because the test tones are necessarily rather small. In addition, the various approaches to computing <em>IP3</em> suffer from small errors in magnitude of the harmonics computed by Spectre RF simulation. These errors can be traced to errors in the waveforms as computed by transient analysis. The errors are quite small relative to the other signals present in the circuit, such as the LO, and are within tolerance. The default tolerances are used. The errors can be reduced considerably by tightening the simulators normal tolerances. The <em>IP3</em> calculation of <a href="chap3.html#36912">Equation&#160;3-2</a> should be the least sensitive to these errors.</p>
+
+<h3>
+<a id="pgfId-1016568"></a>Characterizing a Switched-Capacitor Filter</h3>
+
+<p>
+<a id="pgfId-1016569"></a>Spectre RF simulation can simulate switched-capacitor filters at the transistor level. Spectre RF simulation naturally includes second-order effects such as finite bandwidth effects, nonlinear switch resistance effects, charge redistribution effects, slew-rate limiting effects, and back-gate bias effects. It also allows you to include parasitic resistors and capacitors back annotated from the layout in the simulation. Finally, because it simulates at the circuit level, Spectre RF simulation can accurately simulate switched-current filters. These circuits cannot be adequately simulated using traditional switched-capacitor filter simulators, because the imperfections that are second order effects in switched-capacitor circuits play a much more important role in switched-current filters. Most of these effects cannot be included when using traditional switched-capacitor filter simulators.</p>
+<p>
+<a id="pgfId-1016570"></a>The switched-capacitor filter being simulated is a 5-pole 2.2 kHz low-pass Elliptic filter. The circuit contains 71 MOSFETs and generates 58 equations. The filter was characterized using the sequence of analyses shown in the following netlist. Each analysis, along with its results, is described in the following sections. The analyses were run on an HP 735/125.</p>
+
+<p><strong>Example 3-2
+<a id="pgfId-1016571"></a>The Analyses Run on the Switched-Capacitor Filter</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016572"></a>// PSS analysis (sets periodic operating point)<br />clockAlone pss fund=CLOCK_FREQ saveinit=yes readic=&quot;%C:r.ic&quot;<br />        writefinal=&quot;%C:r.ic&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016573"></a>// Measure transfer functions<br />TFin pac stop=10kHz lin=200</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016574"></a>// Use PXF to get all transfer functions (including PSR)<br />unsmpldTFall (out gnd) pxf stop=10kHz lin=200 maxsideband=5<br />smpldTFall (sout gnd) pxf stop=10kHz lin=200 maxsideband=5</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016575"></a>// Measure noise<br />unsmpldNoise (out gnd) pnoise start=100 stop=25kHz<br />        maxsideband=25<br />smpldNoise (sout gnd) pnoise start=100 stop=25kHz<br />        maxsideband=25</pre>
+<h4>
+<a id="pgfId-1016576"></a>PSS Analysis clockAlone</h4>
+
+<p>
+<a id="pgfId-1016577"></a>This analysis computes the steady-state response of the circuit with only the clock applied. The results of this analysis are used to measure the offset voltage at the output of the filter that results from the offset voltage of the op-amps and charge injection from the switches into the integrators. This analysis is also a prerequisite to the periodic small-signal analyses that follow because it sets the periodic operating point.</p>
+<p>
+<a id="pgfId-1016578"></a>The PSS analysis, like a conventional transient analysis, starts off from an initial condition. If you do not specify an initial condition, then Spectre RF simulation uses a DC analysis to determine the initial condition. During a DC analysis, the clocks are not operating, so the integrators have no feedback, keeping their outputs stuck at the rails. The initial condition computed during the DC analysis causes the filter to react wildly in transient analysis as shown in Figure <a href="chap3.html#38115">3-7</a>, bouncing off the rails several times before it settles. This results in convergence difficulties during PSS analysis that you can resolve several ways.</p>
+<p>
+<a id="pgfId-1018225"></a>One approach that works in this case is to simply specify zero initial conditions for all capacitors in the circuit. This avoids a bad starting point. Another approach that is widely applicable when confronting convergence problems in PSS analysis is to use the <code>tstab</code> parameter to delay the start of the PSS shooting loop. In this example, <code>tstab</code> = 1.5 ms, which implies that transient analysis is performed to at least <em>t</em> = 1.5 ms before the PSS analysis attempts to compute the steady-state solution. Waiting until <em>t</em> = 1.5 ms allows the simulator to get beyond the difficult time when the filter is bouncing off the rails, which results in PSS analysis converging easily.</p>
+<p>
+<a id="pgfId-1016579"></a>As shown in Figure <a href="chap3.html#38115">3-7</a>, the transient behavior of an internal node in the filter shows clipping that results from using the DC operation point as the initial condition. The clipping causes convergence problems for PSS analysis. Convergence is easily achieved either by setting <code>tstab</code> = 1.5 ms so that the PSS analysis gets beyond the clipping, or setting the initial conditions on the capacitors to zero.</p>
+
+<p><strong>Figure 3-7
+<a id="pgfId-1022305"></a><a id="38115"></a>Transient Behavior of an Internal Node</strong></p>
+<p>
+<a id="pgfId-1022304"></a></p>
+<div class="webflare-div-image">
+<img src="images/TransientBehavior.gif" /></div>
+
+<p>
+<a id="pgfId-1016638"></a>After the steady-state response has been computed, recomputing it is accelerated by saving the final point computed by the PSS analysis and using it as an initial condition for subsequent PSS analyses. (Remember that because the steady-state response is periodic, the final point is the same as the initial point.)</p>
+<p>
+<a id="pgfId-1016639"></a>In order to further improve the efficiency of the PSS analysis, the phasing of the clock signals relative to the simulation interval is carefully chosen. It is best to have the simulation interval begin and end at points where the signals are not changing abruptly. For example, the phasing shown in the top half of Figure <a href="chap3.html#36233">3-8</a> results in convergence in fewer iterations and less time than the phasing shown in the bottom half of the figure. In the top half of the figure, the signal is settled and unchanging immediately prior to the end of the analysis. Contrast this with the situation shown in the lower half of the figure, in which the waveform is changing abruptly at the end point.</p>
+
+<p><strong>Figure 3-8
+<a id="pgfId-1022314"></a><a id="36233"></a>Choosing Begin and End Points for PSS Analysis</strong></p>
+<p>
+<a id="pgfId-1022315"></a></p>
+<div class="webflare-div-image">
+<img src="images/PSSBeginEnd.gif" /></div>
+<h4>
+<a id="pgfId-1041487"></a>PAC Analysis TFin</h4>
+
+<p>
+<a id="pgfId-1016737"></a>The PAC analysis applies a small-signal at the input and computes the response at two outputs. The first output is the normal output of the filter. The signal at this output is continuous in time and includes various imperfections such as glitches and regions of slew-rate limiting and settling. It also contains output from both phases of filter. This output is interesting if the filter is followed with a continuous-time filter. The second output is the normal output after being passed through a sample-and-hold. This models the situation where the filter would be followed by an analog-to-digital converter (ADC) for further processing. In this case, most of the imperfections on the normal output are ignored by the sampling nature of the ADC. Taking into account the sampling nature of the ADC is important when trying to measure the transfer function, the noise, or the distortion of any clocked analog circuit such as a switched-capacitor filter.</p>
+<p>
+<a id="pgfId-1016738"></a>With this circuit, only the magnitude and phase of the response at the fundamental frequency are interesting. The small input signal is considered to have unit magnitude and so the transfer functions are computed directly. The transfer functions are shown in <a href="chap3.html#38799">Figure&#160;3-9</a>. Notice that the second null is missing from the transfer function of the normal (continuous-time) output. This is a consequence of blending the response from both phases of the filter.</p>
+
+<p><strong>Figure 3-9
+<a id="pgfId-1022342"></a><a id="38799"></a>Transfer Functions from the Input Voltage to the Outputs</strong></p>
+<p>
+<a id="pgfId-1022343"></a></p>
+<div class="webflare-div-image">
+<img src="images/TransferFunct3.gif" /></div>
+
+<p>
+<a id="pgfId-1022378"></a>There are two possible outputs, each of which is used in a different application. The first is the normal output of the filter and the second is the normal output after being passed through a sample-and-hold.</p>
+<p>
+<a id="pgfId-1022383"></a>The sample-and-hold was implemented in the Verilog-A language and is shown in the following netlist. This sample-and-hold is implemented in such a way that there is no hidden state that would prevent you from using PSS analysis. Both the delay and the aperture must be smaller than the period.</p>
+
+<p><strong>Example 3-3
+<a id="pgfId-1016816"></a>Netlist Showing Sample-and-Hold Implemented Without Hidden State</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1022391"></a>module sh (Pout, Nout, Pin, Nin) (period, delay, aperture,<br />    tc)<br />node [V,I] Pin, Nin, Pout, Nout;<br />parameter real period=1 from (0:inf);<br />parameter real delay=0 from [0:inf);<br />parameter real aperture=1/100 from (0:inf);<br />parameter real tc=1/500 from (0:inf);<br />integer n; real start, stop;<br />node[V,I] hold;<br />    analog {</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016817"></a>// Determine time aperture begins</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016818"></a>        n = ($time() - delay + aperture) / period + 0.5;<br />        start = n*period + delay - aperture;<br />        $break_point( start );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016819"></a>// Determine time aperture ends</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016820"></a>        n = ($time() - delay) / period + 0.5;<br />        stop = n*period + delay;<br />        stop = n*period + delay;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016821"></a>// Implement switch with effectively 1 Ohm series resistance</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016822"></a>        if (($time() &gt; start) &amp;&amp; ($time() &lt;= stop))<br />            I(hold) &lt;- V(hold) - V(Pin,Nin);<br />        else<br />            I(hold) &lt;- 1.0e-12 * (V(hold) - V(Pin,Nin));</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016823"></a>// Implement capacitor with an effective capacitance of tc</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016824"></a>        I(hold) &lt;- tc * dot(V(hold));</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016825"></a>// Buffer output</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016826"></a>        V(Pout,Nout) &lt;- V(hold);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016827"></a>// Control time step tightly during aperture</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016828"></a>        if (($time() &gt;= start) &amp;&amp; ($time() &lt;= stop))<br />            $bound_step( tc );<br />        else<br />            $bound_step( period / 5 );<br />    }<br />}</pre>
+<h4>
+<a id="pgfId-1016829"></a>PXF Analyses unsmpldTFall and smpldTFall</h4>
+
+<p>
+<a id="pgfId-1016830"></a>These analyses directly compute the transfer function from all sources to either the unsampled or sampled output. They differ from the PAC analysis <em>TFin</em> in that they compute transfer functions from all sources to a single output rather than the transfer functions to all outputs from a single input. They are also about 50% slower than the PAC analysis. They are useful when measuring the ability of the filter to reject unwanted signals on the input, the clock, and on the supplies.</p>
+
+<h4>
+<a id="pgfId-1016831"></a>PNoise Analyses unsmpldNoise and smpldNoise</h4>
+
+<p>
+<a id="pgfId-1016832"></a>These analyses compute the total spot noise as a function of frequency at the sampled and unsampled outputs. The results are shown in Figure <a href="chap3.html#29892">3-10</a>. They include noise folding (noise being converted down from sidebands of the clock by the sampling nature of the switched-capacitor filter).</p>
+
+<p><strong>Figure 3-10
+<a id="pgfId-1022402"></a><a id="29892"></a>Noise Response of Switched Capacitor Including Noise Folding</strong></p>
+<p>
+<a id="pgfId-1022432"></a></p>
+<div class="webflare-div-image">
+<img src="images/NoiseResponse.gif" /></div>
+<h2>
+<a id="pgfId-1022476"></a>References</h2>
+<p>
+<a id="pgfId-1027225"></a></p>
+<table class="webflareTable" id="#id1027226">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<h4><em>
+<a id="pgfId-1027262"></a>Clark-Hess 71 </em></h4>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027230"></a>Kenneth K. Clarke, Donald T. Hess. <em>Communication Circuits: Analysis and Design</em>. Addison-Wesley Publishing Company, 1971.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027232"></a>Konrath 96</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027234"></a>W. Konrath, H Brauns. &#8216;&#8216;First fully CAE of a K-band sampling phase detector using periodic steady-state analysis and sophisticated SRD modeling.&#8221; <em>Proceedings of the 1996 European Microwave Conference</em>, September 1996.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027236"></a>Kundert 90</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027238"></a>Kenneth S. Kundert, Jacob K. White, Alberto Sangiovanni-Vincentelli. <em>Steady-State Methods for Simulating Analog And Microwave Circuits.</em> Kluwer Academic Publishers, Boston 1990.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027240"></a>Kundert 94</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027242"></a>Kenneth S. Kundert. &#8216;&#8216;Accurate Fourier Analysis for Circuit Simulators.&#8217;&#8217; <em>Proceedings of the IEEE 1994 Custom Integrated Circuits Conference</em>, May 1994.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027244"></a>Kundert 95</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027246"></a>Kenneth S. Kundert. <em>The Designer&#8217;s Guide to SPICE and Spectre. </em>Kluwer Academic Publishers, Boston 1995.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027248"></a>Razavi 96</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027250"></a>Behzad Razavi. &#8220;A study of phase noise in CMOS oscillators.&#8221; <em>IEEE Journal of Solid-State Circuits</em>, vol. 31, no. 3, March 1996.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027252"></a>Telichevesky 95</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027254"></a>Ricardo Telichevesky, Kenneth S. Kundert, Jacob K. White. &#8216;&#8216;Efficient Steady-State Analysis based on Matrix-Free Krylov-Subspace Methods.&#8217;&#8217; <em>Proceedings of the 32rd Design Automation Conference</em>, June 1995.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027256"></a>Telichevesky 96a </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027258"></a>Ricardo Telichevesky, Kenneth S. Kundert, Jacob K. White. &#8216;&#8216;Receiver Characterization using Periodic Small-Signal Analysis.&#8217;&#8217; <em>
+P
+<em>roceedings of the IEEE 1996 Custom Integrated Circuits Conference</em>, May 1996.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027371"></a>Telichevesky 96b</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1027373"></a>Ricardo Telichevesky, Kenneth S. Kundert, Jacob K. White. &#8216;&#8216;Efficient AC and Noise Analysis of Two-Tone RF Circuits.&#8217;&#8217; <em>Proceedings of the 33rd Design Automation Conference</em>, June 1996.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1022504"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap2.html" id="prev" title="The Spectre RF Analyses">The Spectre RF Analyses</a></em></b><b><em><a href="chap4.html" id="nex" title="Semi-Autonomous Simulation and Small Signal Analysis">Semi-Autonomous Simulation and ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
