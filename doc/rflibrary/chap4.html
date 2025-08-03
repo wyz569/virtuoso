@@ -1,0 +1,975 @@
+
+<html><head><title>PLL library</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="deeptig" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693477301" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the objects included in the Spectre RF rlLib and measureLib libraries." />
+<meta name="DocTitle" content="Spectre Circuit Simulator RF Analysis Library Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="PLL library" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="rflibrary" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693477301" />
+<meta name="NextFile" content="" />
+<meta name="Group" content="SpectreRF" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator RF Analysis Library Reference -- PLL library" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="rflibrary231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="rflibraryTOC.html">Contents</a></li><li><a class="prev" href="chap3.html" title="rfTlineLib Library">rfTlineLib Library</a></li><li style="float: right;"><a class="viewPrint" href="rflibrary.pdf">View/Print PDF</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator RF Analysis Library Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+
+<h1>3
+<a id="pgfId-1008781"></a></h1>
+
+<h1>
+<a id="pgfId-1011663"></a><hr />
+PLL library<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014267"></a>The models in the phase lock loop (PLL) library support top-down design of PLLs. Figure <a href="chap4.html#90261">3-1</a> shows the three steps of the design flow. This appendix describes the first step in detail; all three steps are described briefly.</p>
+
+
+<p><strong>Figure 3-1
+<a id="pgfId-1018005"></a><a id="90261"></a>PLL Top-Down<a id="Figure 1"></a> Design Flow</strong></p>
+
+<p>
+<a id="pgfId-1014359"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig1.gif" /></div>
+
+<ol><li>
+<a id="pgfId-1015663"></a>The first step in <a href="chap4.html#90261">Figure&#160;3-1</a> is to develop an executable specification. The executable specification is an arrangement of fast behavioral models that permits fast architectural studies to separate specification and implementation issues. The executable specification contains baseband models [1,2,3,4,5,6,7,8,9]. (Reference [1] uses the terms &#8220;baseband&#8221; and &#8220;bandpass&#8221; explicitly.)<br />
+<a id="pgfId-1015719"></a>These baseband models suppress clocks and RF/IF carriers. Some literature refers to PLL baseband models as &#8220;relative phase&#8221; or &#8220;phase-domain&#8221; models [2]. This appendix uses the latter term. Phase-domain PLL models are exceptionally fast, capture the important non-linear mechanisms, and can be linearized directly for AC analysis.</li><li>
+<a id="pgfId-1014360"></a>The second step in <a href="chap4.html#90261">Figure&#160;3-1</a> is to translate the executable specification into a system testbench. The system testbench, unlike the executable specification, is composed of passband models [1]. This Appendix refers to passband models as voltage-domain models because they simulate voltages you can observe in a laboratory.</li><li>
+<a id="pgfId-1018006"></a>Comparing voltage- and phase-domain voltage-controlled oscillator (VCO) models highlights the difference between the two models. The output of a voltage-domain VCO model is a clock voltage, a periodic signal. The output of a phase-domain VCO model is a voltage numerically equal to phase. If you unwrap the VCO phase, in steady state, it ramps up indefinitely. Unwrapped phase is not periodic. Voltage-domain models describe non-linear effects related to the shapes of the actual RF waveforms. Such waveform effects include spurs and harmonic locking. Harmonic locking occurs when the PLL locks on to a harmonic of the reference.</li><li>
+<a id="pgfId-1018007"></a>Phase-domain models do not simulate waveform effects. The system testbench is more accurate than the executable specification, but it is still behavioral. Equipped only with behavioral voltage-domain models, the testbench does not simulate device-level effects associated with specific implementations. Examples of such implementation effects are interstage loading, improper bias, and device parasitics.</li><li>
+<a id="pgfId-1014366"></a>The last step in <a href="chap4.html#90261">Figure&#160;3-1</a> is to gradually replace the behavioral models in the system testbench with device-level models, one or two blocks at a time. Device-level models check for the previously mentioned implementation problems. The entire PLL is simulated at the device-level only as a final verification step because such simulations are very lengthy.</li></ol>
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1014368"></a>Models in the PLL library</h2>
+
+<p>
+<a id="pgfId-1014369"></a>The PLL library includes the following phase-domain models:</p>
+<ul><li>
+<a id="pgfId-1014370"></a>Analog multiplier phase detector</li><li>
+<a id="pgfId-1014374"></a>XOR phase detector with bipolar output<br />
+<a id="pgfId-1015706"></a>The XOR phase detector is not explicitly discussed here because it is very similar to the analog multiplier phase detector. The only difference is that the duty cycle-phase error transfer curve is triangular instead of sinusoidal.</li><li>
+<a id="pgfId-1014375"></a>Three-state digital phase frequency detector (PFD)</li><li>
+<a id="pgfId-1014376"></a>Charge pump (current source version)</li><li>
+<a id="pgfId-1014377"></a>VCO tuning curve (analytic and tabular versions)</li><li>
+<a id="pgfId-1014378"></a>Frequency divider</li><li>
+<a id="pgfId-1014379"></a>Lock indicator</li></ul>
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1014382"></a>Introduction to the PLL Library Documentation</h2>
+
+<p>
+<a id="pgfId-1014383"></a>The primary system-level specifications captured by this first set of phase-domain models are acquisition time, lock and capture ranges [12], and phase margin. The PFD model also simulates backlash[8]. Backlash is sometimes called &#8220;deadband&#8221; effect. It is a limit cycle caused by the phase-frequency detector&#8217;s inability to linearly reduce its output pulse width to zero as phase error goes to zero.</p>
+<p>
+<a id="pgfId-1014387"></a>The remainder of this appendix is divided into two main sections.</p>
+<p>
+<a id="pgfId-1018008"></a>The first section introduces phase-domain modeling, describes a feature included to prevent DC convergence problems, and then shows you some examples of using phase-domain models.</p>
+<p>
+<a id="pgfId-1018009"></a>The second section explains how to assemble a more complex PLL and discusses an example. The examples are introductory and are not a comprehensive discussion of all applications of phase-domain models.</p>
+
+
+<h3>
+<a id="pgfId-1018010"></a>Phase-Domain Model of a Simple PLL</h3>
+
+<h4>
+<a id="pgfId-1014389"></a>Description</h4>
+<p>
+<a id="pgfId-1015822"></a>This PLL example, which is built around the simplest phase detector in the library, introduces the fundamentals of phase-domain modeling. <a href="chap4.html#49141">Figure&#160;3-2</a> shows a voltage-domain model of the example and also some selected waveforms. The phase detector in this case is an ideal analog multiplier.</p>
+
+
+<p><strong>Figure 3-2
+<a id="pgfId-1015834"></a><a id="49141"></a>Volta<a id="Figure 2"></a>ge Domain Model</strong></p>
+
+<p>
+<a id="pgfId-1015817"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig2.gif" /></div>
+<p>
+<a id="pgfId-1015854"></a><a href="chap4.html#44619">Figure&#160;3-3</a> shows the equivalent phase-domain model. The phase-domain model is based on the following trigonometric identity:</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015855"></a>sin(θ1)*cos(θ2) = (1/2)*[sin(θ1+θ2)+sin(θ1−θ2)]</pre>
+<p>
+<a id="pgfId-1015856"></a>which, after filtering is approximately</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015857"></a>(1/2)*sin(θ1−θ2)</pre>
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015858"></a><code>q1+q2=(w1+w2)*t </code>and <code>w</code>1+w2 usually lie far beyond the filter&#8217;s corner frequency.</div>
+
+
+
+<p><strong>Figure 3-3
+<a id="pgfId-1015841"></a><a id="44619"></a>Pha<a id="Figure 3"></a>se Domain Model</strong></p>
+
+<p>
+<a id="pgfId-1014477"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig3.gif" /></div>
+<p>
+<a id="pgfId-1014478"></a>The phase and frequency waveforms from the phase-domain model match their voltage-domain counterparts, but the simulation runs faster because the oscillatory waveform is not explicitly simulated.</p>
+<p>
+<a id="pgfId-1018011"></a>Combining the integrators, as shown in <a href="chap4.html#46361">Figure&#160;3-4</a>, eliminates the integrator outside the feedback loop which might cause a problem if you forget to specify an initial condition. Combining the integrators is also necessary if you build phase-domain models of phase-frequency detectors because, in this case, the non-linearity has memory (hysteresis).</p>
+
+
+
+<p><strong>Figure 3-4
+<a id="pgfId-1014481"></a><a id="46361"></a>A More Practical Phase Domain M<a id="Figure 4"></a>odel</strong></p>
+
+<p>
+<a id="pgfId-1014517"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig4.gif" /></div>
+<p>
+<a id="pgfId-1014520"></a>The models in both Figure <h-hot><a href="chap4.html#44619">3-3</a></h-hot> and Figure <h-hot><a href="chap4.html#46361">3-4</a></h-hot> can fail to achieve DC convergence because the phase detector model either has no DC operating point or because it has an infinite number of operating points.</p>
+<p>
+<a id="pgfId-1018012"></a>The sinusoidal function in <a href="chap4.html#76361">Figure&#160;3-5</a> is the phase detector transfer curve. The phase detector is the only non-linear element in this PLL model. For reasons associated with phase-frequency detectors, the phase detector output is called the <em>duty cycle</em>.</p>
+
+
+
+<p><strong>Figure 3-5
+<a id="pgfId-1018013"></a><a id="76361"></a>Phase Detector Transfe<a id="Figure 5"></a>r Curves</strong></p>
+
+<p>
+<a id="pgfId-1014563"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig5.gif" /></div>
+<p>
+<a id="pgfId-1014564"></a>If the required duty cycle lies outside [-1,1], the loop is not locked in steady state. If the required duty cycle lies within [-1,1], there are an infinite number of possible phase errors. In either case, a Spectre<sup>&#174;</sup> circuit simulator RF analysis (Spectre RF) simulation might not converge. The ability of Verilog-A<sup>&#169;</sup> to perform different tasks for different analyses provides an elegant solution to the DC convergence problems and a quick way to map out lock range. Lock range is the range of input frequencies for which the PLL can maintain lock. (Some literature refers to lock range as hold-in range [8].)</p>
+<p>
+<a id="pgfId-1015925"></a>The phase detector model uses the monotonic transfer curve for DC analysis and the true periodic transfer curve for transient analysis. The two transfer curves coincide when the phase error lies in the interval [−π/2, π/2]. If the required duty cycle lies within [-1,1], the monotonic transfer curve forces the steady-state phase error to the interval [-π/2, π/2], where the two curves coincide. The equilibrium point is <em>open-loop-stable</em>, meaning that at DC the loop gain is a positive real number. This is true because the slope of the transfer curve is positive over [-π/2, π/2]. The Nyquist stability criterion is therefore easier to apply. The DC analysis is general enough because only the phase error modulo 2π is of interest, and you usually care only about the open-loop-stable operating points. When the loop is not locked, the DC analysis computes a duty cycle with a magnitude greater than one. A duty cycle greater than one is clearly incorrect, but it is much easier to interpret than a convergence error. DC duty cycle is a lock indicator which can be used in a parametric DC analysis to sweep out lock range.</p>
+
+
+
+
+<h3>
+<a id="pgfId-1018014"></a>Example 1: Dynamic Test for Capture Range and Lock Range</h3>
+
+<p>
+<a id="pgfId-1017200"></a>The circuit used to dynamically test for capture range and lock is range is <em>example_analog_PD</em> in the <em>pllLib</em> library. <em>Capture range</em> is the range of input frequencies that the PLL can acquire from an unlocked state. Because acquisition of frequencies near the edge of the capture range involves a pull-in mechanism [1-12], measuring the capture range requires a transient analysis. You can measure capture and lock ranges by slowly sweeping the input frequency and observing the frequency at which the duty cycle begins and ends a long ramp [12]. You must skip the DC analysis to observe the capture limits. <a href="chap4.html#69945">Figure&#160;3-6</a> plots the VCO control voltage against the input frequency voltage. The input frequency first ramps up and then down. A buffered auxiliary circuit responds to the duty cycle and adds 2.5 volts when the input frequency changes direction. This technique makes the plot easier to read because the forward and reverse sweeps occupy different parts of the vertical scale. In this example, lock range is from 1.36Khz to 3.4Khz, and the capture range is from 1.8Khz to 3Khz.</p>
+
+
+<p><strong>Figure 3-6
+<a id="pgfId-1014571"></a><a id="69945"></a>Lock Range and Captu<a id="Figure 6"></a>re Range</strong></p>
+
+<p>
+<a id="pgfId-1014601"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig6.gif" /></div>
+<p>
+<a id="pgfId-1015953"></a><a href="chap4.html#94319">Figure&#160;3-7</a> compares VCO control voltages in the forward sweep when computed with voltage- or phase-domain models. The models produce similar results. In this example (2.5Khz center frequency), the phase-domain model is only about 20 times faster than the voltage-domain model.</p>
+
+
+
+<p><strong>Figure 3-7
+<a id="pgfId-1015946"></a><a id="94319"></a>VCO Control V<a id="Figure 7"></a>oltages Computed with Voltage- and Phase-Domain Models</strong></p>
+
+<p>
+<a id="pgfId-1014615"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="488" src="images/chap4-8.gif" /></div>
+
+
+
+
+<h3>
+<a id="pgfId-1014616"></a>Example 2: Loop Gain Measurement</h3>
+
+<p>
+<a id="pgfId-1017230"></a>Spectre RF cannot perform a useful AC analysis on a voltage-domain model because by design, a voltage-domain PLL model has no DC operating point. However, because Spectre RF linearizes phase-domain models about phase error, and phase error is a meaningful DC quantity, subsequent AC analyses are valid.</p>
+<p>
+<a id="pgfId-1018015"></a>This example describes how to compute loop gain with a phase-domain model. <a href="chap4.html#58709">Figure&#160;3-8</a> shows an analog design environment version of the model shown in <a href="chap4.html#46361">Figure&#160;3-4</a>. The circuit used to measure loop gain is <em>example_loop_gain</em> in the <em>pllLib</em> library.</p>
+
+
+<p><strong>Figure 3-8
+<a id="pgfId-1018016"></a><a id="58709"></a>Set Up for Loop Gain M<a id="Figure 8"></a>easurement</strong></p>
+
+<p>
+<a id="pgfId-1014626"></a></p>
+<div class="webflare-div-image">
+<img width="672" height="515" src="images/chap4-9.gif" /></div>
+
+<p>
+<a id="pgfId-1016531"></a>The phase-domain model in Figure <a href="chap4.html#58709">3-8</a>, <em>example_loop_gain</em>, includes a voltage source inserted after the VCO. The DC voltage is zero volts, and the AC magnitude is 1 volt. The new voltage source inserts a test signal without changing the DC operating point. You must insert this source at a point where the impedance looking back is much smaller than the impedance looking forward. The accuracy of the resulting loop gain computation depends on how well this condition is met.</p>
+<p>
+<a id="pgfId-1018017"></a>Use the following procedure to compute the loop gain.</p>
+<p>
+<a id="pgfId-1018018"></a>Open the example_loop_gain Schematic</p>
+<ol><li>
+<a id="pgfId-1016547"></a>In the CIW, choose <em>File &#8211; Open</em>.<br />
+<a id="pgfId-1016548"></a>The Open File form appears.</li><li>
+<a id="pgfId-1026035"></a>In the Open File form, choose<em> my_pllLib</em> in the <em>Library Name</em> cyclic field. <br />
+<a id="pgfId-1027548"></a>This is an editable copy of the pllLib library. You can create an editable copy of the <em>pllLib</em> in the same way as is described in the <em>Spectre Circuit Simulator and Accelerated Parallel Simulator RF Analysis in ADE Explorer Workshop</em>.</li><li>
+<a id="pgfId-1025987"></a>Choose <em>example_loop_gain</em> in the <em>Cell Names</em> list box.<br />
+<a id="pgfId-1016554"></a>The completed Open File form appears like the one below.<br />
+<a id="pgfId-1016558"></a><div class="webflare-div-image">
+<img src="images/GOpenFile.gif" /></div></li><li>
+<a id="pgfId-1016559"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1016584"></a>The Schematic window for the <em>example_loop_gain </em>circuit appears.<br />
+<a id="pgfId-1016588"></a><div class="webflare-div-image">
+<img src="images/Gfig8.gif" /></div></li><li>
+<a id="pgfId-1016589"></a>In the Schematic window, choose <em>Tools&#8211; Analog Environment</em>.<br />
+<a id="pgfId-1016603"></a>The ADE window opens. This window is also called the Cadence<sup>&#174;</sup> Analog Circuit Design Environment.<br />
+<a id="pgfId-1018019"></a><div class="webflare-div-image">
+<img src="images/GSimWindowEmpty.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1016566"></a>Setting Up the Design Variables</h4>
+
+<ol><li>
+<a id="pgfId-1016621"></a>In the ADE window, choose<em> Variables &#8211; Copy From Cellview</em> to copy variables from the schematic to the ADE window. <em>Mhz_in</em> displays in the <em>Design Variables</em> area of the ADE window.<br />
+<a id="pgfId-1018020"></a><div class="webflare-div-image">
+<img src="images/GSimVariable1.gif" /></div></li><li>
+<a id="pgfId-1016567"></a>In the ADE window, choose<em> Variables &#8211; Edit</em>, to provide a value for the <em>Mhz_in</em> variable.</li><li>
+<a id="pgfId-1018021"></a>The Editing Design Variables form appears.<br />
+<a id="pgfId-1016638"></a><div class="webflare-div-image">
+<img src="images/GEditVar1.gif" /></div></li><li>
+<a id="pgfId-1016639"></a>In the <em>Value (Expr)</em> field, type <code>2.5m </code>for the value of <code>Mhz_in </code>and click <em>Change</em>.</li><li>
+<a id="pgfId-1018022"></a>In the Editing Design Variables form, click <em>OK</em>.</li><li>
+<a id="pgfId-1018023"></a>The new value for <em>Mhz_in</em> displays in the <em>Design Variables</em> area of the ADE window.<br />
+<a id="pgfId-1018024"></a><div class="webflare-div-image">
+<img src="images/GSimVariable2.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1016671"></a>Setting Up the AC and DC Simulations</h4>
+
+<p>
+<a id="pgfId-1016702"></a>Set up both AC and DC analyses. The zero-voltage <em>vdc</em> source must be the only source with a non-zero AC magnitude.</p>
+
+
+<p>
+<a id="pgfId-1018025"></a></p>
+<div class="webflare-div-image">
+<img src="images/GvdcSource.gif" /></div>
+
+<p>
+<a id="pgfId-1016915"></a>When you set up the DC analysis, save the DC data so you can annotate the schematic with DC node voltages.</p>
+<ol><li>
+<a id="pgfId-1016676"></a>In the ADE window, choose <em>Analysis - Disable</em> to disable any analyses you ran previously. (Check the ADE window to verify whether or not any analysis is enabled.)</li><li>
+<a id="pgfId-1016632"></a>In the ADE window, choose <em>Analysis - Choose</em> to display the Choosing Analyses form.</li><li>
+<a id="pgfId-1018026"></a>Click <em>dc</em> to set up the DC analysis.</li><li>
+<a id="pgfId-1018027"></a>In the DC Analysis area<ol><li>
+<a id="pgfId-1016695"></a>Highlight <em>Save DC Operating Point</em>.</li><li>
+<a id="pgfId-1016697"></a>Highlight <em>Enabled</em>.<br />
+<a id="pgfId-1018028"></a><div class="webflare-div-image">
+<img src="images/GChooseDC1.gif" /></div></li></ol></li><li>
+<a id="pgfId-1016722"></a>Click <em>ac</em> to set up the AC analysis.</li><li>
+<a id="pgfId-1018029"></a>In the AC Analysis area<ol><li>
+<a id="pgfId-1016724"></a>Highlight <em>Frequency</em> for <em>Sweep Variable.</em></li><li>
+<a id="pgfId-1018030"></a>Highlight <em>Start - Stop</em> for <em>Sweep Range</em>. Type <code>10</code> in the <em>Start</em> field and <code>20k</code> in the <em>Stop</em> field.</li><li>
+<a id="pgfId-1018031"></a>Select <em>Automatic</em> in the <em>Sweep Type</em> cyclic field.</li><li>
+<a id="pgfId-1018032"></a>Highlight <em>Enabled</em>.<br />
+<a id="pgfId-1018033"></a><div class="webflare-div-image">
+<img src="images/GChooseAC1.gif" /></div></li></ol></li><li>
+<a id="pgfId-1016711"></a>Click <em>OK</em> in the Choosing Analyses form.</li><li>
+<a id="pgfId-1018034"></a>Both analyses are displayed in the ADE window.<br />
+<a id="pgfId-1018035"></a><div class="webflare-div-image">
+<img src="images/GAnalysesSimWin1.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1016714"></a>Run the Analyses</h4>
+
+<ol><li>
+<a id="pgfId-1016778"></a>To run the analyses, choose <em>Simulation &#8211; Netlist and Run</em><em> </em>in the ADE window.<br />
+<a id="pgfId-1016779"></a>The output log file appears and displays information about the simulation as it runs.<br />
+<a id="pgfId-1018036"></a>Look in the CIW for a message that says the simulation completed successfully.</li></ol>
+
+
+
+
+
+<h4>
+<a id="pgfId-1016774"></a>Displaying the DC Voltages on the Schematic Nodes</h4>
+
+<ul><li>
+<a id="pgfId-1014631"></a>In the ADE window, choose <em>Results &#8211; Annotate &#8211; DC Node Voltages</em> to display the node voltages on the schematic. The DC operating point for the net called <em>duty_cycle</em> must remain between <code>-1</code> volt and <code>1</code> volt.<br />
+<a id="pgfId-1018037"></a><div class="webflare-div-image">
+<img src="images/GDuty_CycleNodeVoltage.gif" /></div>
+<a id="pgfId-1016923"></a>If the operating point falls outside the interval [-1, 1] volt, the loop is not locked and the AC analysis is invalid.</li></ul>
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1018038"></a>AC Response as Gain and Phase</h4>
+
+<ol><li>
+<a id="pgfId-1014632"></a>In the ADE window, choose <em>Results &#8211; Direct Plot &#8211; AC Gain &amp; Phase</em> and follow the prompts at the bottom of the Schematic window.</li><li>
+<a id="pgfId-1018039"></a><em>Select first point</em>&#8212;Select the net labeled <em>returned</em> in the schematic.</li><li>
+<a id="pgfId-1018040"></a><em>Select second point</em>&#8212;Select the net labeled <em>injected</em> in the schematic.</li><li>
+<a id="pgfId-1018041"></a>The waveform window displays two curves.</li><li>
+<a id="pgfId-1018042"></a>The top curve plots phase.</li><li>
+<a id="pgfId-1018043"></a>The bottom curve plots gain.<br />
+<a id="pgfId-1016819"></a><div class="webflare-div-image">
+<img src="images/GSchematic2_5results.gif" /></div></li><li>
+<a id="pgfId-1014633"></a>In the waveform window, choose <em>Tools &#8211; Calculator</em> to open the calculator.<br />
+<a id="pgfId-1017190"></a><div class="webflare-div-image">
+<img src="images/GCalc.gif" /></div></li><li>
+<a id="pgfId-1014634"></a>In the calculator, click the <em>wave</em> button (on the left).</li><li>
+<a id="pgfId-1018044"></a>Then, in the waveform window, select the phase curve (on the top).<br />
+<a id="pgfId-1018045"></a><div class="webflare-div-image">
+<img src="images/GCalcBuffer1a.gif" /></div></li><li>
+<a id="pgfId-1016947"></a>In the calculator, to perform the calculations algebraically, choose <em>Options &#8211; Set Algebraic</em>.</li><li>
+<a id="pgfId-1018046"></a>Subtract 180 from the phase waveform&#8212;In the calculator, click the subtraction symbol (<em>-</em>) followed by the numbers <em>180</em>.</li><li>
+<a id="pgfId-1018047"></a>The calculator buffer should look similar to the following<br />
+<a id="pgfId-1016967"></a><div class="webflare-div-image">
+<img src="images/GCalcBuffer1.gif" /></div></li><li>
+<a id="pgfId-1016966"></a>Click the <em>plot</em> button to plot the calculated waveform.<br />
+<a id="pgfId-1018048"></a><div class="webflare-div-image">
+<img src="images/GWaveEdited3Curves.gif" /></div></li><li>
+<a id="pgfId-1016982"></a>To remove the original phase curve from the waveform window, in the waveform window<ol><li>
+<a id="pgfId-1017019"></a>Choose <em>Curves &#8211; Edit</em> to display the Curves form.</li><li>
+<a id="pgfId-1017020"></a>In the Choose Curves list box, highlight the original phase curve.</li><li>
+<a id="pgfId-1017027"></a>Click <em>Off</em>.</li><li>
+<a id="pgfId-1018049"></a>The Curves form looks similar to the following.<br />
+<a id="pgfId-1017182"></a><div class="webflare-div-image">
+<img src="images/GEditCurvesPhaseOff1.gif" /></div></li></ol>
+<a id="pgfId-1017028"></a>The original phase waveform is no longer displayed in the waveform window.<br />
+<a id="pgfId-1018050"></a><div class="webflare-div-image">
+<img src="images/GWaveEdited1.gif" /></div></li><li>
+<a id="pgfId-1014635"></a>To create the Bode plot<ol><li>
+<a id="pgfId-1016978"></a>If necessary, in the waveform window, choose <em>Curves &#8211; Edit</em> to display the Curves form.</li><li>
+<a id="pgfId-1017052"></a>In the Curves form, select the shifted (by 180 deg) phase curve</li><li>
+<a id="pgfId-1017060"></a>In the Curves form <em>Assign to Y Axis</em> cyclic field, select <em>2</em>.</li><li>
+<a id="pgfId-1018051"></a>The Curves form looks similar to the following.<br />
+<a id="pgfId-1017068"></a><div class="webflare-div-image">
+<img src="images/GCurvesFormBode.gif" /></div></li></ol></li><li>
+<a id="pgfId-1017363"></a>Click <em>OK</em> in the Edit Curves form.</li><li>
+<a id="pgfId-1018052"></a>In the waveform window, choose <em>Axes &#8211; To Strip</em> to change the display as follows.<br />
+<a id="pgfId-1017085"></a>This produces a Bode plot (magnitude and phase) of the loop gain in the waveform window Shown in Figure <a href="chap4.html#60544">3-9</a>.<br /><strong class="webflare-fig-line-height">Figure 3-9
+<a id="pgfId-1018053"></a><a id="60544"></a>Bode Plots, Magnitude and Phase of Loop Gain</strong>
+<a id="pgfId-1016874"></a><div class="webflare-div-image">
+<img src="images/GWaveEditCurves3Strip.gif" /></div></li><li>
+<a id="pgfId-1014637"></a>To generate a Nichols chart (dB versus degrees) from which you can pick off phase and gain margins,<ol><li>
+<a id="pgfId-1017374"></a>In the waveform window, choose <em>Axes &#8211; X Axes</em></li><li>
+<a id="pgfId-1017377"></a>In the <em>Plot vs. cyclic</em> field select the phase curve you created that is 180 degrees out of phase.</li><li>
+<a id="pgfId-1018054"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1017309"></a><div class="webflare-div-image">
+<img src="images/GAxesXAxesNichols.gif" /></div></li></ol>
+<a id="pgfId-1017349"></a>You now have a Nichols chart like the one in Figure <a href="chap4.html#39850">3-10</a>. The phase margin is 30 degrees.<br /><strong class="webflare-fig-line-height">Figure 3-10
+<a id="pgfId-1018055"></a><a id="39850"></a>Nichols Chart of Loop Gain</strong>
+<a id="pgfId-1017395"></a><div class="webflare-div-image">
+<img width="656" height="400" src="images/chap4-31.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1014640"></a>To compute phase margin directly do the following:</p>
+<ol><li>
+<a id="pgfId-1014641"></a>In the calculator, click <em>vf</em>.</li><li>
+<a id="pgfId-1018056"></a>In the Schematic window, click first on the return node and then on the injected node.</li><li>
+<a id="pgfId-1014643"></a>In the calculator, click the <em>divide</em> button.</li><li>
+<a id="pgfId-1014644"></a>In the calculator Special Functions menu, choose <em>phase margin</em> followed by <em>print</em>.</li><li>
+<a id="pgfId-1018057"></a>Add 180 degrees to the expression in the calculator then choose <em>print</em> from the Special Functions menu.</li><li>
+<a id="pgfId-1018058"></a>The Results Display Window displays the phase margin.</li></ol>
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1017535"></a>Example 3: PM Input</h3>
+
+<p>
+<a id="pgfId-1017221"></a>The circuit used to test for PM input is <em>example_PM</em> in the <em>pllLib</em> library. The PM (phase modulation) input pin is useful if the PLL is used as a modulator or demodulator, but it also provides a convenient place to perturb the PLL to assess large signal stability. <a href="chap4.html#31142">Figure&#160;3-11</a> shows a test circuit for such a stability check.</p>
+
+
+<p><strong>Figure 3-11
+<a id="pgfId-1014668"></a><a id="31142"></a>Stability Check Using the PM Input</strong></p>
+
+<p>
+<a id="pgfId-1014673"></a></p>
+<div class="webflare-div-image">
+<img width="498" height="428" src="images/chap4-32.gif" /></div>
+<p>
+<a id="pgfId-1014674"></a>This PLL is very simple but yet different from the previous example. It was modified to produce more interesting results. The lower circuitry requires explanation. The difference amplifier computes frequency error and converts it from Mhz to rad/sec. The integrator computes VCO and reference contributions to phase error. The voltage-controlled-voltage-source at the end adds the input phase stimulus to compute total phase error. The difference amplifier and integrator are from the <em>ahdLib</em>.</p>
+<p>
+<a id="pgfId-1018059"></a>The input phase is a delayed step. The delay makes the initial phase error easy to read. A parametric analysis on the phase error&#8217;s step response with respect to the size of the input phase step reveals some interesting behavior. <a href="chap4.html#89706">Figure&#160;3-12</a> shows the family of phase error step responses produced by the parametric analysis. The external integrator is intentionally not a circular integrator like the one inside the phase detector model. For large and small steps in input phase, the PLL settles into equilibrium, possibly a new one. However, a narrow intermediate range of steps puts the PLL into an unstable mode. The references examine this behavior in mathematical detail [1,4,6,10]. This example shows one way to assess large-signal stability and to demonstrate that the phase-domain models capture the major non-linear mechanisms.</p>
+
+
+
+<p><strong>Figure 3-12
+<a id="pgfId-1014678"></a><a id="89706"></a>Phase Error Response to S<a id="Figure 12"></a>tep PM Input</strong></p>
+
+<p>
+<a id="pgfId-1014691"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig12.gif" /></div>
+
+
+
+
+
+<h2>
+<a id="pgfId-1014692"></a>Modeling a PFD-Based PLL</h2>
+<p>
+<a id="pgfId-1014693"></a><a href="chap4.html#78623">Figure&#160;3-13</a> shows a block diagram of a typical PLL with a phase-frequency detector. This section describes how to specify each component in Figure <a href="chap4.html#78623">3-13</a> and briefly explains what each model does.</p>
+
+<p><strong>Figure 3-13
+<a id="pgfId-1018060"></a><a id="78623"></a>PLL Block Dia<a id="Figure 13"></a>gram</strong></p>
+
+<p>
+<a id="pgfId-1014711"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig13.gif" /></div>
+
+
+
+<h3>
+<a id="pgfId-1014712"></a>VCO</h3>
+
+<p>
+<a id="pgfId-1014713"></a>The VCO is modeled by its tuning curve. The tuning curve characterizes the relationship between the input voltage and the output frequency. The input to the VCO model is the loop filter output voltage, also called the VCO control voltage. The VCO output is a voltage representing the VCO&#8217;s instantaneous frequency in Mhz. Therefore, when the VCO operates at 2 Mhz, the model output is 2 Volts.</p>
+<p>
+<a id="pgfId-1018061"></a>The VCO tuning curve is generally nonlinear and can be specified in one of two ways:</p>
+<ul><li>
+<a id="pgfId-1016024"></a>With the coefficients of a fourth order polynomial</li><li>
+<a id="pgfId-1016027"></a>With a look-up table</li></ul>
+
+<p>
+<a id="pgfId-1014714"></a><strong>Polynomial tuning curve: </strong>The input voltage is internally clamped to the nearest end point if it moves outside the interval [<em>min-vco-input-voltage</em>, <em>max-vco-input-voltage</em>]. Although the input voltage may fall outside the interval, the output behaves as though the input voltage value is at the end points. Within the interval, the output is a fourth order polynomial in the quantity, Vinput minus the free running voltage. When the input voltage equals the free running voltage, the output frequency equals the free running frequency. The scale factor scales the entire polynomial and has a default value of 1. The scale factor is useful in converting data in Khz/volt, for example, to the required Mhz/volt. The parameters are the coefficients of the polynomial.</p>
+<p>
+<a id="pgfId-1014715"></a><strong>Table look-up tuning curve: </strong>The two parameters are the <em>scale factor </em>and the <em>path to the look-up data</em>. The look-up model linearly interpolates between data points and linearly extrapolates outside the data interval. The data format is two columns of data delimited by spaces. There is no header, and there are no extra lines at the end. The first column is input voltage. The second column is output frequency. The path to the data can be absolute or relative to the netlist. The netlist is usually stored at</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014716"></a>&lt;home&gt;/simulation/ckt_name/spectre/schematic/netlist/input.scs</pre>
+
+<p>
+<a id="pgfId-1014717"></a>but you can choose a different location.</p>
+<p>
+<a id="pgfId-1014718"></a>If the data is at</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016030"></a><code>&lt;home&gt;/data/table</code></pre>
+
+<p>
+<a id="pgfId-1016031"></a>and the netlist is as shown above, the relative path is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014719"></a>../../../../../data/table.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018062"></a>Frequency Divider</pre>
+
+<p>
+<a id="pgfId-1014721"></a>The frequency divider is essentially a simple gain element. It takes an input voltage that represents frequency in Mhz, and then scales it by the divide ratio to generate an output voltage that represents the divided frequency. The divide ratio is numerically equal to the voltage on the control pin. If the divide ratio drops below 0.001, the model assigns it to 0.001 and issues a warning. This assignment prevents division by zero during simulation.</p>
+
+
+
+<h3>
+<a id="pgfId-1014722"></a>Charge Pump</h3>
+
+<p>
+<a id="pgfId-1014723"></a>The charge pump transforms the duty cycle into the expected average current sourced or sunk by the charge pump. You define the maximum source and sink currents, and they can be different from each other. If the charge pump output voltage exceeds the rails you define, the output voltage is clamped to the rail through a 0.001 Ohm resistance. The other parameters are the leakage resistance and open circuit voltage. These last two parameters specify the Thevenin equivalent circuit of a leakage path. The leakage path can source or sink current depending on the open circuit voltage.</p>
+
+
+
+<h3>
+<a id="pgfId-1014724"></a>Loop Filter</h3>
+
+<p>
+<a id="pgfId-1014725"></a>The loop filter is entered component-for-component.</p>
+
+
+
+<h3>
+<a id="pgfId-1014726"></a>State-Space Averaged PFD (Phase-Domain Phase-Frequency Detector Model)</h3>
+
+<p>
+<a id="pgfId-1014727"></a>The phase-frequency detector (PFD) model approximates average behavior of a digital, three-state, phase frequency detector. This is the most complicated model in the PLL library. The term <em>state-space averaged</em> is borrowed from the power electronics field [14]. The charge pump currents for the three PFD states are averaged together with a duty cycle much like voltages are averaged together with a duty cycle in a switch-mode power supply model. The PFD inputs are voltages representing the reference and divider output frequencies in Mhz. The output is a voltage that when multiplied by the maximum charge pump current, numerically equals the average charge-pump output current. The PFD output is a duty cycle. When the frequency error is large, the duty cycle is a smooth waveform directly related to the normalized frequency error [1,4]. When the frequency error is small, an integrator inside the PFD model converts frequency error to phase error, and the duty cycle is proportional to the phase error. The duty cycle starts jumping to zero (or resets) as it changes from frequency-mode to phase-mode.</p>
+<p>
+<a id="pgfId-1018063"></a>As phase error enters a deadband determined by the minimum-on-time parameter and reference frequency, the model computes a duty cycle pulse with magnitude one and duration equal to the minimum-pulse-width. After the pulse expires, the duty cycle drops to zero until the phase error exits the deadband. As the phase error exits the deadband, the duty cycle increases to a non-zero value. The deadband and fixed-width unity pulse simulate what some texts call <em>backlash</em> [8].</p>
+<p>
+<a id="pgfId-1018064"></a>The PFD model has two parameters. The first is a numerical option that controls the trade-off between execution speed and accuracy. The <em>speed_vs_accuracy</em> parameter controls the number of times the internal integrator is reset during the transition from frequency-mode to phase-mode. Too few resets can cause error. Too many resets can needlessly slow run time. The default value of this parameter is 50k. To reduce the number of resets in a slow PLL, and thereby reduce run time, increase the <em>speed_vs_accuracy</em> parameter to 70k or 100k. To increase the number of resets in fast PLLs, and thereby increase the accuracy, reduce the <em>speed_vs_accuracy</em> parameter to 10k or 20k. A reasonable setting for the <em>speed_vs_accuracy</em> parameter produces a duty cycle step response that resets approximately to zero at least 3-10 times before entering the final transient. <a href="chap4.html#10332">Figure&#160;3-14</a> shows reasonable duty cycle step response.</p>
+
+
+<p><strong>Figure 3-14
+<a id="pgfId-1014732"></a><a id="10332"></a>Reasonable Duty Cycle Wav<a id="Figure 14"></a>eform</strong></p>
+
+<p>
+<a id="pgfId-1014737"></a></p>
+<div class="webflare-div-image">
+<img width="556" height="332" src="images/chap4-35.gif" /></div>
+
+<p>
+<a id="pgfId-1014738"></a>The other parameter is the <em>minimum_on_time</em> which controls the backlash. This is the minimum pulse width the PFD can generate. As the phase error decreases, the pulse width drops discontinuously from the minimum pulse width to zero. This effect creates a deadband in the duty cycle versus phase error curve.</p>
+<p>
+<a id="pgfId-1018065"></a><a href="chap4.html#89706">Figure&#160;3-12</a> was generated with the default <em>minimum_on_time</em> parameter value of zero μs. The default value of the <em>minimum_on_time</em> parameter produces no deadband and no unity pulses. The default deactivates the backlash mechanism.</p>
+<p>
+<a id="pgfId-1016117"></a><a href="chap4.html#89439">Figure&#160;3-15</a> was generated with a <em>minimum_on_time</em> parameter value of 0.2 μs. Figure 15a illustrates that the pulses only occur as the phase error enters the deadband. Figure 15b shows the limit cycle created by the backlash. The limit cycle is primarily determined by leakage on the loop filter and the minimum pulse width. Some references suggest biasing the duty cycle away from the deadband or loading the filter down to force the limit cycle frequency to a value in which the loop filter attenuates it. The phase-frequency detector model can help quantify the problem and check the solution.</p>
+<p>
+<a id="pgfId-1018066"></a>A pulse is not kicked out upon exiting the deadband because that behavior causes convergence problems for Spectre RF. If phase error is entering the deadband, a pulse at that moment pushes phase error in the same direction it was going, into the deadband. If a pulse occurs as phase error exits the deadband, the pulse drives phase error back into the deadband and Spectre RF has trouble figuring out whether phase error should leave the deadband at all. Fortunately, no significant error is introduced by implementing the pulse only when phase error enters the deadband. In a backlash limit cycle, the feedback loop quickly drives phase error back into the deadband and a pulse occurs on the way in. The error is in the time the feedback loop takes to return phase error to the edge of the deadband and that is usually small when PLL is in a backlash limit cycle.</p>
+<p>
+<a id="pgfId-1014744"></a>(The PLL model that generated Figure <a href="chap4.html#89439">3-15</a> had a center frequency of about 1Mhz and the simulation ran out to 130ms. A voltage-domain model might easily simulate 10 points per carrier cycle. The voltage-domain model would require 1.3 million points to simulate the same amount of action. I did not attempt it. The phase-domain simulation that generated Figure <a href="chap4.html#89439">3-15</a> ran in a matter of seconds!)</p>
+
+
+
+
+<p><strong>Figure 3-15
+<a id="pgfId-1014746"></a><a id="Figure 15"></a><a id="89439"></a>Duty Cycle Waveforms With Pulses and Backlash</strong></p>
+
+<p>
+<a id="pgfId-1014763"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig15.gif" /></div>
+
+
+
+
+<h3>
+<a id="pgfId-1014771"></a>Lock Indicator</h3>
+
+<p>
+<a id="pgfId-1014772"></a>All real components have limited outputs and the limits of any one component can keep the PLL from locking. Just like the simple phase detector model, all of the phase-domain models operate one way for DC analysis and another for transient analysis to prevent DC convergence errors. The lock indicator monitors three signals. In the example, the lock indicator monitors the phase detector output, the VCO control, and the charge pump output. If any of those signals exceeds its limit, the lock indicator output is zero, signifying that the loop is not locked in steady state. If all signals are within their limits, the output is 1 volt, specifying that the loop is locked. The lock indicator is only valid for DC analysis. Use node names to tie the lock indicator inputs to the right nodes and use variables for the component limits. You must specify the units manually twice, once for each component and once for the lock indicator. With variables, the lock indicator parameters are linked to the proper component parameters, and you specify changes in only one place.</p>
+
+
+<h4>
+<a id="pgfId-1014773"></a>Example 4: Modeling Acquisition Transients</h4>
+
+<p>
+<a id="pgfId-1017240"></a>The circuit used to model acquisition transients is the <em>example_phase_domain</em> in the <em>pllLib</em> library. <a href="chap4.html#70112">Figure&#160;3-16</a> shows the duty cycle and VCO frequency response to a momentary change in the divider ratio. When the divider ratio changes, the PFD enters the frequency-mode and slews the VCO frequency toward the new value. As the VCO frequency approaches the final value, the PFD model gradually changes from frequency-mode to phase-mode. When the frequency error is small, but still large enough to slew phase error, the duty cycle waveform looks like a sawtooth waveform. The model gradually increases the amplitude of the sawtooth component of the duty cycle, and always maintains the correct average, as frequency error reduces to zero. The final duty cycle transient is the sawtooth that depends mostly on phase error. <a href="chap4.html#89706">Figure&#160;3-12</a>, modifies the x-axis of the graph to show the duty cycle in the first transition.<a href="chap4.html#84077">Figure&#160;3-17</a> modifies it further to show the sawtooth waveform.</p>
+
+
+
+<p><strong>Figure 3-16
+<a id="pgfId-1014778"></a><a id="70112"></a>Response to Momen<a id="Figure 16"></a>tary Change in Divider Ratio</strong></p>
+
+<p>
+<a id="pgfId-1014783"></a></p>
+<div class="webflare-div-image">
+<img width="533" height="380" src="images/chap4-37.gif" /></div>
+
+
+
+<p><strong>Figure 3-17
+<a id="pgfId-1014785"></a><a id="84077"></a>Duty Cycle During Transition F<a id="Figure 17"></a>rom Frequency to Phase Mode</strong></p>
+
+<p>
+<a id="pgfId-1014791"></a></p>
+<div class="webflare-div-image">
+<img width="524" height="289" src="images/chap4-38.gif" /></div>
+
+
+
+
+<h3>
+<a id="pgfId-1014792"></a>Example 5: Comparison With a Voltage-Domain Model</h3>
+
+<p>
+<a id="pgfId-1017255"></a>Use the <em>example_voltage_domain</em> model in the <em>pllLib</em> library with the only node that can be directly compared between phase- and voltage-domain models, the VCO control node. At full scale, the difference between the two models is not visible. The differences occur at the transitions. <a href="chap4.html#41760">Figure&#160;3-18</a> compares the two models at the transitions. In this example and on the same machine, the voltage-domain model simulates in three hours while the phase-domain model simulates in two seconds.</p>
+<p>
+<a id="pgfId-1018067"></a>The error between the two models does not appear to be consistent. It is larger in the first transition. Furthermore, decreasing the <em>speed_vs_accuracy</em> parameter does not always increase the similarity of the waveforms. This is because the final transient, the one driven primarily by phase error, depends on the residual frequency error at the time the phase error last crossed 2π. The frequency error at that moment, especially after a long frequency slewing period, is sensitive to, among other effects, initial conditions.</p>
+
+
+<p><strong>Figure 3-18
+<a id="pgfId-1016305"></a><a id="41760"></a>Comparison with Voltage Domain Model</strong></p>
+
+<p>
+<a id="pgfId-1014802"></a></p>
+<div class="webflare-div-image">
+<img width="531" height="569" src="images/chap4-39.gif" /></div>
+
+<p>
+<a id="pgfId-1016293"></a>The voltage-domain model therefore shows the same level of variation for small differences in the initial conditions preceding the transition to the new equilibrium. <a href="chap4.html#15628">Figure&#160;3-19</a> compares two voltage-domain simulations of the VCO control signal during the second transition. One of the voltage-domain simulations (the dotted waveform) used different initial conditions. The solid waveform is a delayed version of the dotted waveform. The delay overlays the two simulations for direct comparison. The error is comparable to the error between voltage-domain and phase-domain simulations.</p>
+
+
+
+
+<p><strong>Figure 3-19
+<a id="pgfId-1018068"></a><a id="15628"></a>Effect of Initial Conditions</strong></p>
+
+<p>
+<a id="pgfId-1016275"></a></p>
+<div class="webflare-div-image">
+<img width="530" height="298" src="images/chap4-40.gif" /></div>
+
+
+
+
+
+<h2>
+<a id="pgfId-1014814"></a>How the PFD Model Works</h2>
+
+<p>
+<a id="pgfId-1014815"></a>The heart of the PFD is a digital state machine [8,9].The model is for PFDs with three digital states. The output stage is usually a charge pump or pair of switches. It is convenient to model the PFD in two pieces. The first piece models the state machine and computes a duty cycle that is independent of the output stage. The second piece models the output stage. The charge pump (CP) is used here as an example.</p>
+
+
+<h3>
+<a id="pgfId-1018069"></a>How the PDF/CP Pump Works</h3>
+
+<p>
+<a id="pgfId-1014817"></a>Let the three PFD states be stacked. In the top state, the PFD commands the CP to source current. In the middle state, the pump is off. In the bottom state, the CP sinks current. The PFD is edge triggered. <a href="chap4.html#28457">Figure&#160;3-20</a> shows vectorial representations of the reference and VCO clocks [1,4]. Both vectors rotate counter-clockwise around the origin. The angle between the hands equals phase error. Phase error lies between +-2π. Whenever the reference passes a trigger line, like 3 o&#39;clock, the state jumps to the next state up. If the PFD is already in the top state, the state does not change. Whenever the VCO passes the trigger line, the state jumps to the next state down. If it is already in the bottom state, it again does not change. For a fixed phase error, the state toggles as the hands rotate. State toggles between the middle and top, or between the middle and bottom states. The percentage of time spent in the top, or bottom, state is the duty cycle. The duty cycle is positive for top to middle toggling and negative for middle to bottom toggling.</p>
+
+
+<p><strong>Figure 3-20
+<a id="pgfId-1018070"></a><a id="28457"></a>PFD Operation</strong></p>
+
+<p>
+<a id="pgfId-1014877"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig20.gif" /></div>
+
+<p>
+<a id="pgfId-1014878"></a>If the reference and VCO frequencies are identical, the vectors in Figure <a href="chap4.html#28457">3-20</a> rotate together. Let the sector defined by phase error be red if the reference leads and blue if it lags. If the hands rotate once per minute and the reference leads, you see two colors, white and red. At two million revolutions per second, you see pink. The shade of pink depends linearly on the phase error. Although PFD output current toggles between two values, the loop filter and VCO respond mainly to the &#8220;shade&#8221; of current. The shade is proportional to the duty cycle. With zero frequency error, duty cycle equals phase error divided by 2π. Existing literature uses one function to describe the <em>phase-error-to-duty-cycle</em> relationship and a different function to describe the <em>frequency-error-to-duty-cycle</em> relationship. These two functions are the <em>locked duty cycle function</em> and <em>averaged unlocked duty cycle function</em>, respectively. The new model combines these two functions into one practical model.</p>
+<p>
+<a id="pgfId-1014879"></a>The locked duty cycle function is a multivalued sawtooth. For monotonic movements away from the origin of steady-state phase error, the duty cycle is a sawtooth in the upper-half plane. The duty cycle lies in the lower-half plane for negative movements. If a movement starts off positive, then changes direction, the duty cycle crosses zero and becomes a sawtooth in the lower half plane. The duty-cycle-phase-error trajectory encloses a nonzero area as shown by the {1-2-3-4-5-6-7} sequence of peaks in <a href="chap4.html#68758">Figure&#160;3-21</a>. This is a good reason for putting the integrator next to the non-linearity&#8212;hysteresis involves memory and the integral supplies it.</p>
+
+
+
+
+<p><strong>Figure 3-21
+<a id="pgfId-1014882"></a><a id="68758"></a>Duty Cycle Versus Phase Error With Zero Frequency Error</strong></p>
+
+<p>
+<a id="pgfId-1014909"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig21.gif" /></div>
+
+<p>
+<a id="pgfId-1014910"></a>The new model operates only on frequency error. For small-frequency errors, the duty cycle is indeed proportional to the phase error. The phase error is the integral, with respect to time, of the frequency error. The duty cycle therefore equals the integral of the frequency error divided by 2π. Resetting the integral whenever it hits +-2π produces the multivalued sawtooth described above. If the frequency error changes sign, the resetting integrator ramps to zero, passes through zero, and generates a sawtooth in the lower-half plane. The phase-error-duty-cycle trajectory is precisely the multivalued sawtooth described above. The resettable integrator (RI) merges the integrator of a phase-domain model with the locked duty-cycle function.</p>
+<p>
+<a id="pgfId-1018071"></a>For a sustained frequency error, the RI model predicts an average duty cycle of +-1/2 regardless of error size. This is correct only for small-frequency errors. The true duty cycle goes to +-1 for large-frequency errors. Let the reference frequency far exceed VCO frequency. Whenever the VCO passes the trigger line, the reference frequency passes shortly thereafter. The reference frequency might pass the trigger line several more times before the VCO passes again. In this case, the phase error is still a sawtooth, but the average duty cycle is nearly 1. This behavior lets the PLL acquire input signals faster. The function H, in <a href="chap4.html#20023">Figure&#160;3-22</a>, shows the averaged unlocked duty cycle. This cycle depends on the ratio of the reference to VCO frequencies and is discontinuous where frequency error is zero.</p>
+
+
+
+
+<p><strong>Figure 3-22
+<a id="pgfId-1014914"></a><a id="20023"></a>Averaged Unlocked Du<a id="Figure 22"></a>ty Cycle</strong></p>
+
+<p>
+<a id="pgfId-1014927"></a></p>
+<div class="webflare-div-image">
+<img width="539" height="317" src="images/chap4-43.gif" /></div>
+
+<p>
+<a id="pgfId-1014928"></a>The RI is modified to include the frequency effect. For small-frequency errors, the predicted average duty cycle equals 1/2. This is true because the RI runs from the reset point (=0) to the reset threshold (=2π). It is not necessary to reset the integrator to zero. Resetting the integrator to a &#8220;reset&#8221; function gives the correct average duty cycle (Figure <a href="chap4.html#70365">3-23</a>). As the frequency ratio goes to +-infinity, the reset point changes to +-2π. Because the reset threshold is still +-2π, the predicted average duty cycle changes to +-1. As the frequency ratio approaches unity, the reset point returns to zero, and the predicted average duty cycle returns to 1/2.</p>
+
+
+
+
+<p><strong>Figure 3-23
+<a id="pgfId-1014931"></a><a id="70365"></a>Combining Aver<a id="Figure 23"></a>aged Locked and Unlocked Duty Cycles</strong></p>
+
+<p>
+<a id="pgfId-1014954"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig23.gif" /></div>
+
+<p>
+<a id="pgfId-1014955"></a>The state space averaged PFD model requires one more addition to be practical. As the reset point nears +-2π, the integrator resets very frequently and execution stalls. The integrator must be deactivated for large-frequency errors. The new PFD model uses the weighted sum of a RI and the H. The weighting factors are <em>k</em> and (1-<em>k</em>). <em>k</em> is a function of the ratio of the two input frequencies. <em>k</em> approaches 1 for large-frequency errors and approaches 0 as the frequency ratio approaches unity. A factor of (1-<em>k</em>) under the integral deactivates the integral for large-frequency errors. The resulting PFD model looks like H for large-frequency errors, and it looks like the reactivated RI for small-frequency errors. <em>k</em> determines how fast the RI reactivates and how gradually the model changes from H to the RI. A <em>speed_vs_accuracy</em> parameter controls <em>k</em>. If the model does not reset a few times before reaching frequency lock, you can improve the results by decreasing the <em>speed_vs_accuracy</em> parameter. If the model resets so often that the simulation is too slow, you can speed execution by increasing the parameter. The default setting of 50000 covers a wide range of loop speeds. <a href="chap4.html#94446">Figure&#160;3-24</a> shows the transition from frequency-mode to phase-mode.</p>
+
+
+
+
+<p><strong>Figure 3-24
+<a id="pgfId-1014957"></a><a id="94446"></a>Complete <a id="Figure 24"></a>Model</strong></p>
+
+<p>
+<a id="pgfId-1014978"></a></p>
+<div class="webflare-div-image">
+<img src="images/Gfig24.gif" /></div>
+
+
+
+
+
+<h2>
+<a id="pgfId-1014979"></a>References</h2>
+
+<p>
+<a id="pgfId-1014980"></a>[1&#8220;Loops, Theory and Application,&#8220; J. L. Stensby.</p>
+<p>
+<a id="pgfId-1014981"></a>[2]&#8220;Relative -phase modeling speeds Spice simulation of modulated systems,&#8221; John Kesterson, November 11, 1993 issue of EDN</p>
+<p>
+<a id="pgfId-1014982"></a>[3]&#8220;Simulation of Communication Systems,&#8221; M. Jeruchim, P. Balaban and K. Shanmugan. Plenum, 1992.</p>
+<p>
+<a id="pgfId-1018072"></a>[4]&#8220;Synchronization in Digital Communications,&#8221; Heinrich Meyr and Gerd Ascheid, Published by John Wiley and Sons.</p>
+<p>
+<a id="pgfId-1018073"></a>[5]&#8220;Phase-Locked and Frequency-Feedback Systems,&#8221; Klapper and Frankle, Published by Academic Press</p>
+<p>
+<a id="pgfId-1014985"></a>[6]&#8220;Phaselock Techniques,&#8221; Floyd Gardner, Published by John Wiley and Sons</p>
+<p>
+<a id="pgfId-1014986"></a>[7]&#8220;Non-Linear Relative Phase Models of Phaselock Loops,&#8221; Jess Chen, Cadence Technical Conference, 1996.</p>
+<p>
+<a id="pgfId-1018074"></a>[8]&#8220;Phase-Locked Loops: Theory, Design, and Applications,&#8221; Roland Best, Published by McGraw-Hill</p>
+<p>
+<a id="pgfId-1014988"></a>[9]&#8220;Phase-Locked Loop Circuit Design,&#8221; Dan Wolaver, Published by Prentice Hall</p>
+<p>
+<a id="pgfId-1014989"></a>[10]&#8220;Phase-Lock Basics,&#8221; William F. Egan. Published by John Wiley and Sons.</p>
+<p>
+<a id="pgfId-1014990"></a>[11]&#8220;Non-Linear State Space Averaged Modeling of a 3-State Digital Phase-Frequency Detector,&#8221; Jess Chen, Cadence Technical Conference, 1997</p>
+<p>
+<a id="pgfId-1014991"></a>[12] &#8220;Analog and Mixed-Signal Hardware Description Languages,&#8221; Edited by A. Vachoux, J. Berge, O. Levia, and J. Rouillard. Kluwer Academic Publishers.</p>
+<p>
+<a id="pgfId-1018075"></a>[13] &#8220;Macromodeling with SPICE,&#8221; J.A. Connelly and P. Choi. Prentice Hall. Pages 168-169.</p>
+<p>
+<a id="pgfId-1014993"></a>[14] S. Cuk, California Institute of Technology, Ph.D. Thesis, &#8220;Modelling, Analysis, and Design of Switching Converters.&#8221; 1977</p>
+<p>
+<a id="pgfId-1014242"></a></p>
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3.html" id="prev" title="rfTlineLib Library">rfTlineLib Library</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
