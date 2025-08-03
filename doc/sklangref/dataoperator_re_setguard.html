@@ -1,0 +1,161 @@
+
+<html><head><title>setguard</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-10-20" />
+<meta name="CreateTime" content="1697804046" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes SKILL functions that are common to all of the Cadence tools used in a graphic or nongraphic environment" />
+<meta name="DocTitle" content="Cadence SKILL Language Reference" />
+<meta name="DocType" content="SKILL Reference" />
+<meta name="FileTitle" content="setguard" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="sklangref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-20" />
+<meta name="ModifiedTime" content="1697804046" />
+<meta name="NextFile" content="dataoperator_re_setplist.html" />
+<meta name="Group" content="SKILL Language" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="dataoperator_re_setf_helper.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="SKILL" />
+<meta name="ProductFamily" content="SKILL" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence SKILL Language Reference -- setguard" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="api reference" />
+<meta name="prod_feature" content="SKILL" />
+<meta name="prod_subfeature" content="Data Operator Functions" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="sklangrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="sklangrefTOC.html">Contents</a></li><li><a class="prev" href="dataoperator_re_setf_helper.html" title="setf_&lt;helper&gt;">setf_&lt;helper&gt;</a></li><li style="float: right;"><a class="viewPrint" href="sklangref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="dataoperator_re_setplist.html" title="setplist">setplist</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence SKILL Language Reference<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_setguard" title="setguard"></a><h3>
+<a id="pgfId-1055381"></a><a id="setguard"></a><a id="24282"></a>setguard</h3>
+<a id="pgfId-1040526"></a><a id="marker-1040524"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+setguard( 
+<code><em>s_symbol</em></code> 
+<code><em>g_guard</em></code> 
+) 
+=&gt; <code><em>u_guard</em></code></pre>
+<h4>
+<a id="pgfId-1040527"></a>Description</h4>
+
+<p>
+<a id="pgfId-1040529"></a>Mainly enforces disciplined use of a symbol as a global variable by associating it with a guarding function that is either a symbol that identifies the name of the guarding function or a lambda form (just like the first argument to the <code>apply</code> function). If the guarding function is <code>nil</code>, the symbol is unguarded. The guarding function is called with two arguments whenever a new value is assigned to the symbol: the symbol and the value to be assigned to it. The result of the guarding function determines the <code>setguard</code> return value that gets assigned to the symbol.</p>
+<p>
+<a id="pgfId-1040530"></a>The guarding function associated with a guarded symbol is triggered whenever a new value is assigned to that symbol by way of the <code>setq</code> (or <code>set</code>) function. Neither a lambda binding nor a let binding will cause the guarding function to be called (see examples below).</p>
+
+<h4>
+<a id="pgfId-1040531"></a>Arguments</h4>
+<table class="webflareTable" id="#id1067909">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1067911"></a><span class="webflare-courier-new" style="white-space:pre"><em>s_symbol </em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1067913"></a>Symbol to be associated with the guarding function.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1067915"></a><span class="webflare-courier-new" style="white-space:pre"><em>g_guard </em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1067917"></a>Guarding function to be associated with the symbol.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1040534"></a>Value Returned</h4>
+<table class="webflareTable" id="#id1067922">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1067924"></a><span class="webflare-courier-new" style="white-space:pre"><em>u_guard </em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1067926"></a>Either a symbol that identifies the name of the guarding function or a function object.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1040536"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040537"></a>&gt; procedure( myPortGuard(varName newValue)<br />        if( portp(newValue)<br />        then<br />            newValue<br />        else<br />            printf(&quot;Only port values can be assigned to `%s&#39;\n&quot; varName)<br />            symeval(varName)<br />        )<br />  )<br />myPortGuard</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040538"></a>&gt; setguard(&#39;poport &#39;myPortGuard)<br />myPortGuard</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040539"></a>&gt; poport = nil<br />Only port values can be assigned to `poport&#39;<br />port:&quot;*stdout*&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040540"></a>&gt; poport = 123<br />Only port values can be assigned to `poport&#39;<br />port:&quot;*stdout*&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040541"></a>&gt; setguard( &#39;myStringVar<br />        lambda((varName newValue)<br />            if(stringp(newValue)<br />            then<br />                newValue<br />            else<br />                printf(&quot;Only strings can be assigned to `%s&#39;\n&quot; varName)<br />                symeval(varName)<br />            )<br />        ) ; lambda<br />  ) ; setguard</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040542"></a>&gt; myStringVar = &quot;default&quot;<br />&quot;default&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040543"></a>&gt; myStringVar = 123<br />Only strings can be assigned to `myStringVar&#39;<br />&quot;default&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040544"></a>&gt; myStringVar = nil<br />Only strings can be assigned to `myStringVar&#39;<br />&quot;default&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040545"></a>;; A lambda binding will not trigger the guard<br />&gt; ((lambda (myStringVar) (println &#39;hello)) nil)<br />hello<br />nil</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040546"></a>;; A let binding will also not trigger the guard<br />&gt; let( ((myStringVar 123))<br />        println(myStringVar)<br />  )<br />123<br />nil</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040547"></a>;; This s the symbol `myStringVar&#39; unguarded<br />&gt; setguard(&#39;myStringVar nil)<br />nil</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040548"></a>&gt; myStringVar = 123<br />123</pre>
+<h4><em>
+<a id="pgfId-1040549"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1040511"></a><a href="funcprog_re_apply.html#11180">apply</a></p>
+<p>
+<a id="pgfId-1076269"></a><a href="funcprog_re_lambda.html#61068">lambda</a></p>
+<p>
+<a id="pgfId-1076294"></a><a href="funcprog_re_let.html#23180">let</a></p>
+<p>
+<a id="pgfId-1076319"></a><a href="dataoperator_re_set.html#17551">set</a></p>
+<p>
+<a id="pgfId-1076344"></a><a href="dataoperator_re_setq.html#45066">setq</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="dataoperator_re_setf_helper.html" id="prev" title="setf_&lt;helper&gt;">setf_&lt;helper&gt;</a></em></b><b><em><a href="dataoperator_re_setplist.html" id="nex" title="setplist">setplist</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
