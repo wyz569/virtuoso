@@ -1,0 +1,398 @@
+
+<html><head><title>Dynamic Setup and Hold Check (dyn_setuphold)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484717" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Dynamic Setup and Hold Check (dyn_setuphold)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484717" />
+<meta name="NextFile" content="chap5_re_Dynamic_Subckt_Port_Voltage_Current_Check_dyn_subcktport.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap5_re_Dynamic_Rise_Fall_Edge_Check_dyn_risefall.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Dynamic Setup and Hold Check (dyn_setuphold)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap5_re_Dynamic_Rise_Fall_Edge_Check_dyn_risefall.html" title="Dynamic Rise Fall Edge Check (dyn_risefall)">Dynamic Rise Fall Edge Check ( ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap5_re_Dynamic_Subckt_Port_Voltage_Current_Check_dyn_subcktport.html" title="Dynamic Subckt Port Voltage/Current Check (dyn_subcktport)">Dynamic Subckt Port Voltage/Cu ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Dynamic_Setup_and_Hold_Check_dyn_setuphold" title="Dynamic Setup and Hold Check (dyn_setuphold)"></a><h3>
+<a id="pgfId-1689892"></a>Dynamic Setup and Hold Check (dyn_setuphold)<a id="marker-1689891"></a></h3>
+<h4>
+<a id="pgfId-1689894"></a>Description<a id="marker-1689893"></a></h4>
+
+<p>
+<a id="pgfId-1689895"></a>Reports nodes with setup or hold timing errors with reference to a clock signal. The transition time of the clock signal is specified using refTime.</p>
+<p>
+<a id="pgfId-1689896"></a>For setup timing, transitions that happen between refTime + delay - setupTime and refTime + delay are reported.</p>
+<p>
+<a id="pgfId-1689897"></a>For hold timing, transitions that happen between refTime + delay and refTime + delay + holdTime are reported.</p>
+<p>
+<a id="pgfId-1689898"></a>ref_vhth and vhth parameters are used for triggering rising edge measurements, while ref_vlth and vlth are used for triggering falling edge measurements.</p>
+<p>
+<a id="pgfId-1689899"></a>If the subckt parameter is specified, node and ref_node are considered as local nodes to the specified subcircuit. In other words, node and ref_node belong to instances of the specified subcircuit. Only one subckt value can be specified per check, with no wildcard.</p>
+<p>
+<a id="pgfId-1689900"></a>If the subckt parameter is not specified, node and ref_node are considered as global nodes with the hierarchical names starting from the top level.</p>
+<p>
+<a id="pgfId-1689901"></a>The parameters inst, xinst, xsubckt and depth are not supported.</p>
+<p>
+<a id="pgfId-1689902"></a>The results are written to the dynamic.xml file, which can be viewed in a Web browser.</p>
+
+<h4>
+<a id="pgfId-1689904"></a>Syntax<a id="marker-1689903"></a></h4>
+<a id="pgfId-1689905"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name dyn_setuphold parameter=value ...</pre>
+<h4>
+<a id="pgfId-1689906"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1689962"></a>Design check parameters</p>
+<table class="webflareTable" id="#id1689907">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689909"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689915"></a><code>node</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689917"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689919"></a>Nodes to which the check is applied. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689921"></a><code>ref_node</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689923"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689925"></a>Name of the referenced clock. Wildcards are not supported.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689927"></a><code>setup_time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689929"></a><code>0.0 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689931"></a>Setup time violation window. If specified, the setup check is enabled. Default is 0.0 sec.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689933"></a><code>hold_time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689935"></a><code>0.0 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689937"></a>Hold time violation window. If specified, the hold check is enabled.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689939"></a><code>delay</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689941"></a><code>0.0 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689943"></a>Delay of the reference signal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689945"></a><code>edge</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689947"></a><code>rise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689949"></a>Edge type of the signal net. Default is rise.Possible values are rise, fall and both.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689951"></a><code>ref_edge</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689953"></a><code>rise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689955"></a>Edge type of the reference signal. Default is rise.Possible values are rise, fall and both.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689957"></a><code>fanout</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689959"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689961"></a>Fanout setting to filter node with specified connection. This option is supported only in XPS.Possible values are all, gate and bulk.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690006"></a>Digitize parameters</p>
+<table class="webflareTable" id="#id1689963">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689965"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689971"></a><code>setup_chk_time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689973"></a><code>0.0 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689975"></a>Setup time checking window.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689977"></a><code>hold_chk_time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689979"></a><code>0.0 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689981"></a>Hold time checking window.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689983"></a><code>vlth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689985"></a><code>0.2 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689987"></a>Low voltage threshold for the signal net.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689989"></a><code>ref_vlth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689991"></a><code>0.2 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689993"></a>Low voltage threshold for the referenced net.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689995"></a><code>vhth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689997"></a><code>0.8 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689999"></a>High voltage threshold for the signal net.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690001"></a><code>ref_vhth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690003"></a><code>0.8 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690005"></a>High voltage threshold for the referenced net.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690038"></a>Filtering parameters</p>
+<table class="webflareTable" id="#id1690007">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690009"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690015"></a><code>time_window</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690017"></a><code>[tstart, tstop] sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690019"></a>Time window to which the circuit check is applied. Multiple non-overlapping time windows are supported. Default time window is 0 to tend.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690021"></a><code>report</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690023"></a><code>violation</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690025"></a>Report all checks or violation only. Default is violation.Possible values are all and violation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690027"></a><code>margin_stats</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690029"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690031"></a>Whether to report margin stats. If margin_stats=no, do not report margin stats. If margin_stats=violation, only collect the margin stats of violation=yes. If margin_stats=all, collect all margin stats, including violation=yes and violation=no. Default is no.Possible values are no, violation and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690033"></a><code>error_limit</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690035"></a><code>10000</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690037"></a>Maximum number of errors reported. Default is 10000.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690052"></a>Wildcard scoping</p>
+<table class="webflareTable" id="#id1690039">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690041"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690047"></a><code>subckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690049"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690051"></a>Instances of the specified subcircuit to which the check is applied. Default is none.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1694268"></a>Related Topics</p>
+<p>
+<a id="pgfId-1694270"></a><em><a actuate="user" class="URL" href="../spectreuser/chap12.html#dyn_setuphold" show="replace" xml:link="simple">Dynamic Setup and Hold Check</a></em></p>
+<p>
+<a id="pgfId-1694264"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5_re_Dynamic_Rise_Fall_Edge_Check_dyn_risefall.html" id="prev" title="Dynamic Rise Fall Edge Check (dyn_risefall)">Dynamic Rise Fall Edge Check ( ...</a></em></b><b><em><a href="chap5_re_Dynamic_Subckt_Port_Voltage_Current_Check_dyn_subcktport.html" id="nex" title="Dynamic Subckt Port Voltage/Current Check (dyn_subcktport)">Dynamic Subckt Port Voltage/Cu ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

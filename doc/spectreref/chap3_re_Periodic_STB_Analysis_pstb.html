@@ -1,0 +1,509 @@
+
+<html><head><title>Periodic STB Analysis (pstb)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484709" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Periodic STB Analysis (pstb)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484709" />
+<meta name="NextFile" content="chap3_re_Periodic_Transfer_Function_Analysis_pxf.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Periodic_Steady-State_Analysis_pss.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Periodic STB Analysis (pstb)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Periodic_Steady-State_Analysis_pss.html" title="Periodic Steady-State Analysis (pss)">Periodic Steady-State Analysis ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Periodic_Transfer_Function_Analysis_pxf.html" title="Periodic Transfer Function Analysis (pxf)">Periodic Transfer Function Ana ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Periodic_STB_Analysis_pstb" title="Periodic STB Analysis (pstb)"></a><h3>
+<a id="pgfId-1699466"></a>Periodic STB Analysis (pstb)<a id="marker-1699465"></a></h3>
+<h4>
+<a id="pgfId-1699468"></a>Description<a id="marker-1699467"></a></h4>
+
+<p>
+<a id="pgfId-1699469"></a>The periodic STB (PSTB) analysis is used to evaluate the local stability of a periodically varying feedback circuit. It is a small-signal analysis like STB analysis, except that the circuit is first linearized about a periodically varying operating point as opposed to a simple DC operating point. Linearizing about a periodically time-varying operating point allows the stability evaluation to include the effect of the time-varying operating point. </p>
+<p>
+<a id="pgfId-1699470"></a>Evaluating the stability of a periodically varying circuit is a two-step process. In the first step, the small stimulus is ignored and PSS analysis is used to compute the periodic steady-state response of the circuit to a possibly large periodic stimulus. As part of the PSS analysis, the periodically time-varying representation of the circuit is computed and saved for later use. In the second step, a probe is used to compute the loop gain of the zero sideband. The local stability can be evaluated using gain margin, phase margin, or a Nyquist plot of the loop gain. To perform PSTB analysis, a probe instance must be specified as <code>probe</code> parameter. </p>
+<p>
+<a id="pgfId-1699471"></a>The loop-based algorithm requires that a <code>probe</code> be placed on the feedback loop to identify and characterize the particular loop of interest. The introduction of the probe component should not change any of the circuit characteristics. For the time-varying property of the circuit, the loop gain at different places can be different, but all values can be used to evaluate the stability. The loop-based algorithm provides stability information for single-loop circuits and for multi-loop circuits in which a <code>probe</code> component can be placed on a critical wire to break all loops. For a typical multi-loop circuit, such a critical wire may not be available. The loop-based algorithm can be used only on individual feedback loops to ensure that they are stable. </p>
+<p>
+<a id="pgfId-1699472"></a>The device based algorithm requires the <code>probe</code> be a gain instant, such as a bjt transistor or a mos transistor. The device-based algorithm evaluates the loop gain around the <code>probe</code>, which can be involved in mutiloops. </p>
+<p>
+<a id="pgfId-1699473"></a>Unlike other analyses in Spectre, this analysis can only sweep frequency.</p>
+
+<h4>
+<a id="pgfId-1699475"></a>Syntax<a id="marker-1699474"></a></h4>
+<a id="pgfId-1699476"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name pstb parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1699477"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1699545"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1699478">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1699480"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699486"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699488"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699490"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699492"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699494"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699496"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699498"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699500"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699502"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699504"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699506"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699508"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699510"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699512"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699514"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699516"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699518"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699520"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699522"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699524"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699526"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699528"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699530"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699532"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699534"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699536"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699538"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699540"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699542"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699544"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1699565"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1699546">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1699548"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699554"></a><code>probe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699556"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699558"></a>Probe instance around which the loop gain is calculated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699560"></a><code>localgnd</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699562"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699564"></a>Node name of local ground. If not specified, the probe is referenced to global ground.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1699585"></a>Output parameters</p>
+<table class="webflareTable" id="#id1699566">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1699568"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699574"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699576"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699578"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub, selected, none and nooutput.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699580"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699582"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699584"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1699659"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1699586">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1699588"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699594"></a><code>tolerance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699596"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699598"></a>Tolerance for linear solver. The default value is 1.0e-9 for shooting-based solver and 1.0e-4 for harmonic balance-based solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699600"></a><code>relativeTol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699602"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699604"></a>Relative tolerance for harmonic balance-based linear solver. Default value is 1.0e-2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699606"></a><code>gear_order</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699608"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699610"></a>Gear order used for small-signal integration.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699612"></a><code>solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699614"></a><code>turbo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699616"></a>Solver type. Possible values are std, turbo, std_hh and turbo_hh.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699618"></a><code>oscsolver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699620"></a><code>turbo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699622"></a>Oscillator solver type. It is recommended that you use ira for huge circuits. Possible values are std, turbo, ira and direct.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699624"></a><code>resgmrescycle</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699626"></a><code>short</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699628"></a>Restarts GMRES cycle. Possible values are instant, short, long, recycleinstant, recycleshort, recyclelong and custom.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699630"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699632"></a><code>autoset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699634"></a>Select a linear solver for the GMRES preconditioner. Default is autoset. With autoset, the simulator will automatically select the appropriate precondtioner. The preconditioner affects the rate of convergence of the linear matrix solver used in periodic small-signal analysis. When autoset is selected, the simulator may decide to switch to a different preconditioner after the analysis begins. When that happens, the simulator may issue a warning instructing you to choose a different preconditioner during subsequent runs. Although not required, choosing a different preconditioner according to the simulator&#39;s instructions may speed up subsequent analyses. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699636"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699638"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699640"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699642"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699644"></a><code>200</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699646"></a>This parameter is used to set maximum iteration count of the linear matrix solver used in periodic small-signal analysis. After reaching 1.25*krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase the krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699648"></a><code>osc_version</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699650"></a><code>dts</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699652"></a>Specifies the method to use in small signal analysis for autonomous circuit. Possible values are floquet, augmented and dts.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699654"></a><code>osc_accuracy</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699656"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699658"></a>Accuracy control in small signal analysis for autonomous circuit when osc_version=dts. The higher this value, the more iterations GMRES solver will take. Maximum effective value is 5.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1699679"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1699660">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1699662"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699668"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699670"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699672"></a>Degree of annotation. Possible values are no, title, sweep, status, steps and detailed_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699674"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699676"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1699678"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1699680"></a></p>
+<p>
+<a id="pgfId-1699681"></a>You can define sweep limits by specifying the end points or by providing the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. In addition, You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code>, or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. Alternatively, you may specify the values that the sweep parameter should take by using the <code>values</code> parameter. If you specify both a specific set of values and a set specified using a sweep range, the two sets are merged and collated before being used. All frequencies are in Hertz.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Periodic_Steady-State_Analysis_pss.html" id="prev" title="Periodic Steady-State Analysis (pss)">Periodic Steady-State Analysis ...</a></em></b><b><em><a href="chap3_re_Periodic_Transfer_Function_Analysis_pxf.html" id="nex" title="Periodic Transfer Function Analysis (pxf)">Periodic Transfer Function Ana ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

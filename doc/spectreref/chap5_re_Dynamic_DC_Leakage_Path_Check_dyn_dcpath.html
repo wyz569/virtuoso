@@ -1,0 +1,244 @@
+
+<html><head><title>Dynamic DC Leakage Path Check (dyn_dcpath)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484715" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Dynamic DC Leakage Path Check (dyn_dcpath)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484715" />
+<meta name="NextFile" content="chap5_re_Dynamic_Delay_Check_dyn_delay.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap5_re_Dynamic_Capacitor_Voltage_Check_dyn_capv.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Dynamic DC Leakage Path Check (dyn_dcpath)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap5_re_Dynamic_Capacitor_Voltage_Check_dyn_capv.html" title="Dynamic Capacitor Voltage Check (dyn_capv)">Dynamic Capacitor Voltage Chec ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap5_re_Dynamic_Delay_Check_dyn_delay.html" title="Dynamic Delay Check (dyn_delay)">Dynamic Delay Check (dyn_delay ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Dynamic_DC_Leakage_Path_Check_dyn_dcpath" title="Dynamic DC Leakage Path Check (dyn_dcpath)"></a><h3>
+<a id="pgfId-1687370"></a><a id="42441"></a>Dynamic DC Leakage Path Check (dyn_dcpath)<a id="marker-1687369"></a></h3>
+<h4>
+<a id="pgfId-1687372"></a>Description<a id="marker-1687371"></a></h4>
+
+<p>
+<a id="pgfId-1687373"></a>Reports conductance paths between user-specified nets. This check can be used in two ways. One is based on transient-analysis and other is based on leakage-analysis.Both approaches cannot be combined in one check statement. If you specify both approaches in one check statement, then leakage analysis gets higher priority than transient analysis. Both approaches are explained below: </p>
+<p>
+<a id="pgfId-1687374"></a>* Transient based approach: </p>
+<p>
+<a id="pgfId-1687375"></a>The check based on transient-analysis reports a qualifying path carrying an absolute current higher than the current threshold (<code>ith</code>) and for a time longer than the user-specified duration (<code>duration</code>), within the user-specified time window (<code>time_window</code>). </p>
+<p>
+<a id="pgfId-1687376"></a>* Leakage analysis based approach: </p>
+<p>
+<a id="pgfId-1687377"></a>The check based on leakage analysis is evoked when parameter <code>leaki_times</code> is specified. The <code>leaki_times</code> should be carefully selected in standby or power-down mode (see Leakage Current Simulation in user-manual). The check is performed at specified times (<code>leaki_times</code>) of a transient simulation. The check based on leakage-analysis reports qualifying paths carrying an absolute current higher than the current threshold (<code>ith</code>) at user-specified time points (<code>leaki_times</code>). </p>
+<p>
+<a id="pgfId-1687378"></a>If more than 2 nets are specified, Spectre checks the conducting path between each pair of nodes. For example, if net=[vdc1 vdc2 0] is specified, then the conducting path between vdc1 and vdc2, vdc1 and 0, and vdc2 and 0 is checked. </p>
+<p>
+<a id="pgfId-1687379"></a>Higher accuracy settings are recommended when using the XPS solver: +cktpreset=sram_pwr. </p>
+<p>
+<a id="pgfId-1687380"></a>The results are written to the dynamic.xml file, which can be viewed in a Web browser. </p>
+
+<h4>
+<a id="pgfId-1687382"></a>Syntax<a id="marker-1687381"></a></h4>
+<a id="pgfId-1687383"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name dyn_dcpath parameter=value ...</pre>
+<h4>
+<a id="pgfId-1687384"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1687416"></a>Design check parameters</p>
+<table class="webflareTable" id="#id1687385">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1687387"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687393"></a><code>net</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687395"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687397"></a>The leakage path between the voltage source nodes is checked. <code>net</code> defines a set of nodes and not a pair. For example, node = [vdd vdd1 0] checks the leakage path between vdd and vdd1, vdd and 0, and vdd1 and 0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687399"></a><code>ith</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687401"></a><code>5.00E-05 A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687403"></a>The leakage path with the absolute current higher than the threshold value is reported. Default is 5.00E-05 A.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687405"></a><code>duration</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687407"></a><code>5.00E-09 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687409"></a>Duration threshold. Default is 5.00E-09 sec.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687411"></a><code>sort</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687413"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687415"></a>If set to no, sorting is not performed. If set to current, dyn_dcpath will sort violations by max current. Default is no.Possible values are no and current.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1687454"></a>Filtering parameters</p>
+<table class="webflareTable" id="#id1687417">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1687419"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687425"></a><code>filter</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687427"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687429"></a>If set to no, filtering is not performed. If set to yes, filtering is performed, dyn_dcpath checker will report only one path if the elements in the path are parallel and identical. Default is no. This option is only supported in SpectreFx.Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687431"></a><code>time_window</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687433"></a><code>[tstart, tstop] sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687435"></a>Time window during which the circuit check is applied. Multiple non-overlapping time windows are supported. Default time window is 0 to tend.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687437"></a><code>leaki_times</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687439"></a><code>[...] sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687441"></a>time point(s) at which dynamic dcpath check is performed. This parameter is not supported in MS.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687443"></a><code>error_limit</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687445"></a><code>10000</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687447"></a>Maximum number of errors reported. Default is 10000.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687449"></a><code>xinst</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687451"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687453"></a>Subcircuit instances to be excluded from the check. This parameter is only supported in XPS. Default is none.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693913"></a>Related Topics</p>
+<p>
+<a id="pgfId-1693915"></a><em><a actuate="user" class="URL" href="../spectreuser/chap12.html#dyn_dcpath" show="replace" xml:link="simple">Dynamic DC Leakage Current Path Check</a></em> </p>
+<p>
+<a id="pgfId-1693909"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5_re_Dynamic_Capacitor_Voltage_Check_dyn_capv.html" id="prev" title="Dynamic Capacitor Voltage Check (dyn_capv)">Dynamic Capacitor Voltage Chec ...</a></em></b><b><em><a href="chap5_re_Dynamic_Delay_Check_dyn_delay.html" id="nex" title="Dynamic Delay Check (dyn_delay)">Dynamic Delay Check (dyn_delay ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

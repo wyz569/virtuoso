@@ -1,0 +1,514 @@
+
+<html><head><title>Quasi-Periodic AC Analysis (qpac)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484709" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Quasi-Periodic AC Analysis (qpac)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484709" />
+<meta name="NextFile" content="chap3_re_Quasi-Periodic_Noise_Analysis_qpnoise.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_PZ_Analysis_pz.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Quasi-Periodic AC Analysis (qpac)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_PZ_Analysis_pz.html" title="PZ Analysis (pz)">PZ Analysis (pz)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Quasi-Periodic_Noise_Analysis_qpnoise.html" title="Quasi-Periodic Noise Analysis (qpnoise)">Quasi-Periodic Noise Analysis  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Quasi-Periodic_AC_Analysis_qpac" title="Quasi-Periodic AC Analysis (qpac)"></a><h3>
+<a id="pgfId-1700399"></a>Quasi-Periodic AC Analysis (qpac)<a id="marker-1700398"></a></h3>
+<h4>
+<a id="pgfId-1700401"></a>Description<a id="marker-1700400"></a></h4>
+
+<p>
+<a id="pgfId-1700402"></a>The quasi periodic AC (QPAC) analysis is used to compute transfer functions for circuits that exhibit multitone frequency translation. Such circuits include mixers, switched-capacitor filters, samplers, phase-locked loops, and the like. It is a small-signal analysis like AC analysis, except that the circuit is first linearized about a quasi-periodically varying operating point, as opposed to a simple DC operating point. Linearizing about a quasi-periodically time-varying operating point allows transfer-functions that include frequency translation, whereas simply linearizing about a DC operating point could not because linear time-invariant circuits do not exhibit frequency translation. In addition, the frequency of the sinusoidal stimulus is not constrained by the period of the large periodic solution.</p>
+<p>
+<a id="pgfId-1700403"></a>Computing the small-signal response of a quasi-periodically varying circuit is a two-step process. First, the small stimulus is ignored and the quasi-periodic steady-state response of the circuit to possibly large periodic stimuli is computed using QPSS analysis. As part of the QPSS analysis, the quasi-periodically time-varying representation of the circuit is computed and saved for later use. The second step is to apply the small stimulus to the periodically varying linear representation to compute the small signal response. This is done using the QPAC analysis.</p>
+<p>
+<a id="pgfId-1700404"></a>A QPAC analysis cannot be used independently; it must follow a QPSS analysis. However, any number of quasi-periodic small-signal analyses, such as QPAC, QPSP, QPXF, QPNOISE, can follow a QPSS analysis.</p>
+<p>
+<a id="pgfId-1700405"></a>Unlike other analyses in Spectre, this analysis can only sweep frequency.</p>
+
+<h4>
+<a id="pgfId-1700407"></a>Syntax<a id="marker-1700406"></a></h4>
+<a id="pgfId-1700408"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name qpac parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1700409"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1700489"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1700410">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700412"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700418"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700420"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700422"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700424"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700426"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700428"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700430"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700432"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700434"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700436"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700438"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700440"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700442"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700444"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700446"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700448"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700450"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700452"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700454"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700456"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700458"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700460"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700462"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700464"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700466"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700468"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700470"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700472"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700474"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700476"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700478"></a><code>sweeptype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700480"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700482"></a>Specifies if the sweep frequency range is an absolute frequency, that is, actual frequency, or if it is relative to the &quot;relharmvec&quot; sideband frequency. Possible values are absolute and relative.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700484"></a><code>relharmvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700486"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700488"></a>Sideband - vector of QPSS harmonics to which relative frequency sweep should be referenced.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700527"></a>Output parameters</p>
+<table class="webflareTable" id="#id1700490">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700492"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700498"></a><code>sidevec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700500"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700502"></a>Array of relevant sidebands for the analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700504"></a><code>clockmaxharm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700506"></a><code>7</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700508"></a>An alternative to the <code>sidevec</code> array specification, which automatically generates the array: [ -clockmaxharm ... 0 ... +clockmaxharms][-maxharms(QPSS)[2]...0...maxharms(QPSS)[2] ][...].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700510"></a><code>freqaxis</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700512"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700514"></a>Specifies whether the results should be printed as per the input frequency, the output frequency, or the absolute value of the output frequency. The default is <code>absout</code>. Possible values are absout, out and in.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700516"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700518"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700520"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub, selected, none and nooutput.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700522"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700524"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700526"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700583"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1700528">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700530"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700536"></a><code>tolerance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700538"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700540"></a>Tolerance for linear solver; the default value is 1.0e-9 for shooting-based solver and 1.0e-4 for harmonicbalance-based solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700542"></a><code>relativeTol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700544"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700546"></a>Relative tolerance for harmonicbalance-based linear solver; the default value is 1.0e-2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700548"></a><code>gear_order</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700550"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700552"></a>Gear order used for small-signal integration, 1 or 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700554"></a><code>solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700556"></a><code>turbo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700558"></a>Solver type. Possible values are std and turbo.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700560"></a><code>resgmrescycle</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700562"></a><code>short</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700564"></a>Restarts GMRES cycle. Possible values are instant, short, long, recycleinstant, recycleshort, recyclelong and custom.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700566"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700568"></a><code>autoset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700570"></a>Select a linear solver for the GMRES preconditioner. Default is autoset. With autoset, the simulator will automatically select the appropriate precondtioner. The preconditioner affects the rate of convergence of the linear matrix solver used in periodic small-signal analysis. When autoset is selected, the simulator may decide to switch to a different preconditioner after the analysis begins. When that happens, the simulator may issue a warning instructing you to choose a different preconditioner during subsequent runs. Although not required, choosing a different preconditioner according to the simulator&#39;s instructions may speed up subsequent analyses. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700572"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700574"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700576"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700578"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700580"></a><code>200</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700582"></a>This parameter is used to set maximum iteration count of the linear matrix solver used in periodic small-signal analysis. After reaching 1.25*krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase the krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700603"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1700584">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700586"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700592"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700594"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700596"></a>Degree of annotation. Possible values are no, title, sweep, status, steps and detailed_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700598"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700600"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700602"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700604"></a>You can select the set of periodic small-signal output frequencies of interest by setting either the <code>clockmaxharm</code> or the <code>sidevec</code> parameter. Sidebands are vectors in QPAC. Assuming that there is one large tone and one moderate tone in QPSS, a sideband K1 is represented as [K1_1 K1_2]. Corresponding frequency is as follows:</p>
+<p>
+<a id="pgfId-1700605"></a>    K1_1 * fund(large tone of QPSS) + K1_2 * fund(moderate tone of QPSS) </p>
+<p>
+<a id="pgfId-1700606"></a>If there are L large and moderate tones in QPSS analysis and a given set of n integer vectors representing the sidebands </p>
+<p>
+<a id="pgfId-1700607"></a>    K1 = { K1_1,...K1_j..., K1_L} , K2, ... Kn. the output frequency at each sideband is computed as follows:</p>
+<p>
+<a id="pgfId-1700608"></a>    f(out)= f(in) + SUM_j=1_to_L{Ki_j * fund_j(qpss)}, </p>
+<p>
+<a id="pgfId-1700609"></a>Where, f(in) represents the (possibly swept) input frequency, and fund_j(qpss) represents the fundamental frequency used in the corresponding QPSS analysis. Thus, when analyzing a down-converting mixer while sweeping the RF input frequency, the most relevant sideband for IF output is&#160;&#160;{ -1, 0} . When simulating an up-converting mixer while sweeping IF input frequency, the most relevant sideband for RF output is { 1, 0}. You would enter <code>sidevec</code> as a sequence of integer numbers, separated by spaces. The set of vectors {1 1 0} {1 -1 0} {1 1 1} becomes sidevec=[ 1 1 0 1 -1 0 1 1 1]. For <code>clockmaxharm</code>, only the large tone - the first fundamental is affected by this entry; the rest moderate tones are limited by <code>maxharms</code>, specified for a QPSS analysis. Given maxharms=[k1max k2max ... knmax] in QPSS and clockmaxharm=Kmax all (2*Kmax + 1)*(2*k2max+1)*(2*k3max+1)*...*(2*knmax+1) sidebands are generated.</p>
+<p>
+<a id="pgfId-1700610"></a>The number of requested sidebands changes substantially the simulation time. </p>
+<p>
+<a id="pgfId-1700611"></a>With QPAC, the frequency of the stimulus and of the response are usually different (this is an important area in which QPAC differs from AC). The <code>freqaxis</code> parameter is used to specify whether the results should be output versus the input frequency (<code>in</code>), the output frequency (<code>out</code>), or the absolute value of the output frequency (<code>absout</code>).</p>
+<p>
+<a id="pgfId-1700612"></a>You can specify sweep limits by specifying the end points or the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code>, or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. Alternatively, you may specify the values that the sweep parameter should take by using the <code>values</code> parameter. If you specify both a specific set of values and a set specified using a sweep range, the two sets are merged and collated before being used. All frequencies are in Hertz.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_PZ_Analysis_pz.html" id="prev" title="PZ Analysis (pz)">PZ Analysis (pz)</a></em></b><b><em><a href="chap3_re_Quasi-Periodic_Noise_Analysis_qpnoise.html" id="nex" title="Quasi-Periodic Noise Analysis (qpnoise)">Quasi-Periodic Noise Analysis  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

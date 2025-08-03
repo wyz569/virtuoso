@@ -1,0 +1,996 @@
+
+<html><head><title>Periodic Noise Analysis (pnoise)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484708" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Periodic Noise Analysis (pnoise)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484708" />
+<meta name="NextFile" content="chap3_re_Periodic_S-Parameter_Analysis_psp.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Periodic_AC_Analysis_pac.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Periodic Noise Analysis (pnoise)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Periodic_AC_Analysis_pac.html" title="Periodic AC Analysis (pac)">Periodic AC Analysis (pac)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Periodic_S-Parameter_Analysis_psp.html" title="Periodic S-Parameter Analysis (psp)">Periodic S-Parameter Analysis  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Periodic_Noise_Analysis_pnoise" title="Periodic Noise Analysis (pnoise)"></a><h3>
+<a id="pgfId-1697646"></a>Periodic Noise Analysis (pnoise)<a id="marker-1697645"></a></h3>
+<h4>
+<a id="pgfId-1697648"></a>Description<a id="marker-1697647"></a></h4>
+
+<p>
+<a id="pgfId-1697649"></a>The Periodic Noise, or PNoise analysis is similar to the conventional noise analysis, except that it includes frequency conversion effects. Hence it is useful for predicting the noise behavior of mixers, switched-capacitor filters, and other periodically driven circuits. It is particularly useful for predicting the phase noise of autonomous circuits, such as oscillators.</p>
+<p>
+<a id="pgfId-1697650"></a>PNoise analysis linearizes the circuit about the periodic operating point computed in the prerequisite PSS analysis. It is the periodically time-varying nature of the linearized circuit that accounts for the frequency conversion. In addition, the affect of a periodically time-varying bias point on the noise generated by the various components in the circuit is also included.</p>
+<p>
+<a id="pgfId-1697651"></a>The time-average of the noise at the output of the circuit is computed in the form of spectral density versus frequency. The output of the circuit is specified with either a pair of nodes or a probe component. To specify the output of a circuit with a probe, specify it using the <code>oprobe</code> parameter. If the output is voltage (or potential), choose a <code>resistor</code> or a <code>port</code> as the output probe. If the output is current (or flow), choose a <code>vsource</code> or <code>iprobe</code> as the output probe.</p>
+<p>
+<a id="pgfId-1697652"></a>If the input-referred noise or noise figure is desired, specify the input source by using the <code>iprobe</code> parameter. For input-referred noise, use vsource or isource as the input probe; for noise figure, use a port as the probe. Currently, only a <code>vsource</code>, an <code>isource</code>, or a <code>port</code> may be used as an input probe. If the input source is noisy, as is a <code>port</code>, the noise analysis computes the noise factor (F) and noise figure (NF). To match the IEEE definition of noise figure, the input probe must be a port with no excess noise and its <code>noisetemp</code> must be set to 16.85C (290K). In addition, the output load must be a <code>resistor</code> or <code>port</code> and must be identified as the <code>oprobe</code>.</p>
+<p>
+<a id="pgfId-1697653"></a>If <code>port</code> is specified as the input probe, both input-referred noise and gain are referred back to the equivalent voltage source inside the port. S-parameter analysis calculates those values in traditional sense.</p>
+<p>
+<a id="pgfId-1697654"></a>The reference sideband (<code>refsideband</code>) specifies which conversion gain is used when computing input-referred noise, noise factor, and noise figure. The reference sideband specifies the input frequency relative to the output frequency with:</p>
+<p>
+<a id="pgfId-1697655"></a>    |f(input)| = |f(out) + refsideband * fund(pss)|</p>
+<p>
+<a id="pgfId-1697656"></a>Use <code>refsideband=0</code> when the input and output of the circuit are at the same frequency (such as with amplifiers and filters). When <code>refsideband</code> differs from 0, the single side-band noise figure is computed.</p>
+<p>
+<a id="pgfId-1697657"></a>The noise analysis always computes the total noise at the output, which includes contributions from the input source and the output load. The amount of the output noise that is attributable to each noise source in the circuit is also computed and output individually. If the input source is identified (using iprobe) and is a vsource or isource, the input-referred noise is computed, which includes the noise from the input source itself. Finally, if the input source is identified (using iprobe) and is noisy, as is the case with ports, the noise factor and noise figure are computed. Therefore if:</p>
+<p>
+<a id="pgfId-1697658"></a>    No = total output noise</p>
+<p>
+<a id="pgfId-1697659"></a>    Ns = noise at the output due to the input probe (the source)</p>
+<p>
+<a id="pgfId-1697660"></a>    Nsi = noise at the output due to the image harmonic at the source</p>
+<p>
+<a id="pgfId-1697661"></a>    Nso = noise at the output due to harmonics other than input at the source</p>
+<p>
+<a id="pgfId-1697662"></a>    Nl = noise at the output due to the output probe (the load)</p>
+<p>
+<a id="pgfId-1697663"></a>    IRN = input referred noise</p>
+<p>
+<a id="pgfId-1697664"></a>    G = gain of the circuit</p>
+<p>
+<a id="pgfId-1697665"></a>    F = noise factor</p>
+<p>
+<a id="pgfId-1697666"></a>    NF = noise figure</p>
+<p>
+<a id="pgfId-1697667"></a>    Fdsb = double sideband noise factor</p>
+<p>
+<a id="pgfId-1697668"></a>    NFdsb = double sideband noise figure</p>
+<p>
+<a id="pgfId-1697669"></a>    Fieee = IEEE single sideband noise factor</p>
+<p>
+<a id="pgfId-1697670"></a>    NFieee = IEEE single sideband noise figure</p>
+<p>
+<a id="pgfId-1697671"></a>Then,</p>
+<p>
+<a id="pgfId-1697672"></a>    IRN = sqrt(No^2/G^2)</p>
+<p>
+<a id="pgfId-1697673"></a>    F = (No^2 - Nl^2)/Ns^2</p>
+<p>
+<a id="pgfId-1697674"></a>    NF = 10*log10(F)</p>
+<p>
+<a id="pgfId-1697675"></a>    Fdsb = (No^2 - Nl^2)/(Ns^2+Nsi^2)</p>
+<p>
+<a id="pgfId-1697676"></a>    NFdsb = 10*log10(Fdsb)</p>
+<p>
+<a id="pgfId-1697677"></a>    Fieee = (No^2 - Nl^2 - Nso^2)/Ns^2</p>
+<p>
+<a id="pgfId-1697678"></a>    NFieee = 10*log10(Fieee).</p>
+<p>
+<a id="pgfId-1697679"></a>When the results are output, No is named <code>out</code>, IRN is named <code>in</code>, G is named <code>gain</code>, F, NF, Fdsb, NFdsb, Fieee, and NFieee are named <code>F</code>, <code>NF</code>, <code>Fdsb</code>, <code>NFdsb</code>, <code>Fieee</code>, and <code>NFieee</code>, respectively.</p>
+<p>
+<a id="pgfId-1697680"></a>In a phase noise analysis for an oscillator, the line width, which is also known as the corner frequency, is defined as either the full width at half maximum (FWHM), or as twice the half power (-3dB) width (HW). In the absence of 1/f noise and ignoring any noise floor, the phase noise spectrum satisfies the Lorentzian equation:</p>
+<p>
+<a id="pgfId-1697681"></a>    L(f) = (1/pi) * [ pi * c * fosc^2 ] / [(pi * c * fosc^2)^2 + f^2],</p>
+<p>
+<a id="pgfId-1697682"></a>Where &#39;c&#39; is a constant that defines the phase noise characteristics of the oscillator, &#39;fosc&#39; is the fundamental frequency of the oscillator, and &#39;f&#39; is the offset frequency of the oscillator. Therefore: </p>
+<p>
+<a id="pgfId-1697683"></a>    line width := FWHM = 2* HW = 2 * pi * c * fosc^2.</p>
+<p>
+<a id="pgfId-1697684"></a>Unlike other analyses in Spectre, this analysis can only sweep frequency.</p>
+
+<h4>
+<a id="pgfId-1697686"></a>Syntax<a id="marker-1697685"></a></h4>
+<a id="pgfId-1697687"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name  [p]  [n] ... pnoise parameter=<code><em>value ...</em></code></pre>
+
+<p>
+<a id="pgfId-1697688"></a>The optional terminals (p and n) specify the output of the circuit. If you do not specify the terminals, you must specify the output with a probe component.</p>
+
+<h4>
+<a id="pgfId-1697689"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1697775"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1697690">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1697692"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697698"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697700"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697702"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697704"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697706"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697708"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697710"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697712"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697714"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697716"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697718"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697720"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697722"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697724"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697726"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697728"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697730"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697732"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697734"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697736"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697738"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697740"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697742"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697744"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697746"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697748"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697750"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697752"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697754"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697756"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697758"></a><code>sweeptype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697760"></a><code>unspecified</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697762"></a>Specifies if the sweep frequency range is the absolute frequency of input or if it is relative to the port harmonics. When the unspecified value is used, Spectre RF sweeps using relative when autonomous simulation is performed or when the analysis is PSP; for other cases Spectre RF sweeps the absolute value of the input. Possible values are absolute, relative and unspecified.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697764"></a><code>relharmnum</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697766"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697768"></a>Harmonic to which relative frequency sweep should be referenced.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697770"></a><code>stophalffund</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697772"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697774"></a>If yes, automatically choose stop frequency of pnoise/hbnoise to be half of the fundamental frequency obtained from pss/hb analysis. Only works for noisetype = sampled/pmjitter/timedomain. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1697801"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1697776">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1697778"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697784"></a><code>oprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697786"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697788"></a>Compute total noise at the output defined by this component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697790"></a><code>iprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697792"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697794"></a>Refer the output noise to this component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697796"></a><code>refsideband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697798"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697800"></a>Conversion gain associated with this sideband; is used when computing input-referred noise or noise figure.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1697845"></a>Sampled analysis parameters</p>
+<table class="webflareTable" id="#id1697802">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1697804"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697810"></a><code>thresholdvalue</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697812"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697814"></a>Sampled measurement is done when the signal crosses this value.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697816"></a><code>crossingdirection</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697818"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697820"></a>Specifies the transitions for which sampling must be done. Possible values are all, rise, fall and ignore.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697822"></a><code>maxsamples</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697824"></a><code>16</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697826"></a>Maximum number of sampled events to be processed during the sampled analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697828"></a><code>sampleratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697830"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697832"></a>The ratio between sampled frequency and fund frequency (sampled frequency/fund frequency)..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697834"></a><code>externalsourcedata</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697836"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697838"></a>Name of PXF analysis that provides information to compute the contribution of external jitter sources.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697840"></a><code>measurement</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697842"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697844"></a>Specifies the jitter event list that will be measured.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1697931"></a>Output parameters</p>
+<table class="webflareTable" id="#id1697846">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1697848"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697854"></a><code>noisetype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697856"></a><code>timeaverage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697858"></a>Specifies computation of time-averaged or time-sampled noise information. Possible values are timeaverage, correlations, timedomain, pmjitter and sampled.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697860"></a><code>maxsideband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697862"></a><code>7</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697864"></a>In shooting pnoise, the parameter determines the maximum sideband that is included when computing noise, that is either up-converted or down-converted to the output by the periodic drive signal. In HB pnoise, the parameter determines the size of the small signal system when HB pnoise is performed. This parameter is critical for the accuracy of HB pnoise analysis. Using a small maxsideband may cause accuracy loss. The default value for the shooting pnoise is 7. For the HB pnoise, the default is the <code>harms/maxharms</code> setting in the HB large signal analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697866"></a><code>sidebands</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697868"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697870"></a>Array of relevant sidebands for the analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697872"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697874"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697876"></a>Signals to output. The option &#39;save&#39; specifies the signals to be saved in the result. &#39;allpub&#39; saves all signals at all levels of hierarchy in the schematic, including the internal signals of device models. &#39;all&#39; works like &#39;allpub&#39;. &#39;lvl&#39; saves all signals through the level of hierarchy set in &#39;nestlvl&#39; option. &#39;lvlpub&#39; works like &#39;lvl&#39;. &#39;selected&#39; is not recommended to use here. Possible values are all, lvl, allpub, lvlpub and selected.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697878"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697880"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697882"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697884"></a><code>maxcycles</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697886"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697888"></a>Maximum cycle correlation frequency included when computing noise, that is either up-converted or down-converted to the output by the periodic drive signal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697890"></a><code>noiseskipcount</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697892"></a><code>-1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697894"></a>Calculate time-domain noise on only one of every noiseskipcount time points. When &lt; 0, the parameter is ignored. When &gt;=0, the simulator uses this parameter and ignores numberofpoints.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697896"></a><code>noisetimepoints</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697898"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697900"></a>Additional time points for time-domain noise analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697902"></a><code>numberofpoints</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697904"></a><code>5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697906"></a>Number of time points of interest in the period where time domain PSD is calculated. Simulator divides the period evenly into N segments (N=numberofpoints) and calculates time domain PSD on the starting time point of each segment. When &lt; 0, the parameter is ignored.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697908"></a><code>saveallsidebands</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697910"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697912"></a>Save noise contributors by sideband. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697914"></a><code>separatenoise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697916"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697918"></a>Separate noise into sources and transfer functions. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697920"></a><code>cyclo2txtfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697922"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697924"></a>Output cyclo-stationary noise to text file as input source of next stage. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697926"></a><code>noiseout</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697928"></a><code>usb</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697930"></a>Specify noise output. You can set a vector like noiseout=[usb am pm]. And all are using single sideband(SSB) convention, half of the total power. Possible values are usb, lsb, am and pm.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1698041"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1697932">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1697934"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697940"></a><code>tolerance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697942"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697944"></a>Tolerance for linear solver. The default value is 1.0e-9 for shooting-based solver and 1.0e-4 for harmonic balance-based solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697946"></a><code>relativeTol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697948"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697950"></a>Relative tolerance for harmonic balance-based linear solver. Default value is 1.0e-2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697952"></a><code>gear_order</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697954"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697956"></a>Gear order used for small-signal integration.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697958"></a><code>solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697960"></a><code>turbo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697962"></a>Solver type. Possible values are std, turbo, std_hh and turbo_hh.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697964"></a><code>oscsolver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697966"></a><code>turbo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697968"></a>Oscillator solver type. It is recommended that you use ira for huge circuits. Possible values are std, turbo, ira and direct.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697970"></a><code>resgmrescycle</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697972"></a><code>short</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697974"></a>Restarts GMRES cycle. Possible values are instant, short, long, recycleinstant, recycleshort, recyclelong and custom.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697976"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697978"></a><code>autoset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697980"></a>Select a linear solver for the GMRES preconditioner. Default is autoset. With autoset, the simulator will automatically select the appropriate precondtioner. The preconditioner affects the rate of convergence of the linear matrix solver used in periodic small-signal analysis. When autoset is selected, the simulator may decide to switch to a different preconditioner after the analysis begins. When that happens, the simulator may issue a warning instructing you to choose a different preconditioner during subsequent runs. Although not required, choosing a different preconditioner according to the simulator&#39;s instructions may speed up subsequent analyses. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697982"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697984"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697986"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697988"></a><code>ppv</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697990"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697992"></a>If set to yes, save the oscillator PPV after performing noise analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697994"></a><code>ppvfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697996"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1697998"></a>File to which the PPV of oscillator is written.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698000"></a><code>augmented</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698002"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698004"></a>This parameter will be removed in future release soon. The parameter &#39;noiseout&#39; is recommended. If set to <code>yes</code>, the frequency-aware PPV method is used to calculate the total noise of the oscillator; if set to <code>pmonly</code>, only the PM part of the oscillator noise is calculated; if set to <code>amonly</code>, only the AM part of the oscillator noise is calculated. The output of AM/PM noise is using double sideband convention. Possible values are no, yes, pmonly and amonly.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698006"></a><code>lorentzian</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698008"></a><code>cornerfreqonly</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698010"></a>This option determines if the Lorentzian plot is used in the oscillator noise analysis. &#39;lorentzian=yes&#39; is only valid for &#39;noisetype=timeaverage&#39;. Possible values are no, cornerfreqonly and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698012"></a><code>pnoisemethod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698014"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698016"></a>This option selects the shooting pnoise method. Possible values are default and fullspectrum.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698018"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698020"></a><code>200</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698022"></a>This parameter is used to set maximum iteration count of the linear matrix solver used in periodic small-signal analysis. After reaching 1.25*krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase the krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698024"></a><code>osc_version</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698026"></a><code>dts</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698028"></a>Specifies the method to use in small signal analysis for autonomous circuit. Possible values are floquet, augmented and dts.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698030"></a><code>osc_accuracy</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698032"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698034"></a>Accuracy control in small signal analysis for autonomous circuit when osc_version=dts. The higher this value, the more iterations GMRES solver will take. Maximum effective value is 5.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698036"></a><code>freqdivide</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698038"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698040"></a>Large signal frequency division. Used for oscillator circuit with divider in when osc_version=dts for shooting engine.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1698073"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1698042">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1698044"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698050"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698052"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698054"></a>Degree of annotation. Possible values are no, title, sweep, status, steps and detailed_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698056"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698058"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698060"></a>Analysis title.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698062"></a><code>oscmacrogene</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698064"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698066"></a>If set to yes, harmonic balance steady-state and phase noise data are saved. Applies only if there is pm noise out. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698068"></a><code>oscmacrosave</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698070"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1698072"></a>File to which harmonic balance steady-state solution and phase noise data are to be written.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1698074"></a>In practice, noise can mix with each of the harmonics of the periodic drive signal applied in the PSS analysis and end up at the output frequency. However, the PNoise analysis includes only the noise that mixes with a finite set of harmonics that are typically specified using the <code>maxsideband</code> parameter; however, in special circumstances, the harmonics may be specified with the <code>sidebands</code> parameter. If Ki represents sideband i, then</p>
+<p>
+<a id="pgfId-1698075"></a>    f(noise_source) = f(out) + Ki * fund(pss)</p>
+<p>
+<a id="pgfId-1698076"></a>The <code>maxsideband</code> parameter specifies the maximum |Ki| included in the PNoise calculation. Therefore, noise at frequencies less than f(out)-maxsideband*fund(pss) and greater than f(out)+maxsideband*fund(pss) are ignored. If selected sidebands are specified using the <code>sidebands</code> parameter, then only those specified are included in the calculation. When specifying the sidebands ensure that you include a sideband that contributes significant noise to the output; otherwise, the results will be erroneous. </p>
+<p>
+<a id="pgfId-1698077"></a>The number of requested sidebands does not change the simulation time substantially. However, the <code>maxacfreq</code> of the corresponding PSS analysis should be set to guarantee that |max{f(noise_source)}| is less than <code>maxacfreq</code>; otherwise, the computed solution might be contaminated by aliasing effects. The PNoise simulation is not executed for |f(out)| greater than&#160;&#160;<code>maxacfreq</code>. Diagnostic messages are printed for those extreme cases, indicating which <code>maxacfreq</code> should be set in the PSS analysis. In majority of simulations, however, this is not an issue, because <code>maxacfreq</code> is never allowed to be smaller than 40x the PSS fundamental.</p>
+<p>
+<a id="pgfId-1698078"></a>Phase Noise measurements are possible by using the Analog Design Environment (ADE). Two pnoise analyses are pre-configured for this simulation and most of the analysis named <code>mod2</code> has limited use outside of the Analog Design Environment (ADE) environment. Direct Plot is configured to analyze these results and combine several wave forms to measure AM and PM components of the output noise. For details, see the Spectre RF User Guide.</p>
+<p>
+<a id="pgfId-1698079"></a>You can define sweep limits by specifying the end points or by providing the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. In addition, You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code>, or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. Alternatively, you may specify the values that the sweep parameter should take by using the <code>values</code> parameter. If you specify both a specific set of values and a set specified using a sweep range, the two sets are merged and collated before being used. All frequencies are in Hertz.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Periodic_AC_Analysis_pac.html" id="prev" title="Periodic AC Analysis (pac)">Periodic AC Analysis (pac)</a></em></b><b><em><a href="chap3_re_Periodic_S-Parameter_Analysis_psp.html" id="nex" title="Periodic S-Parameter Analysis (psp)">Periodic S-Parameter Analysis  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

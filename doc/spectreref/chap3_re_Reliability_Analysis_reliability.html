@@ -1,0 +1,2367 @@
+
+<html><head><title>Reliability Analysis (reliability)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484710" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Reliability Analysis (reliability)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484710" />
+<meta name="NextFile" content="chap3_re_Deferred_Set_Options_set.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Quasi-Periodic_Transfer_Function_Analysis_qpxf.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Reliability Analysis (reliability)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Quasi-Periodic_Transfer_Function_Analysis_qpxf.html" title="Quasi-Periodic Transfer Function Analysis (qpxf)">Quasi-Periodic Transfer Functi ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Deferred_Set_Options_set.html" title="Deferred Set Options (set)">Deferred Set Options (set)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Reliability_Analysis_reliability" title="Reliability Analysis (reliability)"></a><h3>
+<a id="pgfId-1702289"></a>Reliability Analysis (reliability)<a id="marker-1702288"></a></h3>
+<h4>
+<a id="pgfId-1702291"></a>Description<a id="marker-1702290"></a></h4>
+
+<p>
+<a id="pgfId-1702292"></a> This analysis computes the reliability for MOSFETs and the circuit. The three reliability modules are: </p>
+<p>
+<a id="pgfId-1702293"></a> 1. MOSFET Hot-Carrier Injection(HCI) module:</p>
+<p>
+<a id="pgfId-1702294"></a>    Predicts transistor and circuit performance degradation due to HCI effects.</p>
+<p>
+<a id="pgfId-1702295"></a> 2. PMOSFET Negative Bias Temperature Instability(NBTI) module:</p>
+<p>
+<a id="pgfId-1702296"></a>    Predicts PMOSFET and circuit performance degradation due to NBTI and NBTI recovery effects.</p>
+<p>
+<a id="pgfId-1702297"></a> 3. NMOSFET Positive Bias Temperature Instability(PBTI) module:</p>
+<p>
+<a id="pgfId-1702298"></a>    Predicts NMOSFET and circuit performance degradation due to PBTI effects.</p>
+<p>
+<a id="pgfId-1702299"></a></p>
+<p>
+<a id="pgfId-1702300"></a>Synopsis:</p>
+<p>
+<a id="pgfId-1702301"></a>name reliability&#160;&#160;&lt;global options&gt; {</p>
+<p>
+<a id="pgfId-1702302"></a>        &lt;reliability control statements&gt; ...</p>
+<p>
+<a id="pgfId-1702303"></a>        &lt;stress simulation statements&gt; ...</p>
+<p>
+<a id="pgfId-1702304"></a>        &lt;aging testbench statements&gt; ...</p>
+<p>
+<a id="pgfId-1702305"></a>        &lt;aging/post-stress simulation statements&gt; ...</p>
+<p>
+<a id="pgfId-1702306"></a>}</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1702307"></a>Note: Starting from MMSIM10.1.0 release version, the &lt;global options&gt; are ignored.</div>
+<p>
+<a id="pgfId-1702308"></a>      The other four sections should be listed in the specified order.</p>
+
+<h4>
+<a id="pgfId-1702310"></a>Syntax<a id="marker-1702309"></a></h4>
+<a id="pgfId-1702311"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name reliability parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1703231"></a>Parameters</h4>
+<table class="webflareTable" id="#id1702312">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1702314"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702320"></a><code>Analysis parameters</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702322"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702324"></a>Analysis title.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702326"></a><code>age time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702328"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702330"></a>The time in future when the transistor degradation and degraded SPICE model parameters are to be calculated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702332"></a><code>deltad value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702334"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702336"></a>Specifies the degradation value. The degradation value can be transconductance, linear or saturation drain current degradation, threshold voltage shift, or any other degradation monitor, depending on the definitions of the lifetime parameters H and m..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702338"></a><code>vec_deltad item</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702340"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702342"></a>Specifies the degradation value in vector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702344"></a><code>deltad mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702346"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702348"></a>Specifies the name of a model whose lifetime is calculated. The model name must be the same as specified in the .model card.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702350"></a><code>maskdev type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702352"></a><code>include</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702354"></a>Includes or excludes the specified devices or the devices that belong to the listed subcircuit or model during reliability analysis. Possible values are include and exclude.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702356"></a><code>deg_ratio type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702358"></a><code>include</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702360"></a>Includes or excludes the specified devices for built-in agemos model. Possible values are include and exclude.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702362"></a><code>deg_ratio dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702364"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702366"></a>Specifies the instances to be included or excluded for degradation ratio of built-in agemos model.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702368"></a><code>maskdev mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702370"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702372"></a>Specifies the models for which the related devices should be included or excluded while performing reliability analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702374"></a><code>maskdev dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702376"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702378"></a>Specifies the instances to be included or excluded during reliability analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702380"></a><code>maskdev sub</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702382"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702384"></a>Specifies the subcircuit(s) for which the related devices should be included or excluded while performing reliability analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702386"></a><code>maskdev tmioff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702388"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702390"></a>Specifies the analysis&#160;&#160;which needs to be turned off for masked devices in tmi. Possible values are none, aging, rtshe and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702392"></a><code>report_model_param value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702394"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702396"></a>Determines whether to print the stress and aged parameters in the.bm# file. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702398"></a><code>load_external_cmi value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702400"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702402"></a>Load the external user-defined CMI flag. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702404"></a><code>load_external_cmi debug</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702406"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702408"></a>The flag of outputting thedebug information for loading external customerdefined CMI shared library.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702410"></a><code>accuracy level</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702412"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702414"></a>Specifies methods used in the reliability simulation when performing integration and substrate current calculation. Possible values are 1 and 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702416"></a><code>minage value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702418"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702420"></a>Specifies the smallest age value for which degraded SPICE model parameters are calculated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702422"></a><code>igatemethod type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702424"></a><code>calc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702426"></a>Specifies the method used for obtaining the gate currents of MOSFETs. Possible values are calc and spice.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702428"></a><code>idmethod type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702430"></a><code>ids</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702432"></a>Specifies how the simulator obtains the drain current (Id) of MOSFETs to perform reliability calculations. Possible values are ids, idrain and idstatic.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702434"></a><code>dumpagemodel file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702436"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702438"></a>Output file name of dump age model.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702440"></a><code>output_aging_model_info file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702442"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702444"></a>Output file of aging model info.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702446"></a><code>dumpagemodel dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702448"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702450"></a>Specifies the instances whose aged modelcard will be output.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702452"></a><code>urilib file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702454"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702456"></a>Specifies URI library file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702458"></a><code>urilib files</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702460"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702462"></a>Specifies URI libraries file name for multiple uri libraries.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702464"></a><code>urilib uri_mode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702466"></a><code>scaleparam</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702468"></a>Specifies which method should be used to perform aging simulation.. Possible values are agemos, scaleparam, mixed_mode, appendage, new_appendage, appendage2 and appendage1.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702470"></a><code>urilib debug</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702472"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702474"></a>Specifies the debug mode for URI library. The value can be 0 or positve. When specified, a flag is added to the URI library indicating whether the debug information should be printed. debugMode is not 0 prints debug messages. Default value is 0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702476"></a><code>bias_mode_urilib bjt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702478"></a><code>-1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702480"></a>Specifies the bjt bias mode for pnp type..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702482"></a><code>relxtran start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702484"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702486"></a>Specifies the start time of reliability analysis during transient simulation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702488"></a><code>relxtran stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702490"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702492"></a>Specifies the stop time of reliability analysis during transient simulation. If stop_time is not specified, the software stops in .tran statement.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702494"></a><code>isubmethod type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702496"></a><code>calc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702498"></a>Specifies the method used for obtaining the substrate currents of MOSFET. Possible values are calc and spice.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702500"></a><code>opmethod type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702502"></a><code>calc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702504"></a>Specifies whether the Igate or Isub value should be obtained from the SPICE models (such as BSIM3 or BSIM4) or whether the internal Igate or Isub equation should be used. Possible values are calc and spice.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702506"></a><code>degsort threshold</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702508"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702510"></a>Prints MOS transistors based on the threshold and number settings. The results are sorted in the descending order of degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702512"></a><code>degsort number</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702514"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702516"></a>Prints only the specified number of&#160;&#160;transistors having the highest degradations. For example, if number=100, the software will print the first 100 transistors with highest degradations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702518"></a><code>agelevel_only value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702520"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702522"></a>Sets the level for reliability analysis, which is essentially the age level number of the reliability analysis to be performed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702524"></a><code>gradual_aging_agestep type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702526"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702528"></a>Sets the type of agestep, linear or logarithm, the default type is linear. Possible values are lin and log.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702530"></a><code>gradual_aging_agestep start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702532"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702534"></a>Specifies the start time of agestep in gradual aging flow, the default value is 0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702536"></a><code>gradual_aging_agestep stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702538"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702540"></a>Specifies the stop time of agestep in gradual aging flow.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702542"></a><code>gradual_aging_agestep total_step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702544"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702546"></a>Specifies the total step numbers of agestep in gradual aging flow.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702548"></a><code>gradual_aging_agestep profile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702550"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702552"></a>Select this option to run profile gradual aging. In profile gradual aging, results of next age step doesn&#39;t depend on the results of the previous age step. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702554"></a><code>gradual_aging_agepoint points</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702556"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702558"></a>Specifies points of agepoints.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702560"></a><code>gradual_aging_agepoint profile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702562"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702564"></a>Select this option to run profile gradual aging. In profile gradual aging, results of next age point doesn&#39;t depend on the results of the previous age point. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702566"></a><code>gradual_aging_save steps</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702568"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702570"></a>Save the specified step of gradual aging result files.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702572"></a><code>gradual_aging_save savedatainseparatedir</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702574"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702576"></a>Dump the waveform files in a separate directory for gradual aging result files. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702578"></a><code>rel_savedatainseparatedir value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702580"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702582"></a>Dump the waveform files in a separate directory. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702584"></a><code>gradual_aging_alter time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702586"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702588"></a>Set time for gradualAging alter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702590"></a><code>gradual_aging_alter param</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702592"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702594"></a>Set params for gradualAging alter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702596"></a><code>gradual_aging_alter value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702598"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702600"></a>Set values for gradualAging alter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702602"></a><code>simmode type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702604"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702606"></a>Mode of reliability analysis. Possible values are stress, aging and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702608"></a><code>simmode file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702610"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702612"></a>File of simMode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702614"></a><code>simmode mapping</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702616"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702618"></a>Device Name Mapping File of simMode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702620"></a><code>simmode tmifile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702622"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702624"></a>Input file for TMI Aging flow.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702626"></a><code>macrodevice sub</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702628"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702630"></a>Specifies the instances for macrodevice.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702632"></a><code>combinedeg value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702634"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702636"></a>Determines whether to combine the external URI results with internal URI results in the bo0 file. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702638"></a><code>keep_aged_data value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702640"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702642"></a>Determines whether to keep the value of the aged model parameters after reliability analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702644"></a><code>check_neg_aging type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702646"></a><code>error</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702648"></a>Specifies the message type to check the negative value in bt0. Default is error. Possible values are error, warn and ignore.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702650"></a><code>check_neg_aging clamp</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702652"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702654"></a>Clamps the negative age value in the bt0 file. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702656"></a><code>enable_negative_age value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702658"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702660"></a>Enable negative age value. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702662"></a><code>output_binary_file value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702664"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702666"></a>Specifies the format of reliability analysis output file. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702668"></a><code>deg_ratio hci</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702670"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702672"></a>The degradation ratio for HCI effect.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702674"></a><code>deg_ratio nbti</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702676"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702678"></a>The degradation ratio for NBTI effect.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702680"></a><code>deg_ratio pbti</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702682"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702684"></a>The degradation ratio for PBTI effect.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702686"></a><code>deg_ratio bti</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702688"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702690"></a>The degradation ratio for NBTI/PBTI effect.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702692"></a><code>type_urilib append</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702694"></a><code>inline</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702696"></a>Compatibility with RelXpert. Possible values are inline, sub and dev.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702698"></a><code>enable_ade_process value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702700"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702702"></a>Enable reliability in ADE. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702704"></a><code>macrodevice type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702706"></a><code>appendparams</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702708"></a>Specifies the instances for macrodevice. Possible values are appendparams and agemos.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702710"></a><code>tmi_aging_mode type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702712"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702714"></a>Mode of tmi aging flow. Possible values are aging, she and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702716"></a><code>omi_aging_mode type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702718"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702720"></a>Mode of omi aging flow. Possible values are aging, she and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702722"></a><code>simmode omifile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702724"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702726"></a>Input file for OMI Aging flow.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702728"></a><code>output_region_param value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702730"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702732"></a>Prints the region method of the parameter. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702734"></a><code>tmi_she_mindtemp value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702736"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702738"></a>The minimum delta temperature of self-heating.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702740"></a><code>enable_tmi_uri value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702742"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702744"></a>Enable the TMI and URI flow. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702746"></a><code>fast_aging_mode type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702748"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702750"></a>Mode of XPS native reliability. Possible values are agemos and ratio.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702752"></a><code>aging_analysis_name value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702754"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702756"></a>Aging analysis name. Possible values are tran, dc and ac.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702758"></a><code>deg_ratio hcin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702760"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702762"></a>The degradation ratio for NMOS HCI effect, it is for TMI aging flow only.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702764"></a><code>deg_ratio hcip</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702766"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702768"></a>The degradation ratio for PMOS HCI effect, it is for TMI aging flow only.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702770"></a><code>deg_ratio btin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702772"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702774"></a>The degradation ratio for PBTI effect, it is for TMI aging flow only.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702776"></a><code>deg_ratio btip</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702778"></a><code>1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702780"></a>The degradation ratio for NBTI effect, it is for TMI aging flow only.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702782"></a><code>output_device_degrad vdd</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702784"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702786"></a>Sets the bias voltage for the device degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702788"></a><code>output_device_degrad tmi_lib_inc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702790"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702792"></a>Sets the TMI library include/section for gm/gds degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702794"></a><code>deltad item</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702796"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702798"></a>Specifies the electrical parameter for lifetime estimation. It is only available for TMI aging flow. Possible values are didsat, didlin, dvtlin, dvtsat and lifetime.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702800"></a><code>degsort item</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702802"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702804"></a>Specifies which item must be used for sorting.&#160;&#160;It is only available for TMI aging flow. Possible values are didsat, didlin, dvtlin, dvtsat and lifetime.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702806"></a><code>output_device_degrad vdlin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702808"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702810"></a>Sets the bias voltage of vdlin for the device degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702812"></a><code>output_device_degrad vgsat</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702814"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702816"></a>Sets the bias voltage of vgsat for the device degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702818"></a><code>output_device_degrad vglin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702820"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702822"></a>Sets the bias voltage of vglin for the device degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702824"></a><code>degsort phys</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702826"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702828"></a>Specify which reliability effect used for sorting&#160;&#160;It is only available for TMI aging flow. Possible values are hci_bti, hci and bti.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702830"></a><code>output_inst_param list</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702832"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702834"></a>Specify the parameter names to be output into bo0 or psf file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702836"></a><code>degradation_check_exception file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702838"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702840"></a>Set degradation check exception list.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702842"></a><code>degradation_check type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702844"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702846"></a>Specify the message type(warning or error) for degradation_check. Possible values are warn and error.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702848"></a><code>degradation_check parameter</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702850"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702852"></a>Specify the degradation_check parameter&#39;s name. Possible values are deltad, dvth, didlin, didsat, did, dgm and dgds.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702854"></a><code>degradation_check value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702856"></a><code>DBL_MAX</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702858"></a>Specify the degradation_check value.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702860"></a><code>degradation_check agelevel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702862"></a><code>-1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702864"></a>Specify the degradation_check agelevel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702866"></a><code>degradation_check error</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702868"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702870"></a>Set degradation check error message output file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702872"></a><code>degradation_check_output file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702874"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702876"></a>Set degradation check result output file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702878"></a><code>rel_mode type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702880"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702882"></a>Specifies the analysis type used for obtaining the device reliability values. Possible values are aging, she, all, aging_she and aging_thermal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702884"></a><code>rel_mode tmode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702886"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702888"></a>Specifies the temperature mode. Possible values are static and dynamic.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702890"></a><code>gradual_aging_with_deg value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702892"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702894"></a>Call calcDegradation before calcAge in gradual aging flow. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702896"></a><code>degradation_check sub</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702898"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702900"></a>Set subckt for degradation check.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702902"></a><code>degradation_check dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702904"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702906"></a>Set device for degradation check.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702908"></a><code>degradation_check mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702910"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702912"></a>Set model for degradation check.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702914"></a><code>output_she_power value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702916"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702918"></a>Set output device power in SHE flow. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702920"></a><code>enable_tmishe_uri value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702922"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702924"></a>Enable TMI and URI flow and pass dtemp of TMI into URI. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702926"></a><code>output_format type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702928"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702930"></a>Specifies reliability output format: SQL, DPL or BIN.. Possible values are SQL, DPL and BIN.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702932"></a><code>skip_tmi_aging_she_tran value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702934"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702936"></a>The flag whether to run transient of aging+SHE. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702938"></a><code>output_device_degrad file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702940"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702942"></a>Specifies file included output_device_degrad options.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702944"></a><code>vdsmethod type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702946"></a><code>external</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702948"></a>Specifies to get external or internal voltage of Vds. Possible values are external and internal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702950"></a><code>output_device_degrad skipaging</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702952"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702954"></a>Output bt0 file and skip aging analysis for saving time. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702956"></a><code>output_device_degrad vthsat</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702958"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702960"></a>Output vthsat for the device degradation in bt0 file. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702962"></a><code>output_device_degrad op</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702964"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702966"></a>Specifies op parameters for device degradation in bt0 file..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702968"></a><code>output_subckt_degrad op</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702970"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702972"></a>Specifies op parameters for subckt degradation in bt0 file..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702974"></a><code>output_device_degrad vthmod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702976"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702978"></a>Specifies method how to calculate vth. Possible values are cmi, max_gm and const_current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702980"></a><code>output_device_degrad vgs</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702982"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702984"></a>Sets the bias voltage of vgs for the dc sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702986"></a><code>deg_num_output_device_degrad top</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702988"></a><code>100</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702990"></a>Output top_deg_num list for the device degradation in bo0 file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702992"></a><code>deg_num_output_subckt_degrad top</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702994"></a><code>100</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702996"></a>Output top_deg_num list for the subckt degradation in bo0 file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702998"></a><code>deg_table_line_break value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703000"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703002"></a>Specifies whether to break line when device name is too long in degradation table. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703004"></a><code>param_output_inst_param sort</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703006"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703008"></a>Specify the parameter whose value is to be used to sort output order.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703010"></a><code>params_output_inst_param sum</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703012"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703014"></a>Specify the parameters the sum of whose values must be printed in the output file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703016"></a><code>output_subckt_degrad vdd</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703018"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703020"></a>Sets the bias voltage for the subckt degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703022"></a><code>output_subckt_degrad vdlin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703024"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703026"></a>Sets the bias voltage of vdlin for the subckt degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703028"></a><code>output_subckt_degrad vgsat</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703030"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703032"></a>Sets the bias voltage of vgsat for the subckt degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703034"></a><code>output_subckt_degrad vglin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703036"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703038"></a>Sets the bias voltage of vglin for the subckt degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703040"></a><code>output_subckt_degrad sub</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703042"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703044"></a>Sets the subckt name to do subckt degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703046"></a><code>output_subckt_degrad node</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703048"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703050"></a>Sets subckt terminal nodes mapping to drain, gate, source and bulk for subckt degradation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703052"></a><code>enable_tmi_uri tmishe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703054"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703056"></a>Enable TMI and URI flow and pass dtemp of TMI into URI. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703058"></a><code>output_subckt_degrad file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703060"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703062"></a>Specifies file included output_subckt_degrad options.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703064"></a><code>output_subckt_degrad ivthp</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703066"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703068"></a>Sets PMOS vth current, it has higher priority than ivth defined in global option.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703070"></a><code>output_subckt_degrad ivthn</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703072"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703074"></a>Sets NMOS vth current, it has higher priority than ivth defined in global option.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703076"></a><code>output_subckt_degrad ivth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703078"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703080"></a>Sets constant vth current for specified model.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703082"></a><code>degsort value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703084"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703086"></a>Specifies to enable to sort degradation data in decreasing order. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703088"></a><code>agelevelonly type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703090"></a><code>include</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703092"></a>Includes or excludes the specified aging levels. Possible values are include and exclude.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703094"></a><code>preset age</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703096"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703098"></a>Specifies age value for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703100"></a><code>preset agelevel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703102"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703104"></a>Specifies agelevel for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703106"></a><code>preset mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703108"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703110"></a>Specifies model list for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703112"></a><code>preset dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703114"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703116"></a>Specifies device list for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703118"></a><code>preset deg</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703120"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703122"></a>Specifies degradation value for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703124"></a><code>preset lifetime</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703126"></a><code>0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703128"></a>Specifies lifetime value (unit is second) for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703130"></a><code>preset sub</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703132"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703134"></a>Specifies subckt list for preset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703136"></a><code>urilib scale_mode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703138"></a><code>original</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703140"></a>Specifies parameter scale mode for URI library. The value can be original or effective. If value is original, send original parameter value to URI for param scale, else send effective value. Possible values are original and effective.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703142"></a><code>gradual_aging_pass_param value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703144"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703146"></a>Whether to pass URI instance state to next gradual aging step. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703148"></a><code>gradual_aging_early_exit value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703150"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703152"></a>Whether to enable early exit in gradual aging flow. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703154"></a><code>win_relxtran mult</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703156"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703158"></a>Specifies multiple time windows for reliability analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703160"></a><code>gradual_aging_early_exit time</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703162"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703164"></a>gradual aging time from which early exit is triggered.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703166"></a><code>output_subckt_degrad correct_bias_voltage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703168"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703170"></a>Specifies whether to correct the sign of voltage bias defined in output_subckt_degrad for reliability analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703172"></a><code>output_subckt_degrad output_bias_voltage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703174"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703176"></a>Specifies whether to output the subckt names and their bias conditions defined in output_subckt_degrad to bt0 and bt0.dpl files. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703178"></a><code>output_device_degrad correct_bias_voltage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703180"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703182"></a>Specifies whether to correct the sign of voltage bias defined in output_device_degrad for reliability analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703184"></a><code>output_device_degrad output_bias_voltage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703186"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703188"></a>Specifies whether to output the model names and their bias conditions defined in output_device_degrad to bt0 and bt0.dpl files. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703190"></a><code>output_device_degrad keep_zero_result</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703192"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703194"></a>Output all the devices included devices of zero degradation in bt0 file. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703196"></a><code>enable_bias_runaway value</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703198"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703200"></a>Enable bias runaway detecting flow. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703202"></a><code>scaleparam_urilib disable</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703204"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703206"></a>Specifies whether need to scale params, the option only works in stress only mode. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703208"></a><code>depend_type_urilib bias</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703210"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703212"></a>Specifies the bias dependent type for URI model.. Possible values are all, voltage and none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703214"></a><code>depend_params_urilib bias</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703216"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703218"></a>Specifies the bias dependent params for URI model..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703220"></a><code>summary_config_output_device_degrad degradation</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703222"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703224"></a>Specifies file included degradation_summary_config options.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703226"></a><code>urilib appendage_check</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703228"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703230"></a>Specifies the flag that indicates whether a validity check should be run for the given appendage model.. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1703232"></a>Detailed Description and Examples:</p>
+<p>
+<a id="pgfId-1703233"></a>age time=[...]</p>
+<p>
+<a id="pgfId-1703234"></a>The duration in the future at which the transistor degradation and degraded SPICE model parameters are to be calculated. The degraded SPICE model parameters are used in aged circuit simulation. The calculated transistor degradation can be transconductance, linear or saturation drain current, degradation, threshold voltage shift, and or any other degradation monitor. While specifying the value, attach the suffix y (year), h (hour) or m (minute). There should be no space between the number and suffix. For example, 10m, 1e-5sec. Note: Currently, specifying multiple time values is not supported. </p>
+<p>
+<a id="pgfId-1703235"></a>deltad value=&lt;deltad_value&gt;</p>
+<p>
+<a id="pgfId-1703236"></a>Requests the calculation of lifetime for each transistor under the circuit operating conditions using the specified degradation value. You can use multiple deltad statements for different types of transistors. The degradation value can be transconductance, linear or saturation drain current degradation, threshold voltage shift, or any other degradation monitor, depending on the definitions of the lifetime parameters H and m. deltad_value can be in decimal notation (xx.xx) or in engineering notation (x.xxe+xx). </p>
+<p>
+<a id="pgfId-1703237"></a>maskdev type={include | exclude} {sub=&lt;subckt_list&gt; | mod=&lt;model_list&gt; | dev=&lt;device_list&gt;}</p>
+<p>
+<a id="pgfId-1703238"></a>Includes or excludes the specified devices or the devices that belong to the listed subcircuit or model during reliability analysis. Note: Starting from the MMSIM10.1 version, the include and exclude values are mutually exclusive.</p>
+<p>
+<a id="pgfId-1703239"></a>report_model_param value={yes | no}(defaults to no)</p>
+<p>
+<a id="pgfId-1703240"></a>Determines whether to print the stress and aged parameters in the.bm# file. Possible values are yes and no. When set to yes, the stress and aged parameters are printed to the .bm# file.</p>
+<p>
+<a id="pgfId-1703241"></a>accuracy level={1 | 2}(defaults to 1)</p>
+<p>
+<a id="pgfId-1703242"></a>Specifies methods used in the reliability simulation when performing integration and substrate current calculation. In other words, specifies trapezoidal integration when performing integrations and calculates Isub for Vgs &lt; Vth. When set to 1, the software uses backward Euler integration and sets Isub=0 when Vgs &lt; Vth. When set to 2, the software uses trapezoidal integration and calculates Isub when Vgs &lt; Vth. Setting accuracy to 2 is more accurate, but increases simulation time when compared to when accuracy is set to 1.</p>
+<p>
+<a id="pgfId-1703243"></a></p>
+<p>
+<a id="pgfId-1703244"></a>minage value=&lt;minage_value&gt;</p>
+<p>
+<a id="pgfId-1703245"></a>Specifies the smallest Age value for which degraded SPICE model parameters are calculated. This statement speeds up aging calculation by using stress SPICE model parameters if the transistor Age value is smaller than the specified minage_value. minage_value can be in decimal notation (xx.xx) or in engineering notation (x.xxe+xx).</p>
+<p>
+<a id="pgfId-1703246"></a>igatemethod type={calc | spice}(defaults to calc)</p>
+<p>
+<a id="pgfId-1703247"></a>Specifies the method used for obtaining the gate terminal current of a MOSFET. During MOSFET HCI simulation, the gate terminal current is required for calculating the degradation value. The simulator can either calculate this value or obtain it from the SPICE output rawfile if the SPICE simulator in use provides such an option. If this command is not used, the simulator calculates the gate terminal current by using its own model parameters. Possible values are calc (default) and spice. When calc is specified, the gate terminal current is calculated using the model parameters and when spice is specified, the gate terminal current value is obtained from the SPICE output rawfile.</p>
+<p>
+<a id="pgfId-1703248"></a>idmethod type={ids | idrain}(defaults to ids)</p>
+<p>
+<a id="pgfId-1703249"></a>Specifies how the simulator obtains the drain current (Id) to perform reliability calculations. The following types of drain currents, which are available from SPICE, are supported by reliability analysis:</p>
+<p>
+<a id="pgfId-1703250"></a>* Dynamic drain current (also called AC drain current) - this is the current that flows in to the drain node.</p>
+<p>
+<a id="pgfId-1703251"></a>* Static drain current (also called channel drain current, DC drain current, or Ids) Possible values are ids (Ids static current ) or idrain (dynamic drain current). Default: ids.</p>
+<p>
+<a id="pgfId-1703252"></a>uri_lib file={&quot;filename&quot;} uri_mode={agemos | appendage} debug={0 | 1}</p>
+<p>
+<a id="pgfId-1703253"></a>Loads the Unified Reliability interface (URI) shared library and specifies which method (uri_mode) should be used to perform aging simulation. Note: appendage mode is not supported in the MMSIM10.1 release.</p>
+<p>
+<a id="pgfId-1703254"></a>relx_tran start=&lt;start_time&gt; stop=&lt;stop_time&gt;</p>
+<p>
+<a id="pgfId-1703255"></a>Specifies the start and stop time for reliability analysis during transient analysis. If stop_time is not specified, the software stops in .tran statement.</p>
+<p>
+<a id="pgfId-1703256"></a>isubmethod type={calc | spice}(defaults to calc)</p>
+<p>
+<a id="pgfId-1703257"></a>Specifies the method used for obtaining substrate terminal current of a MOSFET. During MOSFET HCI simulation, the substrate terminal current is required for calculating the degradation value. The Spectre RelXpert simulator can either calculate this value or obtain it from the SPICE output rawfile if the SPICE simulator in use provides such an option. If this command is not used, the simulator calculates the substrate terminal current by using its own model parameters. Possible values are calc (default) and spice. When calc is specified, the substrate terminal current is calculated using the model parameters and when spice is specified, the substrate terminal current value is obtained from the SPICE output rawfile.n</p>
+<p>
+<a id="pgfId-1703258"></a>opmethod type={calc | spice}(defaults to calc)</p>
+<p>
+<a id="pgfId-1703259"></a>Specifies whether the Igate or Isub value should be obtained from the SPICE models (for example, BSIM3 or BSIM4) or the internal Igate or Isub equation should be used.&#160;&#160;Possible values are calc or spice.&#160;&#160;calc calculates the gate and substrate terminal current using the Cadence Igate and Isub model equations (Default). spice obtains the gate and substrate terminal current value from the SPICE model.</p>
+<p>
+<a id="pgfId-1703260"></a>degsort {threshold=&lt;threshold_value&gt; | number=&lt;number_value&gt;}</p>
+<p>
+<a id="pgfId-1703261"></a>Prints MOS transistors based on the threshold value or number settings. The results are sorted in the descending order of degradation. Note: The threshold and number arguments are mutually exclusive. Therefore, only one of them can be specified with degsort to print the sorted device degradation results. When threshold_value is specified, the transistors having degradation values greater than threshold value are printed. The threshold value can be in decimal notation (xx.xx) or in engineering notation (x.xxe+xx). When number_value is specified, only the first &lt;number_value&gt; transistors having the highest degradations are printed. For example, if number=100, the software will print the first 100 transistors with highest degradations.</p>
+<p>
+<a id="pgfId-1703262"></a>agelevel_only value=[&lt;level_value&gt; &lt;model_list&gt;, &lt;level_value&gt; &lt;model_list&gt;, ...]</p>
+<p>
+<a id="pgfId-1703263"></a>Specifies the age level for performing reliability analysis on the specified model(s). You can specify different age levels for different set of models. Note: This option also supports the URI defined agelevel statement. If model names are not specified, the simulation is performed on all of the devices at the specified age level. The following levels can be used to specify Cadence internal ageMOS models: </p>
+<p>
+<a id="pgfId-1703264"></a>* 1: Specifies HCI reliability analysis.</p>
+<p>
+<a id="pgfId-1703265"></a>* 2: Specifies NBTI reliability analysis.</p>
+<p>
+<a id="pgfId-1703266"></a>* 3: Specifies PBTI reliability analysis.</p>
+
+<h4>
+<a id="pgfId-1703267"></a>Example</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703268"></a>    rel reliability {</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703269"></a>        // reliability control statements</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703270"></a>        age time = [10h 20y 30y]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703271"></a>        deltad value = 0.1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703272"></a>        accuracy level = 2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703273"></a>        agelevel_only value=[0 nch, 1 pch]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703274"></a>        relx_tran start=1us stop=10us</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703275"></a>        idmethod type=idrain</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703276"></a>        maskdev type=include mod=[pch] dev=[mdut6] sub=[inv]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703277"></a>        minage value = 0.00001</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703278"></a>        report_model_param value=yes</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703279"></a>        uri_lib file=&quot;./libURI.so&quot; uri_mode=agemos debug=1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703280"></a>        degsort number=100</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703281"></a>        igatemethod type=spice</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703282"></a>        isubmethod type=spice</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703283"></a>        opmethod type=spice</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703284"></a>        // stress/stress statements.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703285"></a>        tran_stress tran start=0 step=1us stop=10us</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703286"></a>        // aging testbench statements.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703287"></a>        change1 alter param=rel_temp value=125</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703288"></a>        // aging simulation statements.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703289"></a>        tran_aged tran start = 0 step = 1us stop = 10us</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703290"></a>}</pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Quasi-Periodic_Transfer_Function_Analysis_qpxf.html" id="prev" title="Quasi-Periodic Transfer Function Analysis (qpxf)">Quasi-Periodic Transfer Functi ...</a></em></b><b><em><a href="chap3_re_Deferred_Set_Options_set.html" id="nex" title="Deferred Set Options (set)">Deferred Set Options (set)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

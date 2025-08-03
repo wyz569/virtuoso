@@ -1,0 +1,854 @@
+
+<html><head><title>HB AC Analysis (hbac)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484705" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="HB AC Analysis (hbac)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484705" />
+<meta name="NextFile" content="chap3_re_HB_Noise_Analysis_hbnoise.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Harmonic_Balance_Steady_State_Analysis_hb.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- HB AC Analysis (hbac)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Harmonic_Balance_Steady_State_Analysis_hb.html" title="Harmonic Balance Steady State Analysis (hb)">Harmonic Balance Steady State  ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_HB_Noise_Analysis_hbnoise.html" title="HB Noise Analysis (hbnoise)">HB Noise Analysis (hbnoise)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_HB_AC_Analysis_hbac" title="HB AC Analysis (hbac)"></a><h3>
+<a id="pgfId-1690291"></a>HB AC Analysis (hbac)<a id="marker-1690290"></a></h3>
+<h4>
+<a id="pgfId-1690293"></a>Description<a id="marker-1690292"></a></h4>
+
+<p>
+<a id="pgfId-1690294"></a>The harmonic balance AC (HBAC) analysis computes transfer functions for circuits that exhibit single or multi-tone frequency translation. Such circuits include mixers, switched-capacitor filters, samplers, phase-locked loops, and so on. HBAC is a small-signal analysis like AC analysis, except that the circuit is first linearized about a periodically or quasi-periodically varying operating point, rather than about a simple DC operating point. Linearizing about a periodically or quasi-periodically time-varying operating point allows transfer-functions that include frequency translation, which is not the case when linearizing about a DC operating point because linear time-invariant circuits do not exhibit frequency translation. In addition, the frequency of the sinusoidal stimulus is not constrained by the period of the large periodic solution.</p>
+<p>
+<a id="pgfId-1690295"></a>Computing the small-signal response of a periodically or quasi-periodically varying circuit is a two-step process. First, the small stimulus is ignored and the periodic or quasi-periodic steady-state response of the circuit to possibly large periodic stimulus is computed using HB analysis. As part of the HB analysis, the periodically or quasi-periodically time-varying representation of the circuit is computed and saved for later use. The second step is to apply the small stimulus to the periodically or quasi-periodically varying linear representation to compute the small signal response. This is done using the HBAC analysis. An HBAC analysis cannot be used independently; it must follow an HB analysis. However, any number of periodic or quasi-periodic small-signal analyses, such as HBAC,HBSP, or HBNOISE, can follow an HB analysis.</p>
+<p>
+<a id="pgfId-1690296"></a>Modulated small signal measurements are possible using the Analog Design Environment(ADE). The <code>modulated</code> option for HBAC and other modulated parameters are set by ADE. HBAC analyses with this option produce results that can have limited use outside ADE. Direct Plot is configured to analyze these results and combine several wave forms to measure AM and PM response due to single sideband or modulated stimuli. For details, see the &#39;Spectre Circuit Simulator and Accelerated Parallel Simulator RF Analysis User Guide&#39;.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1690297"></a>Note: Unlike other analyses in Spectre, the HBAC analysis can only sweep frequency.</div>
+
+<h4>
+<a id="pgfId-1690299"></a>Syntax<a id="marker-1690298"></a></h4>
+<a id="pgfId-1690300"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ... hbac parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1690301"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1690381"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1690302">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690304"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690310"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690312"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690314"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690316"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690318"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690320"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690322"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690324"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690326"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690328"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690330"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690332"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690334"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690336"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690338"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690340"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690342"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690344"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690346"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690348"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690350"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690352"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690354"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690356"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690358"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690360"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690362"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690364"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690366"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690368"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690370"></a><code>sweeptype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690372"></a><code>unspecified</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690374"></a>Specifies if the sweep frequency range is the absolute frequency of input or if it is relative to the port harmonics. When the unspecified value is used, Spectre RF sweeps using relative when autonomous simulation is performed or when the analysis is PSP; for other cases Spectre RF sweeps the absolute value of the input. Possible values are absolute, relative and unspecified.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690376"></a><code>relharmvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690378"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690380"></a>Sideband - vector of HB harmonics - to which relative frequency sweep should be referenced.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690425"></a>Sampled analysis parameters</p>
+<table class="webflareTable" id="#id1690382">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690384"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690390"></a><code>ptvtype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690392"></a><code>timeaveraged</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690394"></a>Specifies whether the PTV analysis will be traditional or sampled under certain conditions. Possible values are timeaveraged and sampled.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690396"></a><code>sampleprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690398"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690400"></a>The crossing event at this port triggers the sampled small signal computation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690402"></a><code>thresholdvalue</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690404"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690406"></a>Sampled measurement is done when the signal crosses this value.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690408"></a><code>crossingdirection</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690410"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690412"></a>Specifies the transitions for which sampling must be done. Possible values are all, rise, fall and ignore.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690414"></a><code>maxsamples</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690416"></a><code>16</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690418"></a>Maximum number of sampled events to be processed during the sampled analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690420"></a><code>extrasampletimepoints</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690422"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690424"></a>Additional time points for sampled PTV analysis.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690463"></a>Output parameters</p>
+<table class="webflareTable" id="#id1690426">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690428"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690434"></a><code>sidevec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690436"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690438"></a>Array of relevant sidebands for the analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690440"></a><code>maxsideband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690442"></a><code>7</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690444"></a>An alternative to the <code>sidebands</code> array specification, which automatically generates the array: [ -maxsideband ... 0 ... +maxsideband ]. For the shooting analysis, the default value is 7. For HB small signal analysis, the default value is the <code>harms/maxharms</code> setting in the HB large signal analysis. It is ignored in HB small signal when it is larger than the harms/maxharms value of large signal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690446"></a><code>freqaxis</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690448"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690450"></a>Specifies whether the results should be printed as per the input frequency, the output frequency, or the absolute value of the output frequency. Default is <code>absout</code>. . Possible values are absout, out and in.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690452"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690454"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690456"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub, selected, none and nooutput.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690458"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690460"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690462"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690507"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1690464">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690466"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690472"></a><code>tolerance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690474"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690476"></a>Tolerance for linear solver. The default value is 1.0e-9 for shooting-based solver and 1.0e-4 for harmonic balance-based solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690478"></a><code>relativeTol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690480"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690482"></a>Relative tolerance for harmonic balance-based linear solver. Default value is 1.0e-2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690484"></a><code>resgmrescycle</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690486"></a><code>short</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690488"></a>Restarts GMRES cycle. Possible values are instant, short, long, recycleinstant, recycleshort, recyclelong and custom.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690490"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690492"></a><code>autoset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690494"></a>Select a linear solver for the GMRES preconditioner. Default is autoset. With autoset, the simulator will automatically select the appropriate precondtioner. The preconditioner affects the rate of convergence of the linear matrix solver used in periodic small-signal analysis. When autoset is selected, the simulator may decide to switch to a different preconditioner after the analysis begins. When that happens, the simulator may issue a warning instructing you to choose a different preconditioner during subsequent runs. Although not required, choosing a different preconditioner according to the simulator&#39;s instructions may speed up subsequent analyses. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690496"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690498"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690500"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690502"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690504"></a><code>200</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690506"></a>This parameter is used to set maximum iteration count of the linear matrix solver used in periodic small-signal analysis. After reaching 1.25*krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase the krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690527"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1690508">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690510"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690516"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690518"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690520"></a>Degree of annotation. Possible values are no, title, sweep, status, steps and detailed_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690522"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690524"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690526"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690649"></a>Modulation conversion parameters</p>
+<table class="webflareTable" id="#id1690528">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1690530"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690536"></a><code>modulated</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690538"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690540"></a>Compute transfer functions/conversion between modulated sources and outputs. Possible values are single, first, second and no.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690542"></a><code>inmodharmnum</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690544"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690546"></a>Harmonic value for the input source modulation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690548"></a><code>outmodharmvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690550"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690552"></a>Harmonic list for the output modulations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690554"></a><code>moduppersideband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690556"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690558"></a>Index of the upper sideband included in the modulation of an output for PAC and HBAC, or an input for PXF.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690560"></a><code>modsource</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690562"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690564"></a>Refer the output noise to this component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690566"></a><code>perturbation</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690568"></a><code>linear</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690570"></a>The type of HBAC analysis. The default is linear for normal HBAC analysis. im2ds stands for im2 distortion summary and ds stands for distortion summary. Value multiple_beat is deprecated and will be removed in the future: use triple_beat instead. Possible values are linear, ds, ip3, ip2, im2ds, multiple_beat and triple_beat.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690572"></a><code>flin_out</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690574"></a><code>0 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690576"></a>Frequency of linear output signal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690578"></a><code>fim_out</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690580"></a><code>0 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690582"></a>Frequency of IM output signal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690584"></a><code>out1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690586"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690588"></a>Output signal 1.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690590"></a><code>out2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690592"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690594"></a>Output signal 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690596"></a><code>contriblist</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690598"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690600"></a>Array of device names for distortion summary. When contriblist=[&quot;&quot;], distortion from each non-linear device is calculated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690602"></a><code>maxharm_nonlin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690604"></a><code>4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690606"></a>Maximum harmonics of input signal frequency induced by non-linear effect.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690608"></a><code>rfmag</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690610"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690612"></a>RF source magnitude.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690614"></a><code>rfdbm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690616"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690618"></a>RF source dBm.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690620"></a><code>rf1_src</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690622"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690624"></a>Array of RF1 source names for IP3/IP2/IM2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690626"></a><code>rf2_src</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690628"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690630"></a>Array of RF2 source names for IP3/IP2/IM2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690632"></a><code>rf_src</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690634"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690636"></a>Array of RF source names for triple beat analysis, triple beat is not supported in shooting engine, PSS must be run before PAC with &#39;flexbalance=yes&#39; or &#39;harmonicbalance=yes&#39;.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690638"></a><code>freqs</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690640"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690642"></a>Array of RF source frequencies for triple beat analysis, triple beat is not supported in shooting engine, PSS must be run before PAC with &#39;flexbalance=yes&#39; or &#39;harmonicbalance=yes&#39;.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690644"></a><code>rfampls</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690646"></a><code>NULL</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1690648"></a>RF source amplitudes; the units are dBm for ports, Voltage for v-sources and Ampere for i-sources.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1690650"></a>You can select the set of periodic small-signal output frequencies of interest by setting either the <code>maxsideband</code> or the <code>sidevec</code> parameter. When there is only one tone in HB analysis, sidebands are n integer numbers, K1, K2, ..., Kn, and the output frequency at each sideband is computed as follows:</p>
+<p>
+<a id="pgfId-1690651"></a>  f(out)= f(in) + Ki * fund(hb)</p>
+<p>
+<a id="pgfId-1690652"></a>where f(in) represents the (possibly swept) input frequency and fund(hb) represents the fundamental frequency used in the corresponding HB analysis. Thus, when analyzing a down-converting mixer, while sweeping the RF input frequency, the most relevant sideband for IF output is Ki= -1. When simulating an up-converting mixer, while sweeping IF input frequency, the most relevant sideband for RF output is Ki= 1. By setting the <code>maxsideband</code> value to Kmax, all 2 * Kmax + 1 sidebands from -Kmax to +Kmax are generated.</p>
+<p>
+<a id="pgfId-1690653"></a>When there are multiple tones in HB analysis, sidebands are vectors. Consider that you have one large tone and one moderate tone in HB. A sideband, K1, is represented as [K1_1 K1_2]. Corresponding frequency is as follows:</p>
+<p>
+<a id="pgfId-1690654"></a>  K1_1 * fund(large tone of HB) + K1_2 * fund(moderate tone of HB)</p>
+<p>
+<a id="pgfId-1690655"></a>The assumption is that there are L large and moderate tones in HB analysis and a given set of n integer vectors representing the sidebands, K1 = { K1_1, ..., K1_j, ..., K1_L}, K2, ..., Kn. The output frequency at each sideband is computed as follows:</p>
+<p>
+<a id="pgfId-1690656"></a>   f(out)= f(in) + SUM_j=1_to_L{Ki_j * fund_j(hb)}, </p>
+<p>
+<a id="pgfId-1690657"></a>where f(in) represents the (possibly swept) input frequency and fund_j(hb) represents the fundamental frequency used in the corresponding HB analysis. Therefore, when analyzing a down-converting mixer, while sweeping the RF input frequency, the most relevant sideband for IF output is&#160;&#160;{ -1, 0}. When simulating an up-converting mixer, while sweeping IF input frequency, the most relevant sideband for RF output is { 1, 0}. You enter <code>sidevec</code> as a sequence of integer numbers, separated by spaces. The set of vectors {1 1 0} {1 -1 0} {1 1 1} becomes sidevec=[ 1 1 0 1 -1 0 1 1 1]. For <code>maxsideband</code>, only the large tone, which is the first fundamental, is affected by this entry. All the other tones, which are the moderate tones, are limited by <code>maxharms</code> specified for an HB analysis. Given maxharms=[k1max k2max ... knmax] in HB and maxsideband=Kmax, all (2*Kmax + 1)*(2*k2max+1)*(2*k3max+1) *...*(2*knmax+1) sidebands are generated.</p>
+<p>
+<a id="pgfId-1690658"></a>The number of requested sidebands changes the simulation time substantially.</p>
+<p>
+<a id="pgfId-1690659"></a>With HBAC, the frequency of the stimulus and of the response are usually different (this is an important area in which HBAC differs from AC). The <code>freqaxis</code> parameter is used to specify whether the results should be output versus the input frequency (<code>in</code>), the output frequency (<code>out</code>), or the absolute value of the output frequency (<code>absout</code>).</p>
+<p>
+<a id="pgfId-1690660"></a>You can specify sweep limits by specifying the end points, or the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code>, or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. Alternatively, you can use the values parameter to specify the values that the sweep parameter should take. If you provide both a specific set of values and a set specified using a sweep range, the two sets are merged and collated before being used. All frequencies are in Hertz.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Harmonic_Balance_Steady_State_Analysis_hb.html" id="prev" title="Harmonic Balance Steady State Analysis (hb)">Harmonic Balance Steady State  ...</a></em></b><b><em><a href="chap3_re_HB_Noise_Analysis_hbnoise.html" id="nex" title="HB Noise Analysis (hbnoise)">HB Noise Analysis (hbnoise)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

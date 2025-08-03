@@ -1,0 +1,654 @@
+
+<html><head><title>DC Device Matching Analysis (dcmatch)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484704" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="DC Device Matching Analysis (dcmatch)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484704" />
+<meta name="NextFile" content="chap3_re_Device_Characterization_devchrz.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_DC_Analysis_dc.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- DC Device Matching Analysis (dcmatch)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_DC_Analysis_dc.html" title="DC Analysis (dc)">DC Analysis (dc)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Device_Characterization_devchrz.html" title="Device Characterization (devchrz)">Device Characterization (devch ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_DC_Device_Matching_Analysis_dcmatch" title="DC Device Matching Analysis (dcmatch)"></a><h3>
+<a id="pgfId-1688316"></a>DC Device Matching Analysis (dcmatch)<a id="marker-1688315"></a></h3>
+<h4>
+<a id="pgfId-1688318"></a>Description<a id="marker-1688317"></a></h4>
+
+<p>
+<a id="pgfId-1688319"></a>DCMATCH analysis performs device matching analysis on the operating point for a specified output. It computes the deviation in the operating point of a circuit due to processing or environmental variation in modeled devices. If method=standard is specified, a set of dcmatch parameters in model cards are required for each supported device contributing to the deviation. The analysis applies device matching models to construct equivalent mismatch current sources to all the devices that are modeled. These current sources are assumed to have zero mean and certain variance. The variance of the current sources is computed according to device matching models. Next, the 3-sigma variance of DC voltages or currents (due to the mismatch current sources) is computed at the specified outputs. The simulation result displays the devices rank ordered by their contribution to the outputs. In addition, for MOSFET devices, it displays threshold voltage mismatch, current factor mismatch, gate voltage mismatch, and drain current mismatch. For bipolar devices, it displays base-emitter junction voltage mismatch. For resistors, it displays resistor mismatches. </p>
+<p>
+<a id="pgfId-1688320"></a>The analysis replaces multiple simulation runs that determine changes in accuracy with any changes in size. It automatically identifies the set of critical matched components during circuit design. For example, when there are matched pairs in the circuit, the contribution of two matched transistors is equal in magnitude but opposite in sign. Typical usage is to simulate the output offset voltage of operational amplifiers, estimate the variation in bandgap voltages, and predict the accuracy of current steering DACS. </p>
+<p>
+<a id="pgfId-1688321"></a>For method=standard, DCMATCH analysis can be applied to following devices: BSIM3V3, BSIM4, BSIMSOI, EKV, PSP102, PSP103, BJT, VBIC, BHT, RESISTOR, PHY_RES, R3, and resistor-type bsource. If method=statistics is specified, a statistics block is required to list the parameters that are considered as randomly varying. By default, all statistics parameters found in statistics blocks are considered in computation, unless the option <code>variations</code> is explicitly specified. Device matching models are not used in this case and dcmatch model parameters are not required. </p>
+
+<h4>
+<a id="pgfId-1688323"></a>Syntax<a id="marker-1688322"></a></h4>
+<a id="pgfId-1688324"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ... dcmatch parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1688350"></a>Parameters</h4>
+<table class="webflareTable" id="#id1688325">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688327"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688333"></a><code>mth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688335"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688337"></a>Relative mismatch contribution threshold value.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688339"></a><code>where</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688341"></a><code>screen</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688343"></a>Where DC-Mismatch analysis results should be printed. Possible values are screen, logfile, file and rawfile.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688345"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688347"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688349"></a>File name for results to be printed if where=file is used.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1688364"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1688351">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688353"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688359"></a><code>oprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688361"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688363"></a>Compute mismatch at the output defined by this component.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688384"></a>Port parameters</p>
+<table class="webflareTable" id="#id1688365">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688367"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688373"></a><code>portv</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688375"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688377"></a>Voltage across this probe port is output of the analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688379"></a><code>porti</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688381"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688383"></a>Current through this probe port is output of the analysis.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688452"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1688385">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688387"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688393"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688395"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688397"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688399"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688401"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688403"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688405"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688407"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688409"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688411"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688413"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688415"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688417"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688419"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688421"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688423"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688425"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688427"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688429"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688431"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688433"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688435"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688437"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688439"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688441"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688443"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688445"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688447"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688449"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688451"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688478"></a>Sweep variable parameters</p>
+<table class="webflareTable" id="#id1688453">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688455"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688461"></a><code>dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688463"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688465"></a>Device instance whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688467"></a><code>mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688469"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688471"></a>Model whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688473"></a><code>param</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688475"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688477"></a>Name of parameter to sweep.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688498"></a>State-file parameters</p>
+<table class="webflareTable" id="#id1688479">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688481"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688487"></a><code>readns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688489"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688491"></a>File that contains an estimate of DC solution (nodeset).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688493"></a><code>useprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688495"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688497"></a>If set to yes or ns, use the converged initial condition from previous analysis as ic or ns. Possible values are no, yes and ns.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688524"></a>Output parameters</p>
+<table class="webflareTable" id="#id1688499">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688501"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688507"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688509"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688511"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub, selected, none and nooutput.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688513"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688515"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688517"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688519"></a><code>oppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688521"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688523"></a>Determines whether the operating point information should be computed. If yes, where should it be printed (screen or file). Operating point information is not printed in case of the following conditions: (1) operating point is computed in the previous analysis and is unchanged (2) sweep parameter param is set. Possible values are no, screen, logfile and rawfile.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688544"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1688525">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688527"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688533"></a><code>prevoppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688535"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688537"></a>Use operating point computed on the previous analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688539"></a><code>restart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688541"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688543"></a>Restart the DC solution from scratch if any condition has changed. If not, use the previous solution as initial guess. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688564"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1688545">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688547"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688553"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688555"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688557"></a>Degree of annotation. Possible values are no, title, sweep, status and steps.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688559"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688561"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688563"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688608"></a>Miscellaneous parameters</p>
+<table class="webflareTable" id="#id1688565">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688567"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688573"></a><code>version</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688575"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688577"></a>Use BSIM short-channel mismatch equation for BSIM3 and BSIM4 devices, if the value is set to 1 and 3. If set to 0 and 2, do not use BSIM short-channel mismatch equation. Values 2 and 3 are compatible with Monte Carlo analysis while 0 and 1 are not. This option works only when method=standard. Possible values are 0 to 3.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688579"></a><code>method</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688581"></a><code>standard</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688583"></a>Proceed with standard device mismatch models, or utilize the parameters defined in statistics blocks to compute output variation. Possible values are standard and statistics.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688585"></a><code>nsigma</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688587"></a><code>3</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688589"></a>Specifies the variation of each statistics parameter (in the number of sigma). This option works only if method=statistics.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688591"></a><code>variations</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688593"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688595"></a>Selects the type of statistical parameters that are involved in dcmatch. The option is valid only if method=statistics. Possible values are process, mismatch and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688597"></a><code>deltascale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688599"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688601"></a>Scaling factor of offset applied to mismatch and process parameters.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688603"></a><code>nullmfactorcorrelation</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688605"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688607"></a>Controls the mismatch variation correlation of parallel devices defined by m-factor. If set to yes, devices are assumed to get uncorrelated mismatch variations. If set to no, devices are assumed to get the same mismatch variation. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688609"></a>The dcmatch analysis will find a DC operating point first. If the DC analysis fails, the dcmatch analysis also fails. The parameter mth is a threshold value relative to maximum contribution. Any device contribution less than (mth * maximum) is not reported, where maximum is the maximum contribution among all the devices of a given type. </p>
+<p>
+<a id="pgfId-1688610"></a>Examples:</p>
+<p>
+<a id="pgfId-1688611"></a>dcmm1 dcmatch mth=1e-3 oprobe=vd porti=1 </p>
+<p>
+<a id="pgfId-1688612"></a>dcmm2 dcmatch mth=1e-3 oprobe=r3 portv=1 </p>
+<p>
+<a id="pgfId-1688613"></a>dcmm3 n1 n2 dcmatch mth=1e-3 where=rawfile stats=yes </p>
+<p>
+<a id="pgfId-1688614"></a>dcmm4 n3 0 dcmatch mth=1e-3 where=file file=&quot;%C:r.info.what&quot; </p>
+<p>
+<a id="pgfId-1688615"></a>sweep1 sweep dev=mp6 param=w start=80e-6 stop=90e-6 step=2e-6 {</p>
+<p>
+<a id="pgfId-1688616"></a>dcmm5 dcmatch oprobe=vd mth=1e-3 where=rawfile }</p>
+<p>
+<a id="pgfId-1688617"></a>dcmm6 n3 0 dcmatch mth=0.01 dev=x1.mp2 param=w start=15e-6 stop=20e-6 step=1e-6 </p>
+<p>
+<a id="pgfId-1688618"></a>dcmm7 n3 0 dcmatch mth=0.01 param=temp start=25 stop=100 step=25 </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1688619"></a>Note: porti allows you to select a current associated with a specific device given in oprobe as an output. All types of devices are supported for oprobe. For inductor, vsource, switch, controlled voltage source, iprobe, etc., porti can only be set to one, because these devices are two-terminal devices (one port); and for tline porti can be set to one or two, because it is a four-terminal device (two ports). </div>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_DC_Analysis_dc.html" id="prev" title="DC Analysis (dc)">DC Analysis (dc)</a></em></b><b><em><a href="chap3_re_Device_Characterization_devchrz.html" id="nex" title="Device Characterization (devchrz)">Device Characterization (devch ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

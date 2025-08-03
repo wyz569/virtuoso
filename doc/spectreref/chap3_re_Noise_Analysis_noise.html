@@ -1,0 +1,639 @@
+
+<html><head><title>Noise Analysis (noise)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484706" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Noise Analysis (noise)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484706" />
+<meta name="NextFile" content="chap3_re_Optimize_Analysis_optimize.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Monte_Carlo_Analysis_montecarlo.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Noise Analysis (noise)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Monte_Carlo_Analysis_montecarlo.html" title="Monte Carlo Analysis (montecarlo)">Monte Carlo Analysis (montecar ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Optimize_Analysis_optimize.html" title="Optimize Analysis (optimize)">Optimize Analysis (optimize)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Noise_Analysis_noise" title="Noise Analysis (noise)"></a><h3>
+<a id="pgfId-1693477"></a>Noise Analysis (noise)<a id="marker-1693476"></a></h3>
+<h4>
+<a id="pgfId-1693479"></a>Description<a id="marker-1693478"></a></h4>
+
+<p>
+<a id="pgfId-1693480"></a>Noise analysis linearizes the circuit about the operating point and computes the noise spectral density at the output. If you identify an input source, the transfer function and the input-referred noise for an equivalent noise-free network are computed. If the input source is noisy, the noise figure is also computed.</p>
+<p>
+<a id="pgfId-1693481"></a>The noise is computed at the output of the circuit. The output is specified with either a pair of nodes or a probe component. To specify the output of a circuit with a probe, specify it with the <code>oprobe</code> parameter. If the output is voltage (or potential), choose a <code>resistor</code> or a <code>port</code> as the output probe. If the output is current (or flow), choose a <code>vsource</code> or <code>iprobe</code> as the output probe.</p>
+<p>
+<a id="pgfId-1693482"></a>If the input-referred noise is desired, specify the input source by using the <code>iprobe</code> parameter. Currently, only a <code>vsource</code>, an <code>isource</code>, or a <code>port</code> may be used as an input probe. If the input source is noisy, as is a <code>port</code>, the noise analysis computes the noise factor (F) and noise figure (NF). To match the IEEE definition of noise figure, the input probe must be a port with no excess noise and its <code>noisetemp</code> must be set to 16.85C (290K). In addition, the output load must be a <code>resistor</code> or <code>port</code> and must be identified as the <code>oprobe</code>.</p>
+<p>
+<a id="pgfId-1693483"></a>If <code>port</code> is specified as the input probe, both input-referred noise and gain are referred back to the equivalent voltage source inside the port. S-parameter analysis calculates those values in traditional sense.</p>
+<p>
+<a id="pgfId-1693484"></a>The noise analysis always computes the total noise at the output, which includes contributions from the input source and the output load. The amount of output noise that is attributable to each noise source in the circuit is also computed and output individually. If the input source is identified, the input-referred noise is computed, which includes the noise from the input source itself. Finally, if the input source is identified and is noisy, the noise factor and noise figure are computed. Therefore, if:</p>
+<p>
+<a id="pgfId-1693485"></a>No = total output noise</p>
+<p>
+<a id="pgfId-1693486"></a>Ns = noise at the output due to the input probe (the source)</p>
+<p>
+<a id="pgfId-1693487"></a>Nl = noise at the output due to the output probe (the load)IRN = input referred noise</p>
+<p>
+<a id="pgfId-1693488"></a>G = gain of the circuit</p>
+<p>
+<a id="pgfId-1693489"></a>F = noise factor</p>
+<p>
+<a id="pgfId-1693490"></a>NF = noise figure</p>
+<p>
+<a id="pgfId-1693491"></a>Then:</p>
+<p>
+<a id="pgfId-1693492"></a>IRN = sqrt(No^2 / G^2)</p>
+<p>
+<a id="pgfId-1693493"></a>F = (No^2 - Nl^2)/Ns^2</p>
+<p>
+<a id="pgfId-1693494"></a>NF = 10*log10(F)</p>
+<p>
+<a id="pgfId-1693495"></a>When the results are output, No is named <code>out</code>, IRN is named <code>in</code>, G is named <code>gain</code>, F is named <code>F</code>, and NF is named <code>NF</code>.</p>
+<p>
+<a id="pgfId-1693496"></a>Spectre can perform Noise analysis while sweeping a parameter. The parameter can be frequency, temperature, component instance parameter, component model parameter, or netlist parameter. If changing a parameter affects the DC operating point, the operating point is recomputed at each step. You can sweep the circuit temperature by giving the parameter name as <code>temp</code>, without a <code>dev</code> or <code>mod</code> parameter. In addition, you can sweep a netlist parameter by giving the parameter name without a <code>dev</code> or <code>mod</code> parameter. After the analysis is complete, the modified parameter returns to its original value.</p>
+
+<h4>
+<a id="pgfId-1693498"></a>Syntax<a id="marker-1693497"></a></h4>
+<a id="pgfId-1693499"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name  [p]  [n] noise parameter=<code><em>value ...</em></code></pre>
+
+<p>
+<a id="pgfId-1693500"></a>The optional terminals (p and n) specify the output of the circuit. If you do not specify the terminals, you must specify the output with a probe component.</p>
+
+<h4>
+<a id="pgfId-1693514"></a>Parameters</h4>
+<table class="webflareTable" id="#id1693501">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693503"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693509"></a><code>prevoppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693511"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693513"></a>Use the operating point computed in the previous analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1693582"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1693515">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693517"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693523"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693525"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693527"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693529"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693531"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693533"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693535"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693537"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693539"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693541"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693543"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693545"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693547"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693549"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693551"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693553"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693555"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693557"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693559"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693561"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693563"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693565"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693567"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693569"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693571"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693573"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693575"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693577"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693579"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693581"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693614"></a>Sweep variable parameters</p>
+<table class="webflareTable" id="#id1693583">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693585"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693591"></a><code>dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693593"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693595"></a>Device instance whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693597"></a><code>mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693599"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693601"></a>Model whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693603"></a><code>param</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693605"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693607"></a>Name of parameter to sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693609"></a><code>freq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693611"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693613"></a>Frequency when a parameter other than frequency is being swept.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693634"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1693615">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693617"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693623"></a><code>oprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693625"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693627"></a>Compute total noise at the output defined by this component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693629"></a><code>iprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693631"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693633"></a>Input probe. Refer the output noise to this component.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693660"></a>State-file parameters</p>
+<table class="webflareTable" id="#id1693635">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693637"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693643"></a><code>readns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693645"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693647"></a>File that contains an estimate of the DC solution (nodeset).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693649"></a><code>write</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693651"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693653"></a>DC operating point output file at the first step of the sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693655"></a><code>writefinal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693657"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693659"></a>DC operating point output file at the last step of the sweep.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693692"></a>Initial condition parameters</p>
+<table class="webflareTable" id="#id1693661">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693663"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693669"></a><code>force</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693671"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693673"></a>The set of initial conditions to use. Possible values are none, node, dev and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693675"></a><code>readforce</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693677"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693679"></a>File that contains initial conditions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693681"></a><code>skipdc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693683"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693685"></a>Skip DC analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693687"></a><code>useprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693689"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693691"></a>If set to yes or ns, use the converged initial condition from previous analysis as ic or ns. Possible values are no, yes and ns.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693724"></a>Output parameters</p>
+<table class="webflareTable" id="#id1693693">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693695"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693701"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693703"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693705"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub and selected.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693707"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693709"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693711"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693713"></a><code>oppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693715"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693717"></a>Determines whether operating point information should be computed:if yes, where should it be printed (screen or file). Operating point information is not printed if the operating point computed in the previous analysis remains unchanged. Possible values are no, screen, logfile and rawfile.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693719"></a><code>separatenoise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693721"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693723"></a>Separate noise into sources and transfer functions. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693738"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1693725">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693727"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693733"></a><code>restart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693735"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693737"></a>Restart the DC solution from scratch if any condition has changed. If not, use the previous solution as an initial guess. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693758"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1693739">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693741"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693747"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693749"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693751"></a>Degree of annotation. Possible values are no, title, sweep, status and steps.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693753"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693755"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693757"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693759"></a>You can define sweep limits by specifying the end points or the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code> or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. All frequencies are in Hertz.</p>
+<p>
+<a id="pgfId-1693760"></a>The small-signal analysis begins by linearizing the circuit about an operating point. By default, this analysis computes the operating point, if it is not known, or recomputes it if any significant component or circuit parameter has changed. However, if an operating point was computed during a previous analysis, you can set <code>prevoppoint=yes</code> to avoid recomputing it. For example, if <code>prevoppoint=yes</code> and the previous analysis was a transient analysis, the operating point is the state of the circuit at the final time point.</p>
+<p>
+<a id="pgfId-1693761"></a>Nodesets help find the DC or the initial transient solution. You can specify nodesets in the circuit description file with nodeset statements or in a separate file by using the readns parameter. When nodesets are specified, Spectre computes an initial guess of the solution by performing DC analysis, while forcing the specified values on to nodes by using a voltage source in series with a resistor whose resistance is rforce. Spectre then removes these voltage sources and resistors and computes the required solution from this initial guess.</p>
+<p>
+<a id="pgfId-1693762"></a>Nodesets have two important uses. First, if a circuit has two or more solutions, nodesets can bias the simulator towards computing the required solution. Second, this is a convergence aid. By estimating the solution of the largest possible number of nodes, you might be able to eliminate a convergence problem or significantly speed up convergence.</p>
+<p>
+<a id="pgfId-1693763"></a>When you simulate the same circuit multiple times, it is recommended that you use both <code>write</code> and <code>readns</code> parameters and assign the same file name to both parameters. DC analysis then converges quickly even if the circuit has changed since the last simulation, and the nodeset file is automatically updated.</p>
+<p>
+<a id="pgfId-1693764"></a>During the initial operating point DC analysis, you may force certain circuit variables to use the values given in the <code>ic</code> file, <code>ic</code> statements, or <code>ic</code> parameter on the capacitors and inductors. The <code>ic</code> parameter controls the interaction of various methods of setting the force values. The effects of individual settings are as follows:</p>
+<p>
+<a id="pgfId-1693765"></a><code>force</code>=<code>none</code>:All initial conditions are ignored.</p>
+<p>
+<a id="pgfId-1693766"></a><code>force</code>=<code>node</code>:The <code>ic</code> statements are used, and the <code>ic</code> parameters on the capacitors and inductors are ignored.</p>
+<p>
+<a id="pgfId-1693767"></a><code>force</code>=<code>dev</code>:The <code>ic</code> parameters on the capacitors and inductors are used, and the <code>ic</code> statements are ignored.</p>
+<p>
+<a id="pgfId-1693768"></a><code>force</code>=<code>all</code>:Both <code>ic</code> statements and <code>ic</code> parameters are used, with the <code>ic</code> parameters overriding the <code>ic</code> statements.</p>
+<p>
+<a id="pgfId-1693769"></a>If you specify an <code>ic</code> file with the <code>readforce</code> parameter, force values from the file are used and any <code>ic</code> statements are ignored.</p>
+<p>
+<a id="pgfId-1693770"></a>After you specify the initial conditions, Spectre computes the DC operating point with the specified nodes forced to the given value by using a voltage source in series with a resistor whose resistance is <code>rforce</code> (see <code>options</code>).</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Monte_Carlo_Analysis_montecarlo.html" id="prev" title="Monte Carlo Analysis (montecarlo)">Monte Carlo Analysis (montecar ...</a></em></b><b><em><a href="chap3_re_Optimize_Analysis_optimize.html" id="nex" title="Optimize Analysis (optimize)">Optimize Analysis (optimize)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

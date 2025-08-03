@@ -1,0 +1,677 @@
+
+<html><head><title>Quasi-Periodic S-Parameter Analysis (qpsp)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484709" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Quasi-Periodic S-Parameter Analysis (qpsp)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484709" />
+<meta name="NextFile" content="chap3_re_Quasi-Periodic_Steady_State_Analysis_qpss.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Quasi-Periodic_Noise_Analysis_qpnoise.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Quasi-Periodic S-Parameter Analysis (qpsp)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Quasi-Periodic_Noise_Analysis_qpnoise.html" title="Quasi-Periodic Noise Analysis (qpnoise)">Quasi-Periodic Noise Analysis  ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Quasi-Periodic_Steady_State_Analysis_qpss.html" title="Quasi-Periodic Steady State Analysis (qpss)">Quasi-Periodic Steady State An ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Quasi-Periodic_S-Parameter_Analysis_qpsp" title="Quasi-Periodic S-Parameter Analysis (qpsp)"></a><h3>
+<a id="pgfId-1700907"></a>Quasi-Periodic S-Parameter Analysis (qpsp)<a id="marker-1700906"></a></h3>
+<h4>
+<a id="pgfId-1700909"></a>Description<a id="marker-1700908"></a></h4>
+
+<p>
+<a id="pgfId-1700910"></a>The quasi-periodic SP (QPSP) analysis is used to compute scattering and noise parameters for n-port circuits that exhibit frequency translation. Such circuits include mixers, switched-capacitor filters, samplers, phase-locked loops, and the like. It is a small-signal analysis like SP analysis, except, as done in QPAC and QPXF, the circuit is first linearized about a quasi-periodically varying operating point as opposed to a simple DC operating point. Linearizing about a quasi-periodically time-varying operating point allows the computation of S-parameters between circuit ports that convert signals from one frequency band to another. QPSP can also calculate noise parameters in frequency-converting circuits. QPSP computes noise figure (both single-sideband and double-sideband), input referred noise, equivalent noise parameters, and noise correlation matrices. As in QPNOISE, but unlike SP, the noise features of the QPSP analysis include noise folding effects due to the periodically time-varying nature of the circuit. </p>
+<p>
+<a id="pgfId-1700911"></a>Computing the n-port S-parameters and noise parameters of a quasi-periodically varying circuit is a two-step process. First, the small stimulus is ignored and the quasi-periodic steady-state response of the circuit to possibly large periodic stimulus is computed using QPSS analysis. As part of the QPSS analysis, the quasi-periodically time-varying representation of the circuit is computed and saved for later use. The second step is to apply small-signal excitations to compute the n-port S-parameters and noise parameters. This is done using the QPSP analysis. A QPSP analysis cannot be used independently, it must follow a QPSS analysis. However, any number of periodic small-signal analyses, such as QPAC, QPSP, QPXF, QPNOISE, can follow a single QPSS analysis.</p>
+<p>
+<a id="pgfId-1700912"></a>Unlike other analyses in Spectre, this analysis can only sweep frequency.</p>
+
+<h4>
+<a id="pgfId-1700914"></a>Syntax<a id="marker-1700913"></a></h4>
+<a id="pgfId-1700915"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name qpsp parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1700916"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1700990"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1700917">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700919"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700925"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700927"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700929"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700931"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700933"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700935"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700937"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700939"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700941"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700943"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700945"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700947"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700949"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700951"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700953"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700955"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700957"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700959"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700961"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700963"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700965"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700967"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700969"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700971"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700973"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700975"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700977"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700979"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700981"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700983"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700985"></a><code>sweeptype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700987"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700989"></a>Specifies if the sweep frequency range is an absolute frequency, that is, actual frequency, or if it is relative to the &quot;relharmvec&quot; sideband frequency. In QPSP, relative means relative to the input port frequency. Possible values are absolute and relative.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701028"></a>Port parameters</p>
+<table class="webflareTable" id="#id1700991">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700993"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700999"></a><code>ports</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701001"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701003"></a>List of active ports. Ports are numbered in the order given. For purposes of noise figure computation, the input is considered port 1 and the output is port 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701005"></a><code>sprobes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701007"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701009"></a>List of s-probes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701011"></a><code>sprobeharmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701013"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701015"></a>List of sprobe harmonics. Set 2 * fundsize harmonics for each sprobe..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701017"></a><code>portharmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701019"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701021"></a>List of the reference sidebands for the specified list of ports. Must have a one-to-one correspondence with the &#39;ports&#39; vector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701023"></a><code>harmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701025"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701027"></a>List of sidebands, in addition to ones associated with specific ports by portharmsvec, that are active. Call them secondary.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701066"></a>Output parameters</p>
+<table class="webflareTable" id="#id1701029">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701031"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701037"></a><code>freqaxis</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701039"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701041"></a>Specifies whether the results should be printed as per the input port frequency, the output port frequency, or the absolute value of the input frequency. The default is <code>in</code>. Possible values are absin, in and out.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701043"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701045"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701047"></a>Output file name. It just supports S-parameters in PSP, HBSP, and QPSP analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701049"></a><code>datafmt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701051"></a><code>spectre</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701053"></a>Data format of the S-parameter output file. Possible values are spectre, touchstone and touchstone2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701055"></a><code>datatype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701057"></a><code>realimag</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701059"></a>Data type of the S-parameter output file. Possible values are realimag, magphase and dbphase.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701061"></a><code>noisedata</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701063"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701065"></a>Should noise data be saved to the S-parameter output file; if yes, in what format. If &#39;twoport&#39; is selected, the first value in the &#39;ports&#39; vector parameter will be the input and the second one will be the output. Possible values are no and twoport.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701080"></a>Noise parameters</p>
+<table class="webflareTable" id="#id1701067">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701069"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701075"></a><code>donoise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701077"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701079"></a>Perform noise analysis. If oprobe is specified as a valid port, this is set to yes, and a detailed noise output is generated. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701094"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1701081">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701083"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701089"></a><code>clockmaxharm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701091"></a><code>7</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701093"></a>In shooting pnoise, the parameter determines the maximum sideband that is included when computing noise, that is either up-converted or down-converted to the output by the periodic drive signal. In HB pnoise, this parameter determines the size of the small signal system when the HB pnoise is performed. This parameter is critical for the accuracy of the HB pnoise analysis. Using a small maxsideband can cause accuracy loss. The default value for the shooting pnoise is 7. For the HB pnoise, the default is the harms/maxharms setting in the HB large signal analysis..</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701150"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1701095">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701097"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701103"></a><code>tolerance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701105"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701107"></a>Tolerance for linear solver; the default value is 1.0e-9 for shooting-based solver and 1.0e-4 for harmonicbalance-based solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701109"></a><code>relativeTol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701111"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701113"></a>Relative tolerance for harmonicbalance-based linear solver; the default value is 1.0e-2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701115"></a><code>gear_order</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701117"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701119"></a>Gear order used for small-signal integration, 1 or 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701121"></a><code>solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701123"></a><code>turbo</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701125"></a>Solver type. Possible values are std and turbo.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701127"></a><code>resgmrescycle</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701129"></a><code>short</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701131"></a>Restarts GMRES cycle. Possible values are instant, short, long, recycleinstant, recycleshort, recyclelong and custom.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701133"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701135"></a><code>autoset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701137"></a>Select a linear solver for the GMRES preconditioner. Default is autoset. With autoset, the simulator will automatically select the appropriate precondtioner. The preconditioner affects the rate of convergence of the linear matrix solver used in periodic small-signal analysis. When autoset is selected, the simulator may decide to switch to a different preconditioner after the analysis begins. When that happens, the simulator may issue a warning instructing you to choose a different preconditioner during subsequent runs. Although not required, choosing a different preconditioner according to the simulator&#39;s instructions may speed up subsequent analyses. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701139"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701141"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701143"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701145"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701147"></a><code>200</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701149"></a>This parameter is used to set maximum iteration count of the linear matrix solver used in periodic small-signal analysis. After reaching 1.25*krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase the krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701170"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1701151">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701153"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701159"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701161"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701163"></a>Degree of annotation. Possible values are no, title, sweep, status, steps and detailed_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701165"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701167"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701169"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701171"></a>To specify the QPSP analysis, the port and sideband combinations must be specified. You can select the ports of interest by setting the <code>port</code> parameter and the set of periodic small-signal output frequencies of interest by setting <code>portharmsvec</code> or <code>harmsvec</code> parameter. Sidebands are vectors in QPSP. Assuming that there are one large tone and one moderate tone in QPSS, a sideband K1 is represented as [K1_1 K1_2]. The corresponding frequency is as follows:</p>
+<p>
+<a id="pgfId-1701172"></a>    K1_1 * fund (large tone of QPSS) + K1_2 * fund (moderate tone of QPSS) = SUM_j=1_to_L{Ki_j * fund_j(qpss)} </p>
+<p>
+<a id="pgfId-1701173"></a>It is also assumed that there are L (1 large plus L-1&#160;&#160;moderate) tones in QPSS analysis and a given set of n integer vectors representing the sidebands: </p>
+<p>
+<a id="pgfId-1701174"></a>    K1 = { K1_1,...K1_j..., K1_L } , K2, ... Kn. </p>
+<p>
+<a id="pgfId-1701175"></a>If we specify the relative frequency, the scattering parameters at each port are computed at the following frequencies: </p>
+<p>
+<a id="pgfId-1701176"></a>    f(scattered)= f(rel) + SUM_j=1_to_L{Ki_j * fund_j(qpss)}, </p>
+<p>
+<a id="pgfId-1701177"></a>Where, f(rel) represents the relative frequency of a signal incident on a port, f(scattered) represents the frequency to which the relevant scattering parameter represents the conversion,&#160;&#160;and fund_j(qpss) represents the fundamental frequency used in the corresponding QPSS analysis. </p>
+<p>
+<a id="pgfId-1701178"></a>In the analysis of a down-converting mixer with a blocker and of the signal in the upper sideband, sweep the input frequency of the signal coming into RF port. The most relevant sideband for this input is Ki= {1 , 0}, and for IF output, it is Ki= {0 , 0}. Hence, you can associate K1={1 , 0} with the RF port and K2={0 , 0} with the IF port. S21 represents the transmission of a signal from RF to IF, and S11 represents the reflection of the signal back to the RF port. If the signal is in the lower sideband, a choice of K1={-1 , 0} would be more appropriate. </p>
+<p>
+<a id="pgfId-1701179"></a>Either <code>portharmsvec</code> or <code>harmsvec</code> can be used to specify the sidebands of interest. If <code>portharmsvec</code> is given, the sidebands must be in one-to-one correspondence with the ports, with each sideband associated with a single port. If sidebands are specified in the optional <code>harmsvec</code> parameter, all possible frequency-translating scattering parameters associated with the specified sidebands on each port are computed.</p>
+<p>
+<a id="pgfId-1701180"></a>With QPSP, the frequency of the input and of the response are usually different (this is an important area in which QPSP differs from SP). Because the QPSP computation involves inputs and outputs at frequencies that are relative to multiple sidebands, the <code>freqaxis</code> and <code>sweeptype</code> parameters behave somewhat differently in QPSP than in QPAC and QPXF. </p>
+<p>
+<a id="pgfId-1701181"></a>The <code>sweeptype</code> parameter controls the way the frequencies in the QPSP analysis are swept. A <code>relative</code> sweep is a sweep relative to the port sideband (not the QPSS fundamental), and an <code>absolute</code> sweep is a sweep of the absolute input source frequency. For example, with a QPSS fundamentals of 1000MHz (LO) and 966MHz (blocker in RF channel), <code>portharmsvec</code> could be set to [0 1&#160;&#160;-1 1] to examine a downconverting mixer. If sweeptype is set to <code>relative</code> with a sweep range of f(rel)=-10MHz&lt;-&gt;10MHz. S21 would represent the strength of the signal transmitted from the input port in the range 956-&gt;976MHz to the output port to the frequencies 24&lt;-&gt;44MHz. Using <code>sweeptype=absolute</code> and sweeping the frequency from 966&lt;-&gt;976MHz would calculate the same quantities, because f(abs)=956&lt;-&gt;976MHz, and f(rel) = f(abs) - ( K1_1 * fund_1(qpss) + K1_2 * fund_2(qpss) ) = -10MHz&lt;-&gt;10MHz; where, K1_1=0, K1_2=1, fund_1(qpss) = 1000MHz, and fund_2(qpss) = 966MHz. </p>
+<p>
+<a id="pgfId-1701182"></a>The <code>freqaxis</code> parameter is used to specify whether the results should be output versus the scattered frequency at the input port (<code>in</code>), the scattered frequency at the output port (<code>out</code>), or the absolute value of the frequency swept at the input port (<code>absin</code>). </p>
+<p>
+<a id="pgfId-1701183"></a>An increase in the number of requested ports increases the simulation time substantially. The same happens if you increase the number of sidebands to be included in the noise computations. </p>
+<p>
+<a id="pgfId-1701184"></a>QPSP analysis also computes noise figures, equivalent noise sources, and noise parameters. The noise computation, which is skipped only when <code>donoise=no</code>, requires additional simulation time. </p>
+<p>
+<a id="pgfId-1701185"></a>If:</p>
+<p>
+<a id="pgfId-1701186"></a>    No = total output noise at frequency f </p>
+<p>
+<a id="pgfId-1701187"></a>    Ns = noise at the output due to the input probe (the source) </p>
+<p>
+<a id="pgfId-1701188"></a>    Nsi = noise at the output due to the image harmonic at the source </p>
+<p>
+<a id="pgfId-1701189"></a>    Nso = noise at the output due to harmonics other than input at the source </p>
+<p>
+<a id="pgfId-1701190"></a>    Nl = noise at the output due to the output probe (the load) </p>
+<p>
+<a id="pgfId-1701191"></a>    IRN = input referred noise</p>
+<p>
+<a id="pgfId-1701192"></a>    G = gain of the circuit</p>
+<p>
+<a id="pgfId-1701193"></a>    F = noise factor (single side band)</p>
+<p>
+<a id="pgfId-1701194"></a>    NF = noise figure (single side band)</p>
+<p>
+<a id="pgfId-1701195"></a>    Fdsb = double sideband noise factor</p>
+<p>
+<a id="pgfId-1701196"></a>    NFdsb = double sideband noise figure</p>
+<p>
+<a id="pgfId-1701197"></a>    Fieee = IEEE single sideband noise factor</p>
+<p>
+<a id="pgfId-1701198"></a>    NFieee = IEEE single sideband noise figure</p>
+<p>
+<a id="pgfId-1701199"></a>Then:</p>
+<p>
+<a id="pgfId-1701200"></a>    IRN = sqrt(No^2 / G^2)</p>
+<p>
+<a id="pgfId-1701201"></a>    F = (No^2 - Nl^2)/Ns^2</p>
+<p>
+<a id="pgfId-1701202"></a>    NF = 10*log10(F)</p>
+<p>
+<a id="pgfId-1701203"></a>    Fdsb = (No^2 - Nl^2)/(Ns^2+Nsi^2)</p>
+<p>
+<a id="pgfId-1701204"></a>    NFdsb = 10*log10(Fdsb)</p>
+<p>
+<a id="pgfId-1701205"></a>    Fieee = (No^2 - Nl^2 - Nso^2)/Ns^2</p>
+<p>
+<a id="pgfId-1701206"></a>    NFieee = 10*log10(Fieee). </p>
+<p>
+<a id="pgfId-1701207"></a>When the results are output, IRN is named <code>in</code>, G is named <code>gain</code>, F, NF, Fdsb, NFdsb, Fieee, and NFieee are named <code>F</code>, <code>NF</code>, <code>Fdsb</code>, <code>NFdsb</code>, <code>Fieee</code>, and <code>NFieee</code>, respectively. Note that the gain computed by QPSP is the voltage gain from the actual circuit input to the circuit output, and not the gain from the internal port voltage source to the output. </p>
+<p>
+<a id="pgfId-1701208"></a>To ensure accurate noise calculations, the <code>clockmaxharm</code> parameters must be set to include the relevant noise folding effects. <code>clockmaxharm</code> is relevant only to the noise computation features of QPSP.</p>
+<p>
+<a id="pgfId-1701209"></a>You can specify sweep limits by specifying the end points or the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code>, or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. Alternatively, you may specify the values that the sweep parameter should take by using the <code>values</code> parameter. If you specify both a specific set of values and a set specified using a sweep range, the two sets are merged and collated before being used. All frequencies are in Hertz.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Quasi-Periodic_Noise_Analysis_qpnoise.html" id="prev" title="Quasi-Periodic Noise Analysis (qpnoise)">Quasi-Periodic Noise Analysis  ...</a></em></b><b><em><a href="chap3_re_Quasi-Periodic_Steady_State_Analysis_qpss.html" id="nex" title="Quasi-Periodic Steady State Analysis (qpss)">Quasi-Periodic Steady State An ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

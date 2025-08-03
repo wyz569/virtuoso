@@ -1,0 +1,721 @@
+
+<html><head><title>S-Parameter Analysis (sp)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484710" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="S-Parameter Analysis (sp)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484710" />
+<meta name="NextFile" content="chap3_re_Stability_Analysis_stb.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Shell_Command_shell.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- S-Parameter Analysis (sp)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Shell_Command_shell.html" title="Shell Command (shell)">Shell Command (shell)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Stability_Analysis_stb.html" title="Stability Analysis (stb)">Stability Analysis (stb)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_S-Parameter_Analysis_sp" title="S-Parameter Analysis (sp)"></a><h3>
+<a id="pgfId-1703666"></a>S-Parameter Analysis (sp)<a id="marker-1703665"></a></h3>
+<h4>
+<a id="pgfId-1703668"></a>Description<a id="marker-1703667"></a></h4>
+
+<p>
+<a id="pgfId-1703669"></a>The S-parameter analysis linearizes the circuit about the DC operating point and computes S-parameters of the circuit taken as an N-port. The port statements define the ports of the circuit. Each active port is turned on sequentially, and a linear small-signal analysis is performed. Spectre converts the response of the circuit at each active port into S-parameters and outputs these parameters. There must be at least one active port statement in the circuit.</p>
+<p>
+<a id="pgfId-1703670"></a>Sp analysis can output an ASCII model file that can later be read-in by a <code>nport</code> component. The file name and the model type can be specified by <code>file</code> and <code>paramtype</code> parameters, respectively. Currently, only paramtype=s and paramtype=y are supported, for the other possible values of paramtype, the file still generates s-parameters. The text format can be either Spectre native or Touchstone.</p>
+<p>
+<a id="pgfId-1703671"></a>Spectre supports sprobes in sp analysis. Sprobe is a special testbench to allow in-situ probing of bi-directional impedances. If the &#39;sprobes&#39; parameter is given, the parameters S1, S2, Z1, Z2 , StabIndex of specified sprobe will be computed and outputted to rawfile. Here S1 is the scattering parameter looking left from the sprobe; S2 is the scattering parameter looking right from the sprobe; Z1 is the impedance looking left from the sprobe; Z2 is the impedance looking right from the sprobe; StabInex is the stability Index. If sprobes and ports are given, &#39;ports&#39; are used to compute normal S-param, while &#39;sprobes&#39; are used to compute sprobe params. </p>
+<p>
+<a id="pgfId-1703672"></a>If &#39;sprobeports&#39; set, a different sprobe mode is enabled. It can calculate the complete set of network parameters for the circuit looking at the left of sprobe and the circuit looking at the right of the sprobe. In this mode, sprobe is open.</p>
+<p>
+<a id="pgfId-1703673"></a>Spectre can perform AC analysis while sweeping a parameter. The parameter can be frequency, temperature, component instance parameter, component model parameter, or netlist parameter. If changing a parameter affects the DC operating point, the operating point is recomputed at each step. You can sweep the circuit temperature by giving the parameter name as <code>temp</code>, without a <code>dev</code> or <code>mod</code> parameter. In addition, you can sweep a netlist parameter by giving the parameter name without a <code>dev</code> or <code>mod</code> parameter. After the analysis is complete, the modified parameter returns to its original value.</p>
+
+<h4>
+<a id="pgfId-1703675"></a>Syntax<a id="marker-1703674"></a></h4>
+<a id="pgfId-1703676"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name sp parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1703690"></a>Parameters</h4>
+<table class="webflareTable" id="#id1703677">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703679"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703685"></a><code>prevoppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703687"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703689"></a>Use the operating point computed in the previous analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1703758"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1703691">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703693"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703699"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703701"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703703"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703705"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703707"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703709"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703711"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703713"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703715"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703717"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703719"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703721"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703723"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703725"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703727"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703729"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703731"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703733"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703735"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703737"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703739"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703741"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703743"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703745"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703747"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703749"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703751"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703753"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703755"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703757"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703790"></a>Sweep variable parameters</p>
+<table class="webflareTable" id="#id1703759">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703761"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703767"></a><code>dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703769"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703771"></a>Device instance whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703773"></a><code>mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703775"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703777"></a>Model whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703779"></a><code>param</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703781"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703783"></a>Name of parameter to sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703785"></a><code>freq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703787"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703789"></a>Frequency when a parameter other than frequency is being swept.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703804"></a>Port parameters</p>
+<table class="webflareTable" id="#id1703791">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703793"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703799"></a><code>ports</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703801"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703803"></a>List of active ports. Ports are numbered in the order given.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703830"></a>State-file parameters</p>
+<table class="webflareTable" id="#id1703805">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703807"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703813"></a><code>readns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703815"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703817"></a>File that contains an estimate of the DC solution (nodeset).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703819"></a><code>write</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703821"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703823"></a>DC operating point output file at the first step of the sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703825"></a><code>writefinal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703827"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703829"></a>DC operating point output file at the last step of the sweep.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703862"></a>Initial condition parameters</p>
+<table class="webflareTable" id="#id1703831">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703833"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703839"></a><code>force</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703841"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703843"></a>The set of initial conditions to use. Possible values are none, node, dev and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703845"></a><code>readforce</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703847"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703849"></a>File that contains initial conditions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703851"></a><code>skipdc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703853"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703855"></a>Skip DC analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703857"></a><code>useprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703859"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703861"></a>If set to yes or ns, use the converged initial condition from previous analysis as ic or ns. Possible values are no, yes and ns.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703912"></a>Output parameters</p>
+<table class="webflareTable" id="#id1703863">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703865"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703871"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703873"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703875"></a>Output file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703877"></a><code>mode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703879"></a><code>ss</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703881"></a>S-parameters mode selector. Can be mm for mixed-mode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703883"></a><code>datafmt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703885"></a><code>spectre</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703887"></a>Data format of the S-parameter output file. Possible values are spectre, touchstone and touchstone2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703889"></a><code>paramtype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703891"></a><code>s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703893"></a>Output parameter type. If set to s, the S-parameters will be output to raw data. If <code>file</code> is specified, the S-parameters will be output to the file. If set to y, both S-parameters and Y-parameters will be output to raw data. If <code>file</code> is specified, the normalized Y-parameters will be output to the file. If set to z, the behavior is similar to y. If set to yz, then S-parameters, Y-parameters, and Z-parameters will be output to raw data. However, if <code>file</code> is specified, only the S-parameters will be output to the file. Possible values are s, y, z and yz.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703895"></a><code>datatype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703897"></a><code>realimag</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703899"></a>Data type of the S-parameter output file. Possible values are realimag, magphase and dbphase.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703901"></a><code>noisedata</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703903"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703905"></a>Should noise data be saved to the S-parameter output file; if yes, in what format. Possible values are no, twoport and cy.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703907"></a><code>oppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703909"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703911"></a>Determines whether operating point information should be computed:if yes, where should it be printed (screen or file). Operating point information is not printed if the operating point computed in the previous analysis remains unchanged. Possible values are no, screen, logfile and rawfile.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703938"></a>Noise parameters</p>
+<table class="webflareTable" id="#id1703913">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703915"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703921"></a><code>donoise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703923"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703925"></a>Perform noise analysis. If oprobe is specified as a valid port, this is set to yes, and a detailed noise output is generated. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703927"></a><code>oprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703929"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703931"></a>Compute total noise at the output defined by this component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703933"></a><code>iprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703935"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703937"></a>Input probe. Refer the output noise to this component.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703952"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1703939">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703941"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703947"></a><code>restart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703949"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703951"></a>Restart the DC solution from scratch if any condition has changed. If not, use the previous solution as an initial guess. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703972"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1703953">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703955"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703961"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703963"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703965"></a>Degree of annotation. Possible values are no, title, sweep, status and steps.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703967"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703969"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703971"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703992"></a>Sprobe parameters</p>
+<table class="webflareTable" id="#id1703973">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1703975"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703981"></a><code>sprobes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703983"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703985"></a>List of s-probes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703987"></a><code>sprobeports</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703989"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1703991"></a>List of sprobeport.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1703993"></a>If the list of active ports is specified with the <code>ports</code> parameter, the ports are numbered sequentially from one in the order given. Otherwise, all ports present in the circuit are active, and the port numbers used are those that were assigned on the port statements. If <code>donoise=yes</code> is specified, the noise correlation matrix is computed. If in addition, the output is specified using <code>oprobe,</code> the amount that each noise source contributes to the output is computed. Finally, if an input is also specified (using <code>iprobe</code>), the two-port noise parameters are computed (F, Fmin, NF, NFmin, Gopt, Bopt, and Rn).</p>
+<p>
+<a id="pgfId-1703994"></a>Spectre will output file in touchstone Version 2.0 format when datafmt=touchstone2. Network data for Y- and Z-parameters in touchstone Version 2.0 files is not normalized, but in spectre and touchstone version 1.0 file, it is normalized.</p>
+<p>
+<a id="pgfId-1703995"></a>If the <code>mode</code> parameter is set to mm, differential and common-mode S-parameters (denoted as mixed-mode S-parameters) are calculated. When <code>mode=mm</code>, there must be 2N, with N &gt; 1, active port statements in the circuit. The mixed-mode S-parameters are calculated referring to the pairing of the ports, with the port numbers ordered in pair as (1,2) (3,4), and so on in the ports list. With mm, Spectre calculates differential-to-differential, differential-to-common, common-to-differential, and common-to-common S-parameters. A combination of mixed-mode and standard S-parameters is calculated if the &#39;mode&#39; parameter is set to, say, m12m34s5. Then, additional differential-to-standard, common-to-standard, standard-to-differential, and standard-to-common S-parameters are calculated. In the example of mode=m12m34s5, the standard single-end port is port number 5, the two mixed-mode port pairs are (1,2) and (3,4); with Spectre placing restriction of the number on active ports to 5 given in the port list.[Mixed-Mode Order] keyword is used in touchstone Version 2.0 files to describe mixed-mode network parameters order. If mode=m12m34s5, [Mixed-Mode Order] is set to D1,2 D3,4 C1,2 C3,4 S5. </p>
+<p>
+<a id="pgfId-1703996"></a><code>sprobeports is used to specify the sprobeport instances corresponding to sprobes. sprobeport is used to set ports in the circuit looking to the left of sprobe with portL and set ports in the circuit looking to the right of sprobe with </code>portR&#39;. To ensure that <code>sprobeports setting works well even when some sprobe has no sprobeport set, set sprobeport for this sprobe to a blank string. Example:</code></p>
+<p>
+<a id="pgfId-1703997"></a>    sp sp sprobes=[spb1 spb2 spb3] sprobeports=[&quot;&quot; spb_port2 &quot;&quot;]</p>
+<p>
+<a id="pgfId-1703998"></a>    spb_port2 sprobeport portL=[...] portR=[...]</p>
+<p>
+<a id="pgfId-1703999"></a><code>spb_port2 is for sprobe spb2. Sprobe spb1 and spb3 have no ports setting.</code></p>
+<p>
+<a id="pgfId-1704000"></a>When <code>portL is set for a sprobeport, S-Parameters for ports in portL and the left port of the corresponding sprobe will be calculated. And when portR is set for a sprobeport, S-Parameters for the right port of the corresponding sprobe and ports in portR will be calculated.</code></p>
+<p>
+<a id="pgfId-1704001"></a>When <code>donoise=yes, two-port noise parameters will be calculated. For circuit looking to the left of sprobe, the 1st port in portL</code> is used as in-port, the left port of sprobe is used as out-port. For circuit looking to the right of sprobe, the 1st port in <code>portR</code> is used as out-port, the right port of sprobe is used as in-port.</p>
+<p>
+<a id="pgfId-1704002"></a>You can define sweep limits by specifying the end points or the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code> or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. All frequencies are in Hertz.</p>
+<p>
+<a id="pgfId-1704003"></a>The small-signal analysis begins by linearizing the circuit about an operating point. By default, this analysis computes the operating point, if it is not known, or recomputes it if any significant component or circuit parameter has changed. However, if an operating point was computed during a previous analysis, you can set <code>prevoppoint=yes</code> to avoid recomputing it. For example, if <code>prevoppoint=yes</code> and the previous analysis was a transient analysis, the operating point is the state of the circuit at the final time point.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Shell_Command_shell.html" id="prev" title="Shell Command (shell)">Shell Command (shell)</a></em></b><b><em><a href="chap3_re_Stability_Analysis_stb.html" id="nex" title="Stability Analysis (stb)">Stability Analysis (stb)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

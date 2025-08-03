@@ -1,0 +1,763 @@
+
+<html><head><title>Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484716" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484716" />
+<meta name="NextFile" content="chap5_re_Dynamic_Float_Crosstalk_Check_dyn_floatxtalk.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap5_re_Dynamic_Floating_Node_Statistical_Check_dyn_float_tran_stat.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap5_re_Dynamic_Floating_Node_Statistical_Check_dyn_float_tran_stat.html" title="Dynamic Floating Node Statistical Check (dyn_float_tran_stat)">Dynamic Floating Node Statisti ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap5_re_Dynamic_Float_Crosstalk_Check_dyn_floatxtalk.html" title="Dynamic Float Crosstalk Check (dyn_floatxtalk)">Dynamic Float Crosstalk Check  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Dynamic_Floating_Node_Induced_DC_Leakage_Path_Check_dyn_floatdcpath" title="Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)"></a><h3>
+<a id="pgfId-1688141"></a><a id="88162"></a>Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)<a id="marker-1688142"></a></h3>
+<h4>
+<a id="pgfId-1688144"></a>Description<a id="marker-1688143"></a></h4>
+
+<p>
+<a id="pgfId-1688145"></a>Reports DC leakage paths caused by floating gate. </p>
+<p>
+<a id="pgfId-1688146"></a>This check can be used in two ways. One is based on transient analysis and other is based on leakage analysis. Both approaches cannot be combined in one check statement. If you specify both approaches in one check statement, then leakage analysis gets higher priority than transient analysis. Both approaches are explained below: </p>
+<p>
+<a id="pgfId-1688147"></a>* Transient based approach: </p>
+<p>
+<a id="pgfId-1688148"></a>The check based on transient analysis is evoked when parameters <code>time_window</code> or/and <code>duration</code> are specified. It reports the qualifying path carrying an absolute current higher than the parameter <code>ith</code> for a duration longer than the specified duration (<code>duration</code>), within the specified time_window (<code>time_window</code>). This qualifying path must also have a MOSFET with gate floating for duration longer than the specified duration (<code>duration</code>), within the specified time window (<code>time_window</code>). The violations will be the union of dyn_highz and dyn_dcpath, if same setting are used. This methodology does not give the worst case leakage path. If settings of dyn_dcpath and dyn_floatdcpath are same then the violations of dyn_floatdcpath will be subset of dyn_dcpath. The following parameters are irrelevant: Vmin, vmax, points, rforce, leaki_times, sweep, floatgate, detailed_report, debug_net, distribute, numprocesses. The floating node detection is similar to dyn_highz. The path detection is similar to dyn_dcpath. </p>
+<p>
+<a id="pgfId-1688149"></a>* Leakage analysis based approach: </p>
+<p>
+<a id="pgfId-1688150"></a>The check based on leakage analysis is evoked when parameter <code>leaki_times</code> is specified. The <code>leaki_times</code> should be carefully selected in standby or power-down mode (see Leakage Current Simulation in user-manual). The check is performed at specified times (<code>leaki_times</code>) of a transient simulation. Floating nodes and MOSFET devices with floating gates are detected. Potential leakage paths (sweep=no) or worst leakage paths (sweep=all,single,all_once) caused by floating gate MOSFET devices are reported. The leakage paths are checked between user specified power supply nodes (<code>net</code>). The floating node detection and path detection, in Leakage analysis based approach, are explained below: </p>
+<p>
+<a id="pgfId-1688151"></a>** Floating node detection (leaki_times): </p>
+<p>
+<a id="pgfId-1688152"></a>A node is considered floating (or in high impedance state) if it has no conducting path to a power supply or ground. A report of all MOSFETs with floating gates can be printed by using the parameter <code>floatgate</code>. The following device conducting rules are used for the floating node detection: </p>
+<p>
+<a id="pgfId-1688153"></a>  - MOSFET is conducting if mos region is triode OR saturation </p>
+<p>
+<a id="pgfId-1688154"></a>  - Resistors, controlled resistors, phy_res, relay and inductors are conducting if R&lt;=res_th </p>
+<p>
+<a id="pgfId-1688155"></a>  - BJT is conducting if Vbe&gt;bjt_vbe OR Ic&gt;bjt_ith </p>
+<p>
+<a id="pgfId-1688156"></a>  - Diode is conducting if V&gt;diode_vth </p>
+<p>
+<a id="pgfId-1688157"></a>  - Vsources and iprobes are considered conducting </p>
+<p>
+<a id="pgfId-1688158"></a>  - Isources, VCCS, and CCCS are conducting if i&gt;isource_ith </p>
+<p>
+<a id="pgfId-1688159"></a>  - JFET is considered conducting </p>
+<p>
+<a id="pgfId-1688160"></a>  - Mutual inductors and controlled capacitors are not conducting </p>
+<p>
+<a id="pgfId-1688161"></a>  - VerilogA: conducting path depends on module details </p>
+<p>
+<a id="pgfId-1688162"></a>** Path detection (leaki_times): </p>
+<p>
+<a id="pgfId-1688163"></a>Once the floating nodes are identified, the leakage paths caused by the floating nodes need to be detected. You can use the current-based method or conducting-rule-based method to detect the leakage path. These two methods are explained below: </p>
+<p>
+<a id="pgfId-1688164"></a>*** When <code>sweep</code> parameter is set to single, all, or all_once then the leakage path detection is current-based. In the current-based path detection method, floating node voltage is swept, and the current in the path is measured. After measurement, current-based method reports qualifying paths carrying an absolute current higher than the parameter <code>ith</code>. Either all floating nodes are swept at once (sweep=all), or each floating node is swept individually (sweep=single). The following parameters are relevant to current-based path detection method: vmin, vmax, points, rforce, and ith. </p>
+<p>
+<a id="pgfId-1688165"></a>*** When <code>sweep</code> parameter is set to no, then the leakage path detection is based on following conducting rules: </p>
+<p>
+<a id="pgfId-1688166"></a>  - MOSFET with floating gate is always considered conducting. </p>
+<p>
+<a id="pgfId-1688167"></a>  - Resistors, controlled resistors, and inductors are conducting if R&lt;=res_th </p>
+<p>
+<a id="pgfId-1688168"></a>  - BJT is conducting if Vbe&gt;bjt_vbe OR Ic&gt;bjt_ith </p>
+<p>
+<a id="pgfId-1688169"></a>  - Diode is conducting if V&gt;diode_vth </p>
+<p>
+<a id="pgfId-1688170"></a>  - Vsources is conducting if V=0 otherwise it is not conducting </p>
+<p>
+<a id="pgfId-1688171"></a>  - iprobes are considered conducting </p>
+<p>
+<a id="pgfId-1688172"></a>  - Isources, VCCS, and CCCS are conducting if i&gt;isource_ith </p>
+<p>
+<a id="pgfId-1688173"></a>  - VerilogA: conducting path depends on module details </p>
+<p>
+<a id="pgfId-1688174"></a>The following parameters are irrelevant with sweep=no: Vmin, vmax, points, and rforce. </p>
+<p>
+<a id="pgfId-1688175"></a>If more than 2 nets are specified, Spectre checks the leakage path between each pair of nets. For example, if net=[vdc1 vdc2 0] is specified, then the conducting path between vdc1 and vdc2, vdc1 and 0, and vdc2 and 0 is checked. </p>
+<p>
+<a id="pgfId-1688176"></a>Higher accuracy settings are recommended when using the XPS solver: +cktpreset=sram_pwr. </p>
+<p>
+<a id="pgfId-1688177"></a>The results are reported into a file with the extension dynamic.xml, which can be read with a web browser. </p>
+
+<h4>
+<a id="pgfId-1688179"></a>Syntax<a id="marker-1688178"></a></h4>
+<a id="pgfId-1688180"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name dyn_floatdcpath parameter=value ...</pre>
+<h4>
+<a id="pgfId-1688181"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1688213"></a>Design check parameters</p>
+<table class="webflareTable" id="#id1688182">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688184"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688190"></a><code>leaki_times</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688192"></a><code>[...] sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688194"></a>The time point(s) at which the dynamic floatdcpath check is performed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688196"></a><code>duration</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688198"></a><code>5.00E-09 sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688200"></a>Duration threshold. Default is 5.00E-09 sec. This option is supported only in Spectre and APS.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688202"></a><code>time_window</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688204"></a><code>[tstart, tstop] sec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688206"></a>Time window during which the circuit check is applied. Multiple non-overlapping time windows are supported. Default time window is 0 to tend. This option is supported only in Spectre and APS.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688208"></a><code>error_limit</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688210"></a><code>10000</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688212"></a>Maximum number of errors reported. Default is 10000.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688311"></a>Floating node detection parameters</p>
+<table class="webflareTable" id="#id1688214">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688216"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688222"></a><code>mos_ith</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688224"></a><code>100E-9</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688226"></a>Mosfet ids conducting threshold for high impedance node detection. Default is 100 nA.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688228"></a><code>mos_gds</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688230"></a><code>1.0E-5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688232"></a>Mosfet gds conducting threshold for floating node detection. Default is 1e-5.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688234"></a><code>bjt_vbe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688236"></a><code>0.4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688238"></a>BJT vbe conducting threshold for floating node detection. Default is 0.4 V.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688240"></a><code>bjt_ith</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688242"></a><code>50E-9</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688244"></a>BJT ic conducting threshold for floating node detection. Default is 50 nA.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688246"></a><code>res_th_va</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688248"></a><code>10E6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688250"></a>VerilogA resistor conducting threshold for high impedance node detection. Only applicable on AMS IE element and on one or two port AHDL module. Default is 10MOhms.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688252"></a><code>res_th</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688254"></a><code>1E12</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688256"></a>Resistor conducting threshold for floating node detection. Default is 1 TOhm.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688258"></a><code>diode_vth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688260"></a><code>0.6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688262"></a>Diode voltage conducting threshold for high impedance node detection. Default is 0.6V.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688264"></a><code>isource_ith</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688266"></a><code>1.0E-12</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688268"></a>Current source conducting threshold for floating node detection. Default is 1 pA.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688270"></a><code>mos_conduct_rule</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688272"></a><code>tri_sat</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688274"></a>The conducting rule to decide whether a MOSFET is conducting or not. Possible Values tri_sat: Specifies that a MOSFET is conducting when region is either triode or saturation. tri_sat_sub: Specifies that a MOSFET is conducting when region is either triode, saturation, or subthreshold. ids_gds: Specifies that a MOSFET is conducting when ids&gt;mos_ith or gds&gt;mos_gds, where mos_ith and mos_gds are check parameters. vgs: Specifies that a MOSFET is conducting when vgs&gt;vth (Only supported in XPS Fastspice). The region, ids, gds and vgs are oppoint parameters of MOSFET. Default is tri_sat.Possible values are vgs, ids_gds, tri_sat and tri_sat_sub.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688276"></a><code>debug_net</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688278"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688280"></a>Hierarchical net(s) to debug. Wildcard is not allowed. Default is none. The debug report will be generated at <code>leaki_times</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688282"></a><code>nonconducting_subckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688284"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688286"></a>All instances of specified subcircuit are considered non-conducting during the floating node detection. All devices inside the subcircuit are considered non-conducting during the floating node detection. Wildcard is supported. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688288"></a><code>conducting_subckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688290"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688292"></a>All instances of specified subcircuit are considered conducting during the floating node detection. All devices inside the subcircuit are considered conducting during the floating node detection. Wildcard is supported. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688294"></a><code>nonconducting_primitive</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688296"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688298"></a>All instances of specified primitive or VerilogA modules are considered non-conducting during the floating node detection. Wildcard is supported. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688300"></a><code>nonfloat_vpn</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688302"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688304"></a>All specified vpn(s) will be marked as non-floating nodes during floating node detection. Wildcard is not allowed. Default is none. This option is supported only in Spectre XPS FastSPICE mode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688306"></a><code>float_vpn</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688308"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688310"></a>All channel connections of specified vpn(s) will be marked as floating nodes during floating node detection. Wildcard is not allowed. Default is none. This option is supported only in Spectre XPS FastSPICE mode.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688379"></a>Floating node detection filtering parameters</p>
+<table class="webflareTable" id="#id1688312">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688314"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688320"></a><code>skip_domains</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688322"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688324"></a>Pairs of power supply domains in which floating nodes are skipped. Default is none. Wildcarding is not allowed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688326"></a><code>floatgate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688328"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688330"></a>Whether to report all MOSFETs with floating gate at leaki_times. When floatgate=gate_has_driver_no_moscap, floating MOSCAPs will not be reported. Possible values are no, yes and gate_has_driver_no_moscap. Default is no.Possible values are no, yes and gate_has_driver_no_moscap.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688332"></a><code>filter</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688334"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688336"></a>If set to no, filtering is not performed. If set to rc, dyn_floatdcpath will check only one node in same parasitic sub. This option is supported only in XPS.Possible values are no and rc.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688338"></a><code>filter_diocon_nodes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688340"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688342"></a>Filter out highz nodes connected to MOSDIODE. When set to 1, highz node that is connected to PMOSDIODE is filtered out given that its source is connected to VDD. Moreover, a highz node tat is connected to NMOSDIODE is filtered out given that its source is connected to 0. When set to 2, highz node that is connected to PMOSDIODE is filtered out given that its source voltage is greater than drain voltage. Moreover, a highz node that is connected to NMOSDIODE is filter out given that its drain voltage is greater than source voltage. This option is supported only in Spectre and APS. Possible values are 0, 1 and 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688344"></a><code>node</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688346"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688348"></a>Nodes to which the floating node detection is applied. Default is all( node=* ).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688350"></a><code>xnode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688352"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688354"></a>Nodes to be excluded from the floating node detection. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688356"></a><code>inst</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688358"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688360"></a>Subcircuit instances to which the floating node detection is applied. Default includes all instances (inst=*).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688362"></a><code>xinst</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688364"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688366"></a>Subcircuit instances to be excluded from the floating node detection. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688368"></a><code>subckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688370"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688372"></a>The instances of the specified subcircuit to which the floating node detection is applied. Default includes all subcircuits (subckt=*).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688374"></a><code>xsubckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688376"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688378"></a>The instances of the specified subcircuits that are excluded from the floating node detection. Default is none.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688441"></a>Path detection parameters</p>
+<table class="webflareTable" id="#id1688380">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688382"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688388"></a><code>net</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688390"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688392"></a>Hierarchical node names between which the leakage path is checked. Wildcarding is not allowed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688394"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688396"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688398"></a>If set to no, then no DC sweep is performed and leakage path is based on conducting rules. If set to single, then each floating node is swept one at a time and leakage paths more than <code>ith</code> are reported. If set to all, then all floating nodes will be swept together and leakage paths more than <code>ith</code> are reported. If set to all_once, voltage of gates connected to nmos will be VDD, voltage of gates connected to pmos will be 0, voltage of gates connected to both nmos and pmos will be VDD/2, and leakage paths more than <code>ith</code> are reported. The default is all in Spectre and APS, and the default is no in XPS. The option all_once is supported only in XPS. The option single is not supported in XPS..Possible values are no, all, single and all_once.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688400"></a><code>ith</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688402"></a><code>50E-6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688404"></a>Leakage path more than ith will be reported. Applicable only with sweep=single, sweep=all and sweep=all_once. The default value is 50uA.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688406"></a><code>points</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688408"></a><code>3</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688410"></a>Defines number of sweep points, applicable on both sweep=single and sweep=all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688412"></a><code>vmin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688414"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688416"></a>Defines a minimum voltage for sweep=single and single=all. If specified, the voltage sweep will start from specified vmin voltage. If not specified, minimum voltage in a design will be used. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688418"></a><code>vmax</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688420"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688422"></a>Defines a maximum voltage for sweep=single and single=all. If specified, the voltage sweep will stop at specified vmax voltage. If not specified, maximum voltage in a design will be used. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688424"></a><code>rforce</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688426"></a><code>500E06</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688428"></a>Change the rforce value only for sweep=single and sweep=all. The default value is 500 Mohm.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688430"></a><code>numprocesses</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688432"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688434"></a>Number of processes for distributed analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688436"></a><code>distribute</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688438"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688440"></a>Distribute method, only support sweep=single.Possible values are no, fork, lsf and sge.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688467"></a>Path detection filtering parameters</p>
+<table class="webflareTable" id="#id1688442">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688444"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688450"></a><code>detailed_path</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688452"></a><code>per_fm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688454"></a>If set to yes, prints the detailed path. Default is per_fm, print one path per floating mosfet. If set to per_fn, print one path per floating node. The per_fn value is not supported in Spectre XPS.Possible values are per_fm, yes and per_fn.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688456"></a><code>xinst_path</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688458"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688460"></a>Subcircuit instances to be excluded from the path detection. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688462"></a><code>sort</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688464"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688466"></a>If set to no, sorting is not performed. If set to current, dyn_floatdcpath will sort violations by max current. Default is no.Possible values are no and current.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1694082"></a>Related Topics</p>
+<p>
+<a id="pgfId-1694084"></a><em><a actuate="user" class="URL" href="../spectreuser/chap12.html#dyn_floatdcpath" show="replace" xml:link="simple">Dynamic Floating Gate Induced Leakage Check</a></em></p>
+<p>
+<a id="pgfId-1694078"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5_re_Dynamic_Floating_Node_Statistical_Check_dyn_float_tran_stat.html" id="prev" title="Dynamic Floating Node Statistical Check (dyn_float_tran_stat)">Dynamic Floating Node Statisti ...</a></em></b><b><em><a href="chap5_re_Dynamic_Float_Crosstalk_Check_dyn_floatxtalk.html" id="nex" title="Dynamic Float Crosstalk Check (dyn_floatxtalk)">Dynamic Float Crosstalk Check  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

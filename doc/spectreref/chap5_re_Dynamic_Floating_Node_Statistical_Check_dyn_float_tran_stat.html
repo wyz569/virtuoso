@@ -1,0 +1,549 @@
+
+<html><head><title>Dynamic Floating Node Statistical Check (dyn_float_tran_stat)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484716" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Dynamic Floating Node Statistical Check (dyn_float_tran_stat)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484716" />
+<meta name="NextFile" content="chap5_re_Dynamic_Floating_Node_Induced_DC_Leakage_Path_Check_dyn_floatdcpath.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap5_re_Dynamic_Excessive_Rise_Fall_Undefined_State_Time_Check_dyn_exrf.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Dynamic Floating Node Statistical Check (dyn_float_tran_stat)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap5_re_Dynamic_Excessive_Rise_Fall_Undefined_State_Time_Check_dyn_exrf.html" title="Dynamic Excessive Rise, Fall, Undefined State Time Check (dyn_exrf)">Dynamic Excessive Rise, Fall,  ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap5_re_Dynamic_Floating_Node_Induced_DC_Leakage_Path_Check_dyn_floatdcpath.html" title="Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)">Dynamic Floating Node Induced  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Dynamic_Floating_Node_Statistical_Check_dyn_float_tran_stat" title="Dynamic Floating Node Statistical Check (dyn_float_tran_stat)"></a><h3>
+<a id="pgfId-1687926"></a>Dynamic Floating Node Statistical Check (dyn_float_tran_stat)<a id="marker-1687925"></a></h3>
+<h4>
+<a id="pgfId-1687928"></a>Description<a id="marker-1687927"></a></h4>
+
+<p>
+<a id="pgfId-1687929"></a>The dyn_float_tran_stat check reports leaky MOSFETs/BJTs caused by floating nodes. It also detects floating nodes caused by other floating nodes.</p>
+<p>
+<a id="pgfId-1687930"></a>The check deploys a statistical method of forcing (pinging) different voltages on the gate of MOSFET and the base of BJT. Ping refers to randomly forcing a node to 0 or VDD, or ramping from 0 to VDD. Only MOSFET gates or BJT base nodes are pinged. Ping is realized by applying a voltage source in series with a large resistor (ping_resistor) on each node. The strength of a ping is weaker (because of large ping_resistor) than other drivers on each node.</p>
+<p>
+<a id="pgfId-1687931"></a>dyn_float_tran_stat Algorithm</p>
+<p>
+<a id="pgfId-1687932"></a>- Transient simulation is run till ping_start.</p>
+<p>
+<a id="pgfId-1687933"></a>- Qualified nodes are identified to exercise pings according to domains</p>
+<p>
+<a id="pgfId-1687934"></a>- For each qualified node, domain_voltage is evaluated</p>
+<p>
+<a id="pgfId-1687935"></a>- Pings are created randomly using seed value. One third of the qualified nodes are selected for HIGH. One third of qualified nodes are selected for LOW. One third of qualified nodes are selected for RAMP.</p>
+<p>
+<a id="pgfId-1687936"></a>- ping_duration and ping_resistor are evaluated</p>
+<p>
+<a id="pgfId-1687937"></a>- Pings are applied sequentially at ping_start.</p>
+<p>
+<a id="pgfId-1687938"></a>- For each ping:</p>
+<p>
+<a id="pgfId-1687939"></a>    - All MOSFET drain currents and BJT collector currents are stored as reference current (Iref) right before applying the ping</p>
+<p>
+<a id="pgfId-1687940"></a>    - For the first half of ping_duration:</p>
+<p>
+<a id="pgfId-1687941"></a>        - HIGH/LOW to each node is forced through a resistor with ping_resistor value.</p>
+<p>
+<a id="pgfId-1687942"></a>        - Device current (Iping) is checked at 0.95 of 0.5*ping_duration. A fail is detected if:</p>
+<p>
+<a id="pgfId-1687943"></a>          |Iref-Iping| &gt; max(pingibsthresh, pingirelthresh * min(|Iref|,|Iping|))</p>
+<p>
+<a id="pgfId-1687944"></a>    - For the second half of ping_duration:</p>
+<p>
+<a id="pgfId-1687945"></a>        - The RAMP is forced to each node through a resistor with the ping_resistor value and the maximum (Iping,max) and minimum (Iping,min) device current is checked during the RAMP. A fail is detected in any of the following cases:</p>
+<p>
+<a id="pgfId-1687946"></a>          |Iref-Iping,max| &gt; max(pingiabsthresh_ramp, pingirelthresh*min(|Iref|,|Iping,max|))</p>
+<p>
+<a id="pgfId-1687947"></a>          |Iref-Iping,min| &gt; max(pingiabsthresh_ramp, pingirelthresh*min(|Iref|,|Iping,min|))</p>
+<p>
+<a id="pgfId-1687948"></a>The results are written to the dynamic.xml file, which can be viewed in a Web browser. This design check is supported only in Spectre, Spectre APS modes. It is not supported in Spectre XPS FastSPICE , Spectre XPS SPICE, and Spectre XPS MS modes. </p>
+
+<h4>
+<a id="pgfId-1687950"></a>Syntax<a id="marker-1687949"></a></h4>
+<a id="pgfId-1687951"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name dyn_float_tran_stat parameter=value ...</pre>
+<h4>
+<a id="pgfId-1687952"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1688140"></a>Design check parameters</p>
+<table class="webflareTable" id="#id1687953">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1687955"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687961"></a><code>domains</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687963"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687965"></a>Pairs of power supply domains in which floating nodes are checked. Example: domains=[VDD VSS VPP VSS]. Domain also defines domain voltage (domain_voltage) value for forcing node voltages. Default is none. Wildcarding is not allowed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687967"></a><code>ping_start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687969"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687971"></a>Time at which the check is initiated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687973"></a><code>ping_count</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687975"></a><code>300</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687977"></a>Number of statistical periods being used. Default is 300.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687979"></a><code>ping_duration</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687981"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687983"></a>Duration of a ping. A ping consists of two phases: high/low forcing phase and ramp up forcing phase. Length of each phase is half of ping_duration. Default is none..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687985"></a><code>ping_iabsthresh</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687987"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687989"></a>Current threshold for device violation during high/low forcing (first phase). Specify a value and a list of instance name and value pairs in the format [value0 [inst1 value1 inst2 value2 ... ]]. If inst value pairs are not specified, value0 is used for MOSFETs and BJTs in all domains. If an inst value pair is specified, the given value is used for all MOSFETs and BJTs of the given inst. For all other MOSFETs and BJTs, value0 is used. Each value must be a number. It cannot be a netlist parameter or a mathematical expression. If value0 is not specified, the default value <code>1 indicates that the default value is domain_voltage/ping_resistance.</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687991"></a><code>ping_iabsthresh_ramp</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687993"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687995"></a>Current threshold for device violation during ramp forcing (second phase). Specify a value and a list of instance name and value pairs in the format [value0 [inst1 value1 inst2 value2 ... ]]. If inst value pairs are not specified, value0 is used for MOSFETs and BJTs in all domains. If an inst value pair is specified, the given value is used for all MOSFETs and BJTs of the given inst. For all other MOSFETs and BJTs, value0 is used. Each value must be a number. It cannot be a netlist parameter or a mathematical expression. If value0 is not specified, the default value <code>1 indicates that the default value is 100*domain_voltage/ping_resistance.</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687997"></a><code>ping_irelthresh</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1687999"></a><code>1000</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688001"></a>Relative threshold for floating node detection for both high/low and ramp forcing. Default is 1000.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688003"></a><code>seed</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688005"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688007"></a>Seed for random number generation. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688009"></a><code>domain_voltage_thresh</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688011"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688013"></a>Lowest threshold for domain voltage. If a node has voltage less than domain_voltage_thresh, it will be excluded from ping. Default is 0.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688015"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688017"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688019"></a>To probe gate voltage of MOSFETs, base voltage of BJTs, drain current of MOSFETs and collector current of BJTs. When value is set to ping, netlist or all, a new waveform file will be written in raw directory. The format of this new waveform file will be &lt;CheckName&gt;_&lt;PingStart&gt;.tran.tran, where &lt;CheckName&gt; is the name of check statement and &lt;PingStart&gt; is the time specified in <code>ping_start parameter. The waveform will start from PingStart until ping simulation is finished. If save=ping,only save ping voltages and mos/bjt currents, if save=netlist, only save the ones saved in the netlist, if save=all,both of signals in the save=ping and the ones saved in the netlist are saved, Default is no.Possible values are ping, no, all and netlist.</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688021"></a><code>distribute</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688023"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688025"></a>Distribute method.Possible values are no, fork and lsf.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688027"></a><code>numprocesses</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688029"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688031"></a>Number of processes for distributed analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688033"></a><code>report_top_current</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688035"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688037"></a>number of top n devices with the largest leakage current to be reported.When set to 0,report will contain all devices.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688039"></a><code>ping_duration_max</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688041"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688043"></a>maximum value of ping_duration applied. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688045"></a><code>ping_resistor_max</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688047"></a><code>10e+9</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688049"></a>Maximum value of ping_resistor applied. Specify a value and a list of instance name and value pairs in the format [value0 [inst1 value1 inst2 value2 ... ]]. If inst value pairs are not specified, value0 is used in all domains. If an inst value pair is specified, the given value is used at all ports and nodes of the given inst. For all other nodes, value0 is used. Each value must be a number. It cannot be a netlist parameter or a mathematical expression.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688051"></a><code>ping_resistor_min</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688053"></a><code>100e+6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688055"></a>Minimum value of ping_resistor applied. Specify a value and a list of instance name and value pairs in the format [value0 [inst1 value1 inst2 value2 ... ]]. If inst value pairs are not specified, value0 is used in all domains. If an inst value pair is specified, the given value is used at all ports and nodes of the given inst. For all other nodes, value0 is used. Each value must be a number. It cannot be a netlist parameter or a mathematical expression.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688057"></a><code>time_constant</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688059"></a><code>6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688061"></a>time constant. Default is 6.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688063"></a><code>domain_detection_method</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688065"></a><code>dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688067"></a>Domain detection, find the ping nodes through device or node.Possible values are dev and node.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688069"></a><code>stop_nodes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688071"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688073"></a>stop nodes during domain tracking. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688075"></a><code>inst</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688077"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688079"></a>Subcircuit instances to which the check is applied. Default includes all instances (inst=*).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688081"></a><code>xinst</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688083"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688085"></a>Subcircuit instances to be excluded from the check. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688087"></a><code>subckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688089"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688091"></a>The instances of the specified subcircuit to which the check is applied. Default includes all subcircuits (subckt=*).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688093"></a><code>xsubckt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688095"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688097"></a>The instances of the specified subcircuits that are excluded from the check. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688099"></a><code>node</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688101"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688103"></a>Nodes to which the check is applied. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688105"></a><code>xnode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688107"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688109"></a>Nodes to be excluded from the check. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688111"></a><code>ping_voltage_thresh</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688113"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688115"></a>Threshold for ping voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688117"></a><code>ping_index</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688119"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688121"></a>Selectively re-ping a circuit with a list of pings.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688123"></a><code>domain_detection_voltage_atol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688125"></a><code>1e-20</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688127"></a>Voltage tolerance for volatge-based domain detection.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688129"></a><code>ping_timeout</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688131"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688133"></a>Interrupt any individual ping if it takes longer than ping_timeout. The specified time must be a CPU time. Units is in seconds. Default is none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688135"></a><code>freeze</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688137"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688139"></a>When set to yes, independent source is frozen during ping simulation. The value of independent source throughout a ping simulation is constant. The constant value is equal to the value of independent source at ping_start.Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5_re_Dynamic_Excessive_Rise_Fall_Undefined_State_Time_Check_dyn_exrf.html" id="prev" title="Dynamic Excessive Rise, Fall, Undefined State Time Check (dyn_exrf)">Dynamic Excessive Rise, Fall,  ...</a></em></b><b><em><a href="chap5_re_Dynamic_Floating_Node_Induced_DC_Leakage_Path_Check_dyn_floatdcpath.html" id="nex" title="Dynamic Floating Node Induced DC Leakage Path Check (dyn_floatdcpath)">Dynamic Floating Node Induced  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

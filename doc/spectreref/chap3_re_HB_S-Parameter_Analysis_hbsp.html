@@ -1,0 +1,641 @@
+
+<html><head><title>HB S-Parameter Analysis (hbsp)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484705" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="HB S-Parameter Analysis (hbsp)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484705" />
+<meta name="NextFile" content="chap3_re_HB_Stability_Analysis_hbstb.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_HB_Noise_Analysis_hbnoise.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- HB S-Parameter Analysis (hbsp)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_HB_Noise_Analysis_hbnoise.html" title="HB Noise Analysis (hbnoise)">HB Noise Analysis (hbnoise)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_HB_Stability_Analysis_hbstb.html" title="HB Stability Analysis (hbstb)">HB Stability Analysis (hbstb)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_HB_S-Parameter_Analysis_hbsp" title="HB S-Parameter Analysis (hbsp)"></a><h3>
+<a id="pgfId-1691085"></a>HB S-Parameter Analysis (hbsp)<a id="marker-1691084"></a></h3>
+<h4>
+<a id="pgfId-1691087"></a>Description<a id="marker-1691086"></a></h4>
+
+<p>
+<a id="pgfId-1691088"></a>The periodic or quasi-periodic SP (HBSP) analysis is used to compute scattering and noise parameters for n-port circuits such as mixers that exhibit frequency translation. It is a small-signal analysis similar to SP analysis, except that in HBAC and HBNOISE, the circuit is first linearized about a periodically varying operating point as opposed to a simple DC operating point. Linearizing about a periodically or quasi-periodically time-varying operating point allows the computation of S-parameters between circuit ports that convert signals from one frequency band to another. HBSP can also calculate noise parameters in frequency-converting circuits. In addition, HBSP computes noise figure (both single-sideband and double-sideband), input referred noise, equivalent noise parameters, and noise correlation matrices.&#160;&#160;Similar to HBNOISE, but unlike SP, the noise features of the HBSP analysis include noise folding effects due to the periodic time-varying nature of the circuit.</p>
+<p>
+<a id="pgfId-1691089"></a>Computing the n-port S-parameters and noise parameters of a periodically varying circuit is a two-step process. First, the small stimulus is ignored and the periodic or quasi-periodic steady-state response of the circuit to possibly large periodic stimulus is computed using HB analysis. As part of the HB analysis, the periodically time-varying representation of the circuit is computed and saved for later use. The second step is to apply small-signal excitations to compute the n-port S-parameters and noise parameters. This is done using the HBSP analysis. HBSP analysis cannot be used independently; it must follow HB analysis. However, any number of periodic small-signal analyses such as HBAC, HBSP, HBNOISE, can follow an HB analysis.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1691090"></a>Note: Unlike other analyses in Spectre, this analysis can only sweep frequency.</div>
+
+<h4>
+<a id="pgfId-1691092"></a>Syntax<a id="marker-1691091"></a></h4>
+<a id="pgfId-1691093"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name hbsp parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1691094"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1691168"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1691095">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691097"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691103"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691105"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691107"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691109"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691111"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691113"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691115"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691117"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691119"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691121"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691123"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691125"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691127"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691129"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691131"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691133"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691135"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691137"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691139"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691141"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691143"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691145"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691147"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691149"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691151"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691153"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691155"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691157"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691159"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691161"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691163"></a><code>sweeptype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691165"></a><code>unspecified</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691167"></a>Specifies if the sweep frequency range is the absolute frequency of input or if it is relative to the port harmonics. When the unspecified value is used, Spectre RF sweeps using relative when autonomous simulation is performed or when the analysis is PSP; for other cases Spectre RF sweeps the absolute value of the input. Possible values are absolute, relative and unspecified.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691194"></a>Port parameters</p>
+<table class="webflareTable" id="#id1691169">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691171"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691177"></a><code>ports</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691179"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691181"></a>List of active ports. Ports are numbered in the specified order. For noise figure computation, the input is considered as port 1 and the output as port 2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691183"></a><code>portharmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691185"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691187"></a>List of harmonics that are active on specified list of ports. Must have a one-to-one correspondence with the &#39;ports&#39; vector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691189"></a><code>harmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691191"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691193"></a>List of harmonics, in addition to the ones associated with specific ports by portharmsvec, that are active.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691232"></a>Output parameters</p>
+<table class="webflareTable" id="#id1691195">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691197"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691203"></a><code>freqaxis</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691205"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691207"></a>Specifies whether the results should be printed as per the input frequency, the output frequency, or the absolute value of the input frequency. Default is <code>in</code>. Possible values are absin, in and out.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691209"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691211"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691213"></a>Output file name. It just supports S-parameters in PSP, HBSP, and QPSP analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691215"></a><code>datafmt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691217"></a><code>spectre</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691219"></a>Data format of the S-parameter output file. Possible values are spectre, touchstone and touchstone2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691221"></a><code>datatype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691223"></a><code>realimag</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691225"></a>Data type of the S-parameter output file. Possible values are realimag, magphase and dbphase.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691227"></a><code>noisedata</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691229"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691231"></a>Should noise data be saved to the S-parameter output file; if yes, in what format. Possible values are no and twoport.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691246"></a>Noise parameters</p>
+<table class="webflareTable" id="#id1691233">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691235"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691241"></a><code>donoise</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691243"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691245"></a>Perform noise analysis. If oprobe is specified as a valid port, this parameter is set to yes, and a detailed noise output is generated. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691260"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1691247">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691249"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691255"></a><code>maxsideband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691257"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691259"></a>This parameter determines the maximum sideband that is included when computing noise, that is either up-converted or down-converted to the output by the periodic drive signal. This parameter also determines the size of the small signal system when hbnoise is performed. It is critical for the accuracy of hbnoise analysis. Using a small maxsideband may cause accuracy loss. The default value is the <code>harms/maxharms</code> setting in the HB large signal analysis.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691298"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1691261">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691263"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691269"></a><code>tolerance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691271"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691273"></a>Tolerance for linear solver. The default value is 1.0e-9 for shooting-based solver and 1.0e-4 for harmonic balance-based solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691275"></a><code>relativeTol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691277"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691279"></a>Relative tolerance for harmonic balance-based linear solver. Default value is 1.0e-2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691281"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691283"></a><code>autoset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691285"></a>Select a linear solver for the GMRES preconditioner. Default is autoset. With autoset, the simulator will automatically select the appropriate precondtioner. The preconditioner affects the rate of convergence of the linear matrix solver used in periodic small-signal analysis. When autoset is selected, the simulator may decide to switch to a different preconditioner after the analysis begins. When that happens, the simulator may issue a warning instructing you to choose a different preconditioner during subsequent runs. Although not required, choosing a different preconditioner according to the simulator&#39;s instructions may speed up subsequent analyses. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691287"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691289"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691291"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691293"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691295"></a><code>200</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691297"></a>This parameter is used to set maximum iteration count of the linear matrix solver used in periodic small-signal analysis. After reaching 1.25*krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase the krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691330"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1691299">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1691301"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691307"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691309"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691311"></a>Degree of annotation. Possible values are no, title, sweep, status, steps and detailed_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691313"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691315"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691317"></a>Analysis title.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691319"></a><code>sprobes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691321"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691323"></a>List of s-probes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691325"></a><code>sprobeharmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691327"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1691329"></a>List of sprobe harmonics. Set 2 harmonics for each sprobe..</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1691331"></a>To specify the HBSP analysis, the port and port harmonic relations must be specified. You can select the ports of interest by setting the <code>port</code> parameter, and select the set of periodic small-signal output frequencies of interest by setting <code>portharmsvec</code> or <code>harmsvec</code> parameters. For a given set of n integer numbers representing the harmonics K1, K2, ... Kn, the scattering parameters at each port are computed at the following frequencies: </p>
+<p>
+<a id="pgfId-1691332"></a>For periodic SP in one-tone HB analysis, frequency is: </p>
+<p>
+<a id="pgfId-1691333"></a>    f(scattered)= f(rel) + Ki * fund(HB) </p>
+<p>
+<a id="pgfId-1691334"></a>For quasi-periodic noise with multi-tone in HB analysis, sidebands are vectors. Consider that you have one large tone and one moderate tone in HB. Then the above sideband K1 will be represented as [K1_1 K1_2].In this case, the corresponding frequency is: </p>
+<p>
+<a id="pgfId-1691335"></a>    K1_1 * fund(large tone of HB) + K1_2 * fund(moderate tone of HB)= SUM_j=1_to_L{Ki_j * fund_j(HB)} </p>
+<p>
+<a id="pgfId-1691336"></a>If there are L (1 large plus L-1&#160;&#160;moderate) tones in HB analysis and a given set of n integer vectors representing the sidebands: </p>
+<p>
+<a id="pgfId-1691337"></a>    K1 = { K1_1,...K1_j..., K1_L } , K2, ... Kn. </p>
+<p>
+<a id="pgfId-1691338"></a>If you specify the relative frequency, the scattering parameters at each port are computed at the frequencies: </p>
+<p>
+<a id="pgfId-1691339"></a>    f(scattered)= f(rel) + SUM_j=1_to_L{Ki_j * fund_j(hb)}, </p>
+<p>
+<a id="pgfId-1691340"></a>where f(rel) represents the relative frequency of a signal incident on a port, f(scattered) represents the frequency to which the relevant scattering parameter represents the conversion, and fund(one-tone HB) or fund_j(multi-tone HB)represents the fundamental frequency used in the corresponding HB analysis. </p>
+<p>
+<a id="pgfId-1691341"></a>During analysis of a down-converting mixer with a blocker and the signal in the upper sideband, we sweep the input frequency of the signal coming into RF port. In case of periodic SP with one-tone HB, the most relevant harmonic for RF input is Ki= 1 and for IF output Ki= 0. Therefore, we can associate K2=0 with the IF port and K1=1 with the RF port. S21 represents the transmission of signal from the RF to IF, and S11 represents the reflection of signal back to the RF port. If the signal was in the lower sideband, a choice of K1=-1 is more appropriate. For quasi-periodic SP with multi-tone HB, the most relevant sideband for this input is Ki= {1 , 0} - and for IF output Ki= {0 , 0}. Therefore, we can associate K1={1 , 0} with the RF port and K2={0 , 0} with the IF port. If the signal was in the lower sideband, then a choice of K1={-1 , 0} is more appropriate. </p>
+<p>
+<a id="pgfId-1691342"></a>The parameter portharmsvec or harmsvec can be used to specify the harmonics of interest. If <code>portharmsvec</code> is specified, the harmonics must be in one-to-one correspondence with the ports, with each harmonic associated with a single port. If harmonics are specified in the optional <code>harmsvec</code> parameter, all possible frequency-translating scattering parameters associated with the specified harmonics are computed.</p>
+<p>
+<a id="pgfId-1691343"></a>With HBSP, the frequencies of the input and of the response are usually different (this is an important area in which HBSP differs from SP). Because the HBSP computation involves inputs and outputs at frequencies that are relative to multiple harmonics or sidebands, the <code>freqaxis</code> and <code>sweeptype</code> parameters behave differently in HBSP than in HBAC and HBNOISE.</p>
+<p>
+<a id="pgfId-1691344"></a>The <code>sweeptype</code> parameter controls the way the frequencies in the HBSP analysis are swept. Specifying a <code>relative</code> sweep indicates the sweep to be relative to the analysis harmonics or port sideband (not the HB fundamental) and specifying an <code>absolute</code> sweep indicates the sweep of the absolute input source frequency. </p>
+<p>
+<a id="pgfId-1691345"></a>For example, in case of periodic SP with one-tone HB and HB fundamental of 100MHz, <code>portharmsvec</code> is set to [9 1] to examine a downconverting mixer. Using <code>sweeptype=relative</code> and a sweep range of f(rel)=0-&gt;50MHz, S21 represents the strength of signal transmitted from the input port in the range 900-&gt;950MHz to the output port at frequencies 100-&gt;150MHz. Using <code>sweeptype=absolute</code> and sweeping the frequency from 900-&gt;950MHz calculates the same quantities, because f(abs)=900-&gt;950MHz, f(rel) = f(abs) - K1 * fund(hb) = 0-&gt;50MHz, with K1=9, and fund(hb) = 100MHz. </p>
+<p>
+<a id="pgfId-1691346"></a>For quasi-periodic noise with multi-tone HB and HB fundamentals of 1000MHz (LO) and 966MHz (blocker in RF channel), <code>portharmsvec</code> could be set to [0 1&#160;&#160;-1 1] to examine a downconverting mixer. Consider setting <code>sweeptype=relative</code> and a sweep range of f(rel)=-10MHz&lt;-&gt;10MHz, S21 represents the strength of the signal transmitted from the input port in the range 956-&gt;976MHz to the output port at the frequencies 24&lt;-&gt;44MHz. Using <code>sweeptype=absolute</code> and sweeping the frequency from 966&lt;-&gt;976MHz calculates the same quantities, because f(abs)=956&lt;-&gt;976MHz, f(rel) = f(abs) - ( K1_1 * fund_1(hb) + K1_2 * fund_2(hb) ) = -10MHz&lt;-&gt;10MHz, with K1_1=0, K1_2=1, fund_1(hb) = 1000MHz, and fund_2(hb) = 966MHz. </p>
+<p>
+<a id="pgfId-1691347"></a>The <code>freqaxis</code> parameter is used to specify whether the results should be output versus the scattered frequency at the input port (<code>in</code>), the scattered frequency at the output port (<code>out</code>), or the absolute value of the frequency swept at the input port (<code>absin</code>). </p>
+<p>
+<a id="pgfId-1691348"></a>HBSP analysis also computes noise figures, equivalent noise sources, and noise parameters. The noise computation, which is skipped only when <code>donoise=no</code>, requires additional simulation time. If:</p>
+<p>
+<a id="pgfId-1691349"></a>    No = total output noise at frequency f</p>
+<p>
+<a id="pgfId-1691350"></a>    Ns = noise at the output due to the input probe (the source)</p>
+<p>
+<a id="pgfId-1691351"></a>    Nsi = noise at the output due to the image harmonic at the source</p>
+<p>
+<a id="pgfId-1691352"></a>    Nso = noise at the output due to harmonics other than input at the source</p>
+<p>
+<a id="pgfId-1691353"></a>    Nl = noise at the output due to the output probe (the load)</p>
+<p>
+<a id="pgfId-1691354"></a>    IRN = input referred noise</p>
+<p>
+<a id="pgfId-1691355"></a>    G = gain of the circuit</p>
+<p>
+<a id="pgfId-1691356"></a>    F = noise factor (single side band)</p>
+<p>
+<a id="pgfId-1691357"></a>    NF = noise figure (single side band)</p>
+<p>
+<a id="pgfId-1691358"></a>    Fdsb = double sideband noise factor</p>
+<p>
+<a id="pgfId-1691359"></a>    NFdsb = double sideband noise figure</p>
+<p>
+<a id="pgfId-1691360"></a>    Fieee = IEEE single sideband noise factor</p>
+<p>
+<a id="pgfId-1691361"></a>    NFieee = IEEE single sideband noise figure</p>
+<p>
+<a id="pgfId-1691362"></a>Then:</p>
+<p>
+<a id="pgfId-1691363"></a>    IRN = sqrt(No^2/G^2)</p>
+<p>
+<a id="pgfId-1691364"></a>    F = (No^2 - Nl^2)/Ns^2</p>
+<p>
+<a id="pgfId-1691365"></a>    NF = 10*log10(F)</p>
+<p>
+<a id="pgfId-1691366"></a>    Fdsb = (No^2 - Nl^2)/(Ns^2+Nsi^2)</p>
+<p>
+<a id="pgfId-1691367"></a>    NFdsb = 10*log10(Fdsb)</p>
+<p>
+<a id="pgfId-1691368"></a>    Fieee = (No^2 - Nl^2 - Nso^2)/Ns^2</p>
+<p>
+<a id="pgfId-1691369"></a>    NFieee = 10*log10(Fieee).</p>
+<p>
+<a id="pgfId-1691370"></a>When the results are output, IRN is named <code>in</code>, G is named <code>gain</code>, F, NF, Fdsb, NFdsb, Fieee, and NFieee are named <code>F</code>, <code>NF</code>, <code>Fdsb</code>, <code>NFdsb</code>, <code>Fieee</code>, and <code>NFieee</code>, respectively. Note that the gain computed by HBSP is the voltage gain from the actual circuit input to the circuit output, not the gain from the internal port voltage source to the output. </p>
+<p>
+<a id="pgfId-1691371"></a>To ensure accurate noise calculations, the <code>maxsideband</code> or <code>sidebands</code> parameters must be set to include the relevant noise folding effects. <code>maxsideband</code> is only relevant to the noise computation features of HBSP.</p>
+<p>
+<a id="pgfId-1691372"></a>You can specify sweep limits by specifying the end points, or the center value and span of the sweep. Steps can be linear or logarithmic, and you can specify the number of steps or the size of each step. You can specify a step size parameter (<code>step</code>, <code>lin</code>, <code>log</code>, or <code>dec</code>) to determine whether the sweep is linear or logarithmic. If you do not specify a step size parameter, the sweep is linear when the ratio of stop to start values is less than 10 and logarithmic when this ratio is 10 or greater. Alternatively, you can use the values parameter to specify the values that the sweep parameter should take. If you provide both a specific set of values and a set specified using a sweep range, the two sets are merged and collated before being used. All frequencies are in Hertz.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_HB_Noise_Analysis_hbnoise.html" id="prev" title="HB Noise Analysis (hbnoise)">HB Noise Analysis (hbnoise)</a></em></b><b><em><a href="chap3_re_HB_Stability_Analysis_hbstb.html" id="nex" title="HB Stability Analysis (hbstb)">HB Stability Analysis (hbstb)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

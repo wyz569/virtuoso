@@ -1,0 +1,174 @@
+
+<html><head><title>Tips for Reducing Memory Usage with SpectreRF (rfmemory)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484714" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Tips for Reducing Memory Usage with SpectreRF (rfmemory)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484714" />
+<meta name="NextFile" content="chap4_re_Output_Selections_save.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap4_re_Dynamic_Release_Voltage_Node_release_voltage.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Tips for Reducing Memory Usage with SpectreRF (rfmemory)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap4_re_Dynamic_Release_Voltage_Node_release_voltage.html" title="Dynamic Release Voltage Node (release_voltage)">Dynamic Release Voltage Node ( ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap4_re_Output_Selections_save.html" title="Output Selections (save)">Output Selections (save)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Tips_for_Reducing_Memory_Usage_with_SpectreRF_rfmemory" title="Tips for Reducing Memory Usage with SpectreRF (rfmemory)"></a><h2>
+<a id="pgfId-1070174"></a><a id="57128"></a>Tips for Reducing Memory Usage with SpectreRF (rfmemory)<a id="marker-1070175"></a></h2>
+<h4>
+<a id="pgfId-1085101"></a>Description<a id="marker-1085100"></a></h4>
+
+<p>
+<a id="pgfId-1085102"></a><strong>Problem</strong>: How can you reduce memory usage when running SpectreRF simulations? What are the things that you need to be aware of? </p>
+<p>
+<a id="pgfId-1058553"></a><strong>Solution</strong>: The amount of swap/memory that Spectre/SpectreRF requires depends on the following:</p>
+<ul><li>
+<a id="pgfId-1058554"></a>The analysis type you are running (PSS, QPSS, transient, dc, and so on). PSS and QPSS can take up a lot of memory. </li><li>
+<a id="pgfId-1085107"></a>PSS and QPSS shooting can take up a lot of memory. If a reasonably small number of harmonics is needed for your circuit, then harmonic balance will require less memory than the shooting method, especially for systems with multiple input frequencies. More details are provided below.</li><li>
+<a id="pgfId-1085130"></a>The amount of memory required is roughly proportional to the number of nodes in the circuit. Remember that most device models have multiple nodes inside the model.</li><li>
+<a id="pgfId-1085149"></a>The number of nodes/nets you save has only a small effect on memory use and runtime. The number of nodes/nets you save does change the amount of disk space required to save the simulation result. </li></ul>
+
+
+
+<p>
+<a id="pgfId-1068568"></a>This help is broken into four sections; Shooting, Harmonic Balance, Small-Signal Analyses, and Envelope.</p>
+
+<h4><em>
+<a id="pgfId-1085190"></a>PSS analysis</em></h4>
+
+<p>
+<a id="pgfId-1085208"></a>The amount of memory required depends on the number of time points in the PSS solution. The number of time points in the solution depends on several factors.</p>
+<ul><li>
+<a id="pgfId-1085209"></a>If you increase the number of harmonics above 10, the minimum number of time points is 20*number of harmonics. Closely spaced input frequencies require a large number of harmonics to be calculated, and thus require large amount of memory.<br />
+<a id="pgfId-1085210"></a>For example, consider a system with 2.4GHz and 2.4GHz minus 1MHz, or 2.399GHz. To get to the second harmonic of 2.4 GHz requires 4,800 harmonics, which in turn requires 96,000 timepoints. This large number of timepoints would require a large amount of memory. For such systems, use harmonic balance (hb) instead.</li><li>
+<a id="pgfId-1085211"></a>Increasing the accuracy by selecting conservative or by reducing the value of reltol and/or vabstol has the effect of producing more timepoints. A rough estimate is that for every power of 10 smaller you set reltol, five times as many timepoints will be produced.</li><li>
+<a id="pgfId-1085212"></a>Setting a small maxstep compared to the PSS period or setting maxacfreq above 40*PSS beat frequency will produce more timepoints. Unless you see warning messages in the small-signal analyses that instruct you to set maxacfreq, it is better to leave maxstep and maxacfreq unspecified and set conservative and/or a smaller values for reltol and vabstol. This will have the effect of taking more timesteps only in areas of transition, and longer timesteps where the waveform is static.</li><li>
+<a id="pgfId-1085213"></a>The waveforms produced by the circuit can also affect the number of timepoints. If there are fast transitions in your circuit, the timestep will be reduced in the areas of the transitions to preserve high accuracy of the simulation.</li></ul>
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1085197"></a>QPSS analysis</em></h4>
+
+<ul><li>
+<a id="pgfId-1085265"></a>QPSS Analysis should be used only for nonlinear circuits like sampling circuits or switched-capacitor circuits. For other circuits, use hb instead.</li><li>
+<a id="pgfId-1085257"></a>QPSS analysis runs a series of PSS analyses that depend on the number of moderate tones and the number of harmonics set in each moderate tone. Each PSS analysis is one cycle of the signal designated as Large in the QPSS Choosing Analyses Form with all of the input signals applied. The number of harmonics for the large tone and the accuracy settings mentioned above set the number of timepoints for each PSS analysis. The number of PSS analyses (called transient integrations in the Spectre output window) is (2*number of harmonics on moderate tone 1)+1 * (2*number of harmonics on moderate tone 2)+1 and continuing for more input tones. Assuming three harmonics on two moderate tones the number of PSS analyses is (2*3)+1  *  (2*3)+1, or 49 total PSS analyses.</li></ul>
+
+
+<h4><em>
+<a id="pgfId-1068569"></a> Harmonic Balance analysis</em></h4>
+
+<ul><li>
+<a id="pgfId-1085302"></a>The amount of memory required depends primarily on the number of harmonics in the solution. Setting accuracy options will have only a small effect on the memory size.</li><li>
+<a id="pgfId-1085303"></a>The number of harmonics in the solution depends on the number of input frequencies, the number of harmonics to be calculated for each frequency, and whether frequency cuts are used. The default number of harmonics is calculated as follows: (2*number of harmonics on tone 1)+1 * (2*number of harmonics on tone 2)+1  *  (2*number of harmonics on tone 3)+1 and increasing if more inputs are present.</li><li>
+<a id="pgfId-1085304"></a>For a single input and 7 harmonics, (2*7)+1 or 15 harmonics are needed. If there are two inputs with 7 and 3 harmonics set, then 15*7 or 105 harmonics are needed by default.</li><li>
+<a id="pgfId-1085305"></a>Frequency cuts can reduce the number of harmonics that needs to be calculated. For more information on frequency cuts, see the SpectreRF User Guide, Chapter 3. If you want to use frequency cuts, the safest general recommendation is to use the funnel cut with maximum order set between 5 and 9. Use the smallest value of maximum order that produces accurate results.</li></ul>
+
+
+
+
+<h4><em>
+<a id="pgfId-1085294"></a>Small-Signal analysis</em></h4>
+
+<p>
+<a id="pgfId-1085330"></a>Once the PSS, QPSS or HB analysis runs, additional memory is required to run the small-signal analyses. The amount of memory is difficult to predict because different analyses require different amounts of memory. As a rough estimate, the amount of memory might double or triple shortly after the small-signal analysis starts. For shooting method, setting maximum sidebands above about 50 will require more memory. For harmonic balance, the memory depends on the number of harmonics present in the harmonic balance large-signal analysis.</p>
+
+<h4><em>
+<a id="pgfId-1085322"></a>Envelope method</em></h4>
+
+<ul><li>
+<a id="pgfId-1085352"></a>Envelope method has two engines; shooting and harmonic balance. Harmonic balance is recommended because it always requires less memory and time to run, and it has a fast envelope level 1 analysis available.</li><li>
+<a id="pgfId-1085353"></a>Transistor-level and Level 1 harmonic balance envelope is harmonic balance with a transient engine. The memory required is only slightly more than a single-tone hb analysis with the same number of harmonics that are used in envelope.</li><li>
+<a id="pgfId-1085354"></a>For transistor-level envelope, a harmonic balance simulation is done at each time in the envelope analysis. For fast envelope, a series of harmonic balance analyses are run at the start to characterize the circuit, and then a behavioral simulation runs after that.</li></ul>
+
+
+<p>
+<a id="pgfId-1085344"></a>You can consider using the following strategies: </p>
+<ol><li>
+<a id="pgfId-1085432"></a>Check to see how much swap and memory you have on your computer. Greater than 2GB RAM and 5GB swap is recommended. <br />
+<a id="pgfId-1064360"></a>A 64-bit Spectre executable is available with MMSIM releases. This means that there is no 4GB process size limit, which was the case with the 32-bit Spectre executable. This allows much larger circuits to be simulated. If the memory required for simulation is larger than the amount of RAM installed on the machine, the machine will start swapping which dramatically slows the simulation and may cause the simulation to almost completely stop because the disk is so active. The best solution is more RAM on the system. A partial solution for shooting only is to use the swap file option described below. At least one large machine should be available for post-parasitic simulations to complete successfully without swapping.</li><li>
+<a id="pgfId-1085475"></a>If you are using shooting and your machine starts to swap, consider setting the swapfile option. This option writes much of the data from pss and qpss shooting large-signal analyses to disk files on your system. Large files will be produced. If the disk is local to the machine that is running the simulation, this will speed things up slightly compared to swapping in the operating system because Spectre manages the disk operations to put the data in concentric cylinders on the machine, but it is still fundamentally much slower than running on a machine that has more RAM. If the disk is a networked drive, the network latency may actually slow the simulation down. Only setting the option will allow runtime comparisons. Harmonic balance does not have this option.</li><li>
+<a id="pgfId-1070466"></a>For post-layout simulations, consider using RC reduction to reduce the number of nodes in the circuit.</li><li>
+<a id="pgfId-1085514"></a>Choose the largest possible <code>PSSfund</code> frequency. A higher fundamental frequency (<code>PSSfund</code>) yields a shorter simulation time.</li><li>
+<a id="pgfId-1085569"></a>If you have two or more closely spaced frequencies, use harmonic balance instead of PSS.</li><li>
+<a id="pgfId-1085578"></a>When shooting is used, try to use 10 harmonics or less and don&#39;t set the macacfreq or maxstep options unless you get errors from the small-signal analyses. Don&#39;t over-tighten the accuracy options.</li><li>
+<a id="pgfId-1085587"></a>In harmonic balance, use the smallest number of harmonics you can that produce accurate results, and consider using frequency cuts for circuits with multiple input frequencies.</li><li>
+<a id="pgfId-1085598"></a>If you are using names in harmonic balance or if you are using qpss, make sure that all the sources at the same frequency have the same Frequency Name 1 property. <br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1089639"></a>This is NOT the Instance Name property which all must be unique. </div>
+<a id="pgfId-1089633"></a>Setting the Frequency Name 1 property to the same name signifies to Spectre to treat those sources as a single frequency. For example, imagine you have differential RF inputs at 2.4GHz and I and Q differential LOs at 2.41GHz. There are two RF sources and four LO sources. Both RF sources have the same frequency and all four LO sources have the same frequency. As an example, you might set the RF sources to have the frequency name 1 property &quot;RF&quot; and all the LO sources &quot;LO.&quot; In this case, Spectre will solve for two different frequencies as it should. If you named the sources RF1, RF2, LO1, LO2, LO3, and LO4, Spectre will consider these as all separate input frequencies. This becomes a six-tone simulation instead of a two-tone simulation and will take much longer to run and require hugely more memory.</li><li>
+<a id="pgfId-1085607"></a>In shooting small-signal analyses try to keep the number of sidebands to about 50 or less. More than 50 sidebands will require more memory. Full spectrum pnoise requires less memory than traditional pnoise. In hb small-signal analyses, leave the number of sidebands field unspecified and use the smallest number of harmonics in the harmonic balance analysis that you can that also produce accurate results.</li><li>
+<a id="pgfId-1085616"></a>In envelope analysis, use the smallest number of harmonics you can to get an accurate result.</li><li>
+<a id="pgfId-1085625"></a>Run Spectre when no other users are using the same machine so all the RAM is available for your use.</li><li>
+<a id="pgfId-1085923"></a>In harmonic balance, run the memory estimator on the circuit to have an understanding of the rough memory consumption.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap4_re_Dynamic_Release_Voltage_Node_release_voltage.html" id="prev" title="Dynamic Release Voltage Node (release_voltage)">Dynamic Release Voltage Node ( ...</a></em></b><b><em><a href="chap4_re_Output_Selections_save.html" id="nex" title="Output Selections (save)">Output Selections (save)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

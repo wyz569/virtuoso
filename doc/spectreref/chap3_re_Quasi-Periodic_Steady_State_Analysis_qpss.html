@@ -1,0 +1,1814 @@
+
+<html><head><title>Quasi-Periodic Steady State Analysis (qpss)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484710" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Quasi-Periodic Steady State Analysis (qpss)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484710" />
+<meta name="NextFile" content="chap3_re_Quasi-Periodic_Transfer_Function_Analysis_qpxf.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Quasi-Periodic_S-Parameter_Analysis_qpsp.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Quasi-Periodic Steady State Analysis (qpss)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Quasi-Periodic_S-Parameter_Analysis_qpsp.html" title="Quasi-Periodic S-Parameter Analysis (qpsp)">Quasi-Periodic S-Parameter Ana ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Quasi-Periodic_Transfer_Function_Analysis_qpxf.html" title="Quasi-Periodic Transfer Function Analysis (qpxf)">Quasi-Periodic Transfer Functi ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Quasi-Periodic_Steady_State_Analysis_qpss" title="Quasi-Periodic Steady State Analysis (qpss)"></a><h3>
+<a id="pgfId-1701211"></a>Quasi-Periodic Steady State Analysis (qpss)<a id="marker-1701210"></a></h3>
+<h4>
+<a id="pgfId-1701213"></a>Description<a id="marker-1701212"></a></h4>
+
+<p>
+<a id="pgfId-1701214"></a>Quasi-periodic steady-state (QPSS) analysis computes circuit response with multiple fundamental frequencies using harmonic balance&#160;&#160;(in frequency domain) or shooting. QPSS can compute circuit responses with closely spaced or incommensurate fundamentals, which cannot be resolved by PSS efficiently. The simulation time of QPSS analysis is independent of the time-constants of the circuit. In addition, QPSS analysis sets the circuit quasi-periodic operating point, which can then be used during a quasi-periodic time-varying small-signal analysis, such as QPAC, QPXF, QPSP, and QPNOISE.</p>
+<p>
+<a id="pgfId-1701215"></a>Generally, harmonic balance(HB) is very efficient in simulating weak nonlinear circuits while shooting is more suitable for computing a circuit response to several moderate input signals, in addition to a large signal. The large signal, which represents a LO or clock signal, is usually the one that causes the most nonlinearity or the largest response. A typical example is the intermodulation distortion measurements of a mixer with two closely spaced moderate input signals. HB is more efficient than shooting in handling frequency-dependent components, such as delay, transmission line, and S-parameter data.</p>
+<p>
+<a id="pgfId-1701216"></a>QPSS consists of three phases. First, an initial transient analysis with all moderate input signals suppressed is carried out. Second, a number of (at least 2) stabilizing iterations are run with all signals activated. Finally, the Newton method is followed.</p>
+<p>
+<a id="pgfId-1701217"></a>When the shooting method is used, QPSS employs the Mixed Frequency Time (MFT) algorithm extended to multiple fundamental frequencies. For details of MFT algorithm, see <code>Steady-State Methods for Simulating Analog and Microwave Circuits,</code> by K. S. Kundert, J.K. White, and A. Sangiovanni-Vincentelli, Kluwer, Boston, 1990.</p>
+<p>
+<a id="pgfId-1701218"></a> </p>
+<p>
+<a id="pgfId-1701219"></a>Similar to shooting in PSS, shooting in QPSS uses Newton method as its backbone. However, instead of doing a single transient integration, each Newton iteration does a number of transient integrations of one large signal period. Each of the integrations differs by a phase-shift in each moderate input signal. The number of integrations is determined by the numbers of harmonics of moderate fundamentals specified by <code>maxharms</code>. Given maxharms=[k1 k2 ... kn], QPSS always treats k1 as the maximum harmonic of the large signal, and the total number of integrations is (2*k2+1)*(2*k3+1)*...*(2*kn+1). One consequence is that the efficiency of the algorithm depends significantly on the number of harmonics required to model the responses of moderate fundamentals. Another consequence is that the number of harmonics of the large fundamental does not significantly affect the efficiency of the shooting algorithm. The boundary conditions of a shooting interval are such that the time domain integrations are consistent with a frequency domain transformation with a shift of one large signal period. </p>
+<p>
+<a id="pgfId-1701220"></a>QPSS inherits most of the PSS parameters and adds a few new ones. The most important ones are <code>funds</code> and <code>maxharms</code>. They replace the PSS parameter, <code>fund</code> (or <code>period</code>) and <code>harms</code>, respectively. The <code>funds</code> parameter accepts a list of names of fundamentals that are present in the sources. These names are specified in the sources by the <code>fundname</code> parameter. In both shooting and HB QPSS analysis, the first fundamental is considered as the large signal. A few heuristics can be used for picking the large fundamental. </p>
+<p>
+<a id="pgfId-1701221"></a>(1) Pick the fundamental that is not a sinusoidal. </p>
+<p>
+<a id="pgfId-1701222"></a>(2) Pick the fundamental that causes the most nonlinearity. </p>
+<p>
+<a id="pgfId-1701223"></a>(3) Pick the fundamental that causes the largest response. </p>
+<p>
+<a id="pgfId-1701224"></a>The <code>maxharms</code> parameter accepts a list of numbers of harmonics that are required to sufficiently model responses due to different fundamentals. </p>
+<p>
+<a id="pgfId-1701225"></a>The semi-autonomous simulation is a special QPSS analysis combining the autonomous simulation and the QPSS. To perform the semi-autonomous simulation, you need to specify an initial frequency guess for the oscillator inside the circuit, and two oscillator terminals, similar to the autonomous simulation in PSS. For example:</p>
+<p>
+<a id="pgfId-1701226"></a>        </p>
+<p>
+<a id="pgfId-1701227"></a>myqpss (op on) qpss funds=[1.1GHz <code>frf</code>] maxharms=[5 5] tstab=1u flexbalance=yes</p>
+<p>
+<a id="pgfId-1701228"></a>       </p>
+<p>
+<a id="pgfId-1701229"></a>The semi-autonomous simulation is only available in the frequency domain.</p>
+
+<h4>
+<a id="pgfId-1701231"></a>Syntax<a id="marker-1701230"></a></h4>
+<a id="pgfId-1701232"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ... qpss parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1701233"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1701319"></a>QPSS fundamental parameters</p>
+<table class="webflareTable" id="#id1701234">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701236"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701242"></a><code>funds</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701244"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701246"></a>Array of fundamental frequency names for fundamentals to use in analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701248"></a><code>maxharms</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701250"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701252"></a>Array of number of harmonics of each fundamental to consider for each fundamental.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701254"></a><code>autoharms</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701256"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701258"></a>Activates automatic harmonic number calculation in harmonic balance. Applies only if tstab&gt;0 or if autotstab=yes. If a steady-state is reached, Spectre does a spectrum analysis to calculate the optimal number of harmonics for HB. The minimum number of harmonics is specified by maxharms. If steady-state is not reached to sufficient tolerance, autoharms may be disabled. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701260"></a><code>selectharm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701262"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701264"></a>Name of harmonics selection methods. Default is diamond when <code>maximorder</code> is set; otherwise, default is box. Possible values are box, diamond, funnel, axis, widefunnel, crossbox, crossbox_hier and arbitrary.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701266"></a><code>evenodd</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701268"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701270"></a>Array of even, odd, or all strings for moderate tones to select harmonics.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701272"></a><code>maximorder</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701274"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701276"></a>Maximum intermodulation order of harmonics in diamond, funnel, widefunnel, crossbox and crossbox_hier cuts. For example, given a two-tone case, a harmonic, [hx hy], is in the diamond, funnel or widefunnel harmonic set when |hx|+|hy| &lt;= maximorder. And it is in the crossbox or crossbox_hier set when |hx| &lt;= maximorder and |hy| &lt;= maximorder.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701278"></a><code>mappingfft</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701280"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701282"></a>This parameter is valid only for funnel harmonic cut now. When it is set to yes, it is possible to save more memory but maybe at accuracy expense. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701284"></a><code>axisbw</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701286"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701288"></a>The width of the band part of wide funnel harmonic cut along axis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701290"></a><code>minialiasorder</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701292"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701294"></a>The order of mini aliasing harmonic order.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701296"></a><code>selharmvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701298"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701300"></a>Array of harmonics indices.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701302"></a><code>harmlist</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701304"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701306"></a>Array of harmonics indices for time domain qpss.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701308"></a><code>freqdivide</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701310"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701312"></a>Large signal frequency division.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701314"></a><code>freqdividevector</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701316"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701318"></a>Array of frequency division factors for each tone. This parameter overrides freqdivide.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701381"></a>Simulation interval parameters</p>
+<table class="webflareTable" id="#id1701320">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701322"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701328"></a><code>tstab</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701330"></a><code>0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701332"></a>Extra stabilization time after the onset of periodicity for independent sources.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701334"></a><code>autotstab</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701336"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701338"></a>Activates the automatic initial transient (tstab) in harmonic balance and PSS shooting. If set to yes, the simulator decides whether to run tstab and for how long. Typically, the initial length of tstab is 50 periods; however, it could be longer depending on the type of circuit and its behavior. If steady-state is reached (or nearly reached), tstab terminates early. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701340"></a><code>envlp_autotstab</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701342"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701344"></a>Activates the automatic initial envlp (tstabenvlp) in PSS shooting. If set to yes, the simulator decides how long to run tstabenvlp. Typically, the initial length of tstabenvlp is 50 periods; however, it could be longer depending on the type of circuit and its behavior. If steady-state is reached (or nearly reached), tstabenvlp terminates early. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701346"></a><code>autosteady</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701348"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701350"></a>Activates the automatic steady state detection during initial transient (tstab) in harmonic balance and PSS shooting. When steady state is reached (or nearly reached), tstab terminates early. This parameter applies only when tstab&gt;0 or when autotstab=yes. autosteady=no|0 turns this feature off; autosteady=yes|1 activates this feature; autosteady=2 runs autosteady with lower steady state tolerance than autosteady=1. autosteady=2 may help pss convergence but with higher tstab costs. Possible values are 0, 1, 2, no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701352"></a><code>tstabenvlp_autosteady</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701354"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701356"></a>Activates the automatic steady state detection during tstabenvlp in&#160;&#160;PSS shooting. When steady state is reached, tstabenvlp terminates early. This parameter applies only when tstabenvlpstop&gt;0 or when envlp_autotstab=yes. tstabenvlp_autosteady=no|0 turns this feature off; tstabenvlp_autosteady=yes|1 activates this feature; tstabenvlp_autosteady=2 runs autosteady with lower steady state tolerance than tstabenvlp_autosteady=1. tstabenvlp_autosteady=2 may help pss convergence but with higher tstabenvlp costs. Possible values are 0, 1, 2, no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701358"></a><code>stabcycles</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701360"></a><code>2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701362"></a>Stabilization cycles with both large and moderate sources enabled.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701364"></a><code>tstart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701366"></a><code>0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701368"></a>Initial transient analysis start time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701370"></a><code>tstabenvlpstop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701372"></a><code>0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701374"></a>Determines the stop time of envelope tstab.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701376"></a><code>tstabenvlpstep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701378"></a><code>0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701380"></a>Determines the step size of envelope tstab.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701413"></a>Time-step parameters</p>
+<table class="webflareTable" id="#id1701382">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701384"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701390"></a><code>maxstep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701392"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701394"></a>Maximum time step. The default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701396"></a><code>transres</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701398"></a><code>1e-9*stop s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701400"></a>Transition resolution. The transient analysis attempts to stop at corners of input waveforms (for example, corners of rising/falling edge of a pulse). If such events occur within a time less than transres, the analysis combines the events into one and forces only one time point. The rest of the steps are determined by error control. This may lead to loss of detail.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701402"></a><code>maxacfreq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701404"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701406"></a>Maximum frequency requested in a subsequent periodic small-signal analysis. The default is derived from <code>errpreset</code> and <code>harms</code>. This parameter is valid only for shooting.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701408"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701410"></a><code>0.001*period s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701412"></a>Minimum time step that would be used solely to maintain the aesthetics of the results. This parameter is valid only for shooting.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701457"></a>Initial-condition parameters</p>
+<table class="webflareTable" id="#id1701414">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701416"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701422"></a><code>ic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701424"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701426"></a>The value to be used to set the initial condition. Possible values are dc, node, dev and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701428"></a><code>skipdc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701430"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701432"></a>If set to yes, there is no DC analysis for initial transient. Possible values are no, yes and sigrampup.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701434"></a><code>readic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701436"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701438"></a>File that contains initial condition.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701440"></a><code>useprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701442"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701444"></a>If set to yes or ns, use the converged initial condition from previous analysis as ic or ns. Possible values are no, yes and ns.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701446"></a><code>oscic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701448"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701450"></a>Oscillator IC method. It determines how the starting values for the oscillator are calculated. <code>oscic=lin</code> provides you an accurate initial value, but it takes time; oscic=lin_ic&#39; is not recommended, which is the older version of <code>oscic=lin</code> for shooting analysis for backward compatibility;<code>oscic=fastic</code> is fast, but it is less accurate. &#39;oscic=skip&#39; directly uses the frequency provided by you as the initial guess frequency. It is only for the two-tier method. Possible values are default, lin, lin_ic, fastic and skip.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701452"></a><code>tone_homotopy</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701454"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701456"></a>Array of homotopy options for convergence assistance with multi-divider cases, when hbhomotopy=aggregation. The number of entries should be equal to that of tones. The possible values for each entry are 0, 1 and 2. &#39;0&#39; means no convergence assistance is applied for that tone. &#39;1&#39; means only transient stabilization (tstab) is run for that tone and &#39;2&#39; means both tstab and a single-tone HB simulation should be run to obtain the initial guess for multi-tone HB simulation.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701477"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1701458">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701460"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701466"></a><code>readns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701468"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701470"></a>File that contains an estimate of the initial transient solution.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701472"></a><code>cmin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701474"></a><code>0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701476"></a>Minimum capacitance from each node to ground.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701539"></a>Output parameters</p>
+<table class="webflareTable" id="#id1701478">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701480"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701486"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701488"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701490"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub, selected, none and nooutput.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701492"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701494"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701496"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701498"></a><code>oppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701500"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701502"></a>Should operating point information be computed for initial timestep; if yes, where should it be printed (screen or file). Possible values are no, screen, logfile and rawfile.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701504"></a><code>skipstart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701506"></a><code>0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701508"></a>The time to start skipping output data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701510"></a><code>skipstop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701512"></a><code>stop s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701514"></a>The time to stop skipping output data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701516"></a><code>skipcount</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701518"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701520"></a>Save only one of every skipcount points.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701522"></a><code>strobeperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701524"></a><code>0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701526"></a>The output strobe interval (in seconds) of transient time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701528"></a><code>strobedelay</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701530"></a><code>0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701532"></a>The delay (phase shift) between the skipstart time and the first strobe point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701534"></a><code>saveinit</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701536"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701538"></a>If set to yes, the waveforms for the initial transient before steady state are saved. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701589"></a>State-file parameters</p>
+<table class="webflareTable" id="#id1701540">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701542"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701548"></a><code>write</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701550"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701552"></a>File to which initial transient solution (before steady-state) is written.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701554"></a><code>writefinal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701556"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701558"></a>File to which final transient solution in steady-state is written. This parameter is now valid only for shooting.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701560"></a><code>swapfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701562"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701564"></a>Temporary file to hold steady-state information. It tells Spectre to use a regular file, rather than virtual memory to hold the periodic operating point. Use this option if Spectre complains about not having enough memory to complete the analysis. This parameter is now valid only for shooting.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701566"></a><code>writeqpss</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701568"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701570"></a>File to which final quasi-periodic steady-state solution is written. Small signal analyses, such as qpac, qpxf, and qpnoise, can read in the steady-state solution from this file directly, instead of running the qpss analysis again. The results from shooting QPSS cannot be used in HB QPSS analysis and vice-versa.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701572"></a><code>readqpss</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701574"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701576"></a>File from which final quasi-periodic steady-state solution is read. Small signal analyses, such as qpac, qpxf, and qpnoise, can read in the steady-state solution from this file directly, instead of running the qpss analysis again. The results from shooting QPSS cannot be used in HB QPSS analysis and vice-versa.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701578"></a><code>selharmread</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701580"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701582"></a>File from which arbitrary harmonic data needs to be read.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701584"></a><code>selharmwrite</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701586"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701588"></a>File to which harmonic data needs to be written.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701603"></a>Integration method parameters</p>
+<table class="webflareTable" id="#id1701590">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701592"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701598"></a><code>method</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701600"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701602"></a>Integration method. The default is derived from <code>errpreset</code>. This parameter is valid only for shooting. Possible values are euler, trap, traponly, gear2 and gear2only.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701677"></a>Accuracy parameters</p>
+<table class="webflareTable" id="#id1701604">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701606"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701612"></a><code>errpreset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701614"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701616"></a>Selects a reasonable collection of parameter settings. Possible values are liberal, moderate and conservative.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701618"></a><code>relref</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701620"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701622"></a>Reference used for the relative convergence criteria. The default is derived from <code>errpreset</code>. Possible values are pointlocal, alllocal, sigglobal and allglobal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701624"></a><code>lteratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701626"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701628"></a>Ratio used to compute LTE tolerances from Newton tolerance. The default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701630"></a><code>lteminstep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701632"></a><code>0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701634"></a>Local truncation error is ignored if the step size is less than lteminstep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701636"></a><code>steadyratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701638"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701640"></a>Ratio used to compute steady-state tolerances from LTE tolerance. The default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701642"></a><code>maxperiods</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701644"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701646"></a>Maximum number of iterations allowed before convergence is reached in shooting or harmonic balance Newton iteration. For PSS and QPSS, the default is 20 for driven circuits, and 50 for oscillators; For HB, the default is 100.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701648"></a><code>max_innerkrylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701650"></a><code>20</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701652"></a>The maximum iteration number allowed in inner gmres solver in two-level gmres linear solver. The default value is 12 for large signal and 20 for small signal analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701654"></a><code>max_outerkrylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701656"></a><code>4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701658"></a>The maximum iteration number allowed in inner gmres solver in two-level gmres linear solver. The default value is 4.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701660"></a><code>itres</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701662"></a><code>1e-4 for shooting, 0.9 for HB</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701664"></a>Controls the residual for iterative solution of linearized matrix equation at each Newton iteration. Tightening the parameter can help with the Newton convergence, but does not affect the result accuracy. The value should be between [0, 1]. Default value for shooting APS flow is 1e-3.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701666"></a><code>inexactNewton</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701668"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701670"></a>Inexact Newton method. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701672"></a><code>finitediff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701674"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701676"></a>Options for finite difference method refinement after quasi-periodic shooting method. <code>finitediff</code> is changed from no to same grid automatically when <code>readqpss</code> and <code>writeqpss</code> are used to reuse QPSS results. Possible values are no, yes and refine.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701787"></a>Harmonic Balance parameters</p>
+<table class="webflareTable" id="#id1701678">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701680"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701686"></a><code>harmonicbalance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701688"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701690"></a>Use Harmonic Balance engine instead of time-domain shooting. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701692"></a><code>flexbalance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701694"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701696"></a>Same parameter as <code>harmonicbalance</code>. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701698"></a><code>hbpartition_defs</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701700"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701702"></a>Define HB partitions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701704"></a><code>hbpartition_fundratios</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701706"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701708"></a>Specify HB partition fundamental frequency ratios.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701710"></a><code>hbpartition_harms</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701712"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701714"></a>Specify HB partition harmonics.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701716"></a><code>oversamplefactor</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701718"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701720"></a>Oversample device evaluations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701722"></a><code>oversample</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701724"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701726"></a>Array of oversample factors for each tone. This parameter overrides oversamplefactor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701728"></a><code>sweepic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701730"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701732"></a>IC extrapolation method in sweep HB analysis. Possible values are none, linear and log.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701734"></a><code>hbhomotopy</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701736"></a><code>tone</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701738"></a>Name of Harmonic Balance homotopy selection methods. Possible values are tstab, source, gsweep, tone, inctone, aggregation and steptone.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701740"></a><code>gstart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701742"></a><code>1.e-7</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701744"></a>Start conductance for hbhomotopy of gsweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701746"></a><code>gstop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701748"></a><code>1.e-12</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701750"></a>Stop conductance for hbhomotopy of gsweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701752"></a><code>glog</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701754"></a><code>5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701756"></a>Number of steps, log sweep for hbhomotopy of gsweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701758"></a><code>backtracking</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701760"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701762"></a>This parameter is used to activate the backtracking utility of Newton&#39;s method. The default is yes. Possible values are no, yes and forced.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701764"></a><code>excludeconvgwithBK</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701766"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701768"></a>Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701770"></a><code>krylov_size</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701772"></a><code>10</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701774"></a>The minimum iteration count of the linear matrix solver used in HB large-signal analysis. After reaching krylov_size&#160;&#160;iterations, the iteration is forced to terminate because of the poor rate of convergence. Increase krylov_size if the simulation reports insufficient norm reduction errors in GMRES.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701776"></a><code>hbprecond_solver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701778"></a><code>basicsolver</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701780"></a>Choose a linear solver for the GMRES preconditioner. Possible values are basicsolver, blocksolver, autoset, blockdense, blocksolver2 and directsolver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701782"></a><code>lowmem</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701784"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701786"></a>Harmonic balance low memory mode; Possible values are 0, 1, or number (&gt;=10). The default value is &#39;0&#39;, the low memory mode is turned off; if &#39;1&#39; is set, the standard low memory mode is turned on; If a number no less than 10 is set, Spectre interprets the value as the memory requested in GigaBytes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701813"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1701788">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701790"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701796"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701798"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701800"></a>Degree of annotation. Possible values are no, title, sweep, status, estimated, steps, iters, detailed, rejects, alliters, detailed_hb and internal_hb.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701802"></a><code>annotateic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701804"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701806"></a>Degree of annotation for initial condition. Possible values are no, title, sweep, status, estimated, steps, iters, detailed, rejects and alliters.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701808"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701810"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701812"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701833"></a>Newton parameters</p>
+<table class="webflareTable" id="#id1701814">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701816"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701822"></a><code>maxiters</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701824"></a><code>5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701826"></a>Maximum number of iterations per time step.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701828"></a><code>restart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701830"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701832"></a>Restart the DC/PSS/QPSS solution if set to &#39;yes&#39;; if set to &#39;no&#39;, reuse the previous solution as an initial guess; if set to &#39;firstonly&#39;, restart if it is the first point of sweep (supported only in HB). The default value is &#39;no&#39; for HB and &#39;yes&#39; for shooting. Possible values are no, yes and firstonly.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701847"></a>Circuit age</p>
+<table class="webflareTable" id="#id1701834">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701836"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701842"></a><code>circuitage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701844"></a><code> (Years)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701846"></a>Stress time. Age of the circuit used to simulate hot-electron degradation of MOSFET and BSIM circuits.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1701897"></a>Tstab save/restart parameters</p>
+<table class="webflareTable" id="#id1701848">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701850"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701856"></a><code>ckptperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701858"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701860"></a>Checkpoint the analysis periodically by using the specified period.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701862"></a><code>saveperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701864"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701866"></a>Save the tran analysis periodically on the simulation time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701868"></a><code>saveperiodhistory</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701870"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701872"></a>Maintains the history of saved files. If yes, maintains all the saved files. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701874"></a><code>saveclock</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701876"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701878"></a>Save the tran analysis periodically on the wall clock time. The default is 1800s for Spectre. This parameter is disabled in the APS mode by default.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701880"></a><code>savetime</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701882"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701884"></a>Save the analysis states into files on the specified time points.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701886"></a><code>savefile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701888"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701890"></a>Save the analysis states into the specified file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701892"></a><code>recover</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701894"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701896"></a>Specify the file to be restored.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1702007"></a>Compression parameters</p>
+<table class="webflareTable" id="#id1701898">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1701900"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701906"></a><code>xdbcompression</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701908"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701910"></a>Sets the automatic gain compression analysis. In automatic gain compression analysis, Spectre automatically sweeps the input excitation until the gain, as defined by the analysis parameter xdbgain, compresses by the amount specified by the analysis parameter xdblevel. In gain compression analysis, Spectre outputs the hb solution at the calculated compression point only. Dependent analyses, such as hbnoise and hbac, are supported and calculated about the calculated compression level. Auxiliary output includes the gain and voltage/power compression curves. These outputs are available for analysis and post-processing in ADE. The possible values are yes and no. Default is no.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701912"></a><code>xdblevel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701914"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701916"></a>Sets the gain compression level for compression analysis. The reference point for gain compression is the small-signal gain of the circuits, or as specified by the analysis parameter xdbref. Default is 1.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701918"></a><code>xdbgain</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701920"></a><code>power</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701922"></a>Chooses between the voltage gain and transducer power gain as the target for compression point calculation. When xdbgain=power, the gain is defined as G (dB) = Pload (dBm) - Pavailable (dBm). When xdbgain=voltage, the gain is defined as G (dB) = dB20(|Vload|/|Vsource|). In both cases, Spectre sweeps the excitation source until xdbref - G = xdblevel, where the analysis parameter xdbref defines the reference level for compression calculation. Possible values are power and voltage. Default is power.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701924"></a><code>xdbref</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701926"></a><code>linear</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701928"></a>Sets the reference point for gain compression calculations. When xdbref=linear, spectre uses the small-signal gain as the reference. When xdbref=max, spectre uses the maximum observed gain as the reference. Possible values are linear and max. Default is linear.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701930"></a><code>xdbsource</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701932"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701934"></a>The instance name of the excitation source, which is swept automatically to reach the compression level. When xdbgain=power, the excitation source must be a port instance. When xdbgain=voltage, the excitation source must be a vsource instance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701936"></a><code>xdbload</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701938"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701940"></a>The instance name of the load termination. When xdbgain is power, xdbload can be a port, a resistor, or a current probe.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701942"></a><code>xdbnodep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701944"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701946"></a>The output terminals for voltage gain calculation when xdbgain=voltage. If either is left unspecified, the terminal is assumed to be the global ground.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701948"></a><code>xdbnoden</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701950"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701952"></a>The output terminals for voltage gain calculation when xdbgain=voltage. If either is left unspecified, the terminal is assumed to be the global ground.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701954"></a><code>xdbrefnode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701956"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701958"></a>The reference node when xdbload is a current probe. The default is the ground node.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701960"></a><code>xdbharm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701962"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701964"></a>The Integer array which specifies the harmonic indexes of the output voltage or power component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701966"></a><code>xdbsteps</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701968"></a><code>100</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701970"></a>The maximum number of steps for the compression point search. The simulator terminates if xdbsteps exceeds before the compression point is found. The default is 100.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701972"></a><code>xdbmax</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701974"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701976"></a>The maximum input power (or voltage) for the compression point search. Default is 30 dBm when xdbgain=power, and 2.0 V when xdbgain=voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701978"></a><code>xdbstart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701980"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701982"></a>The starting input power (or voltage) for the compression point search. Default is (xdbmax-70) dBm when xdbgain=power, and xdbmax/20000 when xdbgain=voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701984"></a><code>xdbtol</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701986"></a><code>0.01</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701988"></a>Sets the tolerance for compression analysis.&#160;&#160;This tolerance is used in compression curve fitting and calculating the compression point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701990"></a><code>xdbrapid</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701992"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701994"></a>Sets the automatic gain compression analysis in rapid mode. In this mode, Spectre does not trace the compression curve and calculates only the compression point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701996"></a><code>xdbcpi</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1701998"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702000"></a>Sets the estimated input-referred compression point for rapid compression analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702002"></a><code>backoff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702004"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702006"></a>The backoff point. If defined, an addition harmonic balance analysis will be performed after the compression analysis is done. Default is 0 dBm when xdbgain=power, and 0 V when xdbgain=voltage.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1702021"></a>Memory estimation parameters</p>
+<table class="webflareTable" id="#id1702008">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1702010"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702016"></a><code>memoryestimate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702018"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1702020"></a>Sets the memory usage estimate for Harmonic Balance. If yes, a memory estimate is printed in the log file. You can use this memory estimate to plan the computing resources before submitting harmonic balance runs. In memory estimate mode, a short simulation is performed first, and the engine exits after printing the estimate in the log file without saving any results. If no, the simulation continues after the memory estimate is printed. Memory estimation is not recommended for simulations that require less than 500MB approximately. For PSS analysis, memory estimate mode does not apply unless flexbalance=yes. memoryestimate=1 estimates the memory usage for large-signal analysis and memoryestimate=2 estimates both large-signal analysis and small-signal simulations. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1702022"></a>Most of QPSS analysis parameters are inherited from PSS analysis and their meanings remain essentially unchanged. Two new important parameters are <code>funds</code> and <code>maxharms</code>. They replace and extend the role of <code>fund</code> and <code>harms</code> parameters of PSS analysis. One important difference is that <code>funds</code> accepts a list of fundamental names, instead of actual frequencies. The frequencies associated with fundamentals are figured out automatically by the simulator. An important feature is that each input signal can be a composition of more than one source. However, these sources must have the same fundamental name. For each fundamental name, its fundamental frequency is the greatest common factor of all frequencies associated with the name. Omitting fundamental name in the <code>funds</code> parameter is an error that stops the simulation. If <code>maxharms</code> is not given, a warning message is issued, and the number of harmonics defaults to 1 for each fundamental.</p>
+<p>
+<a id="pgfId-1702023"></a>For QPSS analyses, the role of some PSS parameters is extended compared to their role in PSS analysis. In QPSS, the parameter <code>maxperiods</code> that controls the maximum number of shooting iterations for PSS analysis also controls the number of the maximum number of shooting iterations for QPSS analysis.&#160;&#160;Its default value is set to 50.</p>
+<p>
+<a id="pgfId-1702024"></a></p>
+<p>
+<a id="pgfId-1702025"></a>The <code>tstab</code> parameter controls both the length of the initial transient integration with only the clock tone activated and the number of stable iterations with moderate tones activated. The stable iterations are run before shooting or HB Newton iterations.</p>
+<p>
+<a id="pgfId-1702026"></a>The <code>errpreset</code> parameter lets you adjust several simulator parameters to fit your needs. In most cases, <code>errpreset</code> should be the only parameter you need to adjust. If you want a fast simulation with reasonable accuracy, set errpreset to <code>liberal</code>. If you have some concern for accuracy, set errpreset to <code>moderate</code>. If accuracy is your main interest, set errpreset to <code>conservative.</code></p>
+<p>
+<a id="pgfId-1702027"></a>If you do not specify <code>steadyratio</code>, it is always 1.0, and it is not affected by <code>errpreset</code>. The following table shows the effect of <code>errpreset</code> on other parameters in shooting.</p>
+<p>
+<a id="pgfId-1702028"></a>---------------------------------------------------------------------------</p>
+<p>
+<a id="pgfId-1702029"></a>              Parameter defaults as a function of <code>errpreset</code></p>
+<p>
+<a id="pgfId-1702030"></a>---------------------------------------------------------------------------</p>
+<p>
+<a id="pgfId-1702031"></a>errpreset&#160;&#160;    reltol  relref     method        lteratio   maxstep</p>
+<p>
+<a id="pgfId-1702032"></a>---------------------------------------------------------------------------</p>
+<p>
+<a id="pgfId-1702033"></a>liberal&#160;&#160;      1e-3    sigglobal  gear2only     3.5        clock period/80 </p>
+<p>
+<a id="pgfId-1702034"></a>moderate&#160;&#160;     1e-4    sigglobal  gear2only     3.5        clock period/100</p>
+<p>
+<a id="pgfId-1702035"></a>conservative&#160;&#160; 1e-5&#160;&#160;  sigglobal  gear2only     *          clock period/200</p>
+<p>
+<a id="pgfId-1702036"></a>* : lteratio=10.0 for conservative <code>errpreset</code> by default. However, when the specified reltol &lt;= 1e-5*10.0/3.5, lteratio is set to 3.5.</p>
+<p>
+<a id="pgfId-1702037"></a></p>
+<p>
+<a id="pgfId-1702038"></a>The new errpreset settings include a new default <code>reltol</code> that is actually an enforced upper limit for appropriate setting. An increase of <code>reltol</code> above the default is ignored by the simulator. You can decrease this value in the options statement. The only way to increase <code>reltol</code> is to relax <code>errpreset</code>. Spectre sets the value of <code>maxstep</code> so that it is no larger than the value given in the table. Except for <code>reltol</code> and <code>maxstep</code>, <code>errpreset</code> does not change the value of any parameters you have explicitly set. The actual values used for the QPSS analysis are given in the log file. If <code>errpreset</code> is not specified in the netlist, <code>liberal</code> settings are used. For HB, only <code>reltol</code> is affected by <code>errpreset</code>, and the effect is the same as that in shooting. However, <code>lteratio</code> remains 3.5 and&#160;&#160;<code>steadyratio</code> remains 1 with all values of <code>errpreset</code>.</p>
+<p>
+<a id="pgfId-1702039"></a>With parameter &#39;hbhomotopy&#39;, you can specify harmonic balance homotopy selection methods. The possible values of parameter &#39;hbhomotopy&#39; and their descriptions are as follows:</p>
+<p>
+<a id="pgfId-1702040"></a>&#39;hbhomotopy=tstab&#39;: Simulator runs a transient analysis and generates an initial guess for harmonic balance analysis; it is recommended for nonlinear circuits or circuits with frequency dividers.</p>
+<p>
+<a id="pgfId-1702041"></a>&#39;hbhomotopy=source&#39;: For driven circuit, the simulator ignores tstab and accordingly increases the source power level; for oscillators, the simulator accordingly adjusts the probe magnitude until the probe has no effect on the oscillators. It is recommended for strongly nonlinear or high Q circuits.</p>
+<p>
+<a id="pgfId-1702042"></a>&#39;hbhomotopy=tone&#39;: This method is valid only for multi-tone circuit. The simulator first solves a single-tone circuit by turning off all the tones, except the first one, and then solves the multi-tone circuit by restoring all the tones and using the single-tone solution as its initial guess. It is recommended for multi-tone simulation with a strong first tone.</p>
+<p>
+<a id="pgfId-1702043"></a>&#39;hbhomotopy=inctone&#39;: Simulator first solves a single tone, then turns on moderate tones incrementally till all tones are enabled. It is recommended for circuits with one strong large tone.</p>
+<p>
+<a id="pgfId-1702044"></a>&#39;hbhomotopy=gsweep&#39;: A resistor, whose conductance is g, is connected with each node, and the sweep of g is controlled by gstart, gstop, and glog. It is recommended for circuits containing high-impedance or quasi-floating nodes.</p>
+<p>
+<a id="pgfId-1702045"></a> </p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Quasi-Periodic_S-Parameter_Analysis_qpsp.html" id="prev" title="Quasi-Periodic S-Parameter Analysis (qpsp)">Quasi-Periodic S-Parameter Ana ...</a></em></b><b><em><a href="chap3_re_Quasi-Periodic_Transfer_Function_Analysis_qpxf.html" id="nex" title="Quasi-Periodic Transfer Function Analysis (qpxf)">Quasi-Periodic Transfer Functi ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

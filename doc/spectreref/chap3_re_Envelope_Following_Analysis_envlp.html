@@ -1,0 +1,1484 @@
+
+<html><head><title>Envelope Following Analysis (envlp)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484704" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Envelope Following Analysis (envlp)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484704" />
+<meta name="NextFile" content="chap3_re_Harmonic_Balance_Steady_State_Analysis_hb.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Immediate_Set_Dspf_Options_dspf_options.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Envelope Following Analysis (envlp)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Immediate_Set_Dspf_Options_dspf_options.html" title="Immediate Set Dspf Options (dspf_options)">Immediate Set Dspf Options (ds ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Harmonic_Balance_Steady_State_Analysis_hb.html" title="Harmonic Balance Steady State Analysis (hb)">Harmonic Balance Steady State  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Envelope_Following_Analysis_envlp" title="Envelope Following Analysis (envlp)"></a><h3>
+<a id="pgfId-1688663"></a>Envelope Following Analysis (envlp)<a id="marker-1688662"></a></h3>
+<h4>
+<a id="pgfId-1688665"></a>Description<a id="marker-1688664"></a></h4>
+
+<p>
+<a id="pgfId-1688666"></a>This analysis computes the envelope response of a circuit based on the specified analysis <code>clockname</code>, <code>period</code> or <code>fund</code>. If <code>clockname</code> is specified, the simulator automatically determines the clock period by looking through all the sources with the specified name. The envelope response is computed over the interval from <code>start</code> to <code>stop</code>. If the interval is not a multiple of the clock period, it is rounded off to the nearest multiple before the stop time. The initial condition is taken to be the DC steady-state solution, if not given.</p>
+<p>
+<a id="pgfId-1688667"></a>Envelope following analysis is most efficient for circuits where the modulation bandwidth is orders of magnitude lower than the clock frequency. This is typically the case, for example, in circuits where the clock is the only fast varying signal and other input signals have a spectrum whose frequency range is orders of magnitude lower than the clock frequency. The down conversion of two closely placed frequencies can also generate a slow-varying modulation envelope.</p>
+<p>
+<a id="pgfId-1688668"></a>Envelope following analysis is capable of handling both autonomous (non-driven) and driven (non-autonomous) circuits. Autonomous circuits are time-invariant circuits that have time-varying responses. Therefore, autonomous circuits generate non-constant waveforms even though they are not driven by a time-varying stimulus. Driven circuits require time-varying stimulus to generate a time-varying response. The most common example of an autonomous circuit is an oscillator. </p>
+<p>
+<a id="pgfId-1688669"></a>When applied to autonomous circuits, envelope following analysis requires you to specify a pair of nodes, <code>p</code> and <code>n</code>. In fact, this is how envelope following analysis determines whether it is being applied to an autonomous or a driven circuit. If the pair of nodes is supplied, envelope assumes the circuit is autonomous; if not, the circuit is assumed to be driven.</p>
+<p>
+<a id="pgfId-1688670"></a>The analysis generates two types of output files, a voltage versus time (td) file and an amplitude/phase versus time (fd) file for each of the specified harmonics of the clock fundamental.</p>
+<p>
+<a id="pgfId-1688671"></a>Fast mode envelope analysis is used to simulate RF power amplifier (PA) with I/Q orthogonal modulation. Like normal envelope analysis, the time scale difference between I/Q signals and carrier is very large. Fast envelope analysis has larger speed up performance than normal envelope. Fast envelope has two modes, level1 and level2. Level1 is used to simulate the circuit without memory effect. Level2 has been discontinued. If selected, the simulator will automatically switch to level1. If the circuit has strong nonlinear-memory effect, fast envelope can be inaccurate. In this situation, the only accurate way is to use regular envelope analysis. Fast envelope only outputs the fd result of specified nodes (assigned by the parameter &#39;output&#39;) at harmonic 1 of carrier.</p>
+<p>
+<a id="pgfId-1688672"></a>Fast mode envelope analysis is not supported in the Shooting engine; its parameters apply only to the harmonic balance engine.</p>
+
+<h4>
+<a id="pgfId-1688674"></a>Syntax<a id="marker-1688673"></a></h4>
+<a id="pgfId-1688675"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name  [p]  [n] envlp parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1688676"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1688702"></a>Envelope fundamental parameters</p>
+<table class="webflareTable" id="#id1688677">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688679"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688685"></a><code>clockname</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688687"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688689"></a>Name of the clock fundamental.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688691"></a><code>modulationbw</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688693"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688695"></a>Modulation bandwidth.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688697"></a><code>resolutionbw</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688699"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688701"></a>Resolution bandwidth: if set, overwrites the stoptime to be at least 1/resolutionbw.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688746"></a>Simulation interval parameters</p>
+<table class="webflareTable" id="#id1688703">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688705"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688711"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688713"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688715"></a>Stop time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688717"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688719"></a><code>0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688721"></a>Start time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688723"></a><code>tstab</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688725"></a><code>0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688727"></a>Initial stabilization time: can be used to change the phase that envelope starts shooting.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688729"></a><code>period</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688731"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688733"></a>Period of the clock fundamental: if set, <code>clockname</code> can be ignored. It is the estimated period for autonomous circuits.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688735"></a><code>fund</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688737"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688739"></a>Alternative to <code>period</code>. Frequency of the clock fundamental frequency.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688741"></a><code>outputstart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688743"></a><code>start s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688745"></a>Output is saved only after this time is reached.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688784"></a>Time-step parameters</p>
+<table class="webflareTable" id="#id1688747">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688749"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688755"></a><code>maxstep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688757"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688759"></a>Maximum time step for inner transient integration. Default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688761"></a><code>envmaxstep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688763"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688765"></a>Maximum outer envelope step size. Default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688767"></a><code>fixstepsize</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688769"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688771"></a>Use this option to fix envelope step size for speeding up envelope analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688773"></a><code>stepsize</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688775"></a><code>4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688777"></a>The number of cycles skipped between two steps when fixstepsize is yes. The time interval between the two steps will be (stepsize+1)*Tc, where Tc is the clock period. For shooting, autonomous, and fm envelope, it is rounded off to an integer.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688779"></a><code>stepperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688781"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688783"></a>The interval (in seconds of envelope following time) between two steps when fixstepsize is yes. Should be greater than period of clock. For autonomous FM or shooting envelope, it is rounded off to the nearest integer multiple of clock period.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688816"></a>Initial-condition parameters</p>
+<table class="webflareTable" id="#id1688785">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688787"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688793"></a><code>ic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688795"></a><code>all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688797"></a>What should be used to set initial condition. Possible values are dc, node, dev and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688799"></a><code>skipdc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688801"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688803"></a>If set to yes, there will be no DC analysis for initial transient. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688805"></a><code>readic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688807"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688809"></a>File that contains initial transient condition.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688811"></a><code>useprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688813"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688815"></a>If set to yes or ns, use the converged initial condition from previous analysis as ic or ns. Possible values are no, yes and ns.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688836"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1688817">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688819"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688825"></a><code>readns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688827"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688829"></a>File that contains estimate of initial DC solution.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688831"></a><code>cmin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688833"></a><code>0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688835"></a>Minimum capacitance from each node to ground.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688862"></a>State-file parameters</p>
+<table class="webflareTable" id="#id1688837">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688839"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688845"></a><code>write</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688847"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688849"></a>File to which initial transient solution is to be written.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688851"></a><code>writefinal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688853"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688855"></a>File to which final transient solution is to be written.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688857"></a><code>swapfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688859"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688861"></a>Temporary file that holds the matrix information used by Newton&#39;s method. It tells Spectre to use a regular file, rather than virtual memory, to hold the matrix information. Use this option if Spectre does not have enough memory to complete this analysis, This parameter is now valid only for shooting. It does not apply to harmonic balance..</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688876"></a>Envelope Integration method parameters</p>
+<table class="webflareTable" id="#id1688863">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688865"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688871"></a><code>envmethod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688873"></a><code>gear2only</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688875"></a>Envelope Integration method. Possible values are euler, trap, traponly, gear2, gear2only and trapgear2.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688896"></a>Integration method parameters</p>
+<table class="webflareTable" id="#id1688877">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688879"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688885"></a><code>method</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688887"></a><code>gear2only</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688889"></a>Inner transient integration method. Possible values are euler, trap, traponly, gear2, gear2only and trapgear2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688891"></a><code>oscic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688893"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688895"></a>Oscillator IC method. It determines how the starting values for the oscillator are determined. Possible values are default and lin.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688952"></a>Accuracy parameters</p>
+<table class="webflareTable" id="#id1688897">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688899"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688905"></a><code>errpreset</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688907"></a><code>moderate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688909"></a>Selects a reasonable collection of parameter settings. Possible values are liberal, moderate and conservative.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688911"></a><code>relref</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688913"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688915"></a>Reference used for the relative convergence criteria. Default is derived from <code>errpreset</code>. Possible values are pointlocal, alllocal, sigglobal and allglobal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688917"></a><code>lteratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688919"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688921"></a>Ratio used to compute LTE tolerances from Newton tolerance. Default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688923"></a><code>smoothcheck</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688925"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688927"></a>When set to no, the smoothness of the envelope is not checked. The skip cycles are as many as possible. If &#39;fixstepsize=yes&#39;, &#39;smoothcheck&#39; is set to &#39;no&#39; automatically.. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688929"></a><code>itres</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688931"></a><code>1e-2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688933"></a>Relative tolerance for linear solver.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688935"></a><code>inexactNewton</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688937"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688939"></a>Inexact Newton method. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688941"></a><code>steadyratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688943"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688945"></a>Ratio used to compute steady-state tolerances from LTE tolerance. Default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688947"></a><code>envlteratio</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688949"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688951"></a>Ratio used to compute envelope LTE tolerances. Default is derived from <code>errpreset</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1688972"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1688953">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688955"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688961"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688963"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688965"></a>Degree of annotation. Possible values are no, title, sweep, status and steps.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688967"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688969"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688971"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689028"></a>Output parameters</p>
+<table class="webflareTable" id="#id1688973">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1688975"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688981"></a><code>harms</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688983"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688985"></a>If <code>harmonicbalance</code> is set to no, it is the number of clock harmonics to output and the default value is 1. If <code>harmonicbalance</code> is set to yes, it is the maxharm of the clock fundamental and the default value is 3.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688987"></a><code>harmsvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688989"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688991"></a>Array of desired output clock harmonics. Alternative form of <code>harms</code> that allows selection of specific harmonics. For multi-carrier envelope, each group of elements with size equal to that of <code>funds</code> is a selection of specific harmonic combinations of fundamental frequencies.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688993"></a><code>outputtype</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688995"></a><code>both</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688997"></a>Output type. Possible values are both, envelope and spectrum.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1688999"></a><code>save</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689001"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689003"></a>Signals to output. Possible values are all, lvl, allpub, lvlpub, selected, none and nooutput.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689005"></a><code>nestlvl</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689007"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689009"></a>Levels of subcircuits to output.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689011"></a><code>compression</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689013"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689015"></a>Perform data compression on output. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689017"></a><code>strobeperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689019"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689021"></a>The output strobe interval (in seconds) of envelope following time. For Shooting Envelope, the actual strobe interval is rounded off to an integer multiple of the clock period.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689023"></a><code>transtrobeperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689025"></a><code> (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689027"></a>The output strobe interval (in seconds) of envelope time. The value of the parameter must be less than the cycle period. Those strobe timepoints in all cycles will output when the parameter is working. It is valid for shooting and HB.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689054"></a>Newton parameters</p>
+<table class="webflareTable" id="#id1689029">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689031"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689037"></a><code>maxiters</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689039"></a><code>5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689041"></a>Maximum number of Newton iterations per transient integration time step.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689043"></a><code>envmaxiters</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689045"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689047"></a>Maximum number of Newton iterations per envelope step. For time domain Shooting envelope, the default is 3. For Harmonic Balance Envelope, the default is 40.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689049"></a><code>restart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689051"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689053"></a>Restart the DC solution from scratch if any condition has changed. If not, use the previous solution as initial guess. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689080"></a>Circuit age</p>
+<table class="webflareTable" id="#id1689055">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689057"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689063"></a><code>circuitage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689065"></a><code> (Years)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689067"></a>Stress time. Age of the circuit used to simulate hot-electron degradation of MOSFET and BSIM circuits.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689069"></a><code>fmspeedup</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689071"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689073"></a>The level to speed up the envelope analysis for frequency modulated signal. Default is 0 for standard envelope following and 1 for fmmod sources speed up.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689075"></a><code>saveinit</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689077"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689079"></a>If set, the waveforms for the initial transient (tstab) before envelope are saved. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689160"></a>Fast envelope parameters</p>
+<table class="webflareTable" id="#id1689081">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689083"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689089"></a><code>fastmode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689091"></a><code>off</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689093"></a>This parameter controls the accuracy/performance tradeoffs of envelope analysis. When fastmode=off, a transistor-level accurate envelope algorithm is used. When fastmode=level1 or level2, a block-level envelope algorithm is used that provides faster simulation and lesser memory occupation. Level1 mode provides the fastest operation, but ignores eventual modulation signal memory effects. The latter are accounted by Level2 mode at a little less operation speed.. Possible values are off, level1 and level2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689095"></a><code>fastmethod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689097"></a><code>passband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689099"></a>This parameter applies only in fast envelope mode. The passband method models only magnitude-dependent (AM-AM and AM-PM) effects . The baseband method includes both magnitude- and phase-dependent (PM-AM and PM-PM) effects. Use the passband method when you model PAs. Use the baseband method when the circuit includes transistor-level modulators, demodulators, and generally whenever the output depends both on the magnitude and phase of the input signal. Possible values are passband and baseband.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689101"></a><code>writeenv</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689103"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689105"></a>The file to which fast mode envelope data is written. It can be reused by &#39;readenv&#39; if the circuit remains unchanged, except for the decrease in &#39;srci&#39; or &#39;srcq&#39; scale. Can only be used in fast envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689107"></a><code>readenv</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689109"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689111"></a>File from which fast mode envelope data is read. It can be used only if the circuit remains unchanged after the file is created, except for the decrease in &#39;srci&#39; or &#39;srcq&#39; scale. Can only be used in fast envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689113"></a><code>srci</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689115"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689117"></a>I branch baseband modulation source, whose signal corresponds to the real part of baseband signal. If two sources are assigned, it means that the inputs are differential signals and the first source is positive. Only the pwl type of source is supported. Can only be used in fast envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689119"></a><code>srcq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689121"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689123"></a>Q branch baseband modulation source, whose signal corresponds to the imaginary part of baseband signal. If two sources are assigned, it means that the inputs are differential signals and the first source is positive. Only the pwl type of source is supported and can be used only in fast envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689125"></a><code>srcw</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689127"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689129"></a>Wireless source. Can be used only in fast envlp currently.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689131"></a><code>sweepmethod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689133"></a><code>coarse</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689135"></a>This parameter controls the sweep algorithm during the fast envelope circuit characterization. When sweepmethod is coarse, fine, or userdefined, it uses a fixed number of sweep points. When sweepmethod is adaptive, it determines the number of sweep points automatically. coarse uses 7 magnitude points (plus 12 phase points when fastmethod=baseband); fine uses 10 magnitude points (plus 16 phase points when fastmethod=baseband); when sweepmethod=userdefined, use the sweepnum parameter to define the grid. Possible values are coarse, fine, userdefined and adaptive.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689137"></a><code>sweepnum</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689139"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689141"></a>This parameter controls the number of sweep points for fast envelope characterization when sweepmethod=userdefined. When fastmethod=passband, sweepnum is a one-element integer array which sets the number of magnitude sweep points. When fastmethod=baseband, it is a two-element integer array which sets the number of magnitude and phase sweep points. In passband mode, default sweepnum=[7]. In baseband mode, default sweepnum=[7 12]. In most cases, default values are adequate to capture the main and adjacent channel power accurately. Nevertheless, it is recommended to increase sweepnum gradually to ensure that the results do not change. A reasonable strategy is to start at sweepnum=[7 12] and increase to [10 16] until results converge. The upper limit of the magnitude and phase sweep points is [49 48].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689143"></a><code>output</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689145"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689147"></a>Fast mode envelope output nodes. Fast mode envelope only generates fd result ( complex solution of a certain harmonic versus time ) and can be used only in fast envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689149"></a><code>outputharmonic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689151"></a><code>[1]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689153"></a>Output harmonic vector in fast mode envelope analysis. Default value is 1.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689155"></a><code>outputallharms</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689157"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689159"></a>By default, fast mode envlp analysis outputs only one harmonic, as determined by the &#39;outputharmonic&#39; parameter. When &#39;outputallharms&#39; is set to &#39;yes&#39;, all harmonics are calculated and sent to output. In addition, when &#39;outputallharms&#39; is set to &#39;yes&#39; and the input excitation is single-tone, SpectreRF also calculates and stores the output time domain waveform. This parameter applies to fast mode envlp analysis only. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689198"></a>Fast envelope noise model parameters</p>
+<table class="webflareTable" id="#id1689161">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689163"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689169"></a><code>noisemethod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689171"></a><code>off</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689173"></a>This parameter controls the noise model in fast envelope mode. noisemethod does not apply in regular envelope (when fastmode=off). By default, noisemethod=off and the circuit is treated as noiseless. If noisemethod=level1, the noise model is generated from linear noise analysis performed about the DC operating point. If noisemethod=level2, the noise model is calculated from a more rigorous periodic noise analysis. The root-mean-square value of the magnitude of the input signal and the mean of the phase of the input signal, are used as the operating point in periodic noise analysis. The level2 model is preferred in almost all the practical situations. The level1 model is faster to extract and may be useful in certain situations under nearly-linear operating condition. Possible values are off, level1 and level2.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689175"></a><code>fstart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689177"></a><code>1k</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689179"></a>This parameter sets the starting sweep frequency for the fast envelope noise sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689181"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689183"></a><code>3</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689185"></a>This parameter controls the noise frequency sweep for the fast envelope noise model. It is applicable when noisemethod=level1 or level2. When set, the simulator performs a linear or periodic noise analysis around output harmonic, using dec log steps per decade in the frequency interval given by [fstart, 1/(2*Tstep)]. If lin and dec are both specified, log sweep is used and the parameter lin is ignored.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689187"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689189"></a><code>10</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689191"></a>This parameter controls the noise frequency sweep for the fast envelope noise model. It is applicable when noisemethod=level1 or level2. When set, the simulator performs a linear or periodic noise analysis around output harmonic, using lin equal steps in the frequency interval given by [fstart, 1/(2*Tstep)].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689193"></a><code>noisesep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689195"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689197"></a>This parameter controls BER/EVM/FSKErr calculation in wprobe when noisemethod=level1 or level2 in fast envlp wireless simulation. When set, the simulator provides two sets of data for wprobe to calculate two BER/EVM/FSKErr values. One is impacted only by circuit distortion, the other is impacted by both circuit distortion and noise. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689218"></a>Wireless fundamental parameters</p>
+<table class="webflareTable" id="#id1689199">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689201"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689207"></a><code>wsource</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689209"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689211"></a>Wireless source in envlp analysis. It must be selected within wsource instances.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689213"></a><code>wprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689215"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689217"></a>The wprobe vector in envlp analysis. It is designed to measure evm or ber, and so on.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689274"></a>Harmonic Balance Envelope parameters</p>
+<table class="webflareTable" id="#id1689219">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689221"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689227"></a><code>funds</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689229"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689231"></a>Array of fundamental frequency names for fundamentals that will be used for Harmonic Balance Envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689233"></a><code>maxharms</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689235"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689237"></a>Array of number of harmonics of each fundamental that will be considered for Harmonic Balance Envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689239"></a><code>freqdivide</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689241"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689243"></a>Large signal frequency division.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689245"></a><code>fundfreqs</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689247"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689249"></a>Array of fundamental frequencies to use in multi-carrier envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689251"></a><code>harmonicbalance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689253"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689255"></a>Use Harmonic Balance Envelope. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689257"></a><code>flexbalance</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689259"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689261"></a>The same parameter as <code>harmonicbalance</code>. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689263"></a><code>oversamplefactor</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689265"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689267"></a>Oversample sample device evaluations for Harmonic Balance Envelope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689269"></a><code>oversample</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689271"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689273"></a>Array of oversample factors for each tone for Harmonic Balance Envelope.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689312"></a>Tstab save/restart parameters</p>
+<table class="webflareTable" id="#id1689275">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689277"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689283"></a><code>saveperiod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689285"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689287"></a>Save the tran analysis periodically on the simulation time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689289"></a><code>saveclock</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689291"></a><code>1800 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689293"></a>Save the tran analysis periodically on the wall clock time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689295"></a><code>savetime</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689297"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689299"></a>Save the analysis states into files on the specified time points.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689301"></a><code>savefile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689303"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689305"></a>Save the analysis states into the specified file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689307"></a><code>recover</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689309"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689311"></a>Specify the file to be restored.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689338"></a>AMS-envlp co-sim parameters</p>
+<table class="webflareTable" id="#id1689313">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689315"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689321"></a><code>resetenv</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689323"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689325"></a>Use this option to reset envelope data after D2A/A2D events for AMS-envlp co-simulation. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689327"></a><code>ignoredclk</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689329"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689331"></a>Use this option to ignore digital clock if the clock rate is in the same order as envelope clock for AMS-envlp co-simulation. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689333"></a><code>trancycles</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689335"></a><code>5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689337"></a>The number of transient cycles for AMS-envlp co-simulation. This is the number of cycles around D2A/A2D events&#39; time point. Default value is 5.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689358"></a>envlp-PAC parameters</p>
+<table class="webflareTable" id="#id1689339">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1689341"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689347"></a><code>pacnames</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689349"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689351"></a>Names of pac, pnoise, psp, or pxf analyses to be performed at each time point in the <code>pactimes</code> array. Not for AMS.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689353"></a><code>pactimes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689355"></a><code>[...] s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1689357"></a>Times when analyses specified in <code>pacnames</code> array are performed. Not for AMS.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1689359"></a>If <code>period</code> or <code>fund</code> is not specified, the simulator examines all the sources whose name matches the clock name specified in the analysis line by the <code>clockname</code> parameter to determine the clock frequency. If more than one frequency is found, the greatest common factor of these frequencies is used as the clock frequency.</p>
+<p>
+<a id="pgfId-1689360"></a>The maximum envelope step size is affected by many parameters. It can be directly limited by <code>envmaxstep</code>. It is also limited by <code>modulationbw</code>. You provide an estimate of the modulation bandwidth. The simulator puts at least eight points within the modulation period. It is recommended that you use strobeperiod to get equally spaced envelope points, which will improve the noise floor in power spectrum density computation. </p>
+<p>
+<a id="pgfId-1689361"></a>The <code>harms</code> and <code>harmsvec</code> parameters affect the simulation time in an insignificant way. The spectrum is calculated for all the specified harmonics for all sampled integration cycles as the envelope following analysis marches on. For each harmonic, a file is generated. If <code>harmonicbalance</code> is no, <code>harms</code> is typically set to 1 or 2 because the high-order harmonics are not accurate. </p>
+<p>
+<a id="pgfId-1689362"></a>Most parameters of this analysis are inherited from either transient or PSS analysis and their meanings are consistent. However, a few of them need to be clarified. The effect of <code>errpreset</code> on certain envelope following analysis parameters is shown in the following table. </p>
+<p>
+<a id="pgfId-1689363"></a>For &#39;conservative&#39; autonomous envelope, default values for &#39;method&#39; and &#39;envmethod&#39; set to &#39;traponly&#39; to avoid numerical damping of the oscillator. </p>
+<p>
+<a id="pgfId-1689364"></a>In this table, <code>T</code> is the period of the clock.</p>
+<p>
+<a id="pgfId-1689365"></a>---------------------------------------------------------------------</p>
+<p>
+<a id="pgfId-1689366"></a>         Parameter defaults as a function of <code>errpreset</code></p>
+<p>
+<a id="pgfId-1689367"></a>---------------------------------------------------------------------</p>
+<p>
+<a id="pgfId-1689368"></a>errpreset&#160;&#160;    maxstep envmaxstep    reltol   relref  steadyratio envlteratio</p>
+<p>
+<a id="pgfId-1689369"></a>---------------------------------------------------------------------</p>
+<p>
+<a id="pgfId-1689370"></a>liberal&#160;&#160;       T/20   Interval/10   0.01    sigglobal   0.1       0.35</p>
+<p>
+<a id="pgfId-1689371"></a>moderate&#160;&#160;      T/20   Interval/25   0.001   sigglobal   0.1       3.5</p>
+<p>
+<a id="pgfId-1689372"></a>conservative&#160;&#160;  T/50   Interval/50   0.0001  alllocal    1.0       35.0</p>
+<p>
+<a id="pgfId-1689373"></a>The default value for <code>compression</code> is no. The output file stores data for every signal at every timepoint for which Spectre calculates a solution. Spectre saves the X-axis data only once, because every signal has the same x value. If <code>compression=yes</code>, Spectre writes data to the output file only if the signal value changes by at least two times the convergence criteria. To save data for each signal independently, X-axis information corresponding to each signal must be saved. If the signals stay at constant values for large periods of the simulation time, setting <code>compression=yes</code> results in a smaller output data file. If the signals in your circuit move around a lot, setting <code>compression=yes</code> results in a larger output data file. </p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Immediate_Set_Dspf_Options_dspf_options.html" id="prev" title="Immediate Set Dspf Options (dspf_options)">Immediate Set Dspf Options (ds ...</a></em></b><b><em><a href="chap3_re_Harmonic_Balance_Steady_State_Analysis_hb.html" id="nex" title="Harmonic Balance Steady State Analysis (hb)">Harmonic Balance Steady State  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

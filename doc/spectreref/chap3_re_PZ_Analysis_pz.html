@@ -1,0 +1,722 @@
+
+<html><head><title>PZ Analysis (pz)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484709" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="PZ Analysis (pz)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484709" />
+<meta name="NextFile" content="chap3_re_Quasi-Periodic_AC_Analysis_qpac.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Periodic_Transfer_Function_Analysis_pxf.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- PZ Analysis (pz)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Periodic_Transfer_Function_Analysis_pxf.html" title="Periodic Transfer Function Analysis (pxf)">Periodic Transfer Function Ana ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Quasi-Periodic_AC_Analysis_qpac.html" title="Quasi-Periodic AC Analysis (qpac)">Quasi-Periodic AC Analysis (qp ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_PZ_Analysis_pz" title="PZ Analysis (pz)"></a><h3>
+<a id="pgfId-1700063"></a>PZ Analysis (pz)<a id="marker-1700062"></a></h3>
+<h4>
+<a id="pgfId-1700065"></a>Description<a id="marker-1700064"></a></h4>
+
+<p>
+<a id="pgfId-1700066"></a>The PZ analysis linearizes the circuit about the DC operating point and computes the poles and zeros of the linearized network. To compute zeros, you need to specify input sources and output voltages or currents. If no input or output is given, only poles are computed. If there are frequency-dependent components, poles and zeros are computed by approximating those components as equivalent conductances and capacitances evaluated at 1Hz. The PZ analysis uses default direct solver (method=qz) for better accuracy.&#160;&#160;Performance is better in small-to-medium sized circuits. For large circuits, a Krylov subspace iterative solver (method-arnoldi) can be used for better performance, but, with lesser accuracy.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1700067"></a>Note: A frequency-dependent component means that the capacitance or conductance-equivalent representation of the component varies with the frequency. Examples are transmission lines or bjts with excess phases. A linear capacitor is not a frequency-dependent component.</div>
+<p>
+<a id="pgfId-1700068"></a>Spectre can perform the analysis while sweeping a parameter. The parameter can be temperature, component instance parameter, component model parameter, or netlist parameter. If changing a parameter affects the DC operating point, the operating point is recomputed at each step.&#160;&#160;You can sweep the parameter <code>temp</code> or a netlist parameter by specifying the parameter name without a <code>dev</code> or <code>mod</code> parameter. After the analysis is complete, the modified parameter returns to its original value.</p>
+<p>
+<a id="pgfId-1700069"></a>Pole-zero cancellation is performed when a neighboring pole-zero pair is located within <code>absdiff</code> distance. The distance is also determined relatively as <code>reldiff</code> times the magnitude of the pole or zero. Spectre uses the larger value of the two distances for cancellation. By default, a lower bound of resistance is enforced. You may remove this limitation by defining the resistor parameter rac. However, this may affect pz results.</p>
+
+<h4>
+<a id="pgfId-1700071"></a>Syntax<a id="marker-1700070"></a></h4>
+<a id="pgfId-1700072"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ... pz parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1700073"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1700093"></a>Probe parameters</p>
+<table class="webflareTable" id="#id1700074">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700076"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700082"></a><code>iprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700084"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700086"></a>Input probe for zeros of the transfer function.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700088"></a><code>oprobe</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700090"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700092"></a>Output probe for zeros of the transfer function.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700113"></a>Port parameters</p>
+<table class="webflareTable" id="#id1700094">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700096"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700102"></a><code>portv</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700104"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700106"></a>Voltage across the specified oprobe port is the output of the analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700108"></a><code>porti</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700110"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700112"></a>Current through the specified oprobe port is the output of the analysis. Should be used when oprobe is a voltage source or a current probe.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700181"></a>Sweep interval parameters</p>
+<table class="webflareTable" id="#id1700114">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700116"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700122"></a><code>start</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700124"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700126"></a>Start sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700128"></a><code>stop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700130"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700132"></a>Stop sweep limit.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700134"></a><code>center</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700136"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700138"></a>Center of sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700140"></a><code>span</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700142"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700144"></a>Sweep limit span.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700146"></a><code>step</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700148"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700150"></a>Step size, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700152"></a><code>lin</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700154"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700156"></a>Number of steps, linear sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700158"></a><code>dec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700160"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700162"></a>Points per decade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700164"></a><code>log</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700166"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700168"></a>Number of steps, log sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700170"></a><code>values</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700172"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700174"></a>Array of sweep values.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700176"></a><code>valuesfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700178"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700180"></a>Name of the file containing the sweep values.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700213"></a>Sweep variable parameters</p>
+<table class="webflareTable" id="#id1700182">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700184"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700190"></a><code>dev</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700192"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700194"></a>Device instance whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700196"></a><code>mod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700198"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700200"></a>Model whose parameter value is to be swept.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700202"></a><code>param</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700204"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700206"></a>Name of parameter to sweep.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700208"></a><code>freq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700210"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700212"></a>Frequency at which components will be evaluated in setting up the linearized network.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700233"></a>State-file parameters</p>
+<table class="webflareTable" id="#id1700214">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700216"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700222"></a><code>readns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700224"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700226"></a>File that contains estimate of DC solution (nodeset).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700228"></a><code>useprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700230"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700232"></a>If set to yes or ns, use the converged initial condition from previous analysis as ic or ns. Possible values are no, yes and ns.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700253"></a>Output parameters</p>
+<table class="webflareTable" id="#id1700234">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700236"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700242"></a><code>oppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700244"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700246"></a>Should operating point information be computed, and if so, where should it be sent. Possible values are no, screen, logfile and rawfile.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700248"></a><code>zeroonly</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700250"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700252"></a>If set, only zeros are requested. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700285"></a>Filtering parameters</p>
+<table class="webflareTable" id="#id1700254">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700256"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700262"></a><code>fmax</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700264"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700266"></a>Maximum pole and zero frequency value to filter out spurious poles and zeros. This parameter is passed to psf outputs for plotting filtering.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700268"></a><code>docancel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700270"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700272"></a>If set, pole-zero cancellation is requested. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700274"></a><code>absdiff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700276"></a><code>1e-6 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700278"></a>Pole-Zero cancel absolute distance in Hz.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700280"></a><code>reldiff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700282"></a><code>1e-4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700284"></a>Pole-Zero cancel relative distance.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700305"></a>Convergence parameters</p>
+<table class="webflareTable" id="#id1700286">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700288"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700294"></a><code>prevoppoint</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700296"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700298"></a>Use the operating point computed on the previous analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700300"></a><code>restart</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700302"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700304"></a>Restart the DC solution from scratch if any condition has changed. If not, use the previous solution as initial guess. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700325"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1700306">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700308"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700314"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700316"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700318"></a>Degree of annotation. Possible values are no, title, sweep, status and steps.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700320"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700322"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700324"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1700369"></a>Miscellaneous parameters</p>
+<table class="webflareTable" id="#id1700326">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700328"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700334"></a><code>method</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700336"></a><code>qz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700338"></a>Method to perform pz analysis. Possible values are qz and arnoldi.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700340"></a><code>pole_emphasis</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700342"></a><code>lowfreq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700344"></a>If set to lowfreq, calculate low-frequency poles more accurately. If set to highfreq, calculate high-frequency poles more accurately. Possible values are lowfreq and highfreq.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700346"></a><code>numpoles</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700348"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700350"></a>Maximum number of poles requested, only for arnoldi method.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700352"></a><code>numzeros</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700354"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700356"></a>Maximum number of zeros requested, only for arnoldi method.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700358"></a><code>sigmar</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700360"></a><code>0.1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700362"></a>root finding control parameter, only for arnoldi method.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700364"></a><code>sigmai</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700366"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1700368"></a>root finding control parameter, only for arnoldi method.</p>
+</td>
+</tr>
+</tbody></table>
+
+<h4>
+<a id="pgfId-1700370"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700371"></a>mypz pz </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700372"></a>Pole analysis is performed. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700373"></a>mypz2&#160;&#160;(n1 n2) pz iprobe=VIN </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700374"></a>Input is VIN and output is voltage difference between nodes n1 and n2. Both pole and zero analyses are performed. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700375"></a>mypz3 (n1 n2) pz iprobe=I1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700376"></a>Input is I1, output is voltage difference between n1 and n2. Both pole and zero analyses are performed. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700377"></a>mypz4 pz iprobe=VIN oprobe=IP1 porti=1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700378"></a>Input is VIN, output is current through IP1, where IP1 is an iprobe. Both pole and zero analyses are performed. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700379"></a>mypz5 pz iprobe=VIN oprobe=V3 porti=1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700380"></a>Input is VIN, output is current through voltage source V3. Both pole and zero analyses will be performed. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700381"></a>mypz6 pz iprobe=VIN oprobe=R3 portv=1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700382"></a>Input is VIN, output is the voltage across the resistor R3. Both pole and zero analyses will be performed. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700383"></a>mypz7 (n1 n2) pz iprobe=I1 param=temp start=25 stop=100 step=25 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700384"></a>Sweep temperature from 25 C to 100 C with increment of 25 C. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700385"></a>parameters rval=2.0 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700386"></a> R2 3 4 resistor r=rval </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700387"></a> ... </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700388"></a> sweep1 sweep param=rval start=1 stop=10 step=1 { </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700389"></a>    mypz8 (n1 n2) iprobe=VIN </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700390"></a> } </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700391"></a>External sweep parameter rval from 1 to 10 with increment of 1. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700392"></a>mypz9 (n1 n2) pz iprobe=VIN docancel=no </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1700393"></a>Do not perform pole-zero cancellation. </pre>
+
+<b>Note:</b><br />
+<a id="pgfId-1700394"></a> 
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1700395"></a>Note: porti allows you to select a current associated with a specific device given in oprobe as an output. This device, however, has to have its terminal currents as network variables. Thus, to avoid confusion, porti should be used exclusively with voltage sources and current probes and with other components that have voltage-defined branches.</div>
+<p>
+<a id="pgfId-1700396"></a> </p>
+<p>
+<a id="pgfId-1700397"></a>When PZ analysis finishes, a table is printed by default. The table includes values of poles/zeros and a brief notification on the &quot;right-hand side poles&quot;, if there are any. This information can also be viewed graphically. n addition to the direct results, &quot;DC gain&quot; is also listed at the end. It calculates the gain of transfer function H(s), given s=0, including the contribution of the excluded poles/zeros (blocked by user-specified fmax). &quot;Constant factor&quot; calculates the ratio of the coefficients of the leading terms in the numerator and denominator of H(s).</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Periodic_Transfer_Function_Analysis_pxf.html" id="prev" title="Periodic Transfer Function Analysis (pxf)">Periodic Transfer Function Ana ...</a></em></b><b><em><a href="chap3_re_Quasi-Periodic_AC_Analysis_qpac.html" id="nex" title="Quasi-Periodic AC Analysis (qpac)">Quasi-Periodic AC Analysis (qp ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

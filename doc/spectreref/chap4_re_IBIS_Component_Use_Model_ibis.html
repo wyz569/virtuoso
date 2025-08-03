@@ -1,0 +1,550 @@
+
+<html><head><title>IBIS Component Use Model (ibis)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484713" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="IBIS Component Use Model (ibis)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484713" />
+<meta name="NextFile" content="chap4_re_Initial_Conditions_ic.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap4_re_Global_Nodes_global.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- IBIS Component Use Model (ibis)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap4_re_Global_Nodes_global.html" title="Global Nodes (global)">Global Nodes (global)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap4_re_Initial_Conditions_ic.html" title="Initial Conditions (ic)">Initial Conditions (ic)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_IBIS_Component_Use_Model_ibis" title="IBIS Component Use Model (ibis)"></a><h2>
+<a id="pgfId-1068627"></a><a id="63359"></a>IBIS Component Use Model (ibis)<a id="marker-1068626"></a></h2>
+<h4>
+<a id="pgfId-1048349"></a>Description<a id="marker-1048348"></a></h4>
+
+<p>
+<a id="pgfId-1048350"></a>IBIS (I/O Buffer Information Specification) is a standard for electronic behavioral specification of integrated circuit (IC) input/output analog characteristics. It allows you to define a model for the IC component package, and a buffer model for each pin. IBIS standard also allows you to describe a board-level component containing several components on a common substrate or printed circuit board (PCB). For example, a <code>SIMM</code> module is a board-level component that is used to attach several DRAM components on the PCB to a motherboard through edge connector pins. Board pins, components on the board, and connections between them are defined in an Electrical Board Description file with extension<code>.ebd</code>. Component pins, buffers, and package descriptions are in a separate IBIS file with extension<code>.ibs</code>. An Additional Package file with extension<code>.pkg</code> can be used to describe advanced package models. </p>
+<p>
+<a id="pgfId-1048351"></a>Spectre supports IBIS 6.0 and previous versions. Some keywords are not supported.</p>
+<p>
+<a id="pgfId-1048352"></a>IBIS files can be referenced in Spectre netlist by using the <code>ibis_include</code> statement: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048353"></a>ibis_include &quot;DRAM.ibs&quot; [options] </pre>
+
+<p>
+<a id="pgfId-1048354"></a>IBIS file &quot;DRAM.ibs&quot; is translated into Spectre netlist format by using <code>ibis2subckt</code> utility. The output file, &quot;DRAM.scs&quot;, containing subcircuit definitions for each IBIS component, board, and package found in the input IBIS file, is included in the netlist. The list of options may consist of: <code>corner={typ|min|max|slow|fast}</code>, <code>swsel=&lt;int&gt;</code> and <code>mdsel=&lt;int&gt;</code>. These options are transferred to <code>ibis2subckt</code>. They are used to select IBIS buffer model corner, change position of series-switch models, and choose the required models from model selector list. </p>
+<p>
+<a id="pgfId-1048355"></a>IBIS component and board subcircuits can be instantiated in a Spectre netlist along with regular Spectre primitives. Subcircuit name is the same as the component name, but is appended with the suffix<code>_ibis</code>. Subcircuit terminals are component pins, arranged in the order they are listed in the IBIS file. Each pin terminal is followed by a number of signal terminals, depending on the type of the pin buffer model. For example, if m1 is defined in IBIS file as an input buffer model, and m2 - as I/O type, the following IBIS component: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048356"></a>[Component] IC </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048357"></a>[Pin]&#160;&#160;signal_name&#160;&#160; model_name&#160;&#160; R_pin&#160;&#160;   L_pin     C_pin </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048358"></a>p1&#160;&#160;    s1            GND </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048359"></a>p3&#160;&#160;    s3            m1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048360"></a>p4&#160;&#160;    s4            NC </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048361"></a>p5&#160;&#160;    s5            m2 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048362"></a>p2&#160;&#160;    s2            POWER </pre>
+
+<p>
+<a id="pgfId-1048363"></a>can be instantiated in the netlist as: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048364"></a>x_ic ( p1 p3 s3_in p4 p5 s5_in s5_out s5_en p2 ) IC_ibis </pre>
+
+<p>
+<a id="pgfId-1048365"></a><code>ibis2subckt</code> can also be used as a stand-alone utility with the following command-line arguments:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048366"></a>ibis2subckt&#160;&#160;-in &lt;IBIS files&gt; -out &lt;subckt file&gt; -corner {typ|min|max|slow|fast} -swsel &lt;int&gt; -mdsel &lt;int&gt; </pre>
+
+<p>
+<a id="pgfId-1048367"></a>Default values are: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048368"></a>corner&#160;&#160;typ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048369"></a>mdsel&#160;&#160; -1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048370"></a>swsel&#160;&#160; -1 </pre>
+
+<p>
+<a id="pgfId-1048371"></a><strong>SPICE NETLIST SUPPORT</strong> </p>
+<p>
+<a id="pgfId-1048372"></a>For the IBIS component, Spectre also supports the <code>SPICE .IBIS</code> and <code>.EBD</code> statements.</p>
+<p>
+<a id="pgfId-1048373"></a>The supported parameters of<code>.IBIS</code> syntax are <code>file</code>, <code>component</code>, <code>mod_sel</code>, <code>package</code>, and <code>typ</code>.</p>
+
+<h4>
+<a id="pgfId-1082693"></a><strong>.IBIS Parameters</strong> </h4>
+<table class="webflareTable" id="#id1082702">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082704"></a><code>file = &lt;string&gt;</code> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082706"></a>Specifies the IBIS file name with suffix <code>.ibs.</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082712"></a><code>component = &lt;string&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082714"></a>Specifies the used component name in the <code>.ibs</code> file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082748"></a><code>mod_sel = &lt;string1=string2&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082750"></a>Maps the model selector name (string1) to the actual model name (string2), given as [Model selector] in the <code>.ibis</code> file. Multiple selectors are supported.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082778"></a><code>package = &lt;3|0|1|2&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082780"></a>Specifies the type of package. Default value is 3 (use the best available package model). <code>package=0</code> means no package is used. <code>package=1</code> means that an RLC package is used with the same values for all pins provided in the <code>[Package]</code> section. <code>package=2</code> means that an RLC package is used with individual RLC values for each pin provided in the <code>[Pin]</code> section. package=3 means that an advanced package model is used in the <code>[Package Model]</code> section.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1082816"></a><code>typ = &lt;typ|min|max|fast|slow&gt;</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082832"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082834"></a>Specifies the corner of the IBIS buffer. Default value is <code>typ</code> (typical).</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1082699"></a>The supported parameters of the <code>.EBD</code> syntax are <code>file</code>, <code>model</code>, and <code>component</code>. </p>
+<p>
+<a id="pgfId-1048388"></a><strong>.EBD Parameters</strong> </p>
+<table class="webflareTable" id="#id1082851">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082853"></a><code>file = &lt;string&gt;</code> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082855"></a>Specifies the EBD file name with the suffix <code>.ebd</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082857"></a><code>model = &lt;string&gt;</code> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082859"></a>Specifies name of the board-level model provided in <code>.ebd</code> file</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082869"></a><code>component = &lt;string&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1082871"></a>Specifies the component name of the ibis buffer. Multiple components are supported.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1048393"></a><strong>Examples</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048394"></a>.ibis I1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048395"></a>+ file = file.ibs </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048396"></a>+ component = Component </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048397"></a>+ mod_sel = DQ=DQ1,CQ=CQ1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1068616"></a>+ package=0 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1068617"></a>+ typ=slow <br /></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1068618"></a>.ebd pkg </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048401"></a>+ file = file.ebd</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048402"></a>+ model = XXXX </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048403"></a>+ component = Component1 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048404"></a>+ component = Component2</pre>
+
+<p>
+<a id="pgfId-1086415"></a><strong>Supported IBIS Keywords in Spectre</strong></p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1088130"></a>The supported keywords list below is based on IBIS version 6.0.</div>
+
+<p>
+<a id="pgfId-1086946"></a>The following shows the sections and keywords in the IBIS file that are supported in Spectre:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1086947"></a>.ibis FILE</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1086948"></a> FILE Header Section</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087148"></a>  [IBIS Ver]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087860"></a>  [Comment Char] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087867"></a>  [File Name] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087874"></a>  [File Rev] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087881"></a>  [Date]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087888"></a>  [Source]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087895"></a>  [Notes]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087902"></a>  [Disclaimer]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087909"></a>  [Copyright]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087149"></a> [Component]&#160;&#160;               Si Location, Timing_location</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087157"></a>  [Manufacturer] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087164"></a>  [Package]&#160;&#160;             R_pkg, L_pkg, C_pkg</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087171"></a>  [Pin]&#160;&#160;                 signal_name, model_name, R_pin, L_pin, C_pin</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087178"></a>  [Package Model]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087185"></a>  [Pin Mapping]&#160;&#160;         pulldown_ref, pullup_ref, gnd_clamp_ref,                                 power_clamp_ref, ext_ref</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087204"></a>  [Diff Pin]&#160;&#160;            inv_pin, vdiff, tdelay_typ, tdelay_min, tdelay_max</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087223"></a>  [Series Pin Mapping]&#160;&#160;  pin_2, model_name, function_table_group</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087242"></a>  [Series Switch Groups]&#160;&#160;On (m), Off (m)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087249"></a> [Model Selector]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087256"></a>  [Model]&#160;&#160;               Model_type, Polarity, Enable, Vinl, Vinh, C_comp,                                 C_comp_pullup, C_comp_pulldown,                                  C_comp_power_clamp, C_comp_gnd_clamp, Vmeas,                                 Cref, Rref, Vref</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087275"></a>   [Model Spec]&#160;&#160;      Vinh, Vin1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087282"></a>   [Add Submodel]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087289"></a>   [Driver Schedule]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087296"></a>   [Temperature Range]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087303"></a>   [Voltage Range]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087313"></a>   [Pullup Reference]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087320"></a>   [Pulldown Reference]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087327"></a>   [Power Clamp Reference]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087334"></a>   [GND Clamp Reference]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088374"></a>   [C Comp Corner]             C_comp, C_comp_pullup, C_comp_pulldown,<br />                                        C_comp_power_clamp, C_comp_gnd_clamp</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088375"></a>   [Pulldown]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087348"></a>   [Pullup]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087355"></a>   [GND Clamp]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087362"></a>   [POWER Clamp]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087369"></a>   [ISSO PU]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087376"></a>   [ISSO PD]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087383"></a>   [Rgnd]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087390"></a>   [Rpower]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087397"></a>   [Rac]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087404"></a>   [Cac]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087411"></a>   [On]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087418"></a>   [Off]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087425"></a>   [R Series]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087432"></a>   [L Series]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087439"></a>   [R1 Series]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087453"></a>   [C Series]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087460"></a>   [LC Series]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087467"></a>   [RC Series]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087474"></a>   [Series Current]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087481"></a>   [Series MOSFET]&#160;&#160;        Vds</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087488"></a>   [Ramp]&#160;&#160;                 dV/dt_r, dV/dt_f, R_load</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087507"></a>   [Rising Waveform]&#160;&#160;      R_fixture, V_fixture, V_fixture_min,                                      V_fixture_max, C_fixture, L_fixture,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087526"></a>    [Composite Current]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087533"></a>   [Falling Waveform]&#160;&#160;     _fixture, V_fixture, V_fixture_min,                                      V_fixture_max, C_fixture, L_fixture,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087552"></a>    [Composite Current]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087566"></a>   [External Model]&#160;&#160;       Language, Corner, Parameters, Ports, D_to_A,                                      A_to_D</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087589"></a>    [End External Model]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087596"></a>  [Sub Model]&#160;&#160;                Sub model type</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087603"></a>   [Sub Model Spec]&#160;&#160;       V_trigger_r, V_trigger_f</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087618"></a>   [POWER Pulse Table] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087619"></a>   [GND Pulse Table] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087620"></a>   [Pulldown] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087621"></a>   [Pullup] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087622"></a>   [GND Clamp] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087623"></a>   [POWER Clamp] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087610"></a>   [Ramp]&#160;&#160;                  dV/dt_r, dV/dt_f, R_load</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087636"></a>   [Rising Waveform]&#160;&#160;      R_fixture, V_fixture, V_fixture_min,                                      V_fixture_max, C_fixture, L_fixture,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087651"></a>   [Falling Waveform]&#160;&#160;      R_fixture, V_fixture, V_fixture_min,                                      V_fixture_max, C_fixture, L_fixture,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087672"></a>  [Define Package Model]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087681"></a>   [Manufacturer]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087688"></a>   [OEM]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087695"></a>   [Description]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087702"></a>   [Number of Sections]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087709"></a>   [Number of Pins]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087716"></a>   [Pin Numbers]&#160;&#160;           Len, L, R, C, Fork, Endfork</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087735"></a>   [Model Data]&#160;&#160;             </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087742"></a>    [Resistance Matrix]&#160;&#160; Banded_matrix, Sparse_matrix, Full_matrix</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087749"></a>     [Bandwidth]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087756"></a>     [Row]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087763"></a>    [Inductance Matrix]&#160;&#160; Banded_matrix, Sparse_matrix, Full_matrix</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087790"></a>     [Bandwidth]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087782"></a>     [Row]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087803"></a>    [Capacitance Matrix]&#160;&#160; Banded_matrix, Sparse_matrix, Full_matrix</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087804"></a>     [Bandwidth]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087446"></a>     [Row]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087818"></a>    [End Model Data]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087825"></a>   [End Package Model&#8217;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087832"></a>  [END]</pre>
+
+<p>
+<a id="pgfId-1087847"></a>The following shows the sections and keywords in the package file that are supported in Spectre:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087924"></a>.pkg FILE</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087925"></a> FILE Header Section</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087926"></a>  [IBIS Ver]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087927"></a>  [Comment Char] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087928"></a>  [File Name] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087929"></a>  [File Rev] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087930"></a>  [Date]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087931"></a>  [Source]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087932"></a>  [Notes]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087933"></a>  [Disclaimer]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087934"></a>  [Copyright]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087948"></a> [Define Package Model]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087949"></a>  [Manufacturer]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087950"></a>  [OEM]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087951"></a>  [Description]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087952"></a>  [Number of Sections]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087953"></a>   Number of Pins]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087954"></a>  [Pin Numbers]&#160;&#160;           Len, L, R, C, Fork, Endfork</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087955"></a>  [Model Data]&#160;&#160;             </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087956"></a>   [Resistance Matrix]&#160;&#160; Banded_matrix, Sparse_matrix, Full_matrix</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087957"></a>    [Bandwidth]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087958"></a>    [Row]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087959"></a>   [Inductance Matrix]&#160;&#160; Banded_matrix, Sparse_matrix, Full_matrix</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087960"></a>    [Bandwidth]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087961"></a>    [Row]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087962"></a>   [Capacitance Matrix]&#160;&#160; Banded_matrix, Sparse_matrix, Full_matrix</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087963"></a>    [Bandwidth]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087964"></a>    [Row]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087965"></a>   [End Model Data]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087966"></a>  [End Package Model&#8217;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087916"></a>  [END]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1087985"></a>The following shows the sections and keywords in the EBD file that are supported in Spectre:</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088018"></a>.pkg FILE</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088019"></a> FILE Header Section</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088020"></a>  [IBIS Ver]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088021"></a>  [Comment Char] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088022"></a>  [File Name] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088023"></a>  [File Rev] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088024"></a>  [Date]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088025"></a>  [Source]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088026"></a>  [Notes]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088027"></a>  [Disclaimer]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088028"></a>  [Copyright]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088067"></a> [Begin Board Description]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088074"></a>  [Manufacturer]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088081"></a>  [Number of Pins]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088088"></a>  [Pin List]&#160;&#160;               signal_name</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088095"></a>  [Path Description]&#160;&#160;       Len, L, R, C, Fork, Endfork, Pin, Node</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088102"></a>  [Reference Designator Map]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088109"></a>  [End Board Description]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1088116"></a> [END]</pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap4_re_Global_Nodes_global.html" id="prev" title="Global Nodes (global)">Global Nodes (global)</a></em></b><b><em><a href="chap4_re_Initial_Conditions_ic.html" id="nex" title="Initial Conditions (ic)">Initial Conditions (ic)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

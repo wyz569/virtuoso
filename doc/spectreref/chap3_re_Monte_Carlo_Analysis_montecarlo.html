@@ -1,0 +1,1596 @@
+
+<html><head><title>Monte Carlo Analysis (montecarlo)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rrohit" />
+<meta name="CreateDate" content="2023-08-31" />
+<meta name="CreateTime" content="1693484706" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides reference information on the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Monte Carlo Analysis (montecarlo)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-31" />
+<meta name="ModifiedTime" content="1693484706" />
+<meta name="NextFile" content="chap3_re_Noise_Analysis_noise.html" />
+<meta name="Order" content="2" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3_re_Load_Pull_Analysis_loadpull.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Reference -- Monte Carlo Analysis (montecarlo)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectrerefTOC.html">Contents</a></li><li><a class="prev" href="chap3_re_Load_Pull_Analysis_loadpull.html" title="Load Pull Analysis (loadpull)">Load Pull Analysis (loadpull)</a></li><li style="float: right;"><a class="viewPrint" href="spectreref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_re_Noise_Analysis_noise.html" title="Noise Analysis (noise)">Noise Analysis (noise)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Reference<br />Product Version 23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Monte_Carlo_Analysis_montecarlo" title="Monte Carlo Analysis (montecarlo)"></a><h3>
+<a id="pgfId-1692755"></a>Monte Carlo Analysis (montecarlo)<a id="marker-1692754"></a></h3>
+<h4>
+<a id="pgfId-1692757"></a>Description<a id="marker-1692756"></a></h4>
+
+<p>
+<a id="pgfId-1692758"></a>The <code>montecarlo</code> analysis is a swept analysis with associated child analyses similar to the sweep analysis (see <code>spectre -h sweep</code>.) The Monte Carlo analysis refers to &quot;statistics blocks&quot; where statistical distributions and correlations of netlist parameters are specified (detailed information about statistics blocks is given below). For each iteration of the Monte Carlo analysis, new pseudo-random values are generated for the specified netlist parameters (according to their specified distributions) and the list of child analyses are then executed. </p>
+<p>
+<a id="pgfId-1692759"></a>Expressions are associated with the child analyses. These expressions, which you constructed as scalar calculator expressions during Monte Carlo analysis setup, can be used to measure circuit metrics, such as the slew-rate of an op-amp. For each iteration during a Monte Carlo analysis, the expression results vary with the netlist parameters. Therefore, Monte Carlo analysis allows you to examine and predict circuit performance variations, which affect yield. </p>
+<p>
+<a id="pgfId-1692760"></a> </p>
+<p>
+<a id="pgfId-1692761"></a>The statistics blocks allow you to specify batch-to-batch (process) and per-instance (mismatch) variations for netlist parameters. These statistically-varying netlist parameters can be referenced by models&#160;&#160;or instances in the main netlist and may represent IC manufacturing process variation or component variations for board-level designs. The following description gives a simplified example of the Monte Carlo analysis flow: </p>
+<p>
+<a id="pgfId-1692762"></a>perform nominal run if requested </p>
+<p>
+<a id="pgfId-1692763"></a>if any errors in nominal run then stop </p>
+<p>
+<a id="pgfId-1692764"></a>foreach Monte Carlo iteration { </p>
+<p>
+<a id="pgfId-1692765"></a>  if process variations specified then </p>
+<p>
+<a id="pgfId-1692766"></a>    apply <code>process</code> variation to parameters </p>
+<p>
+<a id="pgfId-1692767"></a>  if mismatch variations specified then </p>
+<p>
+<a id="pgfId-1692768"></a>    foreach subcircuit instance { </p>
+<p>
+<a id="pgfId-1692769"></a>       apply <code>mismatch</code> variation to parameters</p>
+<p>
+<a id="pgfId-1692770"></a>    } </p>
+<p>
+<a id="pgfId-1692771"></a>  foreach child analysis { </p>
+<p>
+<a id="pgfId-1692772"></a>    run child analysis </p>
+<p>
+<a id="pgfId-1692773"></a>      evaluate expressions</p>
+<p>
+<a id="pgfId-1692774"></a>  } </p>
+<p>
+<a id="pgfId-1692775"></a>} </p>
+
+<h4>
+<a id="pgfId-1692777"></a>Syntax<a id="marker-1692776"></a></h4>
+<a id="pgfId-1692778"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name montecarlo parameter=<code><em>value ...</em></code></pre>
+<h4>
+<a id="pgfId-1692779"></a>Parameters</h4>
+
+<p>
+<a id="pgfId-1692997"></a>Analysis parameters</p>
+<table class="webflareTable" id="#id1692780">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1692782"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692788"></a><code>numruns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692790"></a><code>100</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692792"></a>Number of Monte Carlo iterations to perform (does not include the nominal run).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692794"></a><code>firstrun</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692796"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692798"></a>Starting iteration number.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692800"></a><code>runpoints</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692802"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692804"></a>Specifies a set of iteration indices to be simulated. Indices can be any positive integer values or values defined by a range function.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692806"></a><code>saverunpointsfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692808"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692810"></a>Save file that contains the actual run points (iteration indices).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692812"></a><code>loadrunpointsfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692814"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692816"></a>Load file that contains the run points (iteration indices) to be simulated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692818"></a><code>variations</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692820"></a><code>process</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692822"></a>Level of statistical variation to apply. Possible values are process, mismatch and all.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692824"></a><code>sampling</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692826"></a><code>standard</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692828"></a>Method of statistical sampling to apply. Possible values are standard, lds and lhs.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692830"></a><code>numbins</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692832"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692834"></a>Number of bins for latin-hypercube (lhs). The number is checked against numruns + firstrun - 1, and Max( numbins, numruns + firstrun -1 ) is used.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692836"></a><code>seed</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692838"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692840"></a>Optional starting seed for random number generator.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692842"></a><code>config</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692844"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692846"></a>Yaml file to set up Monte-Carlo configurations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692848"></a><code>scalarfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692850"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692852"></a>Output file that contains output scalar data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692854"></a><code>paramfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692856"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692858"></a>Output file that contains output scalar data labels.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692860"></a><code>dut</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692862"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692864"></a>If set, the specified subcircuit instance have process and mismatch variations applied and the unspecified instance only have process variations applied. All subcircuits instantiated under this instance also have process and mismatch enabled. By default, mismatch is applied to all subcircuit instances in the design and process is applied globally. This parameter allows the test-bench to change and not affect the variations seen by the actual design.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692866"></a><code>ignore</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692868"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692870"></a>If set, no variation is applied to specified subcircuit instances. In addition, all subcircuits instantiated under this instance do not have variation enabled. By default, the mismatch is applied to all subcircuit instances in the design and the process is applied globally.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692872"></a><code>dutparams</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692874"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692876"></a>If set, only the specified statistical parameters have process and mismatch variations applied.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692878"></a><code>ignoreparams</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692880"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692882"></a>If set, the specified statistical parameters are excluded from applying process and mismatch variation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692884"></a><code>json</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692886"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692888"></a>Output JSON file saves the variations and analysis settings. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692890"></a><code>accuracyaware</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692892"></a><code>summary</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692894"></a>Specifies the mode of run-time monitoring and early-termination of a montecarlo simulation. In summary mode, the statistics of measurement is only listed after the Monte-Carlo analysis finishes. In iteration mode, the statistics is printed out after each step of Monte-Carlo analysis. In autostop mode, analysis is terminated based on the criteria specified by the options minmaxpairs, and smooththresh. Possible values are summary, iteration, autostop and none.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692896"></a><code>minmaxpairs</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692898"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692900"></a>Pairs of values that are used to specify the min and max of each measurement defined in ocean expressions. Simulation is terminated when the current iteration generates a measurement that resides outside the region of [min, max]. It is not necessary that the number of pairs equals the number of measurement. However, each defined pair has to be aligned with the corresponding ocean measurement. Extra number of pairs or measurement will be ignored when deciding upon early termination. This option is only active when accuracyaware=autostop.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692902"></a><code>smooththresh</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692904"></a><code>0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692906"></a>Specifies the smoothness threshold of an averaged ocean measurement. The average takes place within consecutive non-overlapping 200-iteration windows. Suggested value is 1e-4 for a reasonably converged signal-average. This test of smoothness is only active when accuracyaware=autostop.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692908"></a><code>method</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692910"></a><code>standard</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692912"></a>Method used to run montecarlo analysis. Standard is the regular montecarlo analysis with varying netlist parameters. VADE is variation aware design with directly varying device parameters. Possible values are standard and vade.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692914"></a><code>ignoremode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692916"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692918"></a>Controls the type of variation that is applied to ignored devices, when variations=all. By default, the variation seen by ignored devices depends on whether the &#39;dut&#39; or &#39;ignore&#39; parameter is used. If &#39;dut&#39; is used, then all non-DUT devices will get process variation. If the &#39;ignore&#39; parameter is used, then devices in the &#39;ignore&#39; list will use nominal values, i.e. have no variation. When ignoremode=nominal|process. the behavior is consistent for both &#39;dut&#39; and &#39;ignore&#39;. If ignoremode=nominal, then all devices in the &#39;ignore&#39; list or devices that are not in the &#39;dut&#39; list will use nominal values. If ignoremode=process, then all devices in the &#39;ignore&#39; list or devices that are not in the &#39;dut&#39; list will have process variation.. Possible values are default, nominal, process and both.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692920"></a><code>stdscale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692922"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692924"></a>Scale the standard deviation by the specified value. The default value is 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692926"></a><code>process_stdscale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692928"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692930"></a>Scale the standard deviation of process variation parameters by the specified value. The default value is 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692932"></a><code>mismatch_stdscale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692934"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692936"></a>Scale the standard deviation of mismatch variation parameters by the specified value. The default value is 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692938"></a><code>nscale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692940"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692942"></a>N Scale for both of process and mismatch variation parameters in uniform distribution by the specified value. The default value is 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692944"></a><code>process_nscale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692946"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692948"></a>N Scale for process variation parameters in uniform distribution by the specified value. The default value is 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692950"></a><code>mismatch_nscale</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692952"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692954"></a>N Scale for mismatch variation parameters in uniform distribution by the specified value. The default value is 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692956"></a><code>dist</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692958"></a><code>default</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692960"></a>Force all MonteCarlo random variation distributions to the specified type. Possible values are default, unif, gauss and gamma.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692962"></a><code>processdist</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692964"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692966"></a>Set all MonteCarlo process variation distributions to be the specified type. The default type is none. Possible values are none, unif, gauss, gamma, lnorm, sunif and lunif.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692968"></a><code>mismatchdist</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692970"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692972"></a>Set all MonteCarlo mismatch variation distributions to be the specified type. The default type is none. Possible values are none, unif, gauss, gamma, lnorm, sunif and lunif.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692974"></a><code>ignore_type</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692976"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692978"></a>If set, no variation is applied to specified types. Default is none. Possible values are none and memcell.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692980"></a><code>iteruseprevic</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692982"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692984"></a>Controls if MC iterations use previous IC solutions. Possible values are none and nominal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692986"></a><code>dumpvop</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692988"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692990"></a>Whether to dump process/mismatch with new order. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692992"></a><code>loadvariationfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692994"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1692996"></a>Load file in csv format that contains the variation (iteration indices) to be simulated.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693029"></a>Saving Process Parameters</p>
+<table class="webflareTable" id="#id1692998">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693000"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693006"></a><code>saveprocessparams</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693008"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693010"></a>Whether to save scalar data for statistically varying process parameters that are subject to process variation. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693012"></a><code>processscalarfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693014"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693016"></a>Output file that contains process parameter scalar data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693018"></a><code>processparamfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693020"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693022"></a>Output file that contains process parameter scalar data labels.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693024"></a><code>saveprocessvec</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693026"></a><code>[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693028"></a>Array of statistically varying process parameters (which are subject to process variation) to save as scalar data in <code>processscalarfile</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693079"></a>Saving Mismatch Parameters</p>
+<table class="webflareTable" id="#id1693030">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693032"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693038"></a><code>savemismatchparams</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693040"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693042"></a>Whether to save scalar data for statistically varying mismatch parameters that are subject to mismatch variation. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693044"></a><code>mismatchscalarfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693046"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693048"></a>Output file that contains mismatch parameter scalar data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693050"></a><code>mismatchparamfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693052"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693054"></a>Output file that contains mismatch parameter scalar data labels.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693056"></a><code>dumpdependency</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693058"></a><code>none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693060"></a>Whether to save a dependency map. Possible values are none and mismatch.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693062"></a><code>dependencymapfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693064"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693066"></a>Specify the name of the output file that contains a dependency map, which indicates the pairing of mismatch parameters and subcircuit instances.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693068"></a><code>dependencyscalarfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693070"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693072"></a>Output the random numbers that are used by mismatch parameters to a file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693074"></a><code>dependencyparamfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693076"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693078"></a>Output the mapping from mismatch parameters to corresponding subcircuit instances to a file.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693183"></a>Flags</p>
+<table class="webflareTable" id="#id1693080">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693082"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693088"></a><code>donominal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693090"></a><code>yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693092"></a>Whether to perform nominal run. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693094"></a><code>addnominalresults</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693096"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693098"></a>Whether to add nominal run results to Monte Carlo run results. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693100"></a><code>paramdumpmode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693102"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693104"></a>Whether to fully dump process/mismatch parameters information. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693106"></a><code>dumpseed</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693108"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693110"></a>Whether to dump seed parameters information. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693112"></a><code>nullmfactorcorrelation</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693114"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693116"></a>Controls the mismatch variation correlation of parallel devices defined by m-factor. If set to yes, devices are assumed to get uncorrelated mismatch variations. If set to no, devices are assumed to get the same mismatch variation. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693118"></a><code>appendsd</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693120"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693122"></a>Whether to append scalar data. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693124"></a><code>savefamilyplots</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693126"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693128"></a>Whether to save data for family plots. If yes, this could require considerable disk space. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693130"></a><code>savedatainseparatedir</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693132"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693134"></a>Whether to save data for an each plot in a separate directory. If yes, this could require considerable disk space. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693136"></a><code>evaluationmode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693138"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693140"></a>If set to yes, dump random numbers assigned to statistical parameters without running enclosed analyses. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693142"></a><code>diskstorage</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693144"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693146"></a>If set to yes, mismatch data is stored on disk instead of memory while running a montecarlo analysis. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693148"></a><code>wfseparation</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693150"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693152"></a>If set to yes, a separated directory by the name of <code>nom</code> is created for the nominal run and the directory names of individual iterations are simplified by removing the leading analysis names. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693154"></a><code>seedscramble</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693156"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693158"></a>If set to yes, a scrambling procedure is applied to the seed value to generate a <code>better</code> random number sequence in the sense of randomness. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693160"></a><code>distribute</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693162"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693164"></a>Distribute a Monte Carlo analysis to reduce simulation time by using more computer cores across multiple computers. Possible values are no, fork, rsh, ssh, lsf, sge, nc and auto.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693166"></a><code>numprocesses</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693168"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693170"></a>Specifies the number of jobs in distributed mode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693172"></a><code>usesamesequence</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693174"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693176"></a>If set to yes, the random number sequence is maintained for a seed, even if there is a non-empty dut/ignore list. Possible values are no and yes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693178"></a><code>rngversion</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693180"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693182"></a>The version of random number generator. Possible values are v151.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693203"></a>Annotation parameters</p>
+<table class="webflareTable" id="#id1693184">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693186"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693192"></a><code>annotate</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693194"></a><code>sweep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693196"></a>Degree of annotation. Possible values are no, title, sweep and status.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693198"></a><code>title</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693200"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693202"></a>Analysis title.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693229"></a>Fast Monte Carlo parameters (for all FMC methods)</p>
+<table class="webflareTable" id="#id1693204">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693206"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693212"></a><code>fmcmethod</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693214"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693216"></a>The FMC method to use. Possible values are worstsample and yieldest.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693218"></a><code>fmcbudget</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693220"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693222"></a>Budget number of actual simulations for FMC algorithm. For fmcmethod=worstsample, default is no such limit; for fmcmethod=yieldest, default is 3000..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693224"></a><code>fmcconfidence</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693226"></a><code>0.95</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693228"></a>Specify the confidence value in the range of (0.5, 1).</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693297"></a>Fast Monte Carlo parameters (only for Worst Sample method)</p>
+<table class="webflareTable" id="#id1693230">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693232"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693238"></a><code>fmcmode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693240"></a><code>fast</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693242"></a>The FMC mode to control the balance between performance and accuracy. Possible values are fast, conservative and explore.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693244"></a><code>fmcyield</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693246"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693248"></a>Specify the FMC yield target in the range of (0.5, 1).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693250"></a><code>fmcsigma</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693252"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693254"></a>Specify the FMC yield target by the sigma value.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693256"></a><code>fmcnumtailsamples</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693258"></a><code>10</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693260"></a>Request FMC to return the desired number of tail samples.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693262"></a><code>fmcinitruns</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693264"></a><code>50</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693266"></a>Specify number of runs in FMC initial group.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693268"></a><code>fmcnumfails</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693270"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693272"></a>Stop a certain spec during FMC process if its number of failed iterations reaches fmcnumfails. Default is 0, where FMC will not check the number of failed iterations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693274"></a><code>fmcmaxbufsize</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693276"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693278"></a>Specify FMC maximum buffer size.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693280"></a><code>fmcscalarfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693282"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693284"></a>Output file that contains FMC scalar data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693286"></a><code>fmcdumpcontribution</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693288"></a><code>0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693290"></a>dump device mismatch contribution lists into FMC log file, in descending order. Input a positive number to specify the number of devices to be dumped; input a negative number to dump all devices&#39; contributions; input 0 to turn off this feature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693292"></a><code>fmcmoments</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693294"></a><code>no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693296"></a>Instructs FMC to perform computation of moments of the measurement distribution. Possible values are no and yes.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693311"></a>Fast Monte Carlo parameters (only for Yield Estimation method)</p>
+<table class="webflareTable" id="#id1693298">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693300"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693306"></a><code>fmcsigmawidth</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693308"></a><code>0.5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1693310"></a>Specify the FMC yield estimation target width of confidence interval (in terms of sigma)..</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1693312"></a></p>
+<p>
+<a id="pgfId-1693313"></a>Detailed Description and Examples:</p>
+<p>
+<a id="pgfId-1693314"></a>sampling=[standard | lhs]</p>
+<p>
+<a id="pgfId-1693315"></a>Determines the sampling behavior. This parameter can be set to standard, the default value, or lhs. lhs invokes latin-hypercube (LHS) method, while standard defaults to the existing standard sampling behavior.</p>
+<p>
+<a id="pgfId-1693316"></a>numbins=value</p>
+<p>
+<a id="pgfId-1693317"></a>Controls the number of subdivisions used in the LHS method.</p>
+<p>
+<a id="pgfId-1693318"></a>If numbins is not specified, the number of subdivisions of the sampling space in LHS will be numruns + firstrun - 1. This parameter is active only when sampling is lhs. If numbins is set to a non-zero integer, the number of subdivisions will be assigned to the greater of the two values numbins or numruns + firstrun -1.</p>
+<p>
+<a id="pgfId-1693319"></a>numruns:(default=100)</p>
+<p>
+<a id="pgfId-1693320"></a>Specifies the number of Monte Carlo iterations to perform. The simulator performs a loop, running the specified child analyses, and evaluating any expressions numruns times. </p>
+<p>
+<a id="pgfId-1693321"></a>runpoints:(no default)</p>
+<p>
+<a id="pgfId-1693322"></a>Specifies the iteration indices to be simulated. Two types of settings are accepted: integers, and ranges. For example, runpoints=[10 range(15, 18) 20] is an acceptable setting, which is translated to perform the simulation of 10th, 15th, 16th, 17th, 18th, and 20th iterations.</p>
+<p>
+<a id="pgfId-1693323"></a>seed:(no default) </p>
+<p>
+<a id="pgfId-1693324"></a>Specifies the seed for the random number generator. By always specifying the same seed, you can reproduce a previous experiment. If you do not specify a seed, each time you run the analysis, you will get different results, that is, a different stream of pseudo-random numbers is generated.</p>
+<p>
+<a id="pgfId-1693325"></a>scalarfile=&quot;filename&quot;</p>
+<p>
+<a id="pgfId-1693326"></a>Allows you to specify an ASCII file in which scalar data (results of expressions that resolve to scalar values) is written. The data from this file can be read and plotted in histograms by ADE. For each iteration of each Monte Carlo child analyses, Spectre (through Artil) writes a line to this ASCII file, which contains scalar data (one scalar expression per column, for example, slewrate or bandwidth). The default name for this file is of the form name.mcdata, where name is the name of the Monte Carlo analysis instance. This file contains only the matrix of numeric values. If you are an ADE Monte Carlo user, you will be more familiar with the term <code>mcdata</code> file for the scalar file. Additionally, when the ADE Monte Carlo tool is used to generate the Spectre netlist file, Spectre merges the values of the statistically varying process parameters into this file that contains the scalar data (results of expressions). This means that ADE can later read the data and create scatter plots of the statistically varying process parameters against each other, or against the results of the expressions. In this way, you can see correlations between process parameter variations and circuit performance variations. This data merging occurs whenever the scalarfile and processscalarfile are written in the same directory.</p>
+<p>
+<a id="pgfId-1693327"></a>paramfile=&quot;filename&quot;</p>
+<p>
+<a id="pgfId-1693328"></a>Contains the titles, sweep variable values, and the full expression for each of the columns in the scalarfile. If you are an ADE Monte Carlo user, you will be more familiar with the term <code>mcparam</code> file for the paramfile. This file is created in the psf directory by default, unless you specify an alternative path with the file name.</p>
+<p>
+<a id="pgfId-1693329"></a>processscalarfile=&quot;filename&quot;</p>
+<p>
+<a id="pgfId-1693330"></a>If saveprocessparams is set to yes,&#160;&#160;the process (batch-to-batch) values of all statistically varying parameters are saved to this scalar data file. You can use saveprocessvec to filter out a subset of parameters in which case Spectre will save only the parameters specified in saveprocessvec to the processscalarfile). The processscalarfile is equivalent to scalarfile, except that the data in the scalarfile contains the values of the scalar expressions, whereas the data in processscalarfile contains the corresponding process parameter values. The default name for this file is of the form instname.process.mcdata, where instname is the name of the Monte Carlo analysis instance. This file is created in the psf directory by default, unless you specify an alternative path in the filename. You can load processscalarfile and processparamfile into the ADE statistical post-processing environment to plot/verify the process parameter distributions. If you later merge the processparamfile with the data in the scalarfile, you can then plot scalar expressions values&#160;&#160;against the corresponding process parameters by loading this merged file into the ADE statistical postprocessing environment. </p>
+<p>
+<a id="pgfId-1693331"></a>processparamfile=&quot;filename&quot;</p>
+<p>
+<a id="pgfId-1693332"></a>Contains the titles and sweep variable values for each of the columns in processscalarfile. These titles are the names of the process parameters.</p>
+<p>
+<a id="pgfId-1693333"></a> processparamfile is equivalent to the paramfile, except that paramfile contains the name of the expressions, whereas processparamfile contains the names of the process parameters. The default name for this file is of the form instname.process.mcparam, where instname is the name of the Monte Carlo analysis instance. This file is created in the psf directory by default, unless you specify an alternative location with filename. </p>
+<p>
+<a id="pgfId-1693334"></a>firstrun:(default=1)</p>
+<p>
+<a id="pgfId-1693335"></a>Specifies the index of the first iteration. If the first iteration is specified as some number n greater than one, then the beginning n-1 iterations are <code>skipped</code>, that is, the Monte Carlo analysis behaves as if the first n-1 iterations were run, but without actually performing the child analyses for these iterations. The subsequent stream of random numbers generated for the remaining iterations will be the same as if the first n-1 iterations were actually run. By specifying the first iteration number and the same value for seed, you can reproduce a particular run or sequence of runs from a previous experiment (for example, to examine an outlier case in more detail). </p>
+<p>
+<a id="pgfId-1693336"></a>variations={process,mismatch,all} (defaults to process). </p>
+<p>
+<a id="pgfId-1693337"></a>Determines whether to apply only process (batch-to-batch) variations, or only mismatch (per-instance) variations, or both. This parameter assumes that you have specified appropriate statistical distributions in the statistics block. You cannot request that mismatch variations be applied unless you have specified mismatch statistics in the statistics block. You cannot request that process variations be applied unless you have specified process statistics in the statistics block.</p>
+<p>
+<a id="pgfId-1693338"></a>saveprocessvec=[rshsp TOX ...]</p>
+<p>
+<a id="pgfId-1693339"></a>If saveprocessparams is set to yes, this parameter saves the process (batch-to-batch) values of only those parameters that are listed in saveprocessvec to the processparamfile. This acts as a filter so that you do not save all process parameters to the file. If you do not want to filter the list of process parameters, do not specify this parameter.</p>
+<p>
+<a id="pgfId-1693340"></a>donominal={yes,no}(defaults to yes).</p>
+<p>
+<a id="pgfId-1693341"></a>Controls whether Spectre should perform a nominal run before starting the main Monte Carlo loop of iterations. If any errors are encountered during the nominal run (for example, convergence problems, incorrect expressions, and so on) then Spectre issues an appropriate error message and immediately abandons the Monte Carlo analysis. </p>
+<p>
+<a id="pgfId-1693342"></a>If set to <code>no</code>, Spectre runs only the Monte Carlo iteration, and does not perform nominal analysis. If any errors are encountered during the Monte Carlo iterations, Spectre issues a warning and continues with the next iteration of the Monte Carlo loop. </p>
+<p>
+<a id="pgfId-1693343"></a>addnominalresults={yes,no} (defaults to no).</p>
+<p>
+<a id="pgfId-1693344"></a>Controls whether Spectre should append a nominal run results after the Monte Carlo run results in the data files.</p>
+<p>
+<a id="pgfId-1693345"></a>paramdumpmode={yes,no}(defaults to no).</p>
+<p>
+<a id="pgfId-1693346"></a>Controls whether Spectre should dump out each process/mismatch parameter distribution type, mean value, s.t.d. value, and correlation information into additional parameter files. The names for these files are instname.process_full.param, instname.mismatch_full.param, instname.process.correlate.param and instname.mismatch.correlate.param, where instname is the name of the Monte Carlo analysis instance.</p>
+<p>
+<a id="pgfId-1693347"></a>dumpseed={yes,no} (defaults to no).</p>
+<p>
+<a id="pgfId-1693348"></a>Controls whether Spectre should dump out seed parameter and iteration number into instname.seed file, where instname is the name of the Monte Carlo analysis instance.</p>
+<p>
+<a id="pgfId-1693349"></a>nullmfactorcorrelation={yes,no} (defaults to no).</p>
+<p>
+<a id="pgfId-1693350"></a>Controls whether Spectre should emulate a 0% correlation for mismatch devices with m-factor.</p>
+<p>
+<a id="pgfId-1693351"></a>appendsd={yes,no}(defaults to no). </p>
+<p>
+<a id="pgfId-1693352"></a>Specifies whether to append scalar data to an existing scalarfile, or to overwrite the existing scalarfile. This flag applies to both the scalar file and the processscalarfile. </p>
+<p>
+<a id="pgfId-1693353"></a>savefamilyplots={yes,no}. </p>
+<p>
+<a id="pgfId-1693354"></a>If set to <code>yes</code>, a data file (for example, psf) is saved for each analysis for each Monte Carlo iteration, in addition to the expressions scalar results that are saved to the ASCII scalar data file at the end of each iteration. Saving the full data files between runs enables the cloud plotting feature (overlaid waveforms) in ADE. It also enables you to define/evaluate new calculator measurements after the simulation has been run using the ViVA XL calculator. This feature could result in a huge amount of data being stored to disk, and it is advised that you use this feature with care. If you do decide to use this feature, it is advisable to keep the saved data to a minimum. If this parameter is set to <code>no</code>, data files are overwritten by each Monte Carlo iteration.</p>
+<p>
+<a id="pgfId-1693355"></a>savedatainseparatedir={yes,no}. </p>
+<p>
+<a id="pgfId-1693356"></a>If set to <code>yes</code>, a data file (for example, psf) is saved for each analysis for each Monte Carlo iteration in a separate directory, in addition to the expressions scalar results that are saved to the ASCII scalar data file at the end of each iteration. This feature can result in a huge amount of data being stored to the disk. Therefore, it is recommended that you use this feature with care and keep the saved data to a minimum. If this parameter is set to <code>no</code>, data files are overwritten by each Monte Carlo iteration.</p>
+<p>
+<a id="pgfId-1693357"></a>annotate={no,title,sweep,status}</p>
+<p>
+<a id="pgfId-1693358"></a>Specifies the degree of annotation. Use the maximum value of <code>status</code> to print a summary of the runs that did not converge, had problems evaluating expressions, and so on.</p>
+<p>
+<a id="pgfId-1693359"></a>Hints to Improve Performance:</p>
+<p>
+<a id="pgfId-1693360"></a>To get better run performance on small-sized designs, it is recommended to use the following settings:</p>
+<p>
+<a id="pgfId-1693361"></a>1) Set the global option &quot;narrate=compact&quot; to reduce the annotation messages</p>
+<p>
+<a id="pgfId-1693362"></a>2) Reduce the number of saved signals, or use the &quot;save=nooutput&quot; option</p>
+<p>
+<a id="pgfId-1693363"></a>3) Use just the measure statement to measure the simulation results</p>
+
+<h4>
+<a id="pgfId-1693364"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693365"></a>// do a Monte Carlo analysis, with process variations only</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693366"></a>// useful for looking at absolute performance spreads</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693367"></a>mc1 montecarlo variations=process seed=1234 numruns=200 {</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693368"></a>  dcop1 dc      // a child analysis</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693369"></a>  tran1 tran start=0 stop=1u    // another child analysis</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693370"></a>  // expression calculations are sent to the scalardata file</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693371"></a>  export slewrate=oceanEval(&quot;slewRate(v(&quot;vout&quot;),10n,t,30n,t,10,90 )&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693372"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693373"></a>// do a Monte Carlo analysis, with mismatch variations only</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693374"></a>// useful for detecting spreads in differential circuit </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693375"></a>// applications, etc. Do not perform a nominal run.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693376"></a>mc2 montecarlo donominal=no variations=mismatch seed=1234 numruns=200 {</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693377"></a>  dcop2 dc</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693378"></a>  tran2 tran start=0 stop=1u</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693379"></a>  export slewrate=oceanEval(&quot;slewRate(v(&quot;vout&quot;),10n,t,30n,t,10,90 )&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693380"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693381"></a>// do both together...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693382"></a>mc3 montecarlo saveprocessparams=yes variations=all numruns=200 {</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693383"></a>  dcop3 dc</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693384"></a>  tran3 tran start=0 stop=1u</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693385"></a>  export slewrate=oceanEval(&quot;slewRate(v(&quot;vout&quot;),10n,t,30n,t,10,90 )&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1693386"></a>}</pre>
+
+<p>
+<a id="pgfId-1693387"></a></p>
+<p>
+<a id="pgfId-1693388"></a>Specifying Parameter Distributions Using Statistics Blocks</p>
+<p>
+<a id="pgfId-1693389"></a>The <code>statistics blocks</code> are used to specify the input statistical variations for a Monte Carlo analysis. A statistics block may contain one or more <code>process</code> blocks (which represent batch-to-batch&#160;&#160;type variations) and/or one or more <code>mismatch</code> blocks (which represents on-chip or device mismatch variations), in which the distributions for parameters are specified. Statistics blocks may also contain one or more correlation statements to specify the correlations between specified process parameters, and/or to specify correlated device instances (for example matched pairs). Statistics blocks may also contain a <code>truncate</code> statement that may be used for generating truncated distributions. The distributions specified in the process block are sampled once per Monte Carlo iteration and are typically used to represent batch-to-batch or process variations, whereas the distributions specified in the mismatch block are sampled on a per subcircuit instance basis and are typically used to represent device-to-device mismatch for devices on the same chip. In the case where the same parameter is subject to both process and mismatch variations, the sampled process value becomes the mean for the mismatch random number generator for that particular parameter. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1693390"></a>Note: Multiple statistics blocks can exist, and in that case the blocks either accumulate or overlay. Typically, process variations, mismatch variations, and correlations between process parameters are specified in one statistics block. A second statistics block should be specified where actual device instance correlations are specified (that is, specification of matched pairs). </div>
+<p>
+<a id="pgfId-1693391"></a>Statistics blocks can be specified using combinations of the Spectre keywords statistics, process, mismatch, vary, truncate, and correlate. Braces {} are used to delimit blocks.</p>
+<p>
+<a id="pgfId-1693392"></a>The following example shows statistics blocks, which are discussed below along with syntax requirements. </p>
+<p>
+<a id="pgfId-1693393"></a>// define some netlist parameters to represent process parameters </p>
+<p>
+<a id="pgfId-1693394"></a>// such as sheet resistance and mismatch factors </p>
+<p>
+<a id="pgfId-1693395"></a>parameters rshsp=200 rshpi=5k rshpi_std=0.4K xisn=1 xisp=1 xxx=20000 uuu=200</p>
+<p>
+<a id="pgfId-1693396"></a>// define statistical variations, to be used </p>
+<p>
+<a id="pgfId-1693397"></a>// with a MonteCarlo analysis. </p>
+<p>
+<a id="pgfId-1693398"></a>statistics { </p>
+<p>
+<a id="pgfId-1693399"></a>    process {   // process: generate random number once per MC run </p>
+<p>
+<a id="pgfId-1693400"></a>        vary rshsp dist=gauss std=12 percent=yes </p>
+<p>
+<a id="pgfId-1693401"></a>        vary rshpi dist=gauss std=rshpi_std // rshpi_std is a parameter</p>
+<p>
+<a id="pgfId-1693402"></a>        vary xxx dist=lnorm std=12 </p>
+<p>
+<a id="pgfId-1693403"></a>        vary uuu dist=unif N=10 percent=yes </p>
+<p>
+<a id="pgfId-1693404"></a>    truncate tr=2.0 // +/- 2 sigma </p>
+<p>
+<a id="pgfId-1693405"></a>        ... </p>
+<p>
+<a id="pgfId-1693406"></a>    } </p>
+<p>
+<a id="pgfId-1693407"></a>    mismatch {  // mismatch: generate a random number per instance </p>
+<p>
+<a id="pgfId-1693408"></a>        vary rshsp dist=gauss std=2     </p>
+<p>
+<a id="pgfId-1693409"></a>        vary xisn dist=gauss std=0.5    </p>
+<p>
+<a id="pgfId-1693410"></a>        vary xisp dist=gauss std=0.5    </p>
+<p>
+<a id="pgfId-1693411"></a>        truncate tr=7.0 // +/- 7 sigma </p>
+<p>
+<a id="pgfId-1693412"></a>    } </p>
+<p>
+<a id="pgfId-1693413"></a>    // some process parameters are correlated </p>
+<p>
+<a id="pgfId-1693414"></a>    correlate param=[rshsp rshpi] cc=0.6 </p>
+<p>
+<a id="pgfId-1693415"></a>    // specify a global distribution truncation factor</p>
+<p>
+<a id="pgfId-1693416"></a>    truncate tr=6.0     // +/- 6 sigma </p>
+<p>
+<a id="pgfId-1693417"></a>}</p>
+<p>
+<a id="pgfId-1693418"></a>//&#160;&#160;a separate statistics block to specify correlated (i.e. matched) components </p>
+<p>
+<a id="pgfId-1693419"></a>// where m1 and m2 are subckt instances.</p>
+<p>
+<a id="pgfId-1693420"></a>statistics { </p>
+<p>
+<a id="pgfId-1693421"></a>    correlate dev=[m1 m2] param=[xisn xisp] cc=0.8 </p>
+<p>
+<a id="pgfId-1693422"></a>}</p>
+<p>
+<a id="pgfId-1693423"></a>//&#160;&#160;a separate statistics block to specify correlation with wildcard, where </p>
+<p>
+<a id="pgfId-1693424"></a>// <code>I*.M3</code> matches multiple subckt instances, for examples, I1.M3, I2.M3, I3.M3, etc..</p>
+<p>
+<a id="pgfId-1693425"></a>// Only the asterisk (*) is recognized as a valid wildcard symbol.</p>
+<p>
+<a id="pgfId-1693426"></a>statistics { </p>
+<p>
+<a id="pgfId-1693427"></a>    correlate dev=[ I*.M3 ] param=[misx mixy] cc=0.8 </p>
+<p>
+<a id="pgfId-1693428"></a>}</p>
+<p>
+<a id="pgfId-1693429"></a>Specifying Distributions </p>
+<p>
+<a id="pgfId-1693430"></a>Parameter variations are specified using the following syntax: </p>
+<p>
+<a id="pgfId-1693431"></a>vary PAR_NAME dist=&lt;type&gt; {std=&lt;value&gt; | N=&lt;value&gt;} {percent=yes|no} </p>
+<p>
+<a id="pgfId-1693432"></a>The following types of parameter distributions are available: gaussian, lognormal, uniform, set-uniform, and gamma, corresponding to the keywords <code>gauss</code>, <code>lnorm</code>, <code>unif</code>, &#39;sunif&#39;, and &#39;gamma&#39; respectively. For the <code>gauss</code>, the <code>lnorm</code> and the &#39;gamma&#39; distributions, you specify a standard deviation using the <code>std</code> keyword. </p>
+<p>
+<a id="pgfId-1693433"></a>Gaussian Distribution</p>
+<p>
+<a id="pgfId-1693434"></a>For the gaussian distribution, the mean value is taken as the current value of the parameter being varied, giving a distribution denoted by Normal (mean,std). Using the example above, parameter rshpi is varied with a distribution of Normal (5k,0.4k) </p>
+<p>
+<a id="pgfId-1693435"></a>Lognormal Distribution</p>
+<p>
+<a id="pgfId-1693436"></a>The lognormal distribution is denoted by: </p>
+<p>
+<a id="pgfId-1693437"></a>log(x) = Normal( log(mean), std ) </p>
+<p>
+<a id="pgfId-1693438"></a>where, x is the parameter being specified as having a lognormal distribution. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1693439"></a>Note: log() is the natural logarithm function. For parameter xxx in the example, the process variation is according to: </div>
+<p>
+<a id="pgfId-1693440"></a>log(xxx) = Normal( log(20000), 12 ) </p>
+<p>
+<a id="pgfId-1693441"></a>Uniform Distribution</p>
+<p>
+<a id="pgfId-1693442"></a>The uniform distribution for parameter x is generated according to: </p>
+<p>
+<a id="pgfId-1693443"></a>x = unif(mean-N, mean+N) </p>
+<p>
+<a id="pgfId-1693444"></a>The mean value is the nominal value of the parameter x, and the parameter is varied about the mean with a range of +/- N. The standard deviation is not specified for the uniform distribution, but its value can be calculated by using the formula: std=N/sqrt(3). </p>
+<p>
+<a id="pgfId-1693445"></a>Set-uniform Distribution</p>
+<p>
+<a id="pgfId-1693446"></a>Set-uniform, or discrete uniform, distribution is specified by a finite set of values values=[val1 val2 ... valN] that are equally likely to be observed. Values can be provided one by one, or using range(&lt;min&gt;, &lt;max&gt;, &lt;step&gt;), or using expression &lt;min&gt;:&lt;step&gt;:&lt;max&gt;. </p>
+<p>
+<a id="pgfId-1693447"></a>Gamma Distribution</p>
+<p>
+<a id="pgfId-1693448"></a>Similar to Gauss distribution, the mean value for gamma distribution is the current value of the parameter being varied, giving a distribution denoted by Gamma(mean,std). The correponding shape parameter &#39;alpha&#39; and scale parameter &#39;beta&#39; are:</p>
+<p>
+<a id="pgfId-1693449"></a>alpha = ( mean / std )^2 </p>
+<p>
+<a id="pgfId-1693450"></a>beta&#160;&#160;= ( std )^2 / mean. </p>
+<p>
+<a id="pgfId-1693451"></a>Notice: truncation factor is not available for gamma distribution, and it will always be complete gamma distribution for any set value of truncation factor. </p>
+<p>
+<a id="pgfId-1693452"></a>Values as Percentages</p>
+<p>
+<a id="pgfId-1693453"></a>The <code>percent</code> flag indicates whether the standard deviation <code>std</code> or uniform range <code>N</code> are specified in absolute terms (<code>percent=no</code>) or as a percentage of the mean value (<code>percent=yes</code>). For parameter <code>uuu</code> in the example above, the mean value is 200, and the variation is 200 +/- 10%*(200) i.e. 200 +/- 20. For parameter <code>rshsp</code>, the process variation is given by Normal (200, 12%*(200)), that is, Normal (200, 24). It is recommended that you do not use <code>percent=yes</code> with the lognormal distribution.</p>
+<p>
+<a id="pgfId-1693454"></a>Process and Mismatch Variations</p>
+<p>
+<a id="pgfId-1693455"></a>The statistics specified in a process block are applied at global scope, and the distributions are sampled once per Monte Carlo iteration. The statistics specified in a mismatch block are applied on a per-subcircuit instance basis, and are sampled once per subcircuit instance. If you place model cards and/or device instances in subcircuits, and add a mismatch block to your statistics block you can effectively model device-to-device mismatch for these devices/models. </p>
+<p>
+<a id="pgfId-1693456"></a>Correlation Statements</p>
+<p>
+<a id="pgfId-1693457"></a>There are two types of correlation statements that you can use: process parameter correlation statements and instance correlation statements. </p>
+<p>
+<a id="pgfId-1693458"></a>Process Parameter Correlation</p>
+<p>
+<a id="pgfId-1693459"></a>The syntax of the process parameter correlation statement is: </p>
+<p>
+<a id="pgfId-1693460"></a>correlate param=[list of parameters] cc=&lt;value&gt;</p>
+<p>
+<a id="pgfId-1693461"></a>This allows you to specify a correlation coefficient between multiple process parameters. You can specify multiple process parameter correlation statements in a statistics block to build a matrix of process parameter correlations. During a Monte Carlo analysis, process parameter values are randomly generated according to the specified distributions and correlations. </p>
+<p>
+<a id="pgfId-1693462"></a>Mismatch Correlation (Matched Devices)</p>
+<p>
+<a id="pgfId-1693463"></a>The syntax of the instance or mismatch correlation statements are:</p>
+<p>
+<a id="pgfId-1693464"></a>correlate dev=[list of subcircuit instances] {param=[list of parameters]} cc=&lt;value&gt;</p>
+<p>
+<a id="pgfId-1693465"></a>correlate dev=[&lt;wildcard expr&gt;] {param=[list of parameters]} cc=&lt;value&gt;</p>
+<p>
+<a id="pgfId-1693466"></a>where, the device or subcircuit instances to be matched are listed in the list of subcircuit instances or regular expressions with asterisk (*), and the list of parameters specifies exactly which parameters with mismatch variations are to be correlated. </p>
+<p>
+<a id="pgfId-1693467"></a>The instance mismatch correlation statement is used to specify correlations for particular subcircuit instances. If a subcircuit contains a device, you can effectively use the instance correlation statements to specify that certain devices are correlated (that is, matched) and give the correlation coefficient. You can optionally specify exactly which parameters are to be correlated by giving a list of parameters (each of which must have had distributions specified for it in a mismatch block), or specify no parameter list, in which case all parameters with mismatch statistics specified are correlated with the given correlation coefficient. The correlation coefficients are specified in the &lt;value&gt; field and must be between +/- 1.0. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1693468"></a>Note: Correlation coefficients can be constants or expressions, as can <code>std</code> and <code>N</code> when specifying distributions. </div>
+<p>
+<a id="pgfId-1693469"></a>Truncation Factor:</p>
+<p>
+<a id="pgfId-1693470"></a>The default truncation factor for gaussian distributions (and for the gaussian distribution underlying the lognormal distribution) is 4.0 sigma. Randomly generated values that are outside the range of mean +/- 4.0 sigma are automatically rejected and regenerated until they fall inside the range. You can change the truncation factor using the <code>truncate</code> statement. The syntax is:</p>
+<p>
+<a id="pgfId-1693471"></a>truncate tr=&lt;value&gt; </p>
+<p>
+<a id="pgfId-1693472"></a>The following conditions should be considered while setting the truncate factor: The value of the truncation factor can be a constant or an expression. </p>
+<p>
+<a id="pgfId-1693473"></a>Parameter correlations can be affected by using small truncation factors. </p>
+<p>
+<a id="pgfId-1693474"></a>There are different truncate for process and mismatch blocks. If a truncate for process or mismatch block is not given, it will be set to the value of truncate in statistic block.</p>
+<p>
+<a id="pgfId-1693475"></a>Notice: truncation factor is not available for gamma distribution, and it will always be complete gamma distribution for any set value of truncation factor. </p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_re_Load_Pull_Analysis_loadpull.html" id="prev" title="Load Pull Analysis (loadpull)">Load Pull Analysis (loadpull)</a></em></b><b><em><a href="chap3_re_Noise_Analysis_noise.html" id="nex" title="Noise Analysis (noise)">Noise Analysis (noise)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
