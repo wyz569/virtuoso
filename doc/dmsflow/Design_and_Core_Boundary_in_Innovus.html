@@ -1,0 +1,355 @@
+
+<html><head><title>Design and Core Boundary in Innovus</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="leenap" />
+<meta name="CreateDate" content="2023-07-12" />
+<meta name="CreateTime" content="1689152523" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="" />
+<meta name="DocTitle" content="Mixed Signal (MS) Interoperability Guide" />
+<meta name="DocType" content="Methodology" />
+<meta name="FileTitle" content="Design and Core Boundary in Innovus" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="dmsflow" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-07-12" />
+<meta name="ModifiedTime" content="1689152523" />
+<meta name="NextFile" content="Static_Timing_Analysis_for_Mixed_Signal_Designs.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Digital IC Design," />
+<meta name="PrevFile" content="Using_NanoRoute_To_Route_a_Design_from_Virtuoso.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Innovus," />
+<meta name="Product" content="Virtuoso Layout Suite,Innovus," />
+<meta name="ProductFamily" content="Virtuoso Layout Suite,Innovus," />
+<meta name="ProductVersion" content="22.13" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Mixed Signal (MS) Interoperability Guide -- Design and Core Boundary in Innovus" />
+<meta name="Version" content="22.13" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="dmsflow221" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.20.001" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="dmsflowTOC.html">Contents</a></li><li><a class="prev" href="Using_NanoRoute_To_Route_a_Design_from_Virtuoso.html" title="Using_NanoRoute_To_Route_a_Design_from_Virtuoso">Using_NanoRoute_To_Route_a_Des ...</a></li><li style="float: right;"><a class="viewPrint" href="dmsflow.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Static_Timing_Analysis_for_Mixed_Signal_Designs.html" title="Static_Timing_Analysis_for_Mixed_Signal_Designs">Static_Timing_Analysis_for_Mix ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Mixed Signal (MS) Interoperability Guide<br />Product Version 22.13, Last Updated in July 2023</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <div style="width: 100%; font-size: 32px; text-align: left;               font-weight: bold;">17</div>
+<h1 style="margin: 4px 0 4px;"><span>Design and Core Boundary in Innovus</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p></p>
+<div class="toc-macro rbtoc1689152475380">
+<ul class="toc-indentation">
+<li><a href="#DesignandCoreBoundaryinInnovus-DesignandCoreBoundaryDefinitions">Design and Core Boundary Definitions</a></li>
+<li><a href="#DesignandCoreBoundaryinInnovus-MatchingtheOrientationofRowsandStandardCells">Matching the Orientation of Rows and Standard Cells</a></li>
+<li><a href="#DesignandCoreBoundaryinInnovus-HandlingGapsBetweenStandardCellsandtheDesignBoundary">Handling Gaps&#160;Between Standard Cells and the Design Boundary</a>
+<ul class="toc-indentation">
+<li><a href="#DesignandCoreBoundaryinInnovus-GapBetweentheLeftEdgeoftheLeftmostStandardCellandtheDesignBoundary">Gap Between the Left Edge of the Leftmost Standard Cell and the Design Boundary</a></li>
+<li><a href="#DesignandCoreBoundaryinInnovus-GapsBetweentheLeftandBottomEdgesofStandardCellsandtheDesignBoundary">Gaps Between the Left and Bottom Edges of Standard Cells and the Design Boundary</a></li>
+</ul>
+</li>
+<li><a href="#DesignandCoreBoundaryinInnovus-CreatingDouble-HeightRows">Creating Double-Height Rows</a></li>
+<li><a href="#DesignandCoreBoundaryinInnovus-CreatingRoutingTrackswithRespecttocoreBox">Creating Routing Tracks with Respect to coreBox</a></li>
+<li><a href="#DesignandCoreBoundaryinInnovus-ResizingthePRBoundaryObjectinVirtuoso">Resizing the PRBoundary Object in Virtuoso</a></li>
+</ul>
+</div>
+<h2 id="DesignandCoreBoundaryinInnovus-DesignandCoreBoundaryDefinitions"><span class="cad-head-number">17.1 </span>Design and Core Boundary Definitions</h2>
+
+<p>In Innovus, the design boundary or the IO Box is the actual design boundary. In contrast, the core boundary or the Core Box is where core rows are created and standard cells normally placed. Typically, for a digital block that has its floorplan implemented in Innovus, the IO Box and Core Box will be different in size. For example, the following command in Innovus creates a Core Box of width <code>18</code> and height <code>16.53</code> with a margin of <code>1</code> from the left and right edges of the Core Box to the left and right, respectively of the IO Box and a margin of <code>0.95</code> from the bottom and top edges of the Core Box to the bottom and top of the IO Box.</p>
+
+<p><code><span class="fontredcadence">floorPlan</span> -site CoreSite <span class="fontredcadence">-s </span>{20.0 18.43 1.0 0.95 1.0 0.95} -flip s</code></p>
+
+<p><br /></p>
+
+<p><code><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956169.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="CBox.png" data-linked-resource-id="425956169" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956169.png" width="640" /></span></code></p>
+
+<p>Within the Innovus database, the design boundary and core boundary are floorplan properties &#8211;&#160;database objects named as <code>ioBox</code> and <code>coreBox</code>. You can either measure the size of <code>ioBox</code> and <code>coreBox</code>&#160;in the layout window or use the <code><span class="fontredcadence">dbGet</span></code>&#160;command to query the <code>x</code> and <code>y</code> coordinates of the <code>ioBox</code> and <code>coreBox</code>.</p>
+
+<p><code>&gt; <span class="fontredcadence">dbGet</span> <span class="fontredcadence">top.fPlan.ioBox</span></code></p>
+
+<p><code>{0.0 0.0 20.0 18.43}</code></p>
+
+<p><code>&gt; <span class="fontredcadence">dbGet</span> <span class="fontredcadence">top.fPlan.coreBox</span></code></p>
+
+<p><code>{1.0 0.95 19.0 17.48}</code></p>
+
+<p><span>If the above cell view is saved and loaded into Virtuoso, SKILL code can be run in the Command Interface Window (CIW) to query the box properties.&#160;</span></p>
+
+<p>For example, when the following is entered in CIW,</p>
+
+<p><code>cv=geGetEditCellView()</code></p>
+
+<p><code>cv~&gt;prBoundary~&gt;bBox</code></p>
+
+<p>the system should return:</p>
+
+<p><code>((0.0 0.0)</code></p>
+
+<p><code>&#160; &#160; (20.0 18.43)</code></p>
+
+<p><code>)</code></p>
+
+<p>Enter the following in CIW:</p>
+
+<p><code>cv~&gt;prBoundary~&gt;ioBox</code></p>
+
+<p>The system should return:</p>
+
+<p><code>((0.0 0.0)</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;(20.0 18.43)</code></p>
+
+<p><code>)</code></p>
+
+<p><code>cv~&gt;prBoundary~&gt;coreBoxSpec</code></p>
+
+<p><code>&#160;(((1.0 0.95)</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160; (19.0 17.48)</code></p>
+
+<p><code>&#160;&#160;&#160; ) nil 0.0 &quot;evenRowSpacingType&quot; &quot;oddRowFlipType&quot;</code></p>
+
+<p><code>&#160;&#160;&#160; db:0x2844419a</code></p>
+
+<p><code>)</code></p>
+
+<p>In Virtuoso, the PRBoundary object helps Innovus to determine the design boundary. For a design whose floorplan is created in Virtuoso (i.e. PRBoundary object is drawn in Virtuoso), the Core Box and IO Box have the same shape and size when queried in Innovus.</p>
+
+<p>For example, assuming the same size of the PRBoundary object, when the following is entered in CIW,&#160;</p>
+
+<p><code>cv=geGetEditCellView()</code></p>
+
+<p><code>cv~&gt;prBoundary~&gt;bBox</code></p>
+
+<p>the system returns</p>
+
+<p><code>((0.0 0.0)</code></p>
+
+<p><code>&#160;&#160;&#160;&#160;(20.0 18.43)</code></p>
+
+<p><code>)</code></p>
+
+<p><code>cv~&gt;prBoundary~&gt;ioBox</code></p>
+
+<p><code>nil</code></p>
+
+<p><code>cv~&gt;prBoundary~&gt;coreBoxSpec</code></p>
+
+<p><code>nil</code></p>
+
+<p>When running the following queries in Innovus, the same result is obtained for <code>ioBox</code> and <code>coreBox</code>&#160;objects.</p>
+
+<p><code>&gt; <span class="fontredcadence">dbGet</span> <span class="fontredcadence">top.fPlan.ioBox</span></code></p>
+
+<p><code>{0.0 0.0 20.0 18.43}</code></p>
+
+<p><code>&gt; <span class="fontredcadence">dbGet</span> <span class="fontredcadence">top.fPlan.coreBox</span></code></p>
+
+<p><code>{0.0 0.0 20.0 18.43}</code></p>
+
+<p>The Core Box affects how the generated rows and routing tracks are physically located in the design. The details of how Innovus creates the rows and tracks will be described in detail in the next few sections.</p>
+<h2 id="DesignandCoreBoundaryinInnovus-MatchingtheOrientationofRowsandStandardCells"><span class="cad-head-number">17.2 </span>Matching the Orientation of Rows and Standard Cells</h2>
+
+<p>Consider a design that is initially implemented in Virtuoso and has no rows. When this cell view is loaded into Innovus, Innovus will automatically add rows to it. By default, the rows added by Innovus have the first and subsequent odd rows flipped vertically. Rows are created by Innovus for placement-type applications, such as buffer insertion for making an ECO change.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956192.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="designwithnorows.png" data-linked-resource-id="425956192" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956192.png" width="640" /></span></p>
+
+<p>The above design is mainly a top-level design with only macros. In such designs, it does not matter whether the first or second row is flipped. However, for a design filled with only standard cells but no rows created in Virtuoso, some additional steps may be needed in Innovus to ensure that the orientation of the rows created by Innovus matches the orientations of the standard cells.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956191.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="designwithstcells.png" data-linked-resource-id="425956191" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956191.png" width="640" /></span></p>
+
+<p>In the above case, the standard cells are manually placed in Virtuoso in a way that the cells of the first and subsequent odd rows are not vertically flipped while those in the second and subsequent even rows are vertically flipped. As by default, the first and other odd rows inserted by Innovus during <code>init_design</code> are vertically flipped, a row versus cell orientation issue arises. If at a later stage, a ECO change needs to be done to insert a buffer, this buffer will have a different orientation from the other cells in the same row.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956190.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="newbuffer.png" data-linked-resource-id="425956190" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956190.png" width="500" /></span></p>
+
+<p>Cell orientation issues can be detected by running the <code><span class="fontredcadence">checkPlace</span></code>&#160;command at the Innovus command prompt. Alternatively, you can use the Check Placement form, which can accessed from the <em>Place</em> menu. If <code><span class="fontredcadence">routeDesign</span></code>&#160;is run to perform routing, it will also call <code><span class="fontredcadence">checkPlace</span></code>&#160;before routing and generate violation markers where applicable.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956189.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="checkplacement.png" data-linked-resource-id="425956189" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956189.png" width="640" /></span></p>
+
+<p>When cell orientation issues are detected, you can rectify the issue by switching the orientation of the cells using the steps mentioned in the &quot;<em>Switching the Orientation of the Standard Rows</em>&quot; section in the&#160;<a href="Placing_Standard-cell-based_Designs_from_Virtuoso.html">Placing Standard-cell-based Designs from Virtuoso</a> chapter.</p>
+
+<p>Another way to remedy the issue is as follows:</p>
+
+<p><span class="fontredcadence"><ol><li>Delete all rows. At the Innovus command prompt, enter:<br /><code>deleteRow -all</code></li><li>Find out the site property of the standard cell. In the layout window, select the standard cell and at the Innovus command prompt, enter:<br /><code>dbGet selected.cell.site.name<br /></code>Let us assume the systems returns:<br /><code>CoreSite</code></li><li>Get information on the Core Box coordinates. At the Innovus command prompt, enter:<br /><code>dbGet top.fplan.coreBox<br /></code>Let us assume the systems returns:<br /><code>{0 0 9.2 9.2}</code></li><li>Create rows with the correct orientation in the design area. Assuming all the standard cells in the design have the same site name, enter the following command at the Innovus command prompt:<br /><code>createRow -site CoreSite -area 0 0 9.2 9.2</code></li></ol></span></p>
+<p style="margin-left: 30.0px;"><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956188.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="gapleft.png" data-linked-resource-id="425956188" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956188.png" width="640" /></span></p>
+<h2 id="DesignandCoreBoundaryinInnovus-HandlingGapsBetweenStandardCellsandtheDesignBoundary"><span class="cad-head-number">17.3 </span>Handling Gaps&#160;Between Standard Cells and the Design Boundary</h2>
+<h3 id="DesignandCoreBoundaryinInnovus-GapBetweentheLeftEdgeoftheLeftmostStandardCellandtheDesignBoundary"><span class="cad-head-number">17.3.1 </span>Gap Between the Left Edge of the Leftmost Standard Cell and the Design Boundary</h3>
+
+<p>In the case shown below, not only do the manually placed standard cells have a different orientation from the rows created during <code>init_design</code>, there is also a gap between the left edge of the leftmost standard cell and the design boundary. However, having rows created with the correct orientation may not be enough if the cells are not snapping to the placement grid formed by the site width.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956187.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="gapleft2.png" data-linked-resource-id="425956187" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956187.png" width="640" /></span></p>
+
+<p>If <code><span class="fontredcadence">checkPlace</span></code> is run, the tool will report <em>Cell Orientation</em> and <em>Off Placement Grid</em> violations.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956186.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="offPlacement.png" data-linked-resource-id="425956186" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956186.png" width="640" /></span></p>
+
+<p>To understand what an&#160;<em>Off Placement Grid</em> violation means, select the <em>Visibility</em>&#160;check box of the <em>Placement</em> grid or <em>Row Pattern</em>&#160;option on the control panel in the main layout window. This will display the placement grid so that you can easily view whether a cell is placed on or off the grid.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956185.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="placementgrid.png" data-linked-resource-id="425956185" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956185.png" width="640" /></span></p>
+
+<p>Such situations may cause issues at later stages of the implementation flow. For example, suppose a buffer is added by Innovus to make an ECO change. The inserted buffer will snap to the placement grid. In such a case, if you prompt Innovus to insert filler cells automatically to fill up the empty gaps in the design, Innovus will fail to fill up all the empty gaps because the gap between the new buffer and filler cells and other preexisting cells are not integral multiples of the site width.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956184.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="emptygaps.png" data-linked-resource-id="425956184" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956184.png" width="500" /></span></p>
+
+<p>To understand how the problem can be resolved, you must understand the spatial relationship between standard rows and the Core Box. The following diagrams explain how the left edge of the rows are determined by the tool. The <code>-area</code>&#160;option of the <code><span class="fontredcadence">createRow</span></code>&#160;command is used to specify the <code>x</code>&#160;and <code>y</code> coordinates of the lower-left and upper-right corners of the area to be filled with rows.</p>
+
+<p>Assume that the <code>x</code> and <code>y</code> coordinates of the lower-left corner of the <code>coreBox</code>&#160;(and <code>ioBox</code> object) is <code>0,0</code>&#160;and the site width is <code>0.02</code>. Now:</p>
+<ul><li>If the <code>x</code> coordinate of the lower-left corner of the <code>-area</code> option is specified as&#160;<code>0</code>, the first site created will start its lower-left corner at <code>0,0</code>.</li><li>If the lower-left corner of the <code>-area</code> option is specified as <code>0.03</code>, the first site created will have its lower-left corner located at <code>0.04,0</code>. Basically, the tool requires that the space between the Core Box and the left edge of the first site must be an integral multiple of the site width.</li></ul>
+<p><span class="fontredcadence">
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956183.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="cBoxNRowB.PNG" data-linked-resource-id="425956183" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956183.png" width="500" /></span></p>
+
+<p>Thus, a standard cell placed with its lower-left corner at the point&#160;<code>0.03,0</code>&#160;will be off the placement grid.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956182.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="offGridSCell.PNG" data-linked-resource-id="425956182" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956182.png" width="640" /></span></p>
+
+<p>To fix the situation, one solution is to adjust the <code>coreBox</code>&#160;object using the <code>changeFloorplan</code>&#160;command. The diagrams below show that an adjustment of either <code>0.01</code> or <code>0.03</code> to move the left boundary edge of the&#160;<code>coreBox</code> will resolve the off-grid issue.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956181.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="changeCoreLoc.PNG" data-linked-resource-id="425956181" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956181.png" width="640" /></span></p>
+<div class="confluence-information-macro confluence-information-macro-warning"><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>You may have to specify the <code>-noSnapToGrid</code>&#160;option with&#160;<code>changeFloorplan</code>&#160;so that the tool will honor the actual value specified in the <code>-coreToLeft</code>&#160;option.</p>
+</div>
+</div>
+</span></p>
+<h3 id="DesignandCoreBoundaryinInnovus-GapsBetweentheLeftandBottomEdgesofStandardCellsandtheDesignBoundary"><span class="cad-head-number">17.3.2 </span>Gaps Between the Left and Bottom Edges of Standard Cells and the Design Boundary</h3>
+
+<p>In the following case, gaps are present between the left and bottom edges of the standard cells and the design boundary. A new instance inserted by Innovus will not be aligned with other cells in the same row because Innovus will snap the new instance to the row.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956180.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="gapinedges.PNG" data-linked-resource-id="425956180" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956180.png" width="640" /></span></p>
+
+<p>The following diagram explains how the bottom edge of the first row is determined by the <code><span class="fontredcadence">createRow</span></code> command. Let us assume the <code>x</code> and <code>y</code> coordinates of the lower-left corner of <code>coreBox</code>&#160;is <code>0,0</code>, the row height is <code>2</code>, and the site width is <code>0.02</code>:</p>
+<ul><li>If the <code>y</code> coordinate of the lower-left corner of the <code>-area</code> option is specified as <code>0</code>, the bottom edge of the first row will be located at 0.</li><li>If the&#160;<code>y</code> coordinate of the lower-left corner of the <code>-area</code> option is specified as <code>0.4</code>, the bottom edge of the first row will be located at <code>2</code>. The bottom edge of the first row will always snap to the location such that the distance between it and the bottom edge of the core box is an integral multiple of the row height.</li></ul>
+<p><span class="fontredcadence">
+<p>Thus, a standard cell placed with its lower-left corner at the point&#160;<code>0.03,0</code>&#160;will be off the placement grid.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956179.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="rowHeight.PNG" data-linked-resource-id="425956179" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" height="237" src="attachments/425956161/425956179.png" width="640" /></span></p>
+
+<p>If the vertical gap between the bottom edge of the standard cells and the bottom edge of <code>coreBox</code> is not an integral multiple of the row height, the rows created will not fit with all the standard cells, irrespective of the value specified for the <code>-area</code> option. To make the rows fit, use the <code>changeFloorplan</code> command to readjust the&#160;<code>coreBox</code> before recreating the rows.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956178.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="changeCoreBox.PNG" data-linked-resource-id="425956178" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" height="395" src="attachments/425956161/425956178.png" width="640" /></span></p>
+
+<p>In the above case, a cell view with a PRBoundary object of <code>9.2x9.2</code> is loaded into Innovus.</p>
+
+<p>By running the <code>changeFloorplan</code> command with the <code>-coreToEdge</code> option in Innovus, the size of the Core Box is adjusted such that the boundary of the Core Box aligns with the boundary of the box that virtually bounds all the standard cells.&#160;</p>
+
+<p>The <code>-coreToEdge</code> option lets you specify the adjustment for the distances between the core box and io box on each side &#8211;&#160;left, bottom, right, and top.</p>
+<div class="confluence-information-macro confluence-information-macro-warning"><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>The<code> -noSnapToGrid</code> option for <code>changeFloorplan</code> is needed so that the tool will honor the actual value specified in the <code>-coreToEdge</code> option. Without <code>-noSnapToGrid</code>, the tool may make slight adjustments to the specified values so that the Core Box is aligned with the existing tracks. However, as the existing tracks are not likely to be valid and need to be recreated in the next step, the alignment to tracks is not needed.</p>
+</div>
+</div>
+</span></p>
+<h2 id="DesignandCoreBoundaryinInnovus-CreatingDouble-HeightRows"><span class="cad-head-number">17.4 </span>Creating Double-Height Rows</h2>
+
+<p>Suppose your design has double-height cells. Once the single-height rows created in Innovus are aligned with the cells, creation of double-height rows will be straightforward. The following diagram shows single-height rows with CoreSite as the site name and a site height of <code>2</code> populated in the design.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956162.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="SHRows.PNG" data-linked-resource-id="425956162" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" height="424" src="attachments/425956161/425956162.png" width="300" /></span></p>
+
+<p><code><span class="fontredcadence">createRow</span> -site CoreSite -area 0 0 9.2 20</code></p>
+
+<p>Assume these single height rows are for cells with a ground pin (e.g. VSS) at the bottom and a power pin (e.g. VDD) at the top. If double-height cells with <em>VSS-VDD-VSS</em> combination of P/G pins are used in the design, run the following command to create the corresponding standard cell rows.</p>
+
+<p><code><span class="fontredcadence">createRow</span> -site CoreSiteDouble -area 0 0 9.2 20</code></p>
+
+<p>The first&#160;<code>y</code> coordinate for the <code>-area</code> option will be <code>0</code> so that the first double-height row starts from the origin.</p>
+
+<p><span class="fontredcadence">
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956177.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="DHRows.PNG" data-linked-resource-id="425956177" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956177.png" width="640" /></span></p>
+
+<p>If double-height cells with <em>VDD-VSS-VDD</em> combination of P/G pins are used in the design,&#160;run the following command to create the corresponding standard cell rows.</p>
+
+<p><code>createRow -site CoreSiteDouble -area 0 1 9.2 20</code></p>
+
+<p>The first <code>y</code> coordinate for the <code>-area</code> option can be any value greater than <code>0</code> and less or equal to <code>2</code> so that the first double-height row starts from the bottom edge of the second single-height row.</p>
+</span></p>
+<h2 id="DesignandCoreBoundaryinInnovus-CreatingRoutingTrackswithRespecttocoreBox"><span class="cad-head-number">17.5 </span>Creating Routing Tracks with Respect to coreBox</h2>
+
+<p>The location of the lower-left corner of the Core Box&#160;affects not only row creation but also track creation.</p>
+
+<p>In the following diagram, the routing tracks are created with an offset of <code>0.02</code> um and a pitch of <code>0.05</code> um. The offset is measured from the left, vertical edge of the <code>coreBox</code> object to the first track. The initial rows and routing tracks are created by Innovus when the cell view is loaded (for example, with <code>init_design</code>).</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956176.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="routingTracks.PNG" data-linked-resource-id="425956176" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956176.png" width="400" /></span></p>
+
+<p>By default, the tool automatically calculates the offset and pitch values for best pin access results. It does the computation by examining the pin locations of all standard cells (abstracts) stored in the Innovus database. However, the offset value it determines is measured from the boundary of the standard cell. Note that typically, the technology TLEF or the MSOA PDK have recommended values for the offset and pitch values of the routing tracks for each metal routing layers. These offset values are also typically measured from the boundary of the standard cell.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956175.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="auto-offset.PNG" data-linked-resource-id="425956175" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956175.png" width="640" /></span></p>
+
+<p>Assume that the standard cell being placed has a site width of <code>0.05</code>&#160;and the calculated offset and pitch are <code>0</code> and <code>0.05</code> um, respectively. If <span style="">the cell&#160;</span>is placed in a way that <span style="">it</span> is aligned with the placement grid (formed by the site width), then the calculated offset and pitch value will result in the tracks being aligned with the I/O pins of the standard cell. The two examples below show standard cells being placed on the grid, resulting in their I/O pins aligning with the tracks.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956174.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="alignedTracks.PNG" data-linked-resource-id="425956174" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956174.png" width="640" /></span></p>
+
+<p>However, it is possible that the cells manually placed in Virtuoso are not aligned with the rows initially created by Innovus as shown in the beginning of this section. As a result, the tracks are not aligned with the centerline of the pins, which becomes a potential problem for routing.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956173.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="routingproblem.PNG" data-linked-resource-id="425956173" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956173.png" width="350" /></span></p>
+
+<p>To address such problems, follow the steps below to readjust the <code>coreBox</code>&#160;and recreate the tracks:</p>
+
+<p><code><span class="fontredcadence">changeFloorplan</span> <span class="fontredcadence">-coreToEdge</span> 0.03 0.06 0 0 <span class="fontredcadence">-noSnapToGrid</span></code></p>
+
+<p><code>add_tracks</code></p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956172.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="routingproblemAddressed.PNG" data-linked-resource-id="425956172" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956172.png" width="400" /></span></p>
+
+<p>Note that in some complex cases using multiple sets of standard cell libraries, you may have to specify the offset, pitch value, and the mask pattern.&#160;For example:</p>
+
+<p><code>add_tracks -offsets {M1 vert 0 M2 horiz 0.04 M2 0 ...} -mask_pattern {M1 1 2 M2 1 2 ...}</code></p>
+<h2 id="DesignandCoreBoundaryinInnovus-ResizingthePRBoundaryObjectinVirtuoso"><span class="cad-head-number">17.6 </span>Resizing the PRBoundary Object in Virtuoso</h2>
+
+<p>The problem mentioned in the previous section may also be resolved by opening the cell view in Virtuoso and resizing the PRBoundary object so that the left and bottom edges of the PRboundary object are aligned with the left and bottom edges of the bounding box for all the standard cells.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956171.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="resizePRBoundary.PNG" data-linked-resource-id="425956171" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425956161/425956171.png" width="640" /></span></p>
+
+<p>However, note that the above correction is not allowed in cases where gaps are preferred to enable the I/O pins and the standard cell edges to be spaced apart.</p>
+
+<p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425956161/425956170.png" data-linked-resource-container-id="425956161" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="gappreferred.PNG" data-linked-resource-id="425956170" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" height="250" src="attachments/425956161/425956170.png" /></span></p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Using_NanoRoute_To_Route_a_Design_from_Virtuoso.html" id="prev" title="Using_NanoRoute_To_Route_a_Design_from_Virtuoso">Using_NanoRoute_To_Route_a_Des ...</a></em></b><b><em><a href="Static_Timing_Analysis_for_Mixed_Signal_Designs.html" id="nex" title="Static_Timing_Analysis_for_Mixed_Signal_Designs">Static_Timing_Analysis_for_Mix ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

@@ -1,0 +1,236 @@
+
+<html><head><title>Netlist-Driven Mixed Signal Design Flow</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="leenap" />
+<meta name="CreateDate" content="2023-07-12" />
+<meta name="CreateTime" content="1689152511" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="" />
+<meta name="DocTitle" content="Mixed Signal (MS) Interoperability Guide" />
+<meta name="DocType" content="Methodology" />
+<meta name="FileTitle" content="Netlist-Driven Mixed Signal Design Flow" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="dmsflow" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-07-12" />
+<meta name="ModifiedTime" content="1689152511" />
+<meta name="NextFile" content="OpenAccess_Wiring_Terminology.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Digital IC Design," />
+<meta name="PrevFile" content="Quick_Abstract_Inference.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Innovus," />
+<meta name="Product" content="Virtuoso Layout Suite,Innovus," />
+<meta name="ProductFamily" content="Virtuoso Layout Suite,Innovus," />
+<meta name="ProductVersion" content="22.13" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Mixed Signal (MS) Interoperability Guide -- Netlist-Driven Mixed Signal Design Flow" />
+<meta name="Version" content="22.13" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="dmsflow221" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.20.001" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="dmsflowTOC.html">Contents</a></li><li><a class="prev" href="Quick_Abstract_Inference.html" title="Quick_Abstract_Inference">Quick_Abstract_Inference</a></li><li style="float: right;"><a class="viewPrint" href="dmsflow.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="OpenAccess_Wiring_Terminology.html" title="OpenAccess_Wiring_Terminology">OpenAccess_Wiring_Terminology</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Mixed Signal (MS) Interoperability Guide<br />Product Version 22.13, Last Updated in July 2023</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <div style="width: 100%; font-size: 32px; text-align: left;               font-weight: bold;">8</div>
+<h1 style="margin: 4px 0 4px;"><span>Netlist-Driven Mixed Signal Design Flow</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p></p>
+<div class="toc-macro rbtoc1689152473445">
+<ul class="toc-indentation">
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-Overview">Overview</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-TechnologyandIPLibraryPreparation">Technology and IP Library Preparation</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-VerilogNetlistCreation">Verilog Netlist Creation</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-Generalcomments">General comments</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-Floorplanning">Floorplanning&#160;</a>
+<ul class="toc-indentation">
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-FloorplanningofVerilogNetlistUsingBlackboxes">Floorplanning of Verilog Netlist Using Blackboxes</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-GenerateFromSourceforSoftAnalogBlockLayoutUsingVirtuoso">Generate From Source for Soft Analog Block Layout Using Virtuoso</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-LoadPhysicalViewtoMergeOptimizedPinLocationsandBlockBoundary">Load Physical View to Merge Optimized Pin Locations and Block Boundary</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-PhysicalImplementationofSoftAnalogBlocksUsingVirtuoso">Physical Implementation of Soft Analog Blocks Using Virtuoso</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-PhysicalImplementationofSoftDigitalBlocksUsingInnovus">Physical Implementation of Soft Digital Blocks Using Innovus</a></li>
+</ul>
+</li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-Top-levelAnalogNetandPowerRouting">Top-level Analog Net and Power Routing</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-Top-levelDesignImplementation">Top-level Design Implementation</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-FinalChipIntegrationandSign-Off">Final Chip Integration and Sign-Off</a></li>
+<li><a href="#NetlistDrivenMixedSignalDesignFlow-ECOFlows">ECO Flows</a></li>
+</ul>
+</div>
+<h2 id="NetlistDrivenMixedSignalDesignFlow-Overview"><span class="cad-head-number">8.1 </span>Overview</h2>
+
+<p>Most of the designs today are mixed signal in nature. A typical SoC may look like a pool of analog mixed signal IPs with a lot of embedded mixed signal logic into it.&#160;To enable mixed signal floorplanning, advanced interactive and automatic editing and pre-routing, chip assembly capabilities within the Innovus layout environment, Cadence has provided concurrent floorplanning flow using Virtuoso and Innovus. This allows you to plan, implement and connect blocks within a physical layout environment, eliminating the need for time-consuming and error-prone data abstractions and conversions.</p>
+
+<p>A typical netlist-driven mixed signal flow may look similar to the digital implementation flow with minor differences during floorplanning, top level specialty net routing, and ECO flows.</p>
+
+<p><span style="">&#160;</span></p>
+
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425956008.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="dmsfloorplanning.6.1.1.png" data-linked-resource-id="425956008" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425956008.png" /></span></p>
+<h2 id="NetlistDrivenMixedSignalDesignFlow-TechnologyandIPLibraryPreparation"><span class="cad-head-number">8.2 </span>Technology and IP Library Preparation</h2>
+<ul><li>During this stage, you are expected to merge the technology LEF data into its base PDK using the details provided in the&#160;<a href="Technology_Data_Preparation.html">Technology Data Preparation</a>&#160;chapter. The chapter also describes the dos and don&#39;ts that you need to observe to achieve smooth interoperability of design data between Virtuoso and Innovus platform.&#160;</li></ul><ul><li>Design library creation requires special care so that all the technology tree is visible to both the tools with proper reference and/or attach mechanism of design library preparation.</li><li>All the cells used in the design are provided to Innovus in the form of reference OpenAccess libraries instead of the standard LEF files.</li></ul><ul><li>Some environment settings need&#160;to be used before the start of Innovus and/or Virtuoso session.&#160;These are described in the&#160;<a href="Useful_Tips.html">Useful Tips</a>&#160;chapter.</li></ul><h2 id="NetlistDrivenMixedSignalDesignFlow-VerilogNetlistCreation"><span class="cad-head-number">8.3 </span>Verilog Netlist Creation</h2>
+
+<p>The Verilog netlist for the netlist-driven mixed signal flow is generally created through Synthesis. In this flow, the analog block is treated as a hard block during synthesis.</p>
+<h2 id="NetlistDrivenMixedSignalDesignFlow-Generalcomments"><span class="cad-head-number">8.4 </span>General comments</h2>
+<ul><li>Just as for any other design in Innovus, you need to prepare the timing and power intent definition files for more accurate and elaborate analysis within Innovus. Defining power intent through CPF is the recommended methodology.</li></ul><ul><li>Quick abstract inference can be use for fast changing blocks containing digital and analog. This eliminates the need to generate abstract views again and again. Innovus requires an abstract view for all blocks in the design. As custom blocks may only have a layout view during the implementation phase, this capability is useful for creating the required abstract automatically during the floorplanning phase of the design.</li></ul><ul><li>Static timing sign-off is fast becoming a requirement for mixed signal designs, which have timing paths between the digital and analog circuitry. Cadence offers an approach using a full timing model for mixed signal blocks, so exhaustive characterization of such blocks is not necessary.&#160;<span style=""> <br /> </span></li></ul><h2 id="NetlistDrivenMixedSignalDesignFlow-Floorplanning"><span class="cad-head-number">8.5 </span>Floorplanning&#160;</h2>
+
+<p>Netlist-driven mixed signal floorplanning flow can be divided into four stages depending on the maturity of the netlist.&#160;</p>
+
+<p><span class="fontredcadence">
+<p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425956004.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="Floorplanning_Legacy.PNG" data-linked-resource-id="425956004" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425956004.png" /></span>&#160;</p>
+</span></p>
+
+<p>Floorplanning starts very early in the design cycle, sometimes even before a formal Verilog netlist is available. During stage one, a very early chip area estimate is done with determination of a rough floorplan, power resource allocation and IP locations. General routing resource allocation can also be obtained.</p>
+
+<p>In stage two, chip designers can start populating the details of some of the blackboxes for which little or no information was available. During this stage, lot of iterations happen between top-level chip designer and the block implementation team where they negotiate between their implementation challenges.</p>
+
+<p>In stage three, designers move more towards obtaining a much more mature chip. Analog mixed signal blocks might also become available during this stage. Some of the challenges of not having correct abstract are also identified and closed during this stage. Block or IP designers start delivering their final block databases.</p>
+
+<p>In stage four, chip designers start their final sign-off checks. Keeping track of the ECO changes in the block and the top is a big challenge during this stage. Both the block and the top level implementation teams try to keep their blocks closed and clear all the sign-off checks.</p>
+
+<p>Innovus and Virtuoso provide a rich set of commands and GUI functions to floorplan your design interactively. There are also commands for creating an initial floorplan automatically, or, resizing a finished floorplan while keeping relative placement of objects.</p>
+<ul><li>For information on floorplan commands, see the&#160;<a href="../innovusTCR/Floorplan_Commands.html">Floorplan Commands</a>&#160;chapter, in the&#160;<em>Innovus Text Command Reference</em>.</li></ul><ul><li>For information on floorplan GUI, see the&#160;<a href="../innovusMR/Floorplan_Menu.html">Floorplan Menu</a>&#160;chapter, in the&#160;<em>Innovus Menu Reference</em>.</li></ul><h3 id="NetlistDrivenMixedSignalDesignFlow-FloorplanningofVerilogNetlistUsingBlackboxes"><span class="cad-head-number">8.5.1 </span>Floorplanning of Verilog Netlist Using Blackboxes</h3>
+
+<p>In Innovus, you can use the&#160; <code><span class="fontredcadence">specifyBlackBox</span></code> &#160;and&#160; <code><span class="fontredcadence">definePartition</span></code> &#160;commands to create early shapes for the hierarchical blocks where physical hierarchy has to be maintained. Follow with the&#160; <code><span class="fontredcadence">partition</span></code> &#160;and&#160; <code><span class="fontredcadence">savePartition</span></code> &#160;command sequence to save hierarchical black-boxes. You can run congestion and timing aware block and standard cell placement in Innovus.</p>
+
+<p>You can use <code><span class="fontredcadence">earlyGlobalRoute</span></code> results for block pin optimization. Manual editing might be required for pin optimization to address grid, side-constraints, and alignment. Power planning, power routing and early power analysis is possible using&#160; <code><span class="fontredcadence">sroute</span></code> &#160;and Voltus in Innovus. The full-chip floorplan OpenAccess database is saved from Innovus. Use the&#160; <code><span class="fontredcadence">savePartition</span> -<span class="fontredcadence">ptnLib</span> &lt;&gt; -<span class="fontredcadence">ptnView</span> &lt;&gt;</code> &#160;command to save hierarchical nested black boxes and partitions in the OpenAccess database.</p>
+<p align="left"><br /> <span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955999.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="dmsfloorplanning.6.1.3.png" data-linked-resource-id="425955999" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955999.png" /></span></p>
+<h4 id="NetlistDrivenMixedSignalDesignFlow-StepstoPerformtheFloorplanningofVerilogNetlist"><span class="cad-head-number">8.5.1.1 </span>Steps to Perform the Floorplanning of Verilog Netlist</h4>
+
+<p></p>
+<ol><li>Set&#160;<code><span class="fontredcadence">setOaxMode -updateMode</span></code>&#160;to&#160;<code>true</code>&#160;to ensure complete interoperability. Create a configuration file within Innovus and use the top-chip Verilog netlist with OpenAccess reference libraries. Use the following variables while floorplanning a Verilog netlist: The following settings are for a design named&#160;<code>dtmf</code>. The Verilog netlist name is dtmf_chip.v, and the top level cell name is&#160;<code>dtmf_chip</code>.&#160;<br /><ul><li><code><span class="fontredcadence">set</span> <span class="fontredcadence">lefDefOutVersion</span> {5.8}</code></li><li><code><span class="fontredcadence">set</span> <span class="fontredcadence">init_abstract_view</span> {abstract layout}</code></li><li><code><span class="fontredcadence">set</span> <span class="fontredcadence">init_layout_view</span> {layout}</code></li><li><code><span class="fontredcadence">set</span> <span class="fontredcadence">init_pwr_net</span> {vdd}</code></li><li><code><span class="fontredcadence">set</span> <span class="fontredcadence">init_gnd_net</span> {vss}</code></li><li><code><span class="fontredcadence">set init_oa_ref_lib</span> &quot;techlib reflib&quot;</code></li><li><code><span class="fontredcadence">set init_verilog</span> &quot;dtmf_chip.v&quot;</code></li></ul>
+<p><span class="fontredcadence"><ul><li><code>set init_design_netlisttype {Verilog}</code></li><li><code>set init_top_cell {dtmf_chip}</code></li></ul></span></p>
+
+<p><strong>Notes</strong></p>
+<ul><li>No LEF files are required. The library is read by Innovus using the OpenAccess technology and the standard cell library.</li><li>The&#160;<code><span class="fontredcadence">init_abstract_view</span></code>&#160;{<code><em>abstract layout</em></code>} variable uses the layout view to infer abstract information directly from the layout view using on-the-fly quick abstract inference utility within Innovus. This capability is used for fast-changing layout views of macros and this avoids the need of creating abstracts again.<br />
+<p><strong>From where is the tech information read?</strong></p>
+
+<p>If an OpenAccess design is read, the tech graph is analyzed from the design_lib that contains the cellview.</p>
+
+<p>If a Verilog netlist is read with OpenAccess reference libraries, then the first library in the OpenAccess ref lib list is used for the tech. This means that the order of the ref libs is important when a Verilog netlist is used.</p>
+</li><li>
+<p>Additionally, sites and vias can be read from other libraries even though they are mostly considered to be tech information.</p>
+</li></ul></li><li>After the design is imported in Innovus, use the&#160;<em>Partition-Specify Black Box</em>&#160;menu command to define a rectangular shape within the logical hierarchy.&#160;<br />Use Hierarchy Up/Down browser to reach to the logical hierarchy where you want to specify a black box. After the dark green box is obtained, you can make the box rectilinear according to your requirements and adjust it within the floorplan.<br /> <span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425956003.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="SpecifyBlackBox.PNG" data-linked-resource-id="425956003" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425956003.png" /></span></li><li>Use the&#160;<em>Partition-Specify Partition</em>&#160;or&#160;<em>Partition-Specify Black Box</em>&#160;menu command to define a rectangular shape within the logical hierarchy which is required to have a separate physical hierarchy. This could be a soft analog block as well as a digital soft IP. You can use Hierarchy Up/Down browser to reach to the logical hierarchy which you want to specify as a partition. After the orange box is obtained, you can make the box rectilinear according to the requirement and fit it into the floorplan.&#160;<br /> <span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425956002.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="SpecifyPartition.PNG" data-linked-resource-id="425956002" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425956002.png" /></span></li><li>Use the standard cell and block placer in Innovus to run timing-driven detailed placement of hard blocks and standard cells. You can use the&#160;<code>place_design</code>&#160;command with its default setting (you can change the default by using the&#160;<code><span class="fontredcadence">setPlaceMode</span></code>&#160;<span class="fontredcadence">cmd</span>) to obtain automatic timing-driven and congestion-driven placement.&#160;<br />Innovus provides the&#160; <code><span class="fontredcadence">setPlaceMode</span></code> &#160;<span class="fontredcadence">cmd</span> to control the local cell density, local utilization, in-place optimization, timing targets, and so on, to control and guide the placement optimizer. Iterate this step to get optimal placement of partitions and blackboxes specified in the design.&#160;</li><li>After completing detailed placement, you can use <code><span class="fontredcadence">earlyGlobalRoute</span></code> to get a quick estimate of the routing required. Using <code><span class="fontredcadence">earlyGlobalRoute</span></code> also helps in black box and partition pin assignment and pin layer and placement optimization.&#160;</li><li>Use the&#160;<code><span class="fontredcadence">savePartition</span></code>&#160;<code>-<span class="fontredcadence">ptnLib</span></code>&#160;<code>
+              <em>lib_name</em>
+            </code>&#160;<code>-<span class="fontredcadence">ptnView</span></code>&#160;<code>
+              <em>layout_view_name</em>
+            </code>&#160;command in the Innovus command prompt to save the partitions in OpenAccess database. This will create a new library if the library name specified is not an existing name in the&#160;<code>lib</code>.<code>def</code>&#160;list. Two new views are created for each partition and black boxes. The view name specified is used for creating the layout view that should be used for detailed physical implementation of the block. The other view that is created is&#160;<code>
+              <em>layout_view_name</em>
+            </code> <code>_abstract</code>, which is used as an abstract view of the block or partition or blackbox.&#160;<br />Whenever block shape, size or pin position or pin layer is changed, you should update this&#160;<code>_abstract</code>&#160;view because at the top level, the abstract view is referenced and used for detailed implementation. The&#160;<code><span class="fontredcadence">savePartition</span></code>&#160;<code>-<span class="fontredcadence">ptnLib</span></code>&#160;<code>
+              <em>lib_name&#160;</em>
+            </code> <code>-<span class="fontredcadence">ptnView</span></code>&#160;<code>
+              <em>layout_view_name</em>
+            </code>&#160;command will also create a new top level view by the name&#160;<code>
+              <em>layout_view_name</em>
+            </code>&#160;provided as input. This top level view should be used for top-level implementation of the chip.&#160;<br /> <strong>Note:&#160;</strong>Innovus allows blackboxes with a non<code>-R0</code>&#160;orientation to exist in the OpenAccess database. While reading a cellview that has a black box with non-<code>R0</code> orientation within Innovus, Innovus creates a geometric equivalent as the <code>R0</code> image of the blackbox within its virtual memory. While saving the design in the on-disk persistent OpenAccess database, Innovus will revert the black box instance to its original orientation.</li></ol>
+<p><br /></p>
+
+<p><br /></p>
+<div class="confluence-information-macro confluence-information-macro-warning"><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p><strong> <em>Do not change the black box orientation during the Innovus session.</em> </strong></p>
+</div>
+</div>
+<h3 id="NetlistDrivenMixedSignalDesignFlow-GenerateFromSourceforSoftAnalogBlockLayoutUsingVirtuoso"><span class="cad-head-number">8.5.2 </span>Generate From Source for Soft Analog Block Layout Using Virtuoso</h3>
+
+<p>This part of the flow takes place in the Virtuoso environment. In this step, the analog/mixed-signal block in the design will start to get implemented based on the schematic that has been captured for this part of the block.&#160;</p>
+<p align="left"><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955990.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="dmsfloorplanning.6.1.6.png" data-linked-resource-id="425955990" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955990.png" /></span></p>
+<ol><li>Run Virtuoso Layout-GXL/XL from the schematic window. The following GUI is displayed:<br /> <span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425956006.gif" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="layoutgxl1.gif" data-linked-resource-id="425956006" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425956006.gif" /></span> <br /> <br />Configure Physical Hierarchy (CPH) is a shared interface between VLS-XL and Floorplanner available in Virtuoso. You can launch Virtuoso Layout-XL to generate layout view from the given schematic view. This layout view generated for the given schematic uses CPH information to process the generation of layout information according to the given constraints.<br /> <span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955991.gif" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="cph.gif" data-linked-resource-id="425955991" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955991.gif" width="640" /></span></li><li>The soft analog block boundary is automatically generated and you can reshape it to match the design constraints. You can run Virtuoso Block Placer to place bigger blocks inside the analog design module. The feature of Block Placer and menu details are shown in the figure below.&#160;<br /> <span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955995.gif" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="block_placer.gif" data-linked-resource-id="425955995" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955995.gif" width="640" /></span></li><li>The layout generation of a given design is an iterative process. As soon as first cut layout view is ready, save the layout view in OpenAccess database.&#160;<br />For more information, see&#160;<em>Virtuoso Layout-XL User Guide.</em></li></ol>
+<p></p>
+
+<p> <em> <br /> </em></p>
+<h3 id="NetlistDrivenMixedSignalDesignFlow-LoadPhysicalViewtoMergeOptimizedPinLocationsandBlockBoundary"><span class="cad-head-number">8.5.3 </span>Load Physical View to Merge Optimized Pin Locations and Block Boundary</h3>
+
+<p>This step of the flow also takes place in the Virtuoso environment. The Load Physical View command in Virtuoso is used to merge the optimized pin location done in Virtuoso with the floorplan created in Innovus for this block.&#160;</p>
+<p align="left"><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955996.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="dmsfloorplanning.6.1.10.png" data-linked-resource-id="425955996" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955996.png" /></span></p>
+<ol><li>Open the layout view of the soft analog block generated during the floorplanning of Verilog netlist and then call Load Physical View (LPV) to merge the optimized pin locations, layer information, size and updated block boundary generated during Generate from Source. The LPV form is available in the Virtuoso Layout-XL/GXL window. In the&#160;<em>Choose Source Physical View</em>&#160;field, enter the view name generated during Generate From Source.&#160;<br /> <br /> <span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955993.gif" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/gif" data-linked-resource-default-alias="loadphysicalview.gif" data-linked-resource-id="425955993" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955993.gif" /></span></li><li>If Virtuoso driven Analog block is completed 50 percent or greater, then merge using the following steps:<ol><li>Open analog block in Virtuoso.</li><li>Set the status of critical pins to fixed.</li><li>Do Load Physical View from the Innovus -generated soft block view.</li><li>Create abstract to update the abstract view.</li></ol>If Virtuoso-driven analog block implementation is less than 50 percent done, then layout view can be merged using the following steps:<ol><li>Open Innovus generated soft block abstract.</li><li>Set the status of critical pins to fixed (if needed).</li><li>Load the physical view from the Virtuoso analog block.</li><li>Create abstract to update the abstract view for top level usage.</li></ol></li><li>Update the abstract view of the soft analog block to avoid Innovus to read the full detailed layout view of the block.</li></ol>
+<p></p>
+<h3 id="NetlistDrivenMixedSignalDesignFlow-PhysicalImplementationofSoftAnalogBlocksUsingVirtuoso"><span class="cad-head-number">8.5.4 </span>Physical Implementation of Soft Analog Blocks Using Virtuoso</h3>
+<p align="left"><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955992.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="dmsfloorplanning.6.1.12.png" data-linked-resource-id="425955992" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955992.png" /></span></p>
+
+<p>Since physical implementation of soft analog block is an iterative process, you can continue with further refinement of the analog block using Virtuoso Layout Editor. Keep the abstract view updated so that the top-level implementation place-and-route tool can get updated information about the analog blocks.</p>
+
+<p></p>
+<h3 id="NetlistDrivenMixedSignalDesignFlow-PhysicalImplementationofSoftDigitalBlocksUsingInnovus"><span class="cad-head-number">8.5.5 </span>Physical Implementation of Soft Digital Blocks Using Innovus</h3>
+<p align="left"><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/425955989/425955998.png" data-linked-resource-container-id="425955989" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="dmsfloorplanning.6.1.13.png" data-linked-resource-id="425955998" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/425955989/425955998.png" /></span></p>
+
+<p>Physical Implementation of soft digital IPs/blocks can continue in parallel with detailed standard cells and hard blocks within the soft digital block placement, pre-CTS timing closure, CTS, post-CTS timing closure, clock net routing, detailed signal routing, SI and voltage analysis, and so on. This is an iterative process and might take long time. The final delivery after this step is the DRC and LVS clean layout view with all sign-off checks completed.</p>
+
+<p>If the top-level STA flow requires block SPEFs, then run extraction and save the parasitic data back into OpenAccess. Keep the abstract view of the soft digital block updated and in-sync with the layout view to avoid any kind of layout mismatches at the top level-layout integration. The abstract view is required for the top-level integration because reading the detailed layout view and using that for place-and-route of the top level results in more run time. So, to avoid long run times, use the abstract view with boundary pins and metal blockages of the block.</p>
+
+<p></p>
+<h2 id="NetlistDrivenMixedSignalDesignFlow-Top-levelAnalogNetandPowerRouting"><span class="cad-head-number">8.6 </span>Top-level Analog Net and Power Routing</h2>
+
+<p>At this&#160;point, you will use the top-level view saved from Innovus by using the&#160;<code><span class="fontredcadence">savePartition</span></code>&#160;command which will have the abstract view referenced for the partitions and blackboxes at the top level of the design. To do this, follow these guidelines:</p>
+<ul><li>Perform analog net routing. Mark the nets as analog so that applications like Innovus can understand such instances/nets as analog and avoid optimization of such nets and instances. To route these nets, use the Virtuoso Space-Based Router (VSR).</li><li>You can perform power net routing as required by the design in Innovus. The <code><span class="fontredcadence">sroute</span></code> power router can be used for detailed power routing and follow-pin connections to the top-level power grid.</li><li>VSR, a specialty available in Virtuoso platform, can be used for top-level analog net routing for 45nm and below technologies. It can also be called from within Innovus using the&#160;<code>run_vsr</code>&#160;command.</li><li><span style="">With mixed signal routing constraints (DiffPair, MatchLength, NetClass and Shielding) interoperability possible, users are recommended to specify the IP and top-level routing constraints using recommended methods in either Virtuoso or Innovus platform. These constraints will be used throughout the implementation flow. For more information, refer to the&#160;<a href="Routing_Constraint_Interoperability.html">Routing Constraint Interoperability</a>&#160;chapter.</span> <span style=""> <br /> </span></li><li><span style="">PVS-CV tool can be used to validate the compliance of these constraints by net geometries. The tool can validate if the routing has been done manually or by automatic routers.</span></li><li>The top-level critical and analog net routing can be done and pushed down as blockages into the partitions and blocks using the Virtuoso platform. Power nets can also be pushed inside the blocks for the blocks to use it for closing the connection with internal power network of the block.&#160;<br />Similarly, power planning and power routing can be done in Innovus before running the&#160;<code><span class="fontredcadence">partition</span></code>&#160;command and then the <code><span class="fontredcadence">-pushDownSpecialNetAsObs</span></code> option can be used to push power routing and any signal routing or metal blockage as blockages inside the partitions created by Innovus.&#160;<br />Nanoroute, a digital router, should not be used for connecting the partially routed nets manually. If the partially routed sections of the net are left in the design and Nanoroute is run in either ECO or complete mode, multiple hanging routed segments are deleted by Nanoroute. To keep such partially manually routed sections of the signal routes, mark such nets as fixed.</li><li>The&#160;<code><span class="fontredcadence">saveDesign</span> </code> <code><span class="fontredcadence">-cellview</span></code>&#160;command should be used with&#160;<code><span class="fontredcadence">setOaxMode</span> </code> <code><span class="fontredcadence">-updateMode</span> true</code>&#160;at the start of the session in Innovus to save design data in OpenAccess database. The&#160;<code><span class="fontredcadence">setOaxMode</span></code>&#160;command should also be used at the start of the Innovus session. You cannot change the update mode settings in the middle of the session.&#160;<br />While saving from Virtuoso, do not change the top cell name used in Verilog netlist. Innovus always refers to the logical top cell name of the module used in the Verilog netlist for reading and writing the physical database.</li></ul><h2 id="NetlistDrivenMixedSignalDesignFlow-Top-levelDesignImplementation"><span class="cad-head-number">8.7 </span>Top-level Design Implementation</h2>
+
+<p>This portion of the flow is same as the digital foundation flow with all the mixed signal and analog blocks defined as blackboxes.</p>
+
+<p></p>
+<h2 id="NetlistDrivenMixedSignalDesignFlow-FinalChipIntegrationandSign-Off"><span class="cad-head-number">8.8 </span>Final Chip Integration and Sign-Off</h2>
+
+<p>In this step:</p>
+<ul><li>The&#160;<code><span class="fontredcadence">assembleDesign</span></code>&#160;command in Innovus has been enhanced to run multi-level assembly within one single command. This automation can be used to assemble final routed database of the AMS blocks for performing more accurate timing and SI analysis.</li></ul><ul><li>Transition time violations can be checked on long top level nets by STA engine and automatic buffers can be inserted on the violating nets within Innovus.</li></ul><ul><li>Timing and SI ECOs can be performed by doing the changes in the final verilog netlist. ECOs done using the&#160;<code><span class="fontredcadence">ecoOaDesign</span></code>&#160;command would retain the physical database sanctity during late stages of the design flow as well.</li></ul>
+<p>For more details, see the &quot;Restoring the AMS Block Layout&quot; section in the&#160;<a href="Static_Timing_Analysis_for_Mixed_Signal_Designs.html">Static Timing Analysis for Mixed Signal Designs</a>&#160;chapter.</p>
+
+<p><br /></p>
+<h2 id="NetlistDrivenMixedSignalDesignFlow-ECOFlows"><span class="cad-head-number">8.9 </span>ECO Flows</h2>
+
+<p>The Cadence platform based mixed signal solution offers a concurrent mixed signal floorplanning solution, which allows for efficient, frequent and smooth exchange of data between the top level designer and those designing the lower level blocks. The solution is implemented on the OpenAccess database, and allows for the exchange of floorplanning, placement and routing constraints. In addition, the environment offers the capability to embed mixed signal IP blocks with constraints that are used when instantiating such IPs within a design.</p>
+
+<p>To address the challenges of performing ECOs on mixed signal designs, Cadence has implemented powerful ECO functionalities that perform ECOs on the actual OpenAccess database, containing both custom and place-and-route objects. For example, a design containing pcells can be ECO&#39;ed in the Innovus environment without the need to separate out the custom objects in the design.</p>
+
+<p>For information on pre- and post-mask ECO flows in Innovus on OpenAccess, refer to the&#160;&quot;Innovus-Based ECO Flow&quot;&#160;section in the&#160;<a href="Chip_Finishing_and_ECO_Flows.html">Chip Finishing and ECO Flows</a>&#160;chapter.</p>
+
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Quick_Abstract_Inference.html" id="prev" title="Quick_Abstract_Inference">Quick_Abstract_Inference</a></em></b><b><em><a href="OpenAccess_Wiring_Terminology.html" id="nex" title="OpenAccess_Wiring_Terminology">OpenAccess_Wiring_Terminology</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>
