@@ -1,0 +1,140 @@
+
+<html><head><title>Import Flow</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="deeptig" />
+<meta name="CreateDate" content="2023-09-08" />
+<meta name="CreateTime" content="1694169236" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes Virtuoso Power Manager that specifies the power intent information of the designs" />
+<meta name="DocTitle" content="Virtuoso Power Manager User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Import Flow" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vpm" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-08" />
+<meta name="ModifiedTime" content="1694169236" />
+<meta name="NextFile" content="chap2_tk_import_power_intent.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Custom IC Design,Custom IC Design" />
+<meta name="PrevFile" content="chap2.html" />
+<meta name="c_product" content="Virtuoso Analog Design Environment,Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Analog Design Environment,Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Analog Design Environment,Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Power Manager User Guide -- Import Flow" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Power Manager" />
+<meta name="prod_subfeature" content="Flows" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vpmIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vpmTOC.html">Contents</a></li><li><a class="prev" href="chap2.html" title="Power Intent Import">Power Intent Import </a></li><li style="float: right;"><a class="viewPrint" href="vpm.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap2_tk_import_power_intent.html" title="Importing Power Intent">Importing Power Intent</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Power Manager User Guide<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:ct_import_flow" title="Import Flow"></a><h2>
+<a id="pgfId-940947"></a><a id="45640"></a>Import Flow</h2>
+
+<p>
+<a id="pgfId-940731"></a>You can import the power intent and utilize it in the following scenarios:</p>
+<ul><li>
+<a id="pgfId-940757"></a>Use the power intent specified for a design in the top-down power propagation scheme. If you have a hierarchical schematic design for which the power intent is available in a 1801 file, you can import the 1801 file and update the power connectivity of each hierarchical block used in the design as per the power intent. This enables in correctly connecting the power domains of the IP to the power domains of the top design (SOC or a chip).</li><li>
+<a id="pgfId-940735"></a>If you have a digital block with a Verilog netlist available from a digital place and route tool, supply connectivity can be built for this block by using the Cadence Verilog Import flow along with the initial imported power intent available for SOC where the digital block is integrated. This defines the power requirements across digital and analog boundaries. </li><li>
+<a id="pgfId-947564"></a>Register special low power cells that are imported from a 1801 special cell definition file. The registered details are consumed by all the designs that use this file for creating the power connectivity of the cells as per their power domains. The special cell definition file is registered to be included as per the setup. For details, refer to <a href="chap1_tk_reg_supply_set_PD.html#73071">Registering Supply Set and Power Domain</a>.</li></ul>
+
+
+<p>
+<a id="pgfId-940963"></a>The illustration below gives an overview of the import flow.</p>
+
+<p>
+<a id="pgfId-941052"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="327" src="images/chap2-2.gif" /></div>
+
+<p>
+<a id="pgfId-941056"></a>Here are the key stages of the import flow.</p>
+<ul><li>
+<a id="pgfId-941057"></a>Traversal of design hierarchy to find supply net expressions and explicit terminals.<br />
+<a id="pgfId-949619"></a>Elaboration and traversal of the complete design hierarchy is done to identify the standard and special cells that have an associated Liberty model or a special cell definition file. This is done for the supply and topology recognition. These cells are considered as stop cells and the tool does not traverse through these cells for power/ground nets. Only the top level is read to collect the supply information (inherited nets or explicit terminals), which is further mapped to the power/ground information specified in the Liberty model or the special cell definition file.</li><li>
+<a id="pgfId-941058"></a>Standard and special cells identification using Liberty models or the 1801 special cell definition file. <br />
+<a id="pgfId-949707"></a>The special cell rules are read as specified in the input 1801 file to create the corresponding supply connections and resolve them for the top supplies. In a hierarchical design for cells that do not have an associated Liberty or a special cell definition, supply nets information is gathered from the different levels of hierarchy. Power Manager traverses down the hierarchy to the level where it finds supply nets of inherited nets (Net Expressions) or explicit supply terminals.</li><li>
+<a id="pgfId-941059"></a>Reading the input 1801 power specification. <br />
+<a id="pgfId-949713"></a>The power intent is read from the 1801 file and is updated in the design with all the 1801 commands supported by Power Manager. All unsupported commands or unsupported arguments of the supported commands are flagged in the log.</li><li>
+<a id="pgfId-941060"></a>Creation and optimization of the redirected netSets. <br />
+<a id="pgfId-949719"></a>netSet properties are created in the design hierarchy, wherever required. This enables the top-level block to be instantiated in another top-level SoC schematic. The inherited pins are created in the block schematic. The inherited terminals have the same name as the supply nets in the 1801 file. The tie connections are resolved in the design hierarchy.</li><li>
+<a id="pgfId-941061"></a>Creation of the top-level supply ports and supply nets. <br />
+<a id="pgfId-942219"></a>Supply pins are created corresponding to the power domain nets and global nets during 1801 import by reading the <code>create_supply_port</code> and <code>create_supply_net</code> commands for a successful LVS check. <br />
+<a id="pgfId-942220"></a>Refer to the following scenarios that are considered while creating the pins.<ul><li>
+<a id="pgfId-942221"></a>If a pin already exists and it belongs to the same net as mentioned in the 1801 file, it is used.</li><li>
+<a id="pgfId-942222"></a>To create an inherited pin, a pin that exists in the same net as mentioned in the 1801 file is used. However, the pin net should be global and should match the power domain net for which the pin needs to be created. The pin is converted into an inherited pin by associating a terminal net-expression with the existing pin. If the existing pin is already an inherited pin but with the different net-expression, the net-expression is replaced. </li><li>
+<a id="pgfId-942223"></a>All pins created during the 1801 import are removed when you click <em>Remove Power Intent</em>. If any pin existed prior to import and was converted to an inherited pin or the net-expression was changed, it is converted back to a normal pin or the original net-expression is restored, respectively. </li><li>
+<a id="pgfId-942224"></a>For the 1801 import flow, pins are not created in the design schematic for the supply nets that do not have a corresponding <code>create_supply_port</code> command in the input 1801 file. These supply nets are internally generated supply nets that have a corresponding <code>create_supply_net</code> command in the input 1801 file.</li></ul><br />
+<a id="pgfId-942225"></a>The direction of the pins created aligns with the direction specified in the <code>create_supply_port</code> command in the input 1801 file.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-942227"></a>
+It is recommended that after importing a 1801 file, you run <em>Check &#8211; Hierarchy</em> or the <em>File &#8211; Check and Save</em>. These commands create nets corresponding to the netSet properties and set the signal type of power nets and ground nets according to the power intent.</div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-948890"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-949004"></a><a href="chap2_tk_import_power_intent.html#30613">Importing Power Intent</a></p>
+<p>
+<a id="pgfId-948898"></a><a href="chap2_ct_redirect_netset.html#12955">Redirected netSet Property Creation and Optimization</a></p>
+<p>
+<a id="pgfId-948902"></a><a href="chap2_ct_tie_connec_res.html#21075">Tie Connection Resolution</a></p>
+<p>
+<a id="pgfId-948906"></a><a href="chap2_ct_hand_low_power_special.html#94104">Handling of Low Power Special Cells</a></p>
+<p>
+<a id="pgfId-948910"></a><a href="chap2_ct_support_hier_1801.html#68345">Support of Hierarchical 1801 for Import Flow</a></p>
+<p>
+<a id="pgfId-948914"></a><a href="chap2_tk_remove_power_intent.html#20874">Removing Imported Power Intent</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap2.html" id="prev" title="Power Intent Import">Power Intent Import </a></em></b><b><em><a href="chap2_tk_import_power_intent.html" id="nex" title="Importing Power Intent">Importing Power Intent</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

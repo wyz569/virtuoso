@@ -1,0 +1,331 @@
+
+<html><head><title>Design Partitioning</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="deeptig" />
+<meta name="CreateDate" content="2023-09-08" />
+<meta name="CreateTime" content="1694169239" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes Virtuoso Power Manager that specifies the power intent information of the designs" />
+<meta name="DocTitle" content="Virtuoso Power Manager User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Design Partitioning" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vpm" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-08" />
+<meta name="ModifiedTime" content="1694169239" />
+<meta name="NextFile" content="chap3_ct_create_power_domains.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Custom IC Design,Custom IC Design" />
+<meta name="PrevFile" content="chap3_ct_identi_design_obj.html" />
+<meta name="c_product" content="Virtuoso Analog Design Environment,Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Analog Design Environment,Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Analog Design Environment,Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Power Manager User Guide -- Design Partitioning" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Power Manager" />
+<meta name="prod_subfeature" content="1801 Export" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vpmIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vpmTOC.html">Contents</a></li><li><a class="prev" href="chap3_ct_identi_design_obj.html" title="Identification of Design Objects">Identification of Design Objec ...</a></li><li style="float: right;"><a class="viewPrint" href="vpm.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3_ct_create_power_domains.html" title="Creation of Power Domains">Creation of Power Domains</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Power Manager User Guide<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:ct_design_partition" title="Design Partitioning"></a><h3>
+<a id="pgfId-943120"></a><a id="69727"></a>Design Partitioning </h3>
+
+<p>
+<a id="pgfId-943220"></a>A design can contain different types of cells. For example, the following example design contains various types of blocks.</p>
+
+<p>
+<a id="pgfId-942957"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="404" src="images/chap3-4.gif" /></div>
+
+<p>
+<a id="pgfId-943256"></a>During extraction, the extractor handles each type of cell differently. For example, if a cell is already bound with a 1801 file that was previously imported in the schematic of the cell, the extractor refers to the1801file instead of re-extracting the power information of the cellview.</p>
+<p>
+<a id="pgfId-943257"></a>Similarly, for all multi-supply cells that contain primitive cell instances that were identified during the partitioning stage, the extractor extracts the cellview-level power domain information and stitches it to the top-level domains. Instances of single supply cells are considered as standard cells and their power attributes are derived from their corresponding Liberty model and stitched to the top-level power domains. Therefore, before extracting power intent, the tool needs to identify different types of cells and blocks in the design.</p>
+<p>
+<a id="pgfId-943258"></a>During partitioning, the Schematic Editor traverses through the design and identifies the following types of cells:</p>
+
+<p>
+<a id="pgfId-942959"></a></p>
+<table class="webflareTable" id="#id943317">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id943319">
+<a id="pgfId-943319"></a>Cell Type</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id943321">
+<a id="pgfId-943321"></a>Description</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943326"></a>Primitive cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943493"></a>A cell that meets the following criteria:</p>
+
+<ul><li>
+<a id="pgfId-943494"></a>Does not contain any instances </li><li>
+<a id="pgfId-943495"></a>Does not have any power pin or ground pin</li></ul>
+
+
+<p>
+<a id="pgfId-943496"></a>Examples: PMOS, NMOS, RES</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943530"></a>Passive cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943549"></a>A cell that meets the following criteria:</p>
+
+<ul><li>
+<a id="pgfId-943550"></a>Contains only primitive instances </li><li>
+<a id="pgfId-943551"></a>Does not have any power pin or ground pin</li></ul>
+
+
+<p>
+<a id="pgfId-943552"></a>Examples: resistor bank or capacitor bank</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943340"></a>Low power special cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943623"></a>A cell that is registered as a special low power cell.</p>
+<p>
+<a id="pgfId-943624"></a>Examples: isolation cell, level shifter, power switch</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943347"></a>Single supply voltage cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943677"></a>A cell that meets the following criteria:</p>
+
+<ul><li>
+<a id="pgfId-943678"></a>Contains zero or more primitive cell or passive cell instances </li><li>
+<a id="pgfId-943679"></a>Has one power pin and one ground pin</li></ul>
+
+
+<p>
+<a id="pgfId-943680"></a>Example: single-rail cell</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943354"></a>Multiple supply voltage cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943715"></a>A cell that meets the following criteria:</p>
+
+<ul><li>
+<a id="pgfId-943716"></a>Contains zero or more primitive cell or passive cell instances </li><li>
+<a id="pgfId-943717"></a>Has more than one power pin and one or more ground pins</li></ul>
+
+
+<p>
+<a id="pgfId-943718"></a>Example: multi-rail cell</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943361"></a>1801 cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943754"></a>A cell that contains the existing 1801 model. The power intent that has been imported by using the <em>File</em> &#8211; <em>Import Power Intent</em> command is being applied to this cell.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943368"></a>Macro cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943903"></a>A cell that meets any one of the following criteria:</p>
+
+<ul><li>
+<a id="pgfId-943904"></a>Contains one or more instances of primitive cell or passive cell and one or more instances of single supply cell, multiple supply voltage cell, or 1801 cell</li><li>
+<a id="pgfId-943905"></a>Contains one or more instances of primitive cell or passive cell and has more than one power pin and one or more ground pin</li><li>
+<a id="pgfId-943906"></a>Has more than one power pin and one or more ground pin, but does not contain any cell, that is, an empty cell with multiple supply voltages</li></ul>
+
+
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-943375"></a>Hierarchy cells</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-943941"></a>A cell that meets the following criteria:</p>
+
+<ul><li>
+<a id="pgfId-943942"></a>Contains instances of single supply cell, multiple supply voltage cell, macro cell, or 1801 cell</li><li>
+<a id="pgfId-943943"></a>Does not contain any primitive cell or passive cell</li></ul>
+
+
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-943966"></a>After the design partitioning, the next step is the design elaboration. The design elaboration involves the creation of an Embedded Module Hierarchy (EMH), which is a model for storing the hierarchical design data supported at the open access database level. For Power Manager, this open access cellview is called the power view. The extractor traverses the entire schematic hierarchy to achieve the following:</p>
+
+<ul><li>
+<a id="pgfId-943967"></a>Builds a data structure that contains the OA equivalent objects from the database objects encountered. The structure includes a top-level design, instances, nets, terms, instTerms and net connectivity.</li><li>
+<a id="pgfId-943968"></a>Utilizes all the instances of the cells that have Liberty models, associated power views, and associated 1801 model. </li><li>
+<a id="pgfId-943969"></a>Extracts power intent by tracing the connectivity. The connectivity tracing is done considering the block domain of open access cellview, that is, the flat representation of the entire schematic hierarchy in EMH. </li><li>
+<a id="pgfId-943970"></a>Identifies power nets and ground nets and their equivalent power or ground nets by the sigType in the schematic or the name-based registration in the setup.</li><li>
+<a id="pgfId-943971"></a>Identifies switchable or non-switchable power nets or ground nets. This is the output from switch supply pin of switch cell instances (Power Switch).</li><li>
+<a id="pgfId-943972"></a>Pairs the power nets and ground nets. PG net pairing is done by looking at the related PG pins of standard cell instances, special cell instances, macro cell instances. In addition, pairing is also done by tracing a path between the top-block power and ground nets through the source-drain terminals of transistors, shorts, and connector devices in the top block. </li><li>
+<a id="pgfId-943973"></a>Models various states where every single supply each state is assigned a specific voltage or the state of supply sets, that is, collection of supplies instead of individual supplies by using PST for exporting design and power models.</li><li>
+<a id="pgfId-943974"></a>Assigns instances to the power domains.</li><li>
+<a id="pgfId-943975"></a>Creates power states and the power modes. Also, assigns power domains to these power modes.</li><li>
+<a id="pgfId-943976"></a>Identifies boundary ports and assigns these ports to the power domains. This identification is done based on tracing the connectivity through transistors and two terminal devices. Related power and ground nets of ports are derived by analyzing the related supplies of the driver or receiver instTerms in the top block. While identifying ports for creating power domains, it is checked whether the port could be related to more than one power domain by virtue of its connections to one or more instances that may belong to multiple power domains. In such a situation, the port is not associated with any power domain and the warning messages are issued depending on the situation. There are three scenarios where the ports are not related to any of the power domains due to ambiguity in deciding the power domain:<br />
+<a id="pgfId-944244"></a><strong>Case 1</strong>: In this scenario, port C can be related to either of the two supply sets (<code>SS__VDD__VSS</code> and <code>SS__VDDext__VSS</code>) due to its connectivity to <code>M2</code>, which falls in the path of <code>VDD</code>, <code>VSS</code> as well as <code>ExtVDD</code>, <code>VSS</code>. Therefore, port C is not related to any supply set because there is ambiguity related to its power domain.<br />
+<a id="pgfId-944245"></a><div class="webflare-div-image">
+<img width="635" height="330" src="images/chap3-5.gif" /></div>
+<a id="pgfId-944246"></a><strong>Case 2</strong>: In this scenario, the port IN1 is driving two inverter instances that belong to different supply sets and so it can be assigned either to <code>SS__VDD__VSS</code> or <code>SS__vdd__vss</code>. Therefore, port IN1 is not related to any supply set because there is ambiguity related to its power domain.<br />
+<a id="pgfId-944247"></a><div class="webflare-div-image">
+<img width="635" height="443" src="images/chap3-6.gif" /></div>
+<a id="pgfId-944248"></a><strong>Case 3</strong>: In this scenario, the port <code>TOP_IN</code> drives two pins, <code>IN1</code> and <code>IN2</code>, of a hierarchical instance. Inside the instances (not shown in the image), <code>IN1</code> and <code>IN2</code> are separately driving two inverters, which are in two separate supply sets <code>SS__VDD1__VSS</code> and <code>SS__VDD2__VSS</code>, respectively. The port <code>TOP_IN</code> can be assigned either <code>SS__VDD1__VSS</code> or <code>SS__VDD2__VSS</code>, therefore, it is not related to any supply set due to ambiguity in its power domain.<br />
+<a id="pgfId-942961"></a><div class="webflare-div-image">
+<img width="635" height="410" src="images/chap3-7.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-944314"></a>In such scenarios, you can provide the information of data ports to explicitly specify their supply set, forcing the tool to associate the data ports to the desired power domain. </p>
+<p>
+<a id="pgfId-944316"></a>While extracting power intent, Power Manager gives precedence to the explicit registration of the port attributes and traces connectivity through transistors and the two-terminal devices. Each data terminal that can be traced to a power terminal is created as a boundary port for the corresponding power domain. If a data terminal is connected to more than one power terminal, it is attached to the power domain as specified in the port attribute registered in the setup for that data terminal. If the port attribute is not registered in the setup, the tool would associate the data terminal to all possible power domains found by connectivity tracing.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-942963"></a>While extracting power intent, the tool checks each macro cell and the top cell to find ports that are not related to any supply terminal. The tool does not assign such ports to any power domain and displays a warning message for each cell to report such ports in that cell, as shown below:</div>
+<p>
+<a id="pgfId-959710"></a><code>\w *WARNING* (LP-3034): Could not determine driver/receiver supplies for logic port &#39;enps_3v3_i, dll_amux_ao, dll_ibias_10u_ai&#39; in the Liberty or setup files. Ensure that the required supplies are defined in the files.</code></p>
+
+<ul><li>
+<a id="pgfId-944423"></a>Derives domain shutoff conditions by backtracing the enable pins of switch cell instances in the top block to the top block ports and combining those ports in suitable expression as per the design.</li><li>
+<a id="pgfId-944424"></a>Integrates sub blocks that have their own 1801files.<ul><li>
+<a id="pgfId-944425"></a>If the 1801 block has a power intent specified as a Liberty macro model, it identifies the top-level domain that maps to the macro-level domain and creates a domain mapping. PG net voltages in macro cells are assigned from the top net voltages. This might lead to a conflict if the net voltage specified in the macro model are of different voltage levels as compared to the voltage levels of the top net voltage. This conflict can be noted at the verification stage of the power intent.</li><li>
+<a id="pgfId-944426"></a>If the 1801 block has power intent of the design model type, Power Manager collates all the power domains in the 1801 block hierarchy and integrates the 1801 cell in the same way as for a block with the macro model type.</li></ul></li><li>
+<a id="pgfId-944428"></a>Identifies low power special cells and creates power switch rules, isolation rules, and level shifter rules, as required. Enable conditions are derived by backtracing the enable pins of special cells.</li></ul>
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-942967"></a>If a level shifter cell contains an enable pin, it is identified as both an isolation cell and as a level shifter cell. Such cells are also referred as combo cells. In this case, while extracting power intent, the tool defines it as a level shifter cell as well as an isolation cell. In addition, corresponding level shifter and isolation rules are defined.</div>
+
+<h4><em>
+<a id="pgfId-966408"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-966412"></a><a href="chap3_ct_identi_design_obj.html#46846">Identification of Design Objects</a></p>
+<p>
+<a id="pgfId-966416"></a><a href="chap2.html#29412">Power Intent Import</a></p>
+<p>
+<a id="pgfId-966376"></a><a href="chap3_ct_power_view.html#36099">Power View</a></p>
+<p>
+<a id="pgfId-966466"></a><a href="chap1_tk_reg_supply_set_PD.html#73071">Registering Supply Set and Power Domain</a></p>
+<p>
+<a id="pgfId-966488"></a><a href="chap2.html#29412">Power Intent Import</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3_ct_identi_design_obj.html" id="prev" title="Identification of Design Objects">Identification of Design Objec ...</a></em></b><b><em><a href="chap3_ct_create_power_domains.html" id="nex" title="Creation of Power Domains">Creation of Power Domains</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
