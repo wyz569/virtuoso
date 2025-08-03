@@ -1,0 +1,1020 @@
+
+<html><head><title>Spectre Unified Waveform Interface</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="TopicTags" content="TRUE" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="shubh" />
+<meta name="CreateDate" content="2023-05-30" />
+<meta name="CreateTime" content="1685458666" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Spectre  Unified Waveform Interface  allows users to write Spectre probe data and read the data into the Spectre circuit simulator." />
+<meta name="DocTitle" content="Spectre Unified Waveform Interface Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Spectre Unified Waveform Interface" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="Spectre_UWI" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-30" />
+<meta name="ModifiedTime" content="1685458666" />
+<meta name="NextFile" content="" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="Spectre_UWITOC.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Unified Waveform Interface Reference -- Spectre Unified Waveform Interface" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="SpectreUWI231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="Spectre_UWITOC.html">Contents</a></li><li><a class="prev" href="Spectre_UWITOC.html" title="Contents">Contents</a></li><li style="float: right;"><a class="viewPrint" href="Spectre_UWI.pdf">View/Print PDF</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Unified Waveform Interface Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>
+<a name="pgfId-42402"></a><hr />
+Spectre Unified Waveform Interface<hr />
+</h1>
+
+<p>
+<a name="pgfId-42403"></a>The Spectre unified waveform interface (UWI) lets you write the Spectre probe data and read probe data into the Spectre simulator. The current application programming interface (API) supports writing the Spectre simulation data to user-defined formats. This document describes creating Spectre waveform outputs in user-defined formats.</p>
+<p>
+<a name="pgfId-41480"></a>The Spectre UWI is comprised of a set of functions that enables simulation data to be written in a variety of formats (see Figure <a href="Spectre_WI.html#70868">1-1</a>).</p>
+
+<p><strong>Figure 1-1
+<a name="pgfId-41485"></a><a name="70868"></a>Spectre UWI Overview</strong></p>
+<p>
+<a name="pgfId-45608"></a></p>
+<div class="webflare-div-image">
+<img width="483" height="268" src="images/Spectre_WI-2.gif" /></div>
+
+<p>
+<a name="pgfId-41477"></a>You create source files (C-source files) containing the API function definitions for each output format specified in the netlist. You can specify more than one format in the netlist and, for each format, you should define the APIs in a separate <code>.C</code> source file. Dynamic libraries are created from these source files and are linked to the Spectre simulator during run time.</p>
+
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=UltraSim Waveform Interface Directory Structure
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h2>
+<a name="pgfId-41467"></a>Spectre UWI Directory Structure</h2>
+
+<p>
+<a name="pgfId-26147"></a>The Spectre UWI functions are linked to the Spectre simulator through dynamically shared libraries. The shared libraries contain user-provided definitions to the Spectre waveform API calls.</p>
+<p>
+<a name="pgfId-40054"></a>To minimize the effort required for creating these libraries, auto-build scripts and makefiles are included in the <code>mmsim/</code> directory. Figure <a href="Spectre_WI.html#80442">1-2</a> shows the complete waveform interface directory structure.</p>
+
+<p><strong>Figure 1-2
+<a name="pgfId-41012"></a><a name="80442"></a>UWI Directory Structure</strong></p>
+<p>
+<a name="pgfId-45654"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="160" src="images/Spectre_WI-3.gif" /></div>
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=uwi_lib
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h2>
+<a name="pgfId-26529"></a>uwi_lib</h2>
+<a name="pgfId-26508"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+opt options
+[ uwifmt = <code><em>formatName</em></code> ]
+uwilib = <code><em>libraryPath</em></code></pre>
+
+<p>
+<a name="pgfId-40390"></a><strong>Arguments</strong></p>
+
+<p>
+<a name="pgfId-25586"></a></p>
+<table class="webflareTable" id="#id40318">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-40328"></a><span class="webflare-courier-new" style="white-space:pre"><em>formatName</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-46280"></a>Specifies the user-defined output format. To specify multiple formats, use `:&#39; as a delimiter. The option is valid only when the waveform format is defined as <code>uwi</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-40333"></a><span class="webflare-courier-new" style="white-space:pre"><em>libraryPath</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-46368"></a>Specifies the absolute path to the user-defined output format library. This option is used along with <code>uwifmt</code>. Use `:&#39; as a delimiter to specify more than one library.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a name="pgfId-40317"></a>If waveforms need to be generated in <code>sst2</code> format, specify this information in the netlist along with the other formats.</p>
+<p>
+<a name="pgfId-25606"></a><strong>Example</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25587"></a>opt options uwifmt = xydb<br />opt1 options uwilib = ./libXYDB.so</pre>
+
+<p>
+<a name="pgfId-25959"></a>Generates all signals specified in the probe statements in <code>xydb</code> format. The shared library contains definitions of API functions to create the user-defined output format.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a name="pgfId-25964"></a>The Spectre simulator generates signals in user-defined formats and, if required for postprocessing, in <code>sst2</code> formats. Postprocessing occurs when the netlist contains <code>.measure</code> statements.</div>
+
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=UltraSim Waveform Interface APIs
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h2>
+<a name="pgfId-27158"></a>Spectre UWI APIs</h2>
+
+<p>
+<a name="pgfId-26697"></a>This section describes the Spectre UWI API syntax and functionality. The data structures mentioned in this section are specified in the <code>uwi.h</code> file.</p>
+<ul><li>
+<a name="pgfId-41580"></a><a href="Spectre_WI.html#79363">uwi_WfIntDef</a></li><li>
+<a name="pgfId-41585"></a><a href="Spectre_WI.html#34504">uwi_Setup</a></li><li>
+<a name="pgfId-41590"></a><a href="Spectre_WI.html#36436">uwi_WfDefinition</a></li></ul>
+
+
+
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=uwi_WfIntDef
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h3>
+<a name="pgfId-26604"></a><a name="79363"></a>uwi_WfIntDef</h3>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47022"></a>struct uwi_WfIntDef {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47023"></a>    void   *( *open )( const struct uwi_Setup *initData );
+&#160;&#160;&#160;&#160;void   *( *defineWf )( uwi_StreamHandle stream, const struct
+&#160;&#160;&#160;&#160;       uwi_WfDefinition *wfDef ); </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47030"></a> int ( *endDefineWfs )( uwi_StreamHandle stream );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47033"></a> int ( *addDWfPoint )( uwi_StreamHandle stream, uwi_WfHandle wfHdl,<br />       enum uwi_Logic value, double time );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47037"></a> int ( *addAWfPoint )( uwi_StreamHandle stream, uwi_WfHandle wfHdl,<br />        double value, double time );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47040"></a>    int ( *addAWfComplexPoint )( uwi_StreamHandle stream, uwi_WfHandle wfHdl,
+&#160;&#160;&#160;&#160;        double vReal, double vImage, double time );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47044"></a> int ( *flush )( uwi_StreamHandle stream );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47047"></a> int ( *flushNow )( uwi_StreamHandle stream );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47050"></a> int ( *close )( uwi_StreamHandle stream );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47053"></a> char *( *getErrMsg )();</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47056"></a> int ( *resetXCoord )( uwi_StreamHandle stream );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47059"></a> char *format;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47063"></a> int ( *addTapIntervalData ) ( uwi_StreamHandle stream, uwi_WfHandle tapHdl, int          intervalIndex, double avgValue, double peakValue,<br />        double rmsValue );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47067"></a> int ( *addStaticCapacitance ) ( uwi_StreamHandle stream, uwi_WfHandle tapHdl,<br />         double tapCap, double devRes, double<br />         devOutLoad );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47069"></a> int ( *limitFileReached ) ( uwi_StreamHandle stream, double maxFileSizeInBytes,<br />        int currBufSizeInNumberOfPoints );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47074"></a> void ( *updateFileSize ) ( uwi_StreamHandle stream, int sizeUpdated );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47077"></a> void ( *defineAliasName ) ( uwi_StreamHandle stream, uwi_WfHandle wfHdl,<br />        const struct uwi_WfDefinition *aliasWfDef );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47081"></a> void ( *setMaxFileSize ) ( double maxFileSizeInBytes );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47082"></a>};</pre>
+
+<p>
+<a name="pgfId-32326"></a><strong>Description</strong></p>
+<p>
+<a name="pgfId-32327"></a>Registers the public functions of a waveform library with the Spectre simulator. The function is called on each shared library after loading. The function returns a pointer to a <code>uwi_WfIntDef</code> structure containing pointers to the API functions. The user defines the functions and assigns them to the members of this structure.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a name="pgfId-26617"></a>The memory to the structure is allocated by the user and should not be freed until the Spectre process is terminated. The intention is that each shared library contains a static instance of such a structure.</div>
+<p>
+<a name="pgfId-26743"></a>The <code>uwi_register</code> function is required for every library. The Spectre simulator, in addition, has the following requirements on the function handlers returned. The functions <code>open</code> and <code>defineWf</code> are mandatory. </p>
+<p>
+<a name="pgfId-26664"></a>The format character string within the <code>uwi_WfIntDef</code> structure identifies the provided waveform format. This string needs to match the <code>wf_format</code> string in the netlist to activate the provided waveform output.</p>
+<p>
+<a name="pgfId-26654"></a><strong>Example</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25723"></a>uwi_StreamHandle open( const uwi_Setup* initData )</pre>
+
+<p>
+<a name="pgfId-25611"></a>This function is called whenever a new file stream in the user-defined output format needs to be opened. <code>uwi_StreamHandle</code> associates the waveforms with the format written. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-26770"></a>typedef void* uwi_StreamHandle;</pre>
+
+<p>
+<a name="pgfId-25618"></a>This function is called by the Spectre simulator with a <code>uwi_Setup</code> argument. The argument contains the description of the global simulation information valid for the current output being written. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a name="pgfId-25763"></a>On return of the function, the Spectre simulator deletes or reuses the memory of the structure argument passed to the function.</div>
+
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=uwi_Setup
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h3>
+<a name="pgfId-41550"></a><a name="34504"></a>uwi_Setup</h3>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47817"></a>struct uwi_Setup {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-47818"></a> const char             *fileName; <br /> const char             *fileNameExt;<br /> enum uwi_AnalysisType   analysis; <br /> double                  temp; <br /> int                     runNum;<br /> int                     alterIter; <br /> int                     ageIter;<br /> double                  tRes; <br /> double                  tStop;<br /> const char             *rawDir; <br /> int                     isDouble; <br /> const char             *netName; <br /> const char             *amsWaveName; <br /> int                     tapNumber;<br /> double                  clockCycle;<br /> int                     numCycles;<br /> int                     numIntervals;<br /> int                     avgMethod; <br /> int                     peakMethod;<br /> int                     rmsMethod;<br /> int                     splitNum;<br /> int                     nTotalHarm;<br /> int                     iCurrentHarm;<br /> int                     envPostProcess;<br /> double                  tStart; <br /> char                   *title;<br /> unsigned int&#160;&#160;          distrFileNum;  </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-45725"></a>};</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-48106"></a></pre>
+
+<p>
+<a name="pgfId-48103"></a><strong>Description</strong></p>
+<p>
+<a name="pgfId-41566"></a>The information provided in the <code>uwi_Setup</code> structure is intended to provide a precise description of the overall simulation run associated with this stream. <span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span> is the name of the SPICE netlist and the analysis field is defined as</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25818"></a>enum uwi_AnalysisType {TRAN, DC, NOISE, AC}</pre>
+
+<p>
+<a name="pgfId-26799"></a><code>alterIter</code>, <code>ageIter</code>, <code>temp</code>, and <code>tRes</code> provide additional information in case of more complex simulation runs. In general, output systems can take advantage of this information beginning with better error checking and output filename creation up to more efficient data structures. <code>tRes</code> gives the time resolution of the x axis specified in the options. The default is 1ps.</p>
+<p>
+<a name="pgfId-27133"></a><strong>Example</strong></p>
+<p>
+<a name="pgfId-41612"></a>You can replace <span class="webflare-courier-new" style="white-space:pre"><em>filename</em></span> in <code>uwi_Setup</code> with your own output file and then open that to dump the waveform or other information. If you open a file for writing and you want it to be used as the stream, that file handle must be returned by </p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25770"></a>uwi_WfHandle defineWf( uwi_StreamHandle stream, const uwi_WfDefinition* wfDef )</pre>
+
+<p>
+<a name="pgfId-25772"></a>This function creates a handle for the given waveform definition in the given stream. The signal name, scope of the signal, units represented, and type of the signal are passed through by the <a href="Spectre_WI.html#36436">uwi_WfDefinition</a> structure. The function returns a pointer to <code>uwi_WfHandle</code> if successful. The waveform handle is subsequently used while calling the function to write the Spectre simulation data.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-39523"></a>typedef void* uwi_WfHandle;</pre>
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=uwi_WfDefinition
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h3>
+<a name="pgfId-39524"></a><a name="36436"></a>uwi_WfDefinition</h3>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-48196"></a>struct uwi_WfDefinition {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-48197"></a>    const char         *wfName;
+&#160;&#160;&#160;&#160;const char        **scopeName;
+&#160;&#160;&#160;&#160;const char         *units;
+&#160;&#160;&#160;&#160;enum uwi_WfType&#160;&#160;   wfType;     </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25778"></a>};</pre>
+
+<p>
+<a name="pgfId-25779"></a><strong>Description</strong></p>
+<p>
+<a name="pgfId-41571"></a><code>uwi_WfDefinition</code> is defined as a structure containing all signal-specific information. The instance of this structure is controlled by the Spectre simulator and is not guaranteed to exist during the call to the <code>defineWf</code> function.</p>
+<p>
+<a name="pgfId-41554"></a>The individual field descriptions are as follows:</p>
+<ul><li>
+<a name="pgfId-41203"></a><code>wfName</code> represents the actual signal name</li><li>
+<a name="pgfId-41204"></a><code>scopeName</code> is a null-terminated <code>char*</code> array<br />
+<a name="pgfId-41215"></a>Each entry in this array represents the part of the hierarchical path to this signal, starting with the top level. </li><li>
+<a name="pgfId-41205"></a><code>units</code> identifies the physical unit of this signal (either a V for voltage or A for current) </li><li>
+<a name="pgfId-41206"></a><code>uwi_WfType</code> is an <code>enum</code> defined as <br /><pre class="webflare-pre-block webflare-courier-new" id="#id25825">
+<a name="pgfId-25825"></a>enum uwi_WfType {ANALOG,DIGITAL}</pre></li></ul>
+
+
+
+
+
+
+
+<p>
+<a name="pgfId-26829"></a>The type of a distinguishes between continuous time signals and discrete signal values. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a name="pgfId-25807"></a>At the return of the function, the Spectre simulator deletes or reuses the memory allocated to the structure.</div>
+<p>
+<a name="pgfId-41621"></a><strong>Examples</strong></p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-39697"></a>int endDefineWfs( uwi_StreamHandle stream )</pre>
+
+<p>
+<a name="pgfId-39842"></a>This function indicates the completion of definition of all waveforms to be added to the database. This optional function can be ignored by setting the function pointer in the <code>uwi_WfIntDef</code> structure to <code>null</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-39844"></a>int addDWfPoint( uwi_StreamHandle stream, uwi_WfHandle wfHandle, uwi_Logic val, double t )</pre>
+
+<p>
+<a name="pgfId-25863"></a>This function sets the digital value of the waveform in a stream, pointed to by <code>wfHandle</code>. The x axis value is passed through the argument <code>t</code> (for DC, <code>t</code> is ignored). The digital value passed through the argument value is one of the enumerated types defined in <code>uwi_Logic</code>. If successful, the function returns <code>0</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-39710"></a>enum uwi_Logic {IN, OUT, X, Z}<br />int addAWfPoint(uwi_StreamHandle stream, uwi_WfHandle wfHandle, double val, double t)</pre>
+
+<p>
+<a name="pgfId-25872"></a>This function sets the analog value of a waveform in a stream pointed to by <code>wfHandle</code> for the time <code>t</code>. If successful, the function returns <code>0</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-26847"></a>int flush(uwi_StreamHandle stream)</pre>
+
+<p>
+<a name="pgfId-25886"></a>This function is called when the Spectre simulator requires the flushing of the waveform data corresponding to the <code>uwi_StreamHandle</code>. If successful, the function returns <code>0</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25894"></a>int close(uwi_StreamHandle stream)</pre>
+
+<p>
+<a name="pgfId-25896"></a>This function closes the stream handle instance referred to by <code>stream</code>. This function is called once for each stream opened. The function returns <code>0</code> if successful. It is a good practice to close the open streams. That would avoid any conflict during output process.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25897"></a>int resetXCoord(uwi_StreamHandle stream)</pre>
+
+<p>
+<a name="pgfId-27677"></a>This function resets the x coordinate of the database to time 0. All signals that are written after this function would start from time zero.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-25898"></a>char* getErrMsg()</pre>
+
+<p>
+<a name="pgfId-25906"></a>This function returns a textual description of the last error that occurred in one of the API functions. Depending on the importance of an error within the Spectre flow, the textual message might be printed to the output.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a name="pgfId-39717"></a>Other functions and variables defined in the <code>uwi.h</code> header file are used internally by the Spectre simulator and can be ignored.</div>
+
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=Building a Shared Library
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h2>
+<a name="pgfId-26042"></a>Building a Shared Library</h2>
+
+<p>
+<a name="pgfId-48265"></a>Assuming that SPECTRE_INSTALL is the root of the SPECTRE installation, the path to the <code>uwi.h</code> file is <code>${SPECTRE_INSTALL}/tools/mmsim/include/</code>. When adding this path to the compile line using the <code>-I</code> option, you can add the path to the <code>mmsim/include</code> directory, rather the path to the plug-ins directory, as follows: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-48357"></a><code>% gcc -fPIC -I${MMSIM_INSTALL}/tools/mmsim/include -o myplugin.o -c myplugin.c</code></pre>
+
+<p>
+<a name="pgfId-48360"></a>No Cadence libraries need to be linked to the final plug-in DLL. To create the plug-in, all object files should be compiled with the appropriate PIC option and then linked together into the DLL. </p>
+<p>
+<a name="pgfId-48345"></a>The following example uses <code>gcc</code> to create the shared library. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-48349"></a>% gcc -shared -o libmyXYDB_sh.so myuwi.o % cp libmyXYDB_sh.so ~/plugins/`cds_plat`</pre>
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=UltraSim Waveform Interface Example
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<h2>
+<a name="pgfId-27171"></a>Spectre UWI Example</h2>
+
+<p>
+<a name="pgfId-27175"></a>This example illustrates the use of these APIs to dump a waveform in a simple ASCII format.</p>
+<p>
+<a name="pgfId-46997"></a>/******************************************************************</p>
+
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46701"></a>This is a simple program to explain the UWI interface. The main </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46702"></a>purpose of this code is to demonstrate the UWI interface through</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46703"></a>a very simple example. This file is not recommended to be used as</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46704"></a>a general format for all spice netlist. It has several limitations</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46705"></a>and would fail for other spice netlist if used without modifying</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46706"></a>the code</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46707"></a>******************************************************************/</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46708"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46709"></a>#include &lt;stdio.h&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46710"></a>#include &lt;string.h&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46711"></a>#include &lt;stdlib.h&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46712"></a>#include &quot;uwi.h&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46713"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46714"></a>/*********************************************************************</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46715"></a>This structure defines a stream in terms of a file pointer where data </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46716"></a>will be stored. It also has arrays for data, digital time, analog time </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46717"></a>and digital value to store waveform data</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46718"></a>**********************************************************************/</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46719"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46720"></a>#define MAX_SIG_COUNT&#160;&#160;100000</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46721"></a>#define MAX_DATA_COUNT 1000000</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46722"></a>#define MAX_CHAR&#160;&#160;     1000</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46723"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46724"></a>typedef struct wfInfo</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46725"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46726"></a> int&#160;&#160;index;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46727"></a> double time;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46728"></a> double val;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46729"></a> double imag;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46730"></a> short isDigital:1;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46731"></a>    short isComplex:1;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46732"></a>} sigData;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46733"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46734"></a>struct wfFormat</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46735"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46736"></a> FILE* fp;   &#160;&#160;          /* Defines output stream                 */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46737"></a> char* sigName[MAX_SIG_COUNT];  /* Stores the name of the signals&#160;&#160;      */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46738"></a> sigData signal[MAX_DATA_COUNT]; /* Stores signal name starting and index */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46739"></a> int sigCount;    &#160;&#160;      /* Stores the index of the signal Name   */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46740"></a> int dataCount;  /* Stores the number of data points to be flushed&#160;&#160;  */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46741"></a>};</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46742"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46743"></a>static struct wfFormat format;&#160;&#160;/* Creates static instance of struct to store */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46744"></a>        /* waveform */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46745"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46746"></a>/* Function delclaration to convert and integer to corresponding string value */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46747"></a>/* {0, 1, x, z} */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46748"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46749"></a>char* getLogicStr(int val)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46750"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46751"></a> if(val == 0)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46752"></a>  return &quot;0&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46753"></a> else if(val ==1 )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46754"></a>  return &quot;1&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46755"></a> else if(val == 2)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46756"></a>  return &quot;x&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46757"></a> else if(val == 3)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46758"></a>  return &quot;z&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46759"></a> else</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46760"></a>  return &quot;&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46761"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46762"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46763"></a>/* This defines the open function */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46764"></a>uwi_StreamHandle openSAF(const struct uwi_Setup* setup)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46765"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46766"></a> char name[MAX_CHAR];</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46767"></a> int STR_LEN = MAX_CHAR - 10; /* Max length of the file name that would be *</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46768"></a>        &#160;&#160;*&#160;&#160;&#160;&#160;copied. Any name greater than that would be</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46769"></a>        &#160;&#160;*&#160;&#160;&#160;&#160;truncated&#160;&#160;  */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46770"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46771"></a> /* Initialize the data-structure wfFormat */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46772"></a> format.fp&#160;&#160;       = NULL;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46773"></a> format.sigCount&#160;&#160; = 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46774"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46775"></a>    snprintf( name, STR_LEN, &quot;%s/%s&quot;, setup-&gt;rawDir, setup-&gt;fileName  ); </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46776"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46777"></a> /* create a unique file name depending upon the analysis type */   </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46778"></a> if(setup-&gt;analysis == UWI_DC)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46779"></a>  strcat(name, &quot;_DC.saf&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46780"></a> else if(setup-&gt;analysis == UWI_TRAN)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46781"></a>  strcat(name, &quot;.saf&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46782"></a> else if(setup-&gt;analysis == UWI_NOISE)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46783"></a>  strcat(name, &quot;_NOISE.saf&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46784"></a> else if(setup-&gt;analysis == UWI_AC)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46785"></a>   strcat(name, &quot;_AC.saf&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46786"></a> else if(setup-&gt;analysis == UWI_INFO)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46787"></a>   strcat(name, &quot;_INFO.saf&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46788"></a>    else </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46789"></a>        // Not supported analysis</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46790"></a>        return NULL;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46791"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46792"></a> /* open the file */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46793"></a> format.fp = fopen(name, &quot;w+&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46794"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46795"></a> /* Print the header information */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46796"></a> fprintf( format.fp,&quot;\tSignal\t\tTime\t\tVal\n&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46797"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46798"></a> return format.fp;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46799"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46800"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46801"></a>/* Defining the waveform handle function */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46802"></a>uwi_WfHandle defineWfSAF(uwi_StreamHandle strHandle, const struct </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46803"></a>            uwi_WfDefinition* wfDef)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46804"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46805"></a> int index, sigSize = 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46806"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46807"></a> /* Allocate memory for the signal */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46808"></a> if( wfDef-&gt;wfName )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46809"></a>  sigSize = strlen( wfDef-&gt;wfName );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46810"></a>    int it;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46811"></a>    if ( wfDef-&gt;scopeName &amp;&amp; wfDef-&gt;scopeName[0] != 0 ) {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46812"></a>        for (it = 0; wfDef-&gt;scopeName[it] != 0; ++it ) {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46813"></a>            sigSize += 1 + strlen(wfDef-&gt;scopeName[it]);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46814"></a>        }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46815"></a>    }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46816"></a>    </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46817"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46818"></a> if( sigSize &amp;&amp; format.sigCount &lt; MAX_SIG_COUNT )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46819"></a>  format.sigName[format.sigCount] = (char *)malloc(sigSize+1);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46820"></a> else </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46821"></a>  return NULL;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46822"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46823"></a> /* Copy the signal name to the struct defined at the start of the program */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46824"></a>    if ( wfDef-&gt;scopeName &amp;&amp; wfDef-&gt;scopeName[0] != 0 ) {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46825"></a>        format.sigName[format.sigCount][0] = &#39;\0&#39;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46826"></a>        for (it = 0; wfDef-&gt;scopeName[it] != 0; ++it ) {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46827"></a>            strcat(format.sigName[format.sigCount], wfDef-&gt;scopeName[it]);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46828"></a>            strcat(format.sigName[format.sigCount], &quot;.&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46829"></a>        }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46830"></a>        strcat(format.sigName[format.sigCount], wfDef-&gt;wfName);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46831"></a>    } else</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46832"></a>        strcpy(format.sigName[format.sigCount], wfDef-&gt;wfName);&#160;&#160;&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46833"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46834"></a> /* increment the index of the name array */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46835"></a> index = ++format.sigCount;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46836"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46837"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46838"></a> /* Return the index as Waveform Handle */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46839"></a> return (uwi_WfHandle)(size_t)index;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46840"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46841"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46842"></a>/* Define the flush function */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46843"></a>int flushSAF(uwi_StreamHandle stream)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46844"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46845"></a> int i;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46846"></a> sigData sig;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46847"></a> char* name;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46848"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46849"></a> for(i = 0; i&lt; format.dataCount; ++i)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46850"></a> {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46851"></a>  sig = format.signal[i];</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46852"></a>  name =  format.sigName[sig.index-1];</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46853"></a>  if( sig.isDigital )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46854"></a>  {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46855"></a>   char* lStr = getLogicStr((int)sig.val);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46856"></a>   fprintf((FILE*) stream, &quot;\t%s \t%e&#160;&#160;\t%s\n&quot;,name, sig.time, lStr );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46857"></a>  }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46858"></a>        else if ( sig.isComplex )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46859"></a>   fprintf((FILE*) stream, &quot;\t%s \t%e&#160;&#160;\t%e&#160;&#160;\t%e\n&quot;, name, sig.time, sig.val, sig.imag );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46860"></a>  else</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46861"></a>   fprintf((FILE*) stream, &quot;\t%s \t%e&#160;&#160;\t%e\n&quot;, name, sig.time, sig.val);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46862"></a> }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46863"></a> /* Reset the counter */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46864"></a> format.dataCount = 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46865"></a> return 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46866"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46867"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46868"></a>/* Defines the close API */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46869"></a>int closeSAF(uwi_StreamHandle stream)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46870"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46871"></a> int i;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46872"></a> fclose((FILE*)stream);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46873"></a> for( i = 0 ; i &lt; format.sigCount ; ++i )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46874"></a>  free( format.sigName[i] );</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46875"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46876"></a> return 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46877"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46878"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46879"></a>/* Defines the addDWfPoint API */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46880"></a>int addDWfPointSAF(uwi_StreamHandle stream, uwi_WfHandle wfHandle, </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46881"></a>            enum uwi_Logic val, double t)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46882"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46883"></a> /* Add the digital value and the corresponding time into the array of the *</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46884"></a>  * struct */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46885"></a> int index = (size_t)(wfHandle);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46886"></a>  </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46887"></a> if( format.dataCount &lt; MAX_DATA_COUNT )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46888"></a> {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46889"></a>  format.signal[format.dataCount].time&#160;&#160;    = t;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46890"></a>  format.signal[format.dataCount].val&#160;&#160;     = (double)val;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46891"></a>  format.signal[format.dataCount].index&#160;&#160;   = index;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46892"></a>  format.signal[format.dataCount].isDigital = 1; </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46893"></a>  ++format.dataCount;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46894"></a> }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46895"></a> else</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46896"></a>  printf(&quot;Exceeded the maximum data point that can be stored \n&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46897"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46898"></a> return 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46899"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46900"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46901"></a>/* Defines addAWfPoint API */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46902"></a>int addAWfPointSAF(uwi_StreamHandle stream, uwi_WfHandle wfHandle, double val, </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46903"></a>                 double t)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46904"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46905"></a> int index = (size_t)(wfHandle);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46906"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46907"></a>  </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46908"></a> if( format.dataCount &lt; MAX_DATA_COUNT )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46909"></a> {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46910"></a>  format.signal[format.dataCount].time&#160;&#160;    = t;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46911"></a>  format.signal[format.dataCount].val&#160;&#160;     = val;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46912"></a>  format.signal[format.dataCount].index&#160;&#160;   = index;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46913"></a>  format.signal[format.dataCount].isDigital = 0; </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46914"></a>  ++format.dataCount;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46915"></a> }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46916"></a> else</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46917"></a>  printf(&quot;Exceeded the maximum data point that can be stored \n&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46918"></a> return 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46919"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46920"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46921"></a>/* Defines addAWfComplexPoint API */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46922"></a>int addAWfComplexPointSAF(uwi_StreamHandle stream, uwi_WfHandle wfHandle,</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46923"></a>                          double vReal, double vImag, double freq)</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46924"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46925"></a> int index = (size_t)(wfHandle);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46926"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46927"></a>  </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46928"></a> if( format.dataCount &lt; MAX_DATA_COUNT )</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46929"></a> {</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46930"></a>  format.signal[format.dataCount].time&#160;&#160;    = freq;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46931"></a>  format.signal[format.dataCount].val&#160;&#160;     = vReal;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46932"></a>  format.signal[format.dataCount].imag&#160;&#160;    = vImag;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46933"></a>  format.signal[format.dataCount].index&#160;&#160;   = index;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46934"></a>  format.signal[format.dataCount].isDigital = 0; </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46935"></a>  format.signal[format.dataCount].isComplex = 1; </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46936"></a>  ++format.dataCount;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46937"></a> }</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46938"></a> else</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46939"></a>  printf(&quot;Exceeded the maximum data point that can be stored \n&quot;);</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46940"></a> return 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46941"></a>}</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46942"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46943"></a>/* Finally register all the functions defined above with uwi_register() API */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46944"></a>struct uwi_WfIntDef* uwi_register()</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46945"></a>{</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46946"></a> /* Defines a static struct of the waveform interface definition */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46947"></a> static struct uwi_WfIntDef wfIntDef;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46948"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46949"></a> /* Assigns all the user defined functions to the members of the waveform *</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46950"></a>  * interface object */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46951"></a> wfIntDef.open&#160;&#160;      = openSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46952"></a> wfIntDef.defineWf&#160;&#160;  = defineWfSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46953"></a> wfIntDef.addDWfPoint = addDWfPointSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46954"></a> wfIntDef.addAWfPoint = addAWfPointSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46955"></a>    wfIntDef.addAWfComplexPoint = addAWfComplexPointSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46956"></a> wfIntDef.flush&#160;&#160;     = flushSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46957"></a> wfIntDef.close&#160;&#160;     = closeSAF;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46958"></a> wfIntDef.getErrMsg&#160;&#160; = NULL;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46959"></a> wfIntDef.resetXCoord = NULL;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46960"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46961"></a> /* the format is SAF the user needs specify the same format in the </pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46962"></a>  * netlist */</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46963"></a> wfIntDef.format = &quot;SAF&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-46964"></a> return &amp;wfIntDef;</pre>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-40870"></a>}</pre>
+<!-- [TOPIC_END] -->
+
+<p>
+<a name="pgfId-41750"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Spectre_UWITOC.html" id="prev" title="Contents">Contents</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
