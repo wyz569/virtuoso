@@ -1,0 +1,360 @@
+
+<html><head><title>Running the Pre-Layout Electromigration Check</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="urajput" />
+<meta name="CreateDate" content="2023-10-30" />
+<meta name="CreateTime" content="1698658143" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to work with the electrically aware design on analog signal circuits" />
+<meta name="DocTitle" content="Virtuoso Electrically Aware Design Flow Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Running the Pre-Layout Electromigration Check" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vead" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-30" />
+<meta name="ModifiedTime" content="1698658143" />
+<meta name="NextFile" content="chap3.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="chap2.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Electrically Aware Design Flow Guide -- Running the Pre-Layout Electromigration Check" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="veadIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="veadTOC.html">Contents</a></li><li><a class="prev" href="chap2.html" title="Running Simulations and Saving Electrical Data">Running Simulations and Saving ...</a></li><li style="float: right;"><a class="viewPrint" href="vead.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3.html" title="Extracting Parasitics in the Layout View">Extracting Parasitics in the L ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Electrically Aware Design Flow Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>3
+<a id="pgfId-1034311"></a></h1>
+<h1>
+<a id="pgfId-1034313"></a><hr />
+<a id="53702"></a>Running the Pre-Layout Electromigration Check<hr />
+</h1>
+
+<p>
+<a id="pgfId-1090294"></a>Pre-layout EM check on a schematic help you find whether the MOS device terminals carry more current than the maximum allowed current based on the pin layer shape and size. The limits for each conductor are specified in the EAD technology file. In case of EM violations, EAD may recommend number of fingers or fins for a given device to be EM-compliant.</p>
+<p>
+<a id="pgfId-1090871"></a>PreEM check reads the values set for the environment variable <code>layoutXL</code> <code>lxFingeringNames</code> to recognize the names of the device finger CDF parameters.</p>
+<p>
+<a id="pgfId-1082609"></a>You can run the pre-layout EM check (pre-EM check) on the specified layers of a Pcell. This helps in identifying and resolving EM violations even before creating the actual circuit layout.</p>
+<p>
+<a id="pgfId-1082605"></a>Running the pre-EM check automatically creates a scratch layout view based on the device parameters that you specify. It then runs the EM check on the scratch layout and generates a report that lists EM violations. The report also provides recommendations on how to resolve the reported violations, if any.</p>
+<p>
+<a id="pgfId-1078590"></a>The pre-EM check reports violations at the terminals where J/Jmax ratio is greater than or equal to 1. The default threshold percentage value is 100. You can modify the threshold value using the <a href="appB.html#70535">preEMViolThresholdPercent</a> environment variable.</p>
+
+<h2>
+<a id="pgfId-1080135"></a><a id="95536"></a>Setting Up Environment Variables for the Pre-EM check</h2>
+
+<p>
+<a id="pgfId-1080018"></a>Ensure that you set the following environment variables before running the pre-EM check:</p>
+<ul><li>
+<a id="pgfId-1080209"></a><a href="appB.html#30070">useCorner</a></li><li>
+<a id="pgfId-1087597"></a><a href="appB.html#57202">useSetup</a></li><li>
+<a id="pgfId-1080229"></a><a href="appB.html#13830">preEMCheckLayers</a></li><li>
+<a id="pgfId-1080126"></a><a href="appB.html#73556">preEMDetailReport</a></li><li>
+<a id="pgfId-1080132"></a><a href="appB.html#30952">preEMLogFile</a></li><li>
+<a id="pgfId-1086383"></a><a href="appB.html#70535">preEMViolThresholdPercent</a></li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1093600"></a>You can also use the Pre-EM Setup form to specify the extraction setup, extraction corner, and pre-em check layers.</p>
+<p>
+<a id="pgfId-1093601"></a>To set these options:</p>
+<ol><li>
+<a id="pgfId-1093602"></a>From the menu bar of the ADE Assembler, choose <em>EAD</em> &#8211; <em>Run Pre-EM Check</em>.<br />
+<a id="pgfId-1093603"></a>The Pre-EM Setup form opens.</li><li>
+<a id="pgfId-1093604"></a>In the <em>Extraction Setup</em> field, specify the path to the file containing the setup options.<br />
+<a id="pgfId-1093605"></a>For example: <code>&quot;./cadence/dfII/EAD/1/setup/gpdk45.ini&quot;</code></li><li>
+<a id="pgfId-1093606"></a>In the <em>Extraction Corner</em> field, specify the extraction corner that is mapped to an ICT file or eadTechFile to be used for extraction and the source of the EM models to be used for EM Checking.<br />
+<a id="pgfId-1093619"></a>For example, <code>nominal</code>.</li><li>
+<a id="pgfId-1093607"></a>In the <em>Pre-EM Check Layers</em> field, specify the comma-separated list of layers on which pre-EM check is performed.<br />
+<a id="pgfId-1093649"></a>For example, <code>Via1</code>, <code>Via2</code>, <code>Via3</code></li><li>
+<a id="pgfId-1093608"></a>Click <em>OK</em>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1093593"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1093740"></a><a href="appA.html#90796">The Pre-EM Setup Form</a></p>
+
+<h2>
+<a id="pgfId-1075063"></a><a id="36256"></a>Running the Pre-EM Check</h2>
+
+<p>
+<a id="pgfId-1085324"></a>You can run the pre-EM check as part of simulation runs in ADE Explorer, and ADE Assembler. For this, you need to first enable the pre-EM check mode in EAD setup.</p>
+<p>
+<a id="pgfId-1086877"></a>During the simulation run, a scratch layout is internally created and the pre-EM check is run on the scratch layout. After the simulation is complete, electrical data is automatically saved as CSV datasets and a pre-EM report is generated.</p>
+<p>
+<a id="pgfId-1075367"></a>Follow these steps to enable and run the pre-EM check:</p>
+<ol><li>
+<a id="pgfId-1075325"></a>From the menu bar, choose <em>EAD</em> <em>&#8211; Setup</em>.<br />
+<a id="pgfId-1075523"></a>The <em>EAD Setup</em> form is displayed.<br />
+<a id="pgfId-1075564"></a><div class="webflare-div-image">
+<img width="667" height="597" src="images/PreEMFlow-2.gif" /></div></li><li>
+<a id="pgfId-1075521"></a>Select the <em>Enable Electrical Data Capture for EAD Flow</em> check box.</li><li>
+<a id="pgfId-1075690"></a>Select the <em>Pre EM Check</em> check box.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1083433"></a>The <em>Pre EM Check</em> check box is enabled only if the <em>Enable Electrical Data Capture for EAD Flow</em> check box is selected.</div></li><li>
+<a id="pgfId-1075750"></a>Ensure that the design for which you need to perform electromigration analysis is displayed in the <em>Design Selection</em> section.</li><li>
+<a id="pgfId-1082155"></a>Specify the signal and methods to save electric data. For more information about how to set these options, refer to <a href="chap2.html#92599">Preparing the EAD Setup for Simulation</a>.</li><li>
+<a id="pgfId-1075811"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1075822"></a>On the <em>Run</em> toolbar, click <em>Run Simulation</em>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1091009"></a>If simulation results are already available, select <em>EAD</em> &#8211; <em>Run Pre-EM Check</em> to run the pre-EM check. This helps you save time by eliminating the need of running the simulation again.</div>
+<a id="pgfId-1087189"></a>The steps to run the pre-EM check are same in ADE Explorer and ADE Assembler.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1078759"></a>After the simulation finishes, the EM report opens, displaying the details of the instances and their terminals where EM violations are reported. The report also provides recommendations on how to resolve the reported violations. For more information about the pre-EM report, refer to <a href="PreEMFlow.html#51410">Pre-EM Report</a>.</p>
+<p>
+<a id="pgfId-1078977"></a>If you want to view the EM report again, click <em>View PreEM Violations</em> in the EAD results view as shown in the following figure.</p>
+
+<p>
+<a id="pgfId-1080340"></a></p>
+<div class="webflare-div-image">
+<img width="648" height="292" src="images/PreEMFlow-3.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1082500"></a>The <em>View PreEM Violations</em> command is displayed only if you have enabled the pre-EM check in the EAD setup.</div>
+
+<h3>
+<a id="pgfId-1080907"></a><a id="51410"></a>Pre-EM Report</h3>
+
+<p>
+<a id="pgfId-1080956"></a>The pre-EM report provides the following details:</p>
+<ul><li>
+<a id="pgfId-1081331"></a>Information about the layout and schematic cellviews, and datasets used for EM check</li><li>
+<a id="pgfId-1081406"></a>A summary of pass, fail, and warning statuses of the EM check and recommended number of fingers to resolve the EM violations, if any</li><li>
+<a id="pgfId-1081597"></a>Details of the instances and their terminals where EM violations are reported&#8211;J/Jmax ratio, m-Factor, no of terms, no of current fingers, and recommended number of fingers to resolve the reported EM violations</li><li>
+<a id="pgfId-1090168"></a>Runtime information in the following format:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1090214">
+<a id="pgfId-1090214"></a>Pre-EM check started at: <code><em>start date and time</em></code> and ended at: <code><em>end date and time</em></code>  with elapsed time (wall clock): <code><em>elapsed time</em></code> s.</pre></li></ul>
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1083559"></a>To view the detailed pre-EM report, ensure that the <a href="appB.html#73556">preEMDetailReport</a> environment variable is set to <code>t</code>.</div>
+<p>
+<a id="pgfId-1081096"></a>The following figure shows an example of a pre-EM report:</p>
+
+<p>
+<a id="pgfId-1091421"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="789" src="images/PreEMFlow-4.gif" /></div>
+
+<p>
+<a id="pgfId-1082096"></a>The Pre-EM checker reports a warning for instance terminals, if any of the following condition is met:</p>
+<ul><li>
+<a id="pgfId-1092139"></a>There are no shapes connected to the instance terminal.</li><li>
+<a id="pgfId-1092214"></a>There is no current passing through the instance terminal.</li><li>
+<a id="pgfId-1092293"></a>There is no mapping in the layout for the instance terminal in the schematic.<br />
+<a id="pgfId-1092522"></a><div class="webflare-div-image">
+<img width="668" height="343" src="images/PreEMFlow-5.gif" /></div></li></ul>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1091608"></a>If any of the instance terminals have reported a warning, WARN is printed in the CHECK STATUS for that instance in the Pre-EM report.</p>
+<p>
+<a id="pgfId-1091840"></a>If any of the instance terminals have reported a fail status, FAIL is printed in the CHECK STATUS for that instance in the Pre-EM report.</p>
+<p>
+<a id="pgfId-1091983"></a>The priority order of the statuses is as follows: FAIL &gt; WARN &gt; PASS.</p>
+
+<p>
+<a id="pgfId-1091777"></a></p>
+
+<p>
+<a id="pgfId-1079182"></a>You can also view the details of the reported violations in the Annotation Browser of Virtuoso Schematic Editor, as shown in the following figure.</p>
+
+<p>
+<a id="pgfId-1080563"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="355" src="images/PreEMFlow-6.gif" /></div>
+
+<p>
+<a id="pgfId-1084166"></a>If required, you can view the saved CSV datasets by loading the history results in ADE Assembler. To view the datasets, in the EAD results view, from the <em>Maestro View</em> and <em>History</em> drop-down lists, select <em>ALL</em>. The CSV datasets are displayed in the datasets table as shown in the following figure.</p>
+
+<p>
+<a id="pgfId-1084620"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="247" src="images/PreEMFlow-7.gif" /></div>
+<h2>
+<a id="pgfId-1073857"></a>Performing What-If Analysis Based on the Pre-EM Check Results</h2>
+
+<p>
+<a id="pgfId-1085471"></a>After analyzing the violations reported in the pre-EM check, you can make the suggested changes in the design, and verify the results by running the pre-EM checks again in ADE Explorer, or ADE Assembler.</p>
+<p>
+<a id="pgfId-1085472"></a>Alternatively, you may want to reuse the results saved in the CSV datasets, and run a what-if analysis by making some changes in the setup, for example, changing the EM temperature or electrical data in the dataset. You can then run the EM checks using the EAD Browser in Virtuoso Schematic Editor, as explained below.</p>
+
+<h3>
+<a id="pgfId-1084456"></a>Preparing the Setup for What-If Analysis</h3>
+
+<p>
+<a id="pgfId-1085557"></a>Follow these steps to prepare the set up for what-if analysis:</p>
+<ol><li>
+<a id="pgfId-1073555"></a>Open the design under test (DUT) in Virtuoso Schematic Editor.</li><li>
+<a id="pgfId-1073651"></a>From the schematic editor menu, choose <em>Launch</em> <em>&#8211;</em> <em>Plugins</em> <em>&#8211;</em> <em>EAD</em>.<br />
+<a id="pgfId-1073728"></a>The EAD Browser assistant is displayed.<br />
+<a id="pgfId-1073827"></a><div class="webflare-div-image">
+<img width="481" height="513" src="images/PreEMFlow-8.gif" /></div></li><li>
+<a id="pgfId-1073725"></a>Select the <em>No Layout</em> check box.</li><li>
+<a id="pgfId-1081860"></a>In the <em>Use Setup</em> section, ensure that the correct setup is selected in the <em>Setup Name</em> drop-down list.</li><li>
+<a id="pgfId-1073936"></a>Click <em>Start EAD</em>.</li><li>
+<a id="pgfId-1073958"></a>Import the dataset that has the latest electrical data used for running the pre-EM check by performing the following actions:<ol><li>
+<a id="pgfId-1073975"></a>Click the <em>Update with latest electrical data from simulation</em> button to reload the electrical data for the datasets that were saved during the last simulation run.</li><li>
+<a id="pgfId-1074014"></a>From the <em>Electrical Dataset </em>drop-down list, select the CSV dataset that was created after the simulation run.<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1084655"></a>
+The CSV datasets are available only if you have run the pre-EM check in ADE Assembler or ADE Explorer.</div></li></ol></li><li>
+<a id="pgfId-1077097"></a>By default, the EM checker is disabled in the Schematic EAD. To enable the EM checker, perform the following actions:<ol><li>
+<a id="pgfId-1077111"></a>On the <em>EAD Browser </em>toolbar, click the drop-down arrow next to <em>Run EM check</em> to display additional commands.</li><li>
+<a id="pgfId-1077190"></a>Click <em>Disable EM Checker</em> to remove the check mark.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1074472"></a>Click <em>Close</em> if a message box appears, displaying the temperature mismatch warning.</div></li></ol></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1083002"></a>After the setup is ready, you can run what-if analysis. The following sections describes a few examples of performing the analysis:</p>
+<ul><li>
+<a id="pgfId-1086031"></a><a href="PreEMFlow.html#48357">Editing Terminal Currents in Datasets for What-If Analysis</a></li><li>
+<a id="pgfId-1086041"></a><a href="PreEMFlow.html#47140">Editing EM Temperature for What-If Analysis</a></li></ul>
+
+
+<h4>
+<a id="pgfId-1076682"></a><a id="48357"></a>Editing Terminal Currents in Datasets for What-If Analysis</h4>
+
+<p>
+<a id="pgfId-1076696"></a>Follow these steps to edit the values of terminal current and to analyze its effect on EM violations:</p>
+<ol><li>
+<a id="pgfId-1076790"></a>In the <em>EAD Browser</em> of Virtuoso Schematic Editor, click the <em>EM</em> tab.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1077444"></a>If the EM tab is disabled, first enable it by removing the check mark from the <em>Disable EM Checker</em> command in the EAD Browser toolbar.</div></li><li>
+<a id="pgfId-1077447"></a>Select a net in the summary pane and click <em>Edit currents</em> on the EM tab toolbar to display the <em>Terminal Electrical Values</em> table. The Terminal Electrical Values table in the detail pane lists all the terminals on the selected net with the electrical values from the dataset.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1077575"></a>Ensure that you have selected the correct dataset from the <em>Electrical Dataset</em> drop-down list.</div></li><li>
+<a id="pgfId-1077519"></a>Double-click the cell next to the terminal to edit its current value.</li><li>
+<a id="pgfId-1077837"></a>On the <em>EAD Browser</em> toolbar, click <em>Run Pre-EM Checker</em> (<img width="25" height="26" src="images/PreEMFlow-10.gif" />
+).</li><li>
+<a id="pgfId-1077838"></a>Select the location where you want to save the log file that contains the detailed report of EM analysis, and then click <em>Save</em>.<br />
+<a id="pgfId-1077812"></a>The EM report opens. Analyze the effect of changing the terminal current on the EM violations.</li></ol>
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1077853"></a><a id="47140"></a>Editing EM Temperature for What-If Analysis</h4>
+
+<p>
+<a id="pgfId-1077877"></a>Follow these steps to edit the EM temperature and to analyze its effects on the EM violations:</p>
+<ol><li>
+<a id="pgfId-1077927"></a>In the <em>EAD Browser</em> toolbar of Virtuoso Schematic Editor, click the drop-down arrow next to the Options button to display additional commands, and then choose <em>Edit Options</em>.<br />
+<a id="pgfId-1078095"></a>The <em>EAD Options</em> form opens.</li><li>
+<a id="pgfId-1078093"></a>Click the <em>EM</em> tab.</li><li>
+<a id="pgfId-1078156"></a>In the <em>Temperature</em> section, edit the value of EM temperature in the <em>EM Temperature</em> field.</li><li>
+<a id="pgfId-1078265"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1078287"></a>On the <em>EAD Browser</em> toolbar, click <em>Run Pre-EM Checker</em> (<img width="25" height="26" src="images/PreEMFlow-11.gif" />
+).</li><li>
+<a id="pgfId-1078288"></a>Select the location where you want to save the log file that contains the detailed report of EM analysis, and then click <em>Save</em>.<br />
+<a id="pgfId-1078280"></a>The EM report opens. Analyze the effect of EM temperature on the EM violations.</li></ol>
+
+
+
+
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap2.html" id="prev" title="Running Simulations and Saving Electrical Data">Running Simulations and Saving ...</a></em></b><b><em><a href="chap3.html" id="nex" title="Extracting Parasitics in the Layout View">Extracting Parasitics in the L ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

@@ -1,0 +1,907 @@
+
+<html><head><title>Resimulating Designs with Extracted Parasitics</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="urajput" />
+<meta name="CreateDate" content="2023-10-30" />
+<meta name="CreateTime" content="1698658139" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to work with the electrically aware design on analog signal circuits" />
+<meta name="DocTitle" content="Virtuoso Electrically Aware Design Flow Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Resimulating Designs with Extracted Parasitics" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vead" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-30" />
+<meta name="ModifiedTime" content="1698658139" />
+<meta name="NextFile" content="eae.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="preEMCalculator.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Electrically Aware Design Flow Guide -- Resimulating Designs with Extracted Parasitics" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="veadIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="veadTOC.html">Contents</a></li><li><a class="prev" href="preEMCalculator.html" title="Introduction to EM Calculator">Introduction to EM Calculator</a></li><li style="float: right;"><a class="viewPrint" href="vead.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="eae.html" title="Quantus-Pegasus Integration for Partial Layouts">Quantus-Pegasus Integration fo ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Electrically Aware Design Flow Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>7
+<a id="pgfId-1034311"></a></h1>
+<h1>
+<a id="pgfId-1034313"></a><hr />
+<a id="53702"></a>Resimulating Designs with Extracted Parasitics<hr />
+</h1>
+
+<p>
+<a id="pgfId-1062796"></a>The parasitic information of the design gets updated dynamically while you run electromigration analysis and make changes in the layout to resolve violations. You can use this information, which you can get from a partial or complete layout, to regenerate a netlist and then rerun simulations in ADE Assembler to check if the output specifications are still met. If required, you can further modify design variables and parameters or the layout to meet the desired results.</p>
+<p>
+<a id="pgfId-1055496"></a>This chapter describes the enhancements in the parasitic aware design flow and how to use parasitics from the layout view to run simulations in ADE Assembler.</p>
+<p>
+<a id="pgfId-1057621"></a>This chapter includes the following topics:</p>
+<ul><li>
+<a id="pgfId-1057609"></a><a href="chap5.html#65128">Preparing the Parasitic Setup</a></li><li>
+<a id="pgfId-1057647"></a><a href="chap5.html#52094">Running Simulations and Verifying Specifications</a></li><li>
+<a id="pgfId-1081516"></a><a href="chap5.html#82067">Using Extracted Parasitics to Run Spectre EM/IR Analysis</a></li><li>
+<a id="pgfId-1057714"></a><a href="chap5.html#52663">Using Parasitic Values from Multiple Sources</a></li><li>
+<a id="pgfId-1057691"></a><a href="chap5.html#36256">Running Advanced Simulation Runs to Improve Designs</a></li><li>
+<a id="pgfId-1061936"></a><a href="chap5.html#70834">Viewing and Updating Layout Parasitics in VSE XL</a></li></ul>
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1055729"></a><a id="72578"></a>Running Simulations with Layout Parasitics</h2>
+
+<p>
+<a id="pgfId-1055730"></a>After the electromigration analysis is complete and violations are resolved, reopen the adexl view of your design. Next, prepare the parasitic setup by including layout parasitics and rerun simulations.</p>
+<p>
+<a id="pgfId-1055736"></a>The following topics describe how to perform parasitic resimulations:</p>
+<ul><li>
+<a id="pgfId-1055754"></a><a href="chap5.html#65128">Preparing the Parasitic Setup</a></li><li>
+<a id="pgfId-1055764"></a><a href="chap5.html#52094">Running Simulations and Verifying Specifications</a></li></ul>
+
+
+<h3>
+<a id="pgfId-1055731"></a><a id="65128"></a>Preparing the Parasitic Setup</h3>
+
+<p>
+<a id="pgfId-1057738"></a>Preparation of parasitic setup involves creation of a netlist_layout view or a DSPF file that contains parasitics and other layout-dependent effects (LDE) to be used in simulation.</p>
+<p>
+<a id="pgfId-1059673"></a>The following sections describe the steps to prepare a parasitic setup in different ways:</p>
+<ul><li>
+<a id="pgfId-1059708"></a><a href="chap5.html#26142">Creating a Netlist Cellview with Layout Parasitics in Virtuoso Layout EAD</a></li><li>
+<a id="pgfId-1059718"></a><a href="chap5.html#60535">Creating a Netlist Cellview with Layout Parasitics in Virtuoso ADE Assembler</a></li><li>
+<a id="pgfId-1080511"></a><a href="chap5.html#76913">Creating a DSPF File with Layout Parasitics in Virtuoso Layout EAD</a></li></ul>
+
+
+
+<h4>
+<a id="pgfId-1059646"></a><a id="26142"></a>Creating a Netlist Cellview with Layout Parasitics in Virtuoso Layout EAD</h4>
+
+<p>
+<a id="pgfId-1059910"></a>To create a netlist cellview from Layout EAD, click <img width="36" height="27" src="images/chap5-2.gif" />
+ on the EAD toolbar or the EAD Browser toolbar and choose <em>Build Parasitic/LDE Netlist View</em>. The Par<a id="buildForm"></a>asitics &amp; LDE Setup form is displayed as shown below.</p>
+
+<p>
+<a id="pgfId-1059914"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="506" src="images/chap5-3.gif" /></div>
+
+<p>
+<a id="pgfId-1060103"></a>On the <em>General</em> tab, the library and cell name of the layout view are displayed in the <em>Library Name</em> and <em>Cell Name</em> fields. </p>
+<p>
+<a id="pgfId-1079301"></a>On the <em>Layout</em> tab, enter a name to be used for the netlist view in the <em>View Name</em> field. Specify other values on this form.</p>
+<p>
+<a id="pgfId-1080441"></a>Related Topic: </p>
+<ul><li>
+<a id="pgfId-1080445"></a><a href="appA.html#96415">Parasitics &amp; LDE Setup</a> form field description</li></ul>
+<p>
+<a id="pgfId-1059788"></a>Click <em>OK</em> to close the form and to build the netlist view. </p>
+<p>
+<a id="pgfId-1079336"></a>A message box displaying a summary of parasitics and other LDEs included in the netlist view is displayed. Click <em>OK</em> to close this message.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1060641"></a>This view is used in ADE Assembler when you select Layout (Parasitics/LDE) in the parasitic Mode toolbar.</div>
+
+<p>
+<a id="pgfId-1060647"></a></p>
+<div class="webflare-div-image">
+<img width="666" height="35" src="images/chap5-4.gif" /></div>
+<h4>
+<a id="pgfId-1059762"></a><a id="60535"></a>Creating a Netlist Cellview with Layout Parasitics in Virtuoso ADE Assembler</h4>
+
+<p>
+<a id="pgfId-1059725"></a>This method is helpful when the schematic and layout views are available in different libraries. Perform the following steps to prepare a netlist from ADE Assembler:</p>
+<ol><li>
+<a id="pgfId-1057739"></a>In the ADE Assembler window, choose <em>Parasitics/LDE &#8211; Setup</em>. <br />
+<a id="pgfId-1057740"></a>The <strong>
+Parasitics &amp; LDE Setup</strong>
+ form is displayed, as shown below.<br />
+<a id="pgfId-1055821"></a><div class="webflare-div-image">
+<img width="635" height="392" src="images/chap5-5.gif" /></div>
+<a id="pgfId-1058909"></a>The General tab shows the schematic view of the DUT. </li><li>
+<a id="pgfId-1058961"></a>Open the Layout tab and specify a name for the netlist layout view to be created with the parasitics. By default, this is set to <code>netlist_layout</code>.<br />
+<a id="pgfId-1058965"></a><div class="webflare-div-image">
+<img width="635" height="508" src="images/chap5-6.gif" /></div></li><li>
+<a id="pgfId-1058928"></a>Using the following drop-down lists, select the library, cell, and view names of the layout view from where the parasitics will be read in:<ul><li>
+<a id="pgfId-1059045"></a><em>Layout Lib Name for Parasitics &amp; LDE</em></li><li>
+<a id="pgfId-1059058"></a><em>Layout Cell Name for Parasitics &amp; LDE</em></li><li>
+<a id="pgfId-1059079"></a><em>Layout View Name for Parasitics &amp; LDE</em></li></ul></li><li>
+<a id="pgfId-1055927"></a>Specify the following values in the <em>Parasitics</em> section:<ol><li>
+<a id="pgfId-1059289"></a>Select any one of the following options for the <em>Include parasitics from</em> field:<ul><li>
+<a id="pgfId-1071887"></a><em>Layout</em>: To include parasitics from the layout view for the design</li><li>
+<a id="pgfId-1071976"></a><em>MODGEN constraints</em>: To include parasitics from MODGEN constraints. When you select this option, the layout view is not checked for parasitics. A dummy layout is created by placing all MODGEN constraints and device instances. A netlist is then created by using that dummy layout.</li></ul><br />
+<a id="pgfId-1056017"></a>If you extracted parasitics for multiple corners in the layout view, names of all the corners are listed in the <em>Extraction corner for layout parasitics</em> list.</li><li>
+<a id="pgfId-1057793"></a>Select the name of corner for which you want to use parasitics in the netlist layout view.</li><li>
+<a id="pgfId-1056060"></a>Specify the name of a ground net in the <em>Reference net for Grounded C</em> field. You can also select a net from the schematic by clicking on <em>Select from Schematic</em>.</li><li>
+<a id="pgfId-1056072"></a>By default, the <em>Expand Devices with M-Factor</em> check box is selected, which implies that Virtuoso looks for cells in the layout that have parameters defining multiple factors. If the corresponding cell in the schematic view does not contain an equal number of factors, before generating the netlist, multiple copies of that schematic cell are created to establish the connection. If not required, clear this check box.</li><li>
+<a id="pgfId-1056108"></a>When you select this check box, also specify the names of the CDF parameters that define m-factor parameters of devices in the <em>Device M Factor Parameter Names</em> field on the General tab.</li><li>
+<a id="pgfId-1056101"></a>If there are any dummy cells backannotated from the layout to the schematic view, you can choose to include them while generating the netlist for simulation by clearing the <em>Ignore Dummies Back-Annotated to Schematic</em> check box. By default, such dummy cells are ignored.</li></ol><br />
+<a id="pgfId-1056189"></a>For more details about the <strong>
+Setup Parasitics &amp; LDE</strong>
+ form, see <a actuate="user" class="URL" href="../parasim/chap2.html#setupParasiticsEstimates" show="replace" xml:link="simple">Parasitics/LDE &#8211;Setup</a> in the <em>Parasitic Aware Design User Guide</em>.</li><li>
+<a id="pgfId-1055928"></a>If required, configure other settings in this form.</li><li>
+<a id="pgfId-1056223"></a>Click <em>Apply</em> to save the settings.<br />
+<a id="pgfId-1055929"></a>The tool validates the entries in the form.</li><li>
+<a id="pgfId-1055902"></a>Click <em>OK</em> to close the form.<br />
+<a id="pgfId-1057859"></a>Virtuoso creates a netlist view with the name specified in the <em>Netlist View Name</em> field. This netlist view includes the parasitics from the layout view.<br />
+<a id="pgfId-1058794"></a>The simulation mode in ADE Assembler is automatically changed to <code>Layout (Parasitics/LDE)</code>. This is the mode in which ADE Assembler runs simulations with parasitics included in the netlist.<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1058763"></a>
+A netlist created from a layout view merges the parasitics from both the layout view and the schematic view. While doing that, preference is given to the parasitics in the layout view. For example, if you have specified both resistance and capacitance for a net in the schematic view, whereas, only capacitance for that net in the layout view, the netlist with get the capacitance value from the layout and resistance value from the schematic. To use only the parasitics from the layout view and to ignore all the estimated parasitics from the schematic, set the <a href="../parasim/appEnvVar.html#mixSchEstWithLayoutParasitics">mixSchEstWithLayoutParasitics</a> environment variable to <code>nil</code>.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1058230"></a>If you change the layout view of your design, you need to rebuild the parasitic/LDE view before running simulations to include the parasitics from the layout correctly. For this, click <em>Build Parasitic/LDE View</em> on the <em>Parasitic Mode</em> toolbar in the ADE Assembler window.</div>
+
+<p>
+<a id="pgfId-1058234"></a></p>
+<div class="webflare-div-image">
+<img width="666" height="35" src="images/chap5-8.gif" /></div>
+
+<p>
+<a id="pgfId-1058216"></a>The <strong><a actuate="user" class="URL" href="../parasim/chap2.html#parasiticsBuildEstimatesXL" show="replace" xml:link="simple">Build Parasitic/LDE View</a></strong> form is displayed. If required, specify the scaling factors for parasitics and click <em>OK</em>.</p>
+
+<h4>
+<a id="pgfId-1079342"></a><a id="76913"></a>Creating a D<a id="dspf"></a>SPF File with Layout Parasitics in Virtuoso Layout EAD</h4>
+
+<p>
+<a id="pgfId-1079229"></a>To export the parasitics from Layout EAD into a DSPF file, click <img width="36" height="27" src="images/chap5-9.gif" />
+ on the EAD toolbar or the EAD Browser toolbar and choose <em>Generate DSPF File</em>. The Parasitics &amp; LDE Setup form is displayed.</p>
+<p>
+<a id="pgfId-1079891"></a>Validate the information on the <em>General</em> tab and make changes, if required.</p>
+<p>
+<a id="pgfId-1079586"></a>Open the <em>DSPF</em> tab, as shown below. </p>
+<p>
+<a id="pgfId-1079781"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="506" src="images/chap5-10.gif" /></div>
+
+<p>
+<a id="pgfId-1079767"></a>This tab shows the settings used to write parasitic data in a DSPF file. If required, customize the settings. Click <em>OK</em> to close the form and generate the DSPF file.</p>
+<p>
+<a id="pgfId-1088780"></a>The DSPF file generated in Virtuoso Layout EAD does not include LDE effects and cannot be used for parasitics resimulation.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1079767"></a>The subcircuit port order in the DSPF file is retrieved from terminal order (<code>termOrder</code>) defined in the <em>Simulation Information</em> (<code>simInfo</code>) of Spectre.</div>
+<p>
+<a id="pgfId-1080188"></a>Related Topic: </p>
+<ul><li>
+<a id="pgfId-1080299"></a><a href="appA.html#96415">Parasitics &amp; LDE Setup</a> form field description</li></ul>
+
+<h3>
+<a id="pgfId-1055254"></a><a id="52094"></a>Running Simulations and Verifying Specifications </h3>
+
+<p>
+<a id="pgfId-1056770"></a>After the estimated view is built successfully, run a new simulation for your design and view the results to analyze how the desired output specifications are met. The color codes on the Results tab indicate the pass, fail, or near pass status, as shown in the figure below.</p>
+
+<p>
+<a id="pgfId-1057948"></a></p>
+<div class="webflare-div-image">
+<img src="images/eadSimResultStatus.gif" /></div>
+<h4>
+<a id="pgfId-1058027"></a>Comparing the Simulation Results</h4>
+
+<p>
+<a id="pgfId-1056502"></a>You can compare the results with that of the previous simulations, which were run without using the parasitic estimates. For this, you can use the Spec Comparison form in ADE Assembler.</p>
+<p>
+<a id="pgfId-1056567"></a>On the Results toolbar, click <img src="images/adexlSpecCompBtn.gif" />
+ (<em>Spec Comparison</em>) to open the <strong>
+Spec Comparison</strong>
+ window. Select two histories for which you need to compare the results, and specify the test and design points for which you need to compare the results. ADE Assembler creates a comparison report and displays it in the reporting section of this window, as shown in the figure below.</p>
+
+<p>
+<a id="pgfId-1056571"></a></p>
+<div class="webflare-div-image">
+<img src="images/eadSpecComparison1.GIF" /></div>
+
+<p>
+<a id="pgfId-1056555"></a>For more details on Spec Comparison, refer to <h-hot><a actuate="user" class="URL" href="../assembler/asmViewingResults.html#specComparison" show="replace" xml:link="simple">Comparing Results</a></h-hot> in the <em>Virtuoso ADE Assembler User Guide</em>.</p>
+<p>
+<a id="pgfId-1056539"></a>The result comparison summary helps in analyzing the impact of parasitics on the design performance. Accordingly, you can decide the further actions to be taken to improve the design schematic or layout.</p>
+
+<h2>
+<a id="pgfId-1081519"></a><a id="82067"></a>Using Extracted Parasitics to Run Spectre EM/IR Analysis </h2>
+
+<p>
+<a id="pgfId-1081558"></a>The extracted parasitics can be saved in DSPF files, which you can include in Spectre EM/IR analysis. This provides the capability to use the Spectre solver for the generation of current data. You can further use that current data to run EM checks in EAD.</p>
+<p>
+<a id="pgfId-1081897"></a>To use the extracted parasitics to run Spectre EM/IR analysis, perform the following steps:</p>
+<ol><li>
+<a id="pgfId-1082000"></a>Open the layout view of the design.</li><li>
+<a id="pgfId-1082043"></a>Open the EAD Browser, and run parasitic extraction by using the <em>Extract Parasitics for All Nets</em> command.<br />
+<a id="pgfId-1082174"></a>Check the extracted parasitics data.</li><li>
+<a id="pgfId-1082002"></a>Use the <em>Export Parasitics &#8211; Generate DSPF File</em> command to save the parasitic details in a DSPF file.<br />
+<a id="pgfId-1082362"></a><div class="webflare-div-image">
+<img width="668" height="202" src="images/chap5-14.gif" /></div></li><li>
+<a id="pgfId-1082004"></a>Specify the settings for DSPF file generation as explained in <a href="chap5.html#76913">Creating a DSPF File with Layout Parasitics in Virtuoso Layout EAD</a>.<br />
+<a id="pgfId-1082552"></a>A .dspf file is saved with the extracted parasitics.</li><li>
+<a id="pgfId-1081994"></a>Open the maestro cellview for the design in Virtuoso ADE Explorer.</li><li>
+<a id="pgfId-1082819"></a>Choose <em>Setup &#8211; Simulation Files</em> to open the Simulation Files Setup form.</li><li>
+<a id="pgfId-1082711"></a>Specify the name of the saved DSPF file in the Simulation Files Setup form.<br />
+<a id="pgfId-1082715"></a><div class="webflare-div-image">
+<img width="668" height="499" src="images/chap5-15.gif" /></div></li><li>
+<a id="pgfId-1082707"></a>Choose <em>Setup &#8211; EM/IR Analysis </em>to open the <em>Spectre EMIR / Voltus-Fi XL Analysis Setup</em> form.</li><li>
+<a id="pgfId-1082983"></a>Do the following:<ol><li>
+<a id="pgfId-1083009"></a>On the <em>Analysis</em> tab, select the <em>Enable EMIR Analysis in transient or DC Solution</em>.<br /><ffi2-fig-frame-in-2 id="#id1083745">
+<a id="pgfId-1083745"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="668" height="736" src="images/chap5-16.gif" /></div></li><li>
+<a id="pgfId-1083003"></a>On the <em>Solver</em> tab, ensure that the solver method is selected as <em>direct</em>.</li></ol></li><li>
+<a id="pgfId-1083198"></a>Run simulation in ADE Explorer and save results.</li><li>
+<a id="pgfId-1083192"></a>Open the layout view again.</li><li>
+<a id="pgfId-1083259"></a>In the EAD Browser, create a user-defined dataset by using <code>Spectre EM/IR Results</code> as the current source. <br />
+<a id="pgfId-1083440"></a>For more details, refer to <a href="chap4.html#36907">Creating User-Defined Custom Datasets</a>.</li><li>
+<a id="pgfId-1083437"></a>Run EM analysis in EAD Browser.<br />
+<a id="pgfId-1083428"></a>EAD runs EM analysis for the nets by using the saved current dataset.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1057127"></a><a id="52663"></a>Using Parasitic Values from Multiple Sources</h3>
+
+<p>
+<a id="pgfId-1057149"></a>If you have defined some important parasitics in the schematic view of your design, you can choose to use them along with the parasitics from layout.</p>
+<p>
+<a id="pgfId-1058090"></a>To create parasitic estimates, in the ADE Assembler window, choose <em>Parasitics/LDE &#8211; Create Estimates</em>. The Parasitics &amp; Electrical Setup assistant is displayed. Select a net or terminal on the schematic and choose the type of estimate to be created. A new estimate is created. For more details, refer to <h-hot><a actuate="user" class="URL" href="../parasim/chap2.html#creatingParasiticEstimates" show="replace" xml:link="simple">Creating Parasitic Estimates</a></h-hot> in the <em>Virtuoso Parasitic Aware Design User Guide</em>.</p>
+<p>
+<a id="pgfId-1057759"></a>You can now add parasitic estimates from other sources, such as a layout view, in any one of the following ways:</p>
+<ul><li>
+<a id="pgfId-1057760"></a><a href="chap5.html#setParSource">By setting the source of a parasitic estimate to a layout</a></li><li>
+<a id="pgfId-1057761"></a><a href="chap5.html#createLayoutEst">By creating layout stitching estimates for a cell</a></li></ul>
+
+
+<h4>
+<a id="pgfId-1057128"></a>Setting the So<a id="setParSource"></a>urce of a Parasitic Estimate to a Layout View</h4>
+
+<p>
+<a id="pgfId-1057135"></a>To specifically set the source for an estimate to a layout view, do the following:</p>
+<ol><li>
+<a id="pgfId-1057266"></a>Open the schematic view of your design.</li><li>
+<a id="pgfId-1058265"></a>Select the nets for which you want to create parasitic estimate constraints.</li><li>
+<a id="pgfId-1057294"></a>In the <strong>
+Parasitics and Electrical Setup</strong>
+ assistant, click <em>Create Estimated Capacitance</em> to create a capacitance estimate, or <em>Create Estimated Resistance</em> to create a resistance estimate.<br />
+<a id="pgfId-1057342"></a>A new estimate is created for the net and displayed in the assistant.</li><li>
+<a id="pgfId-1057331"></a>Select the newly created estimate and open the Estimate Editor section.</li></ol>
+
+
+
+
+
+<p>
+<a id="pgfId-1058101"></a>By default, the source property of a newly created estimate is set to <code>manual</code>.</p>
+
+<ol><li>
+<a id="pgfId-1057387"></a>Change the source property for the estimate to <code>layout view</code>, as shown in the figure below.<br />
+<a id="pgfId-1057374"></a><div class="webflare-div-image">
+<img src="images/eadAddLayoutEstimates.gif" /></div>
+<a id="pgfId-1057356"></a>When you change the source of the estimate, the tool automatically adds three properties, <em>layLib</em>, <em>layCell</em>, and <em>layView</em>, and shows the names of the library, cell, and first found layout view for the current cell.<br />
+<a id="pgfId-1057412"></a>In this way, you can add a mixed set of estimates, with different sources, for a particular cellview. When you run a simulation with schematic estimates the next time, parasitic estimates will be included according to the source type.<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1057429"></a>
+You cannot set the source of L and K estimates to <code>layout view</code>.</div></li></ol>
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1057112"></a>Creating Layout Stit<a id="createLayoutEst"></a>ching Estimates for a Cell</h4>
+
+<p>
+<a id="pgfId-1057082"></a>If you want to get all the parasitics from a layout view, you can create a layout stitching estimate. For this, in the <strong>
+Parasitics and Electrical Setup</strong>
+ assistant, click <em>Create Layout Stitching Estimates for Cell</em>.</p>
+<p>
+<a id="pgfId-1057566"></a>Two new estimates, one of R and C type each, are created, as shown in the figure below.</p>
+
+<p>
+<a id="pgfId-1057548"></a></p>
+<div class="webflare-div-image">
+<img width="502" height="424" src="images/chap5-18.gif" /></div>
+
+<p>
+<a id="pgfId-1057536"></a>The new estimate is attached to a layout view from where it is pulling all the R or C estimates.</p>
+
+<h2>
+<a id="pgfId-1056954"></a><a id="36256"></a>Running Advanced Simulation Runs to Improve Designs</h2>
+
+<p>
+<a id="pgfId-1056960"></a>If the simulation results or the spec comparison reports indicate that the design performance is not as expected, you need to modify the design schematic or design parameters or the layout and rerun simulations until you get the desired results.</p>
+<p>
+<a id="pgfId-1056800"></a>Some of the run modes in ADE Assembler help in identifying the design or parameter settings that can generate the desired results. Some of the possible ways to achieve the desired results are given below:</p>
+<ul><li>
+<a id="pgfId-1056857"></a><a actuate="user" class="URL" href="../assembler/asmOptimize.html#firstpage" show="replace" xml:link="simple">Run a local or global optimization</a> to find out the best design point. For more details, refer to <em>Virtuoso ADE Assembler User Guide</em>.</li><li>
+<a id="pgfId-1056901"></a>Use the <a actuate="user" class="URL" href="../assembler/asmOptimize.html#manualTuning" show="replace" xml:link="simple">manual tuning run mode</a> to run simulations with different parameterization setups and modify the design between different runs manually.</li><li>
+<a id="pgfId-1056926"></a>Update the layout of devices, re-extract parasitics, run EM checks and resimulate the design with parameters.</li></ul>
+
+
+
+<h4><em>
+<a id="pgfId-1058564"></a>Important Points to Note</em></h4>
+
+<ul><li>
+<a id="pgfId-1058565"></a>In the <code>Local Optimization</code> run mode, you can sweep the values of device parameters to identify the best design point that meets the desired specifications. For details on extracted view optimization, refer to <a actuate="user" class="URL" href="../parasim/chap2.html#simExtractedView" show="replace" xml:link="simple">Optimizing an Extracted or Layout View</a> in the <em>Virtuoso Parasitic Aware Design Flow User Guide</em>.</li><li>
+<a id="pgfId-1058567"></a>After you modify the devices in schematic or change the design parameters, you can rebuild the netlist_layout view with the same layout parasitics. You do not have to make any changes in the layout until you have found a good solution.</li></ul>
+
+
+<h2>
+<a id="pgfId-1060731"></a><a id="70834"></a>Viewing and Updating <a id="SchematicEAD"></a>Layout Parasitics in VSE XL</h2>
+
+<p>
+<a id="pgfId-1060772"></a>During the resimulation phase of the EAD flow, you can identify the effect of layout parasitics on the simulation results of your design. As described in <a href="chap5.html#72578">Running Simulations with Layout Parasitics</a>, you can create a netlist using the layout view that includes parasitics, run simulation, and compare the results with the simulation results obtained for the schematic view.</p>
+<p>
+<a id="pgfId-1060774"></a>As a circuit designer, you can also visualize the layout parasitics on the schematic view to analyze how they have affected the simulation results. If the specifications for simulation results are not being met, you can tune the devices and apply constraints to provide guidance to the layout designer for the placement of those devices. In this way, you can collaborate with the layout designer to ensure that the layout is electrically correct.</p>
+<p>
+<a id="pgfId-1060764"></a>The EAD Browser assistant in the schematic view provides the capability to overlay the layout parasitics on the schematic. This assistant provides access to parts of the EAD Browser that are useful to the circuit designer.</p>
+<p>
+<a id="pgfId-1060795"></a>To open the EAD Browser assistant in VSE XL window,</p>
+
+<ul><li>
+<a id="pgfId-1060822"></a>Choose <em>Launch &#8211; Plugins &#8211; EAD</em>.</li></ul>
+
+<p>
+<a id="pgfId-1060823"></a>The EAD workspace for VSE XL is loaded. This workspace consists of:</p>
+<ul><li>
+<a id="pgfId-1060826"></a>The EAD Browser assistant that is displayed to the left of the schematic diagram.</li><li>
+<a id="pgfId-1060829"></a>The EAD toolbar that is displayed on top of the layout canvas. This toolbar is not visible by default. To view the toolbar, choose <em>Window &#8211; Toolbars &#8211; EAD Toolbar</em>.</li><li>
+<a id="pgfId-1062600"></a>The EAD menu. This menu contains the command to open the EAD Options form.</li></ul>
+
+
+<p>
+<a id="pgfId-1060814"></a>Initially, the EAD Browser assistant shows the fields required to prepare the setup, as shown below.</p>
+
+<p>
+<a id="pgfId-1060862"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="476" src="images/chap5-19.gif" /></div>
+
+<p>
+<a id="pgfId-1060900"></a>For the EAD Browser to retrieve the parasitics from the layout view, the first step is to choose a layout view. Select the layout view corresponding to the current schematic, and then select a mode in which you want to access it.</p>
+<p>
+<a id="pgfId-1060902"></a>You can choos<a id="copyMode"></a>e from the following three modes:</p>
+<ul><li>
+<a id="pgfId-1060891"></a><code>Copy</code>: Copies the entire top-level cell to a new cell that you can manage. This allows you to make changes to the extraction engines, the filtering options, and the layout without involving the layout engineer. In this mode, when any changes are done in the source layout view, you are prompted to update the saved copy to reflect the changes. If you agree, the copy of the layout view is updated. If not, the saved copy is not updated at that time, but is automatically updated later when you use the <em><a actuate="user" class="URL" href="../vead/chap3.html#eadToolbar" show="replace" xml:link="simple">Update Parasitics &amp; EM</a></em> command from the <a href="chap3.html#33659">EAD Browser Toolbar</a>.<br />
+<a id="pgfId-1080598"></a>By default, the new cell in which the top-level cell is copied is created in the same library. However, if you do not have write permission to that location, you can specify a different library name in the <em>Copy Library</em> drop-down list, which is enabled only in the copy mode.</li><li>
+<a id="pgfId-1060950"></a><code>Read</code>: (Default) Opens the layout view in read mode, which means that you can view any saved parasitics, but cannot make changes to the extraction engines or the filtering options. Only the layout designer can make changes and those changes are always reflected in your view. This mode avoids duplication of data.</li><li>
+<a id="pgfId-1061009"></a><code>Edit</code>: Opens the layout view in edit mode, which means that you will be able to make changes to the extraction engines, the filtering options, and parasitics. The changes will be available to the layout engineer later, but the view will be locked while you are using it.<br />
+<a id="pgfId-1061010"></a>If the <a href="appB.html#57202">useSetup</a> environment variable is set to the path of the file that contains the setup options to be used, the <em>Use Setup</em> check box is selected by default, and the name of the EAD setup is displayed in the <em>Setup Name</em> drop-down list. Otherwise, you can select the check box and choose a setup filename.<br />
+<a id="pgfId-1061021"></a>Click <em>Start EAD</em> in the EAD Browser assistant to bind the given layout cellview to the schematic cellview and to view the details of EAD Browser, as shown below.<br />
+<a id="pgfId-1061062"></a><div class="webflare-div-image">
+<img width="668" height="572" src="images/chap5-20.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1061101"></a>Important Points to Note</h4>
+
+<ul><li>
+<a id="pgfId-1061104"></a>The setup details, including the process settings, extraction engine controls, high precision C and R extractor settings, and so on. are loaded from the EAD setup file selected on the Welcome to EAD form.<ul><li>
+<a id="pgfId-1061040"></a>The EAD Browser assistant in VSE XL is the same as that available in Virtuoso Layout Suite XL, except for the following differences:<ul><li>
+<a id="pgfId-1061135"></a>Display annotations on the schematic (<img width="44" height="28" src="images/chap5-21.gif" />
+): Annotates the net capacitance and current for instance terminals on the schematic.</li><li>
+<a id="pgfId-1061138"></a>Show Layout (<img width="36" height="28" src="images/chap5-22.gif" />
+): Opens the layout view corresponding to the current schematic view. This layout is the same as that selected on the Welcome to EAD form.</li><li>
+<a id="pgfId-1078624"></a>Run Pre-EM Checker &amp; Generate Report (<img width="25" height="25" src="images/chap5-23.gif" />
+): Runs the pre-EM check in VSE XL and generates the pre-EM report. This option is available only if the <em>No Layout</em> check box is selected in EAD Browser assistant of the VSE XL.</li></ul></li><li>
+<a id="pgfId-1061127"></a>Currently, you cannot view the electromigration information for the nets or perform electromigration checks in the schematic view. Therefore, the commands in the EM Checker menu (<img width="44" height="28" src="images/chap5-24.gif" />
+) are not available.<br />
+<a id="pgfId-1061261"></a>Depending on the mode (<code>Copy</code>, <code>Read</code>, or <code>Edit</code>) in which the layout view is being accessed, different sets of commands are enabled or disabled on the EAD Browser toolbar. For example, in <code>Read</code> mode, you can only read and display the available parasitics. Therefore, the commands to edit EAD setup, extract parasitics, and update electrical data are disabled on the EAD Browser toolbar, as shown below.<br />
+<a id="pgfId-1061265"></a><div class="webflare-div-image">
+<img width="668" height="191" src="images/chap5-25.gif" /></div>
+<a id="pgfId-1061169"></a>For details of all the commands, refer to <a href="chap3.html#33659">EAD Browser Toolbar</a>.</li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1081109"></a></p>
+<p>
+<a id="pgfId-1061330"></a>The following sections describe how you can use the EAD Browser in VSE XL to view and update parasitics in the schematic view:</p>
+<ul><li>
+<a id="pgfId-1061356"></a><a href="chap5.html#32249">Viewing Parasitics</a></li><li>
+<a id="pgfId-1061367"></a><a href="chap5.html#35439">Extracting Parasitics</a></li><li>
+<a id="pgfId-1061375"></a><a href="chap5.html#88482">Annotating Parasitics on the Schematic</a></li><li>
+<a id="pgfId-1061383"></a><a href="chap5.html#52305">Modifying Parasitics on the Schematic</a></li><li>
+<a id="pgfId-1061391"></a><a href="chap5.html#45560">Building Netlist to Run Simulations</a></li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1061399"></a><a id="32249"></a>Viewing Parasit<a id="RProbe"></a>ics</h3>
+
+<p>
+<a id="pgfId-1061610"></a>Irrespective of the mode in which you access the layout view, details of the parasitics already available in the layout are displayed in the Summary pane. This includes the count of the capacitance and resistance for each net. When you click a net in the Summary pane, its details are displayed in the detail pane of the assistant, as shown below.</p>
+
+<p>
+<a id="pgfId-1061614"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="511" src="images/chap5-26.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1072682"></a>For a hierarchical design, the Summary pane lists all the nets available in the current hierarchy level or the levels below it.</div>
+<p>
+<a id="pgfId-1066685"></a>By default, the <em>Capacitance By Layer</em> and <em>Capacitance by Node</em> tables are not visible on the C tab of the detail pane they require detailed knowledge of the layout topography which is not visible to the circuit view. You can display them by setting the <a href="appB.html#37244">detailedParasiticTables</a> environment variable to <code>t</code> or by selecting the <em>Detailed Parasitic Tables</em> check box on the <a href="appA.html#26574">Environment</a> tab of the EAD Options form.</p>
+<p>
+<a id="pgfId-1063596"></a>By selecting a row in the detail pane, you can view how Rs and Cs are placed on the corresponding net in the circuit. Selecting a column for capacitance or resistance count opens the <h-hot><a actuate="user" class="URL" href="../vead/chap3.html#C_Tab" show="replace" xml:link="simple"></a></h-hot><em>C</em><h-hot> tab</h-hot> or <h-hot><a actuate="user" class="URL" href="../vead/chap3.html#Rtab" show="replace" xml:link="simple"></a></h-hot><em>R</em><h-hot> tab</h-hot>, respectively, in the detail pane. Select rows in the detail pane to view the Rs or Cs. For example, the figure shown below shows the resistance path as a purple line for the selected net <code>net6</code>.</p>
+
+<p>
+<a id="pgfId-1063607"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="682" src="images/chap5-27.gif" /></div>
+
+<p>
+<a id="pgfId-1066753"></a>There can be multiple resistance paths in the layout between the two logical circuit points.</p>
+
+<h4>
+<a id="pgfId-1064301"></a>Probing Resistances for Nets, Terminals, or Instance Terminals Selected on Schematic</h4>
+
+<p>
+<a id="pgfId-1065925"></a>While you are working with the design schematic, you can interactively view resistance paths on a particular net or between selected terminals. </p>
+<p>
+<a id="pgfId-1065926"></a>For selected probing, perform these steps:</p>
+<ol><li>
+<a id="pgfId-1066009"></a>To enable selected probing, choose <em>Filtering Options &#8211; Selected</em> on the EAD Browser toolbar.</li><li>
+<a id="pgfId-1067951"></a>To view the resistance paths on the <a href="../vead/chap3.html#Rtab"></a><em>R</em> tab of the detail pane, select a net or terminal on the schematic as described below.<br />
+<a id="pgfId-1067954"></a>To view the resistance paths, do this:<ul><li>
+<a id="pgfId-1066079"></a>Select a net to view all the resistance paths from or to that net</li><li>
+<a id="pgfId-1066112"></a>Select an instance terminal or a terminal to view all the resistance paths from or to that terminal on the connected net</li><li>
+<a id="pgfId-1066133"></a>Select more than one terminal to view all the resistance paths between those two terminals</li></ul><br />
+<a id="pgfId-1065854"></a>In the example shown below, the resistance paths on the selected net <code>net10</code> are displayed.<br />
+<a id="pgfId-1064305"></a><div class="webflare-div-image">
+<img width="666" height="497" src="images/chap5-28.gif" /></div>
+<a id="pgfId-1066316"></a>Similarly, the following example shows the resistance path between two instance terminals.<br />
+<a id="pgfId-1066343"></a><div class="webflare-div-image">
+<img width="668" height="425" src="images/chap5-29.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1071115"></a>Resistance paths are displayed only when both the terminals of a net exist in the currently displayed schematic hierarchical level. If one terminal exists inside a subcell, EAD Browser does not display any resistance path.</div>
+<p>
+<a id="pgfId-1069092"></a>For more details about the <em>Resistance Paths</em> table and the information contained in it, refer to <h-hot><a actuate="user" class="URL" href="../vead/chap3.html#Rtab" show="replace" xml:link="simple"></a></h-hot><em>R</em><h-hot> tab</h-hot>.</p>
+
+<h4>
+<a id="pgfId-1069077"></a>Probing Capacitan<a id="CProbe"></a>ce for Nets Selected on Schematic</h4>
+
+<p>
+<a id="pgfId-1067749"></a>Similar to resistance, you can interactively view coupled capacitance values for one or more nets selected on the schematic.</p>
+<p>
+<a id="pgfId-1067750"></a>For selected probing, perform these steps:</p>
+<ol><li>
+<a id="pgfId-1067751"></a>Choose <em>Filtering Options &#8211; Selected</em> on the EAD Browser toolbar.</li><li>
+<a id="pgfId-1067752"></a>On the schematic, select one or more nets, as described below:<ul><li>
+<a id="pgfId-1067881"></a>To view the coupling capacitance for a single net, select that net on the layout canvas</li><li>
+<a id="pgfId-1067891"></a>To view the coupling capacitance between two selected nets, select those two nets</li><li>
+<a id="pgfId-1068008"></a>To view the coupling capacitance between multiple nets, select all those nets</li></ul><br />
+<a id="pgfId-1067754"></a>The coupling capacitance values corresponding to your selection are displayed on the <a href="../vead/chap3.html#C_Tab"></a><em>C </em>tab of the detail pane.</li></ol>
+
+
+
+
+
+<p>
+<a id="pgfId-1067759"></a>In the example shown below, the coupling capacitance between the selected net <code>AVDD</code> and all other nets connected to it, <code>IN</code> and <code>OUT</code>, is displayed.</p>
+
+<p>
+<a id="pgfId-1067763"></a></p>
+<div class="webflare-div-image">
+<img width="666" height="489" src="images/chap5-30.gif" /></div>
+
+<p>
+<a id="pgfId-1068084"></a>In the example shown below, the coupling capacitance between the selected nets <code>AVDD</code> and <code>IN</code> are displayed. The coupling capacitance between other nets is hidden.</p>
+
+<p>
+<a id="pgfId-1068088"></a></p>
+<div class="webflare-div-image">
+<img width="666" height="422" src="images/chap5-31.gif" /></div>
+
+<p>
+<a id="pgfId-1068454"></a>In the figure shown above, the <em>Net</em> and <em>To Net </em>columns in the <em>Coupling Caps</em> table show the from and to nets between which the coupling capacitance value is found.</p>
+<p>
+<a id="pgfId-1068216"></a>Another example given below shows how the coupling capacitance is reported when multiple nets are selected.</p>
+
+<p>
+<a id="pgfId-1086970"></a></p>
+<div class="webflare-div-image">
+<img width="666" height="504" src="images/chap5-32.gif" /></div>
+<h4>
+<a id="pgfId-1068220"></a>Filtering the Coupling Caps Table by Layer</h4>
+
+<p>
+<a id="pgfId-1087017"></a>To filter entries in the <em>Coupling Caps</em> table:</p>
+
+<ul><li>
+<a id="pgfId-1087065"></a>On the <em>C</em> tab of the <em>EAD Browser</em>, click <img width="22" height="22" src="images/chap5-33.gif" />
+ and select one of the following options to specify the layers you want to be displayed in the <em>Coupling Caps</em> table.<ul><li>
+<a id="pgfId-1087181"></a><em>Show All Layers</em>: Shows all layers.</li><li>
+<a id="pgfId-1087296"></a><em>Hide All Layers</em>: Hides all layers.</li><li>
+<a id="pgfId-1087314"></a><em>Show Only Via Layers</em>: Shows only via layers.</li><li>
+<a id="pgfId-1087337"></a><em>Show Only Conductor Layers</em>: Shows only conductor layers.</li><li>
+<a id="pgfId-1087389"></a><em>Show Layers Above</em> &gt; <span class="webflare-courier-new" style="white-space:pre"><em>Layer Name</em></span>: Shows only layers that are above the selected layer.</li></ul></li></ul>
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1063618"></a><a id="62908"></a>Finding a Specific Resistance Path</h4>
+
+<p>
+<a id="pgfId-1066278"></a>You can search for specific resistance paths between two instance terminals, or beginning from or ending at the selected instance terminal. For example, the figure given below shows the resistance paths from <code>M3:D</code>.</p>
+
+<p>
+<a id="pgfId-1064506"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="230" src="images/chap5-34.gif" /></div>
+<h3>
+<a id="pgfId-1061425"></a><a id="35439"></a>Extracting Parasitics</h3>
+
+<p>
+<a id="pgfId-1061462"></a><em>Only when layout is accessed in edit or copy mode.</em></p>
+<p>
+<a id="pgfId-1061721"></a>If the parasitics are not available in the layout view, you can extract them for all the nets by using the (<img width="44" height="23" src="images/chap5-35.gif" />
+) command menu on the toolbar. Alternatively, you can extract parasitics for only a few selected nets by using the <em>Extract Parasitics</em> command from the context menu in the Summary pane. For more details, see <a href="chap3.html#31181">Extracting Parasitics in Layout EAD</a>.</p>
+
+<h3>
+<a id="pgfId-1067247"></a>Viewing an<a id="editMaxR"></a>d Editing Constraints </h3>
+
+<p>
+<a id="pgfId-1067271"></a>In addition to the Constraint Manager assistant, you can directly view or edit the Max Resistance and Max C constraints for specific nets in the EAD Browser. For more details, refer to the following topics:</p>
+<ul><li>
+<a id="pgfId-1068775"></a><a href="chap5.html#19754">Viewing and Editing the Max Resistance Constraint in the EAD Browser</a></li><li>
+<a id="pgfId-1068793"></a><a href="chap5.html#17292">Viewing and Editing the Max Capacitance Constraint in the EAD Browser</a></li><li>
+<a id="pgfId-1071296"></a><a href="chap5.html#84773">Viewing and Editing the Max Coupling Capacitance Constraint in the EAD Browser</a></li></ul>
+
+
+
+<h4>
+<a id="pgfId-1067311"></a><a id="19754"></a>Viewing and Editing the Max Resistance Constraint in the EAD Browser</h4>
+
+<p>
+<a id="pgfId-1067313"></a>To edit the Max Resistance constraint for a net in the EAD Browser:</p>
+<ol><li>
+<a id="pgfId-1067314"></a>Click in the <em>R Count</em> column for a particular net on the Summary pane of the EAD Browser.<br />
+<a id="pgfId-1067316"></a>Alternatively, open the <a href="../vead/chap3.html#Rtab"></a><em>R</em> tab in the detail pane, and then select the net on the schematic. </li><li>
+<a id="pgfId-1067321"></a>Click <em>Edit Max R Constraints</em> (<img width="27" height="26" src="images/chap5-36.gif" />
+) on the toolbar of the <a href="../vead/chap3.html#Rtab"></a><em>R</em> tab.</li><li>
+<a id="pgfId-1067322"></a>The <em>Count</em> column in the resistance paths table is changed to <em>Max R</em>. This column shows the existing constraint values, if defined in the constraint view. Otherwise, the cells are blank.<br />
+<a id="pgfId-1067326"></a><div class="webflare-div-image">
+<img width="668" height="262" src="images/chap5-37.gif" /></div></li><li>
+<a id="pgfId-1067327"></a>If required, double-click in the column and edit the constraint values.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1067328"></a>You can select and edit the Max R constraint for multiple nets together.</div>
+<a id="pgfId-1067329"></a>You can also use the <em>Edit Max R Constraint</em> and <em>Delete Max R Constraint</em> commands from the context-sensitive menu of the detail pane to edit or delete the constraints.<br />
+<a id="pgfId-1067333"></a><div class="webflare-div-image">
+<img width="668" height="300" src="images/chap5-38.gif" /></div>
+<a id="pgfId-1067334"></a>When you save the schematic view, the constraint values are also saved in the constraint view.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1067411"></a><a id="17292"></a>Viewing an<a id="editMaxC"></a>d Editing the Max Capacitance Constraint in the EAD Browser</h4>
+
+<p>
+<a id="pgfId-1067412"></a>To edit the Max Capacitance constraint for a net in the EAD Browser:</p>
+<ol><li>
+<a id="pgfId-1067461"></a>Right-click the row for a net on the Summary pane of the EAD Browser.</li><li>
+<a id="pgfId-1067468"></a>Choose <em>Constraints &#8211; Edit Max Capacitance Constraints</em> from the context menu. <br />
+<a id="pgfId-1067469"></a>The <em>EAD - Edit Max Capacitance Constraint</em> form is displayed, as shown below.<br />
+<a id="pgfId-1067473"></a><div class="webflare-div-image">
+<img width="668" height="171" src="images/chap5-39.gif" /></div>
+<a id="pgfId-1067531"></a>The default constraint values are displayed in the form.</li><li>
+<a id="pgfId-1067474"></a>Edit the required constraint values and click <em>OK</em>.<br />
+<a id="pgfId-1068642"></a>The constraint is added to the selected net and is visible in the Constraint Manager assistant, as shown in the example given below.<br />
+<a id="pgfId-1068646"></a><div class="webflare-div-image">
+<img width="668" height="539" src="images/chap5-40.gif" /></div>
+<a id="pgfId-1067639"></a>A check for any capacitance values is also done and the violations are highlighted in red.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1067571"></a>If you need to apply the same constraint value to multiple nets, select the nets in the EAD Browser and use the <em>Edit Max Capacitance Constraints</em> command to create or edit the constraint.</div>
+<a id="pgfId-1067626"></a>You can also use the <em>Delete Max Capacitance Constraint</em> command from the context-sensitive menu of the selected net on the Summary pane to delete the constraint.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1069391"></a><a id="84773"></a>Viewing an<a id="editMaxCoupC"></a>d Editing the Max Coupling Capacitance Constraint in the EAD Browser</h4>
+
+<p>
+<a id="pgfId-1069392"></a>To edit the Max Coupling Capacitance constraint between two nets in the EAD Browser:</p>
+<ol><li>
+<a id="pgfId-1069393"></a>Select two nets in the Summary pane of the EAD Browser.</li><li>
+<a id="pgfId-1069394"></a>Right-click and choose <em>Constraints &#8211; Edit Max Coupling Capacitance Constraints</em> from the context menu. <br />
+<a id="pgfId-1069534"></a>The <em>EAD - Edit Constraint</em> form is displayed, as shown below.<br />
+<a id="pgfId-1069538"></a><div class="webflare-div-image">
+<img width="668" height="102" src="images/chap5-41.gif" /></div></li><li>
+<a id="pgfId-1069384"></a>Specify a value in the <em>Max Coupling Capacitance</em> field.</li><li>
+<a id="pgfId-1069633"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1069661"></a>The constraint is added to the selected nets and is visible in the Constraint Manager assistant, as shown in the example given below.<br />
+<a id="pgfId-1069732"></a><div class="webflare-div-image">
+<img width="668" height="539" src="images/chap5-42.gif" /></div>
+<a id="pgfId-1069737"></a>A check for any coupling capacitance values is also done, and the violations are highlighted in red.<br />
+<a id="pgfId-1069766"></a>Other ways to edit the Max Coupling Capacitance constraint are as:<ul><li>
+<a id="pgfId-1070440"></a>Double-click a cell in the <em>Max C</em> column of the <em>Capacitance By Net</em> table in the detail pane and edit the value. If you remove the value, the constraint is deleted from Constraint Manager.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1070729"></a>By default, the <em>Max C</em> column is hidden if the Max Coupling Constraint is not defined for any net. To view this column, right-click in the column header of this table and choose <em>Max C</em>.</div></li><li>
+<a id="pgfId-1070431"></a>Right-click a net in the <em>Capacitance By Net</em> table in the detail pane of the EAD Browser, and to choose the <em>Edit Max Coupling Capacitance Constraints </em>command.</li></ul><br />
+<a id="pgfId-1070296"></a>If a constraint is not required for any net, right-click the net in the summary pane of the EAD Browser and choose <em>Constraints &#8211; Delete Max Coupling Capacitance Constraints</em> from the context menu.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1061477"></a><a id="88482"></a>Annotating Parasitics on the Schematic</h3>
+
+<p>
+<a id="pgfId-1061824"></a>By default, the display of annotations on the schematic is enabled. Select a net in the EAD Browser and use the commands shown below to view annotations.</p>
+
+<p>
+<a id="pgfId-1061828"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="157" src="images/chap5-43.gif" /></div>
+
+<p>
+<a id="pgfId-1061478"></a>When you select both the check boxes, the annotations for total capacitance and terminal current values are displayed on the selected net, as shown below.</p>
+
+<p>
+<a id="pgfId-1061857"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="540" src="images/chap5-44.gif" /></div>
+<h3>
+<a id="pgfId-1061490"></a><a id="52305"></a>Modifying Parasitics on the Schematic</h3>
+
+<p>
+<a id="pgfId-1061491"></a><em>Only when layout is accessed in the edit mode.</em></p>
+<p>
+<a id="pgfId-1062162"></a>If any specifications were not met during the resimulation flow, you can check the parasitics of the nets whose results are being used in calculations. If required, you can modify parasitics or add appropriate constraints. By doing this, you can provide suggestions to the layout engineer on a net-by-net basis.</p>
+
+<p>
+<a id="pgfId-1062166"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="445" src="images/chap5-45.gif" /></div>
+
+<p>
+<a id="pgfId-1062110"></a>The effect of updated parasitics or constraints can be seen in the EAD Browser. For example, after you add or update the Max Capacitance constraint on a net, if the total capacitance value for the net is more than the constraint value, it is highlighted as a violation, as shown below.</p>
+
+<p>
+<a id="pgfId-1062221"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="445" src="images/chap5-46.gif" /></div>
+
+<p>
+<a id="pgfId-1062144"></a>The layout engineers can update the layout view to view the constraints and the new violations reported due to those constraints. They can then address the same by making appropriate changes in the layout view.</p>
+
+<h3>
+<a id="pgfId-1061503"></a><a id="45560"></a>Building Netlist to Run Simulations</h3>
+
+<p>
+<a id="pgfId-1061504"></a><em>Only when layout is accessed in the edit or copy mode.</em></p>
+<p>
+<a id="pgfId-1062295"></a>If you updated the parasitics in the schematic view, you can verify that the modifications can help in meeting the specifications. For this, you can use the build a netlist view using the <em>Build Netlist View</em> the (<img width="44" height="28" src="images/chap5-47.gif" />
+) command on the EAD Browser toolbar. The command opens the Build Parasitic/LDE Netlist View for &lt;schematic&gt; view form in which you can specify the name for the netlist view and other options for parasitic inclusion.</p>
+<p>
+<a id="pgfId-1062296"></a></p>
+<p>
+<a id="pgfId-1061469"></a>A netlist is created using the current schematic view as base. You can use this netlist view to run simulations in ADE Assembler and verify results.</p>
+
+<h3>
+<a id="pgfId-1087595"></a>Annotating Parasitics from Schematic EAD Browser</h3>
+
+<p>
+<a id="pgfId-1087660"></a>To annotate parasitics in Layout from the EAD Browser in the Schematic.</p>
+<ol><li>
+<a id="pgfId-1087736"></a>From the toolbar of the <em>EAD Browser</em> in Virtuoso Schematic Editor, click the <em>Open</em> <em>Layout</em> <img width="22" height="22" src="images/chap5-48.gif" />
+ icon.<br />
+<a id="pgfId-1087904"></a>Virtuoso Layout Suite opens.</li><li>
+<a id="pgfId-1087907"></a>Select a net in the EAD Browser of the Schematic.</li><li>
+<a id="pgfId-1088009"></a>Click either the <em>C</em> tab or the <em>R</em> tab and click an entry either in the <em>Coupling Caps</em> table or in the <em>Resistance Paths</em> table that you want to annotate in the layout, respectively.<br />
+<a id="pgfId-1087910"></a>The following example shows the coupling capacitance between the nets <code>AVDD</code> and <code>outp</code> highlighted in the Layout.<br />
+<a id="pgfId-1088537"></a><div class="webflare-div-image">
+<img width="604" height="557" src="images/chap5-49.gif" /></div>
+<a id="pgfId-1088188"></a>The following example shows the resistance path annotated in the layout for the selected net in the EAD Browser of the Schematic.<br />
+<a id="pgfId-1088563"></a><div class="webflare-div-image">
+<img width="604" height="554" src="images/chap5-50.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="preEMCalculator.html" id="prev" title="Introduction to EM Calculator">Introduction to EM Calculator</a></em></b><b><em><a href="eae.html" id="nex" title="Quantus-Pegasus Integration for Partial Layouts">Quantus-Pegasus Integration fo ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

@@ -1,0 +1,2319 @@
+
+<html><head><title>Performing Electromigration Checks and Fixing Violations</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="urajput" />
+<meta name="CreateDate" content="2023-10-30" />
+<meta name="CreateTime" content="1698658130" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to work with the electrically aware design on analog signal circuits" />
+<meta name="DocTitle" content="Virtuoso Electrically Aware Design Flow Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Performing Electromigration Checks and Fixing Violations" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vead" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-30" />
+<meta name="ModifiedTime" content="1698658130" />
+<meta name="NextFile" content="preEMCalculator.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="chap3.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Electrically Aware Design Flow Guide -- Performing Electromigration Checks and Fixing Violations" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="veadIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="veadTOC.html">Contents</a></li><li><a class="prev" href="chap3.html" title="Extracting Parasitics in the Layout View">Extracting Parasitics in the L ...</a></li><li style="float: right;"><a class="viewPrint" href="vead.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="preEMCalculator.html" title="Introduction to EM Calculator">Introduction to EM Calculator</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Electrically Aware Design Flow Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>5
+<a id="pgfId-1034311"></a></h1>
+<h1>
+<a id="pgfId-1034313"></a><hr />
+<a id="53702"></a>Performing Electromigration Checks and Fixing Violations<hr />
+</h1>
+
+<p>
+<a id="pgfId-1051346"></a>This section describes the electromigration (EM) checking capabilities in Layout EAD.</p>
+<p>
+<a id="pgfId-1089774"></a>Electromigration is a general term used to describe failure mechanisms in the metal wires of a chip caused by the movement of metal atoms in a wire because of high current stress. As electrons move through a metal wire, they collide with the atoms in that wire. These collisions cause wires to become heated and, if enough electrons collide with a metal atom over a period of time, the metal atom can move in the direction of the electron flow, potentially creating</p>
+<ul><li>
+<a id="pgfId-1058802"></a>An open circuit if the wire breaks</li><li>
+<a id="pgfId-1058804"></a>A short to an adjacent metal wire if enough atoms move to the same location</li></ul>
+
+<p>
+<a id="pgfId-1058791"></a>EM checking is performed to analyze the power grid and signals of the design for any density violations of the DC and AC current through the metal conductor lines, vias, and contacts. These violations can then be corrected by limiting current density in the affected areas of the design.</p>
+<p>
+<a id="pgfId-1066276"></a>You can use Layout EAD to</p>
+<ul><li>
+<a id="pgfId-1066277"></a>Run EM checks</li><li>
+<a id="pgfId-1066278"></a>Analyze the results and identify violations in the EAD Browser</li><li>
+<a id="pgfId-1063378"></a>Highlight problem areas and display detailed EAD-related information in the layout canvas</li></ul>
+
+
+<p>
+<a id="pgfId-1063407"></a>You can then edit your design directly in the layout window to address the issues found and rerun the analysis either automatically or on-demand to ensure that the problems were resolved.</p>
+<p>
+<a id="pgfId-1058753"></a>This section covers the following topics:</p>
+<ul><li>
+<a id="pgfId-1058764"></a><a href="chap4.html#70901">Running EM Analysis to Identify Violations</a><ul><li>
+<a id="pgfId-1058883"></a><a href="chap4.html#45742">Verifying the Setup for EM Analysis</a></li><li>
+<a id="pgfId-1058901"></a><a href="chap4.html#19433">Running an EM Check</a></li><li>
+<a id="pgfId-1073226"></a><a href="chap4.html#24531">Running EM Checks with High Precision R and C Extraction</a></li><li>
+<a id="pgfId-1058912"></a><a href="chap4.html#89376">Running EM Checks on a CUSTOM Dataset</a></li></ul></li><li>
+<a id="pgfId-1058922"></a><a href="chap4.html#41641">Viewing EM Information in the EAD Browser</a></li><li>
+<a id="pgfId-1058936"></a><a href="chap4.html#22984">Viewing Electrical Information in the Layout Window</a><ul><li>
+<a id="pgfId-1090368"></a><a href="chap4.html#68193">Using Info Balloons</a></li><li>
+<a id="pgfId-1090432"></a><a href="chap4.html#54226">Using Point-To-Point Info Balloons</a></li><li>
+<a id="pgfId-1090393"></a><a href="chap4.html#95941">Using Measurement Display</a></li></ul></li><li>
+<a id="pgfId-1063149"></a><a href="chap4.html#83562">Highlighting and Fixing Violations in the Layout Window</a></li><li>
+<a id="pgfId-1091658"></a><a href="chap4.html#38159">Fixing Violations Using EM Driven Trunk Optimization</a><ul><li>
+<a id="pgfId-1091673"></a><a href="chap4.html#18271">Optimizing EM Driven Trunks</a></li></ul></li><li>
+<a id="pgfId-1112125"></a><a href="chap4.html#14329">Running EM Analysis on Power Grids</a><ul><li>
+<a id="pgfId-1112480"></a><a href="chap4.html#17677">Running EM Analysis on the Scratch Cellview</a></li><li>
+<a id="pgfId-1112490"></a><a href="chap4.html#50103">Running EM Analysis on the Original Grid</a></li><li>
+<a id="pgfId-1112497"></a><a href="chap4.html#82159">Modifying the Original Layout</a></li></ul></li><li>
+<a id="pgfId-1117828"></a><a href="chap4.html#95887">Generating EAD Dataset</a></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1055234"></a><a id="70901"></a>Running EM Analysis to Identify Violations</h2>
+
+<p>
+<a id="pgfId-1058961"></a>Layout EAD uses the electrical data produced by simulation in ADE Assembler and the parasitic information extracted from the layout view to analyze your design against the EM checks you have enabled and highlight any EM issue that exist.</p>
+<p>
+<a id="pgfId-1065673"></a>This section describes the settings you need to make before running the EM check, how to run the EM check itself, and how to run an EM check when there is no simulation data available from ADE Assembler.</p>
+
+<h3>
+<a id="pgfId-1055235"></a><a id="45742"></a>Verifying the <a id="verifySetup"></a>Setup for EM Analysis</h3>
+
+<p>
+<a id="pgfId-1055427"></a>Use the <em>Extraction Corner</em> and <em>EM Dataset</em> fields at the top of the EAD Browser to specify the corner for which results are to be displayed and the dataset to be used to run the EM checks and display results.</p>
+<p>
+<a id="pgfId-1065700"></a>You can also update the electrical data from ADE Assembler and enable or disable specific checks for the selected dataset.</p>
+
+<p>
+<a id="pgfId-1059025"></a></p>
+<div class="webflare-div-image">
+<img width="662" height="196" src="images/chap4-2.gif" /></div>
+
+<p>
+<a id="pgfId-1056964"></a>To set these options,</p>
+<ol><li>
+<a id="pgfId-1056666"></a>Choose the <em>Extraction Corner</em> for which you want to display results from the drop-down list.<br />
+<a id="pgfId-1056796"></a>You define these extraction corners during EAD Setup in ADE Assembler. See <a href="chap2.html#44525">Setting up Testbenches and Corners</a> for more information.<br />
+<a id="pgfId-1065719"></a>Each corner must also be mapped to an ICT file containing the required process information. See the <a href="appA.html#92713">EAD Process Settings &#8211; Corners</a> tab for more information.</li><li>
+<a id="pgfId-1056715"></a>Choose the <em>EM Dataset</em> to be used for the EM check.<br />
+<a id="pgfId-1059132"></a><div class="webflare-div-image">
+<img width="635" height="196" src="images/chap4-3.gif" /></div><ul><li>
+<a id="pgfId-1056680"></a>The default is <em>All</em>, which specifies that EM results are reported for all available datasets.</li><li>
+<a id="pgfId-1059108"></a>You can limit the results to a particular dataset by choosing that dataset from the drop-down list.</li><li>
+<a id="pgfId-1059121"></a>The <em>CUSTOM</em> dataset is a special dataset that lets you enter current values manually in cases where there is no current data available from ADE Assembler or if you want to enter your own currents in order to perform a what-if analysis. See <a href="chap4.html#89376">Running EM Checks on a CUSTOM Dataset</a> for more information.</li></ul></li><li>
+<a id="pgfId-1055828"></a>Use the <em>Update with latest electrical data</em> button to reload the electrical data for the datasets that have changed in ADE Assembler since the datasets were last transferred to the layout.<br />
+<a id="pgfId-1059166"></a><div class="webflare-div-image">
+<img width="635" height="199" src="images/chap4-4.gif" /></div>
+<a id="pgfId-1056971"></a>Use this if you have updated or created new datasets in ADE Assembler.</li><li>
+<a id="pgfId-1056854"></a>Use the <em>Select EM checks</em> drop down to enable or disable all or selected checks for the selected datasets.<br />
+<a id="pgfId-1077680"></a><div class="webflare-div-image">
+<img width="635" height="298" src="images/chap4-5.gif" /></div><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1077707"></a>
+The check boxes for the <em>Dynamic-Peak</em> and <em>Dynamic-RMS</em> checks are enabled only when the <em>Dynamic Analysis</em> check box on the <a actuate="user" class="URL" href="../vead/appA.html#eadOptionsEM" show="replace" xml:link="simple">EM</a> tab of the EAD Options form is checked.</div><br />
+<a id="pgfId-1079289"></a>The following table describes the available EM checks, the type of current that is checked and the EM rule that is applied for each check.<br />
+<a id="pgfId-1077697"></a><table class="webflareTable webflareTableIndent" id="#id1077730">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1077732">
+<a id="pgfId-1077732"></a>EM Check</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1077734">
+<a id="pgfId-1077734"></a>Type of Current Used</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1077736">
+<a id="pgfId-1077736"></a>EM Rule Applied in the Check</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077766"></a><em>DC Op</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077768"></a>Current from the DC Operating Point analysis</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1078539"></a>From ICT File: <code>em_jmax_dc_avg</code></p>
+<p>
+<a id="pgfId-1078502"></a>From emDataFile: <code>avgCurrentDensSpecList</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077772"></a><em>Static-Avg</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077774"></a>Average current from the Transient analysis</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1078575"></a>From ICT File: <code>em_jmax_ac_avg</code></p>
+<p>
+<a id="pgfId-1078510"></a>From emDataFile: <code>avgCurrentDensSpecList</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077738"></a><em>Dynamic-Peak</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077740"></a>Peak current flowing through the resistor for the specified time of Transient Analysis. You can specify time in the <em>Dynamic Analysis</em> section on the <em>EM</em> tab of the <strong><a actuate="user" class="URL" href="../vead/chap3.html#layoutEADSetup" show="replace" xml:link="simple">Layout EAD Options</a></strong> form.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1078437"></a>From ICT File: <code>em_jmax_ac_peak</code></p>
+<p>
+<a id="pgfId-1078438"></a>From emDataFile: <code>ACpeakCurrentDensSpecList</code> or <code>peakCurrentDensSpecList</code></p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1078026"></a><code>peakCurrentDensSpecList is same as ACpeakCurrentDensSpecList</code>, but when both the rules are available, <code>ACpeakCurrentDensSpecList</code> is used for the nets with signal type not set to <code>power</code> or <code>ground</code>.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1077744"></a><em>Dynamic-Rms</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1078117"></a>Rms current flowing through the resistor for the specified time of Transient Analysis. You can specify time in the <em>Dynamic Analysis</em> section on the <em>EM</em> tab of the <strong><a actuate="user" class="URL" href="../vead/chap3.html#layoutEADSetup" show="replace" xml:link="simple">Layout EAD Options</a></strong> form.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1078385"></a>From ICT File: <code>em_jmax_ac_rms</code></p>
+<p>
+<a id="pgfId-1077748"></a>From emDataFile: <code>rmsCurrentDensSpecList</code></p>
+<p>
+<a id="pgfId-1078319"></a><code></code></p>
+</td>
+</tr>
+</tbody></table><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1078761"></a>Layout EAD does not support the <code>avgAbsCurrentDensSpecList</code>, <code>userDefinedCurrentDensSpecList</code>, and <code>DCrmsCurrentDensSpecList</code> EM rules from <code>emDataFile</code>.</div>
+<a id="pgfId-1083701"></a>If any dataset has been deleted from the constraints view, its name will appear in the strikethrough font style. You can remove such datasets from this list by using the <em>Delete Electrical Data command</em> on the EAD toolbar<em>.</em></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1078763"></a><a id="19433"></a>Running an <a id="runEMCheck"></a>EM Check</h3>
+
+<p>
+<a id="pgfId-1060600"></a>You run the EM check using the <em>Run EM Check</em> button in the EAD Browser toolbar.</p>
+
+<p>
+<a id="pgfId-1069419"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="48" src="images/chap4-7.gif" /></div>
+
+<p>
+<a id="pgfId-1068365"></a>Click once to run the EM check for the selected extraction corner based on the values in the selected datasets and the parasitics extracted from the layout view. If there are no datasets available, you are prompted to load them from the schematic.</p>
+<p>
+<a id="pgfId-1068393"></a>Click the drop-down arrow to see the additional commands listed in the table below:</p>
+<table class="webflareTable" id="#id1068366">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1068368">
+<a id="pgfId-1068368"></a>Command</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1068370">
+<a id="pgfId-1068370"></a>Lets you...</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068372"></a><em>Extract Parasitics &amp; Run EM Check</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068374"></a>Run parasitic extraction and then perform the EM check</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068376"></a><em>Update Electrical Data, Extract Parasitics, &amp; Run EM Check</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068378"></a>Reload any updated electrical data from ADE Assembler for the selected datasets, run parasitic extraction, and then perform the EM check</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068380"></a><em>Update Electrical Data</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1081385"></a>Transfers the electrical datasets from ADE Assembler or schematic to the layout. While doing this, if EAD finds that the name of the dataset being transferred matches with the name of an existing dataset at the layout side, it compares the creation timestamps of the two. If their timestamp is same, no action is taken. If their timestamp is different, the tool shows a dialog box and prompts you to confirm whether the dataset at the layout side should be overwritten. If you confirm, it deletes the existing dataset and copies the newer version to the layout.</p>
+<p>
+<a id="pgfId-1081386"></a>Before deleting the dataset at the layout side, EAD ensures that the ADE Assembler results database is accessible. If, due to some reason, the ADE Assembler results database is not accessible, the transfer of that dataset is skipped, and the version already saved with the layout is retained.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068384"></a><em>Delete Electrical Data</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068386"></a>Delete any terminal currents stored in the layout view for selected datasets.</p>
+<p>
+<a id="pgfId-1068387"></a>This command displays the Dataset Deletion Dialog that shows a list of all the available electrical datasets. Choose the datasets you want to delete in the and click <em>Delete</em> to remove them from the design. EM checks and results are updated automatically.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1083576"></a>A dataset name displayed in strikethrough font style implies that it has already been deleted from the constraints view. You can safely delete it from Layout EAD too.</div>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068389"></a><em>Disable EM</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1068391"></a>Disable EM checking for the current Layout EAD session.</p>
+<p>
+<a id="pgfId-1068392"></a>Selecting this option removes all EM-related data from the browser tables and disables the <em>EM</em> tab.</p>
+</td>
+</tr>
+</tbody></table>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1088275"></a>
+(<strong>Advanced nodes Only</strong>) EAD supports color-based EM rules and can perform checks based on the color of shapes.</div>
+
+<p>
+<a id="pgfId-1088260"></a>To run an EM check and view the results in the EAD Browser,</p>
+
+<ol><li>
+<a id="pgfId-1059299"></a>Click the <em>Run EM Check</em> button in the EAD Browser toolbar.<br />
+<a id="pgfId-1059354"></a>Layout EAD runs the check, matching EM statements in the order specified in the ICT file for the given layer, with the following exceptions:<ul><li>
+<a id="pgfId-1067305"></a>For vias where the current direction is known, those statements with matching direction are processed first</li><li>
+<a id="pgfId-1067306"></a>For single vias only, an EM statement matching a via with the keyword SINGLE will be selected over other matching statements regardless of the order</li><li>
+<a id="pgfId-1069196"></a>For terminals that have multiple pins associated with them, each pin is currently treated as a voltage source (at 0V) instead of a current source</li></ul><br />
+<a id="pgfId-1063595"></a>When the check is finished, EAD updates the <em>summary</em> table to show color-coded electromigration information for the nets in the design. The color coding is based on the settings in the <a href="appA.html#26574">Environment</a> form.<br />
+<a id="pgfId-1056256"></a><div class="webflare-div-image">
+<img width="635" height="318" src="images/chap4-8.gif" /></div><ul><li>
+<a id="pgfId-1056376"></a><em>EM Viol</em> shows the number of electromigration violations for each net.</li><li>
+<a id="pgfId-1059414"></a><em>J/Jmax</em> shows the worst case ratio of current to maximum current. A value greater than or equal to 1.0 is a violation. The higher the value, the more serious the violation.</li><li>
+<a id="pgfId-1059449"></a><em>Max Drop</em> shows the maximum IR drop between two terminals on the net.</li></ul></li><li>
+<a id="pgfId-1056258"></a>Right-click in one of the cells to open the context menu.<br />
+<a id="pgfId-1059492"></a><div class="webflare-div-image">
+<img width="635" height="223" src="images/chap4-9.gif" /></div>
+<a id="pgfId-1057883"></a>The commands here let you perform the following actions for the selected net:<ul><li>
+<a id="pgfId-1059579"></a>Update parasitic information and EM data</li><li>
+<a id="pgfId-1059598"></a>Re-extract the parasitics and rerun the EM check (either separately or with a single click)</li><li>
+<a id="pgfId-1065795"></a>Enable the high precision C and R extraction, which creates constraints to extract capacitance and resistance values with a higher degree of accuracy. See <a href="chap4.html#24531">Running EM Checks with High Precision R and C Extraction</a> for more information on high precision R and C extraction.</li></ul></li><li>
+<a id="pgfId-1055458"></a>Click one of the EM table cells in the <em>summary</em> pane to open the <em>EM</em> tab in the <a href="chap3.html#91740">Detail Pane</a>.<br />
+<a id="pgfId-1061618"></a>See <a href="chap4.html#41641">Viewing EM Information in the EAD Browser</a> for more information.<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1074093"></a>
+By default, the EM results are not saved when you save the layout view. To ensure that the EM results are saved into the OA database when you save the layout, set the <a href="appB.html#71204">writeEMResultsToOA</a> environment variable to <code>t</code> before running the EM checks. If the results are saved into the OA database, next time when you open the layout view, the EM results will be displayed in the Summary pane of the EAD Browser.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1075457"></a>Related Environment Variables</em></h4>
+
+<ul><li>
+<a id="pgfId-1075461"></a><a href="appB.html#16020">distributeTermCurrent</a></li><li>
+<a id="pgfId-1075465"></a><a href="appB.html#41473">printAdjustedCurrents</a></li></ul>
+
+
+<h3>
+<a id="pgfId-1056602"></a><a id="24531"></a>Running EM Checks with<a id="RunEMCheckwithHPR"></a> High Precision R and C Extraction</h3>
+
+<p>
+<a id="pgfId-1084296"></a>For critical nets, you can perform high precision R and C extraction to get the detailed resistance or capacitance data that can be used to further perform EM checks for those nets. Therefore, before performing high precision R extraction, set the <a href="appB.html#27700">resistanceMeshFileName</a> and <a href="appB.html#61469">resistanceFieldFileName</a> environment variables to save the resistance mesh and field data in binary files. Later, you can use this saved data to run EM checks and to overlay this data on the layout canvas and identify high current density areas and EM hot spots. If you need to extract data from multiple cellviews, you can use the <a href="appB.html#85752">hprStampDataFileName</a> environment variable to add cell identification in formation to the names of mesh and data files.</p>
+<p>
+<a id="pgfId-1072869"></a>When you perform high precision R extraction, the <em>Highlight mesh</em> command appears on the toolbar of the <em>R</em> tab displayed for that net: </p>
+
+<p>
+<a id="pgfId-1098190"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="110" src="images/chap4-10.gif" /></div>
+
+<p>
+<a id="pgfId-1083390"></a>In addition, the following additional commands appears on the toolbar of the <em>EM</em> tab displayed for that net: </p>
+<ul><li>
+<a id="pgfId-1074029"></a><em>Highlight current density</em></li><li>
+<a id="pgfId-1074038"></a>A drop-down list with the names of datasets<br />
+<a id="pgfId-1072885"></a><div class="webflare-div-image">
+<img width="668" height="196" src="images/chap4-11.gif" /></div></li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1072861"></a>You can use these commands to run EM checks for the nets.</p>
+<p>
+<a id="pgfId-1083491"></a>For more details, refer to the following topics:</p>
+<ul><li>
+<a id="pgfId-1072551"></a><a href="chap4.html#95826">Viewing Current Density and Vectors</a></li><li>
+<a id="pgfId-1072571"></a><a href="chap4.html#13254">Viewing Voltage Drop</a></li><li>
+<a id="pgfId-1072593"></a><a href="chap4.html#85445">Identifying EM Hot Spots</a></li></ul>
+
+
+
+<h4>
+<a id="pgfId-1072293"></a><a id="95826"></a>Viewing Current Density and Vectors</h4>
+
+<p>
+<a id="pgfId-1072300"></a>If you have performed high precision resistance analysis for a net and saved the data in binary files, you can run EM checks and overlay its current density and magnitude on the layout canvas.</p>
+<p>
+<a id="pgfId-1072318"></a>To run EM checks and overlay the current density for a net, do the following:</p>
+<ol><li>
+<a id="pgfId-1072319"></a>Click the resistance value for that net in the <em>summary</em> pane of the EAD Browser to open the <em>R</em> tab in the <em>details</em> pane.</li><li>
+<a id="pgfId-1072320"></a>Using the current dataset drop-down list, select a dataset for which you need to view the current density.</li><li>
+<a id="pgfId-1072321"></a>On the toolbar of the <em>EM</em> tab, click <em>Highlight current density</em>.<br />
+<a id="pgfId-1080877"></a>Layout EAD runs EM checks for the net to identify the current density and overlays the data in the layout. <br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1088403"></a>The unit for current density is <img width="60" height="32" src="images/chap4-12.gif" />
+.</div></li><li>
+<a id="pgfId-1080882"></a>Zoom in to a large level to view the current density clearly.<br />
+<a id="pgfId-1072337"></a><div class="webflare-div-image">
+<img width="668" height="804" src="images/chap4-13.gif" /></div></li><li>
+<a id="pgfId-1072338"></a>You can reset the layer filter to view the current density on specific layers.</li></ol>
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1072339"></a>To view the current density magnitude, select <em>Highlight current density magnitude</em> from the drop-down menu on the toolbar of the <em>EM</em> tab. </p>
+<p>
+<a id="pgfId-1072340"></a>Layout EAD uses highlights of different colors to mark the magnitude of current, as shown in the figure given below. </p>
+
+<p>
+<a id="pgfId-1072350"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="638" src="images/chap4-14.gif" /></div>
+
+<p>
+<a id="pgfId-1072352"></a>The colors at the red end represent higher current density and the colors at the blue end represent lower current density.</p>
+
+<h4>
+<a id="pgfId-1072786"></a><a id="13254"></a>Viewing <a id="voltageDrop"></a>Voltage Drop</h4>
+
+<p>
+<a id="pgfId-1090729"></a>If you have performed high precision resistance analysis for a net and saved the data in binary files, you can run current analysis to identify the IR drop or voltage drop (in volts) for that net. By default, the tool displays an overlay as per the real voltage drop values at different points on the net. However, when you set the <a href="appB.html#10834">showVoltageDropViolation</a> environment variable to <code>t</code> and provide the voltage drop tolerance data for critical nets, Layout EAD uses the reference tolerance levels to display the violation level in percentage. The violation level is the voltage drop percentage allowed by the design specification. This value is calculated as <br /><code>(|V - refV| / vTol ) * 100</code>.</p>
+<p>
+<a id="pgfId-1072353"></a>You can provide the voltage drop tolerance data for critical nets in one of the following two ways:</p>
+<ul><li>
+<a id="pgfId-1090766"></a>By defining the <a actuate="user" class="URL" href="../constraints/appA.html#maxVoltageDrop" show="replace" xml:link="simple">Max Voltage Drop</a> constraint in the Constraint Manager</li><li>
+<a id="pgfId-1090776"></a>By defining the voltage drop tolerance data in a reference file specified by using the <a href="appB.html#61469">resistanceFieldFileName</a> environment variable. The reference file should be an ASCII text file written in the format shown below.<br />
+<a id="pgfId-1080036"></a><span class="webflare-courier-new" style="white-space:pre"><em>&lt;netName&gt; &lt;layerName&gt; &lt;refX&gt; &lt;refY&gt; &lt;vTol&gt; &lt;refV&gt;</em></span><br />
+<a id="pgfId-1079998"></a>An example reference file is shown below.<br />
+<a id="pgfId-1080058"></a><code>AVDD Metal3 0.8875 67.5400 0.10 2.0
+AVSS Metal3 0.8875 1.0000   0.05 0.0</code><br />
+<a id="pgfId-1079999"></a>The above sample file defines that for the net <code>AVDD</code>, reference voltage is <code>2.0 volts</code>, reference point is at <code>x=0.8875um</code> and <code>y=67.5400um</code> on layer <code>Metal3</code>, and the voltage drop tolerance is <code>+/-0.10 volts</code>. Similarly, reference values are given for the net <code>AVSS</code>.<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1090853"></a>
+If, for a critical net, the IR drop tolerance is defined using both the Max Drop constraint as well as a reference file, the tolerance value given in the constraint is used to calculate violation. If multiple constraints are defined for a net, EAD considers the constraint with the smallest IR drop tolerance to identify violations.</div></li></ul>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1080092"></a>To view the voltage drop for a critical net for which high precision R extraction has been run, perform the following steps:</p>
+<ol><li>
+<a id="pgfId-1079688"></a>Click the net in the <em>summary</em> pane of the EAD Browser.</li><li>
+<a id="pgfId-1089660"></a>Open the <em>EM</em> tab in the detail pane.</li><li>
+<a id="pgfId-1079689"></a>Using the current dataset drop-down list, select a dataset for which you need to view the voltage drop.</li><li>
+<a id="pgfId-1073708"></a>In the drop-down command list on the toolbar of the <em>EM</em> table, click <em>Highlight voltage drop</em>.</li></ol>
+
+
+
+<p>
+<a id="pgfId-1073709"></a>The voltage drop is highlighted on that net, as shown below.</p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1079830"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="663" src="images/chap4-15.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1079831"></a>If the <a href="appB.html#10834">showVoltageDropViolation</a> environment variable is set to <code>t</code>, the voltage drop overlay shows the voltage drop level calculated by using the reference details. If no reference information was provided, the value of voltage drop is displayed.</div>
+<p>
+<a id="pgfId-1079950"></a>The colors at the red end represent higher voltage drop and the colors at the blue end represent lower voltage drop levels. The range of voltage drop values represented by each color are listed in the <em>Highlight Legend</em> displayed in the details section of the EAD Browser.</p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1090944"></a>
+The resistance network, which is used to compute current density and voltage drop, is extracted using HPR and the corresponding data is saved in binary files specified by <a href="appB.html#27700">resistanceMeshFileName</a> and <a href="appB.html#61469">resistanceFieldFileName</a> variables. After the analysis is complete, you can choose to delete these binary files.</div>
+
+<p>
+<a id="pgfId-1090952"></a>Also see: <h-hot><a actuate="user" class="URL" href="../vead/chap3.html#irDropTab" show="replace" xml:link="simple">Viewing IR drop for fast R extraction</a></h-hot></p>
+
+<h4>
+<a id="pgfId-1090954"></a><a id="85445"></a>Identifying EM Hot Spots</h4>
+
+<p>
+<a id="pgfId-1072376"></a>If you have performed high precision resistance analysis for a net and saved the data in binary files, you can run EM checks to identify the EM hot spots for that net.</p>
+<p>
+<a id="pgfId-1073792"></a>Layout EAD compares <code>J</code> with the <code>Jmax</code> value specified for that net in the EM rules and calculates the EM violation (<code>J/Jmax%</code>). These EM violations can be overlayed on the layout canvas to identify the EM hot spots that need correction.</p>
+<p>
+<a id="pgfId-1072377"></a>To run the EM checks and to overlay the EM violations for a net on the layout, do the following:</p>
+<ol><li>
+<a id="pgfId-1072378"></a>Click the net in the <em>summary</em> pane to view its details in the <em>detail</em> pane.</li><li>
+<a id="pgfId-1083313"></a>Open the <em>EM</em> tab in the <em>detail</em> pane.</li><li>
+<a id="pgfId-1072379"></a>Using the current dataset drop-down list, select a dataset to use the current data.</li><li>
+<a id="pgfId-1072380"></a>Click <em>Highlight EM Violations</em>.<br />
+<a id="pgfId-1072381"></a>The violating EM hot spots are highlighted in different colors on the selected net in the layout. The colors correspond to the color options set in the <em>EM Violation Highlighting</em> section on the <em>Environment</em> tab of the <a actuate="user" class="URL" href="../vead/appA.html#eadOptionsEnvironment" show="replace" xml:link="simple">EAD Options form</a>.<br />
+<a id="pgfId-1072391"></a><div class="webflare-div-image">
+<img width="668" height="534" src="images/chap4-16.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1072392"></a>By default, the Jmax values are taken from the EM rules specified in the <code>eadTechFile</code> or ICT file. However, for a quick check of potential EM violations, you can provide a custom Jmax definition file with<code>.jmax</code> extension. Name of the file before <code>.jmax</code> should be same as the name set using the <a href="appB.html#61469">resistanceFieldFileName</a> environment variable. This custom Jmax file should be an ASCII file written in the format shown below.</p>
+<p>
+<a id="pgfId-1072396"></a><span class="webflare-courier-new" style="white-space:pre"><em>&lt;layer-name&gt;</em></span>          <span class="webflare-courier-new" style="white-space:pre"><em>&lt;Jmax-value-for-the-layer&gt;</em></span></p>
+<p>
+<a id="pgfId-1072397"></a>An example Jmax file is shown below.</p>
+<p>
+<a id="pgfId-1072398"></a><code>fp        0.02<br />wm&#160;&#160;      0.01</code></p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1072399"></a>The unit for Jmax is <code>A/um2</code>.</div>
+<p>
+<a id="pgfId-1072400"></a>For layers other than those specified in the <code>.jmax</code> file, the Jmax values are taken from the <code>eadTechFile</code> or ICT file. If multiple EM rules are found for a layer, Layout EAD uses the rules with the worst or smallest Jmax value.</p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1072401"></a>
+The high precision resistance extraction for identification of EM hot spots is slow. Therefore, it is recommended to use this feature for validation of critical nets only.</div>
+<h4>
+<a id="pgfId-1118034"></a>Highlighting EM Violations</h4>
+
+<p>
+<a id="pgfId-1118070"></a>Layout EAD compares <code>J</code> with the <code>Jmax</code> value specified for that net in the EM rules and calculates the EM violation (<code>J/Jmax%</code>). These EM violations can be overlayed on the layout canvas to identify the EM hot spots that need correction.</p>
+<p>
+<a id="pgfId-1118066"></a>To highlight EM violations for a net:</p>
+<ol><li>
+<a id="pgfId-1118130"></a>Click the net in the <em>summary</em> pane to view its details in the <em>detail</em> pane.</li><li>
+<a id="pgfId-1118131"></a>Open the <em>EM</em> tab in the <em>detail</em> pane.</li><li>
+<a id="pgfId-1118146"></a>Click Show Legend Table.<br />
+<a id="pgfId-1118233"></a>The <em>Highlight Legend : EM</em> table is displayed. The table displays the EM violation ranges used to highlight violations in the EAD. These are the same ranges that are defined in the <em>Environment</em> tab of the EAD Options form. If you want to add another range, click <em>Add</em> anywhere in the table.<br />
+<a id="pgfId-1118173"></a><div class="webflare-div-image">
+<img width="635" height="527" src="images/chap4-17.gif" /></div>
+<a id="pgfId-1118649"></a>If you have enabled layer-based filtering for EM violations by setting the environment variable <code>applyLayerFilterOnCanvasHighlight</code> to <code>t</code>, you can select the layers for which you want to highlight EM violations from the <em>Select which layers are displayed in the table</em> drop-down list.</li><li>
+<a id="pgfId-1118133"></a>Click <em>Highlight EM violations</em>.<br />
+<a id="pgfId-1118980"></a>The EM violations are highlighted on the canvas.<br />
+<a id="pgfId-1119153"></a><div class="webflare-div-image">
+<img width="635" height="360" src="images/chap4-18.gif" /></div>
+<a id="pgfId-1119112"></a>You can clear the check box in the <em>Visibility</em> column against a range if you do not want to highlight violations for that range.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1119463"></a></p>
+
+<h3>
+<a id="pgfId-1072263"></a><a id="89376"></a>Running EM Checks on a CUSTOM Dataset</h3>
+
+<p>
+<a id="pgfId-1075792"></a>You can use <em>CUSTOM</em> datasets if you do not have access to simulated current data from ADE Assembler or if you want to perform a what-if analysis based on current values entered manually in the table. If you are trying multiple combinations of current values for nets, you can save these combinations in different user-defined datasets. These user-defined datasets can be later used to run EM checks. You can also update the electrical values in these datasets.</p>
+<ul><li>
+<a id="pgfId-1075686"></a><a href="chap4.html#80655">Using Custom Datasets for EM Checks</a></li><li>
+<a id="pgfId-1075696"></a><a href="chap4.html#36907">Creating User-Defined Custom Datasets</a></li><li>
+<a id="pgfId-1096136"></a><a href="chap4.html#79607">Saving CSV Templates for User-Defined Custom Datasets</a></li><li>
+<a id="pgfId-1076190"></a><a href="chap4.html#75528">Reloading and Updating User-Defined Custom Datasets</a></li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1075624"></a><a id="80655"></a>Using Custom Datasets for EM Checks</h4>
+
+<p>
+<a id="pgfId-1057090"></a>To use a custom dataset, do this,</p>
+<ol><li>
+<a id="pgfId-1057064"></a>Choose <em>CUSTOM</em> from the <em>EM Dataset</em> drop-down.<br />
+<a id="pgfId-1057173"></a><div class="webflare-div-image">
+<img width="635" height="192" src="images/chap4-19.gif" /></div>
+<a id="pgfId-1057066"></a>All EM information is removed from the <em>summary</em> and <em>detail</em> panes.</li><li>
+<a id="pgfId-1061111"></a>Select a net in the <em>summary</em> pane and click <em>Edit currents</em> on the EM tab toolbar.<br />
+<a id="pgfId-1061049"></a>The <em>EM</em> table in the <em>detail</em> pane lists all the terminals on the selected net but with no current values set.<br />
+<a id="pgfId-1061070"></a><div class="webflare-div-image">
+<img width="635" height="219" src="images/chap4-20.gif" /></div></li><li>
+<a id="pgfId-1061149"></a>Type in current values for the terminals on the selected net.<br />
+<a id="pgfId-1057247"></a><div class="webflare-div-image">
+<img width="635" height="219" src="images/chap4-21.gif" /></div>
+<a id="pgfId-1056505"></a>While editing the terminal current data in this table, you can copy data from one or more rows, columns, or cells, and paste it to other rows, columns, or cells. For this, you can use the <code>Ctrl+C</code> and <code>Ctrl+V</code> bindkeys. However, it is important to note that the following points with respect to copying data from selected cells in a row or column:<ul><li>
+<a id="pgfId-1098492"></a>You can paste the cells copied from the selected columns of a row to the same columns of other rows. For example, cells copied from columns A and B of row1 can be pasted to columns A and B of row 2 or row3. It cannot be copied to columns D and E of row 2. <br />
+<a id="pgfId-1098676"></a>Similarly, you can paste the cells copied from the selected rows of a column to the same rows of other columns.</li><li>
+<a id="pgfId-1098513"></a>You can copy the selected cells either from a single row or from a single column at a time. Copying a set of cells from a combination of multiple rows and columns is not supported.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1098266"></a>For an accurate EM check, the values you enter must be KCL-compliant (that is, the sum of all the values entered for the net must be 0).</div></li></ul></li><li>
+<a id="pgfId-1055528"></a>Right-click the net in the summary pane and choose <em>Run EM Check</em>.<br />
+<a id="pgfId-1057141"></a>Layout EAD performs the EM check based on the current values you entered and updates the <em>summary</em> table only for the selected net.<br />
+<a id="pgfId-1061220"></a><div class="webflare-div-image">
+<img width="635" height="469" src="images/chap4-22.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1075652"></a><a id="36907"></a>Creating User-<a id="userdefinedDatasets"></a>Defined Custom Datasets</h4>
+
+<p>
+<a id="pgfId-1075674"></a>While performing what-if analysis, you can create user-defined datasets with the manually entered current values. These datasets can be saved later as a part of the design and then reloaded to run EM checks. </p>
+<p>
+<a id="pgfId-1075959"></a>To create a user-defined dataset:</p>
+<ol><li>
+<a id="pgfId-1075879"></a>Select <em>CUSTOM</em> from the <em>EM Dataset</em> drop-down.</li><li>
+<a id="pgfId-1076411"></a>Select a net in the <em>summary</em> pane and click <em>Edit currents</em> on the EM tab toolbar.</li><li>
+<a id="pgfId-1076693"></a>Edit the electrical values in the <em>Terminal Electrical Values</em> table on the EM tab in the details pane of the EAD Browser.<br />
+<a id="pgfId-1076697"></a><div class="webflare-div-image">
+<img width="635" height="468" src="images/chap4-23.gif" /></div>
+<a id="pgfId-1098455"></a>While editing the terminal current data in this table, you can copy data from one or more rows, columns, or cells, and paste it to other rows, columns, or cells. For this, you can use the <code>Ctrl+C</code> and <code>Ctrl+V</code> bindkeys.</li><li>
+<a id="pgfId-1076463"></a>Select <em>Create User-Defined dataset </em>from the <em>Run EM Check</em> drop-down menu on the EAD Browser toolbar.<br />
+<a id="pgfId-1075972"></a>The Create User-Defined Dataset form is displayed.<br />
+<a id="pgfId-1075883"></a><div class="webflare-div-image">
+<img width="635" height="490" src="images/chap4-24.gif" /></div></li><li>
+<a id="pgfId-1075885"></a>In the <em>Dataset Name</em> field, specify the name for the custom dataset. For example, <code>myDataset1</code>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1075886"></a>You can use any alphanumeric character in a dataset name. <code>CUSTOM</code> and <code>All</code> are reserved names that cannot be used. Also, the names of any simulation datasets saved from ADE Assembler cannot be used.</div>
+<a id="pgfId-1075865"></a>As you have edited the current values in the details pane, you can keep the <em>Current Source</em> as <code>Manual</code>. For details on the different sources of current that can be used while creating a user-defined dataset, refer to <a href="chap4.html#47671">Sources of Current Values for a User-Defined Dataset</a>.</li><li>
+<a id="pgfId-1081492"></a>Click <em>Apply</em> and then click <em>OK</em> to complete the creation of dataset.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1076238"></a>The electrical values that you changed for the selected nets are stored in the specified user-defined dataset.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1076542"></a>When you save the layout view of the design, the user-defined datasets are also saved with it in the design database.</div>
+
+<h4><em>
+<a id="pgfId-1081920"></a><a id="47671"></a>Sources of Current Valu<a id="layoutDatasets"></a>es for a User-Defined Dataset</em></h4>
+
+<p>
+<a id="pgfId-1081921"></a>As listed in the <em>Current Source</em> drop-down list of the Create User-Defined Dataset form, a user-defined dataset can get the current data from any one of the following sources:</p>
+<ul><li>
+<a id="pgfId-1099083"></a><a href="chap4.html#manual">Manual</a></li><li>
+<a id="pgfId-1099101"></a><a href="chap4.html#sResults">Simulation Results</a></li><li>
+<a id="pgfId-1099198"></a><a href="chap4.html#schCSV">Schematic CSV</a></li><li>
+<a id="pgfId-1101464"></a><a href="chap4.html#CSV">CSV</a></li><li>
+<a id="pgfId-1110263"></a><a href="chap4.html#emirRes">Spectre EM/IR Results</a></li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1099140"></a>The following sections explain these sources of current data:</p>
+<p>
+<a id="pgfId-1081906"></a><strong>Manual</strong><a id="manual"></a></p>
+<p>
+<a id="pgfId-1099210"></a>You can directly enter the current values for a net in the <em>Terminal Electrical Values</em> table on the details pane of the EAD Browser. This method has been used in the <h-hot><a href="chap4.html#userdefinedDatasets">steps describing the creation of a custom dataset</a></h-hot>.</p>
+<p>
+<a id="pgfId-1099218"></a><strong>Simulation Results</strong><a id="sResults"></a></p>
+<p>
+<a id="pgfId-1099220"></a>You can directly import the current values from the simulation results saved in a <code>psf</code> directory. When you choose this mode, the <em>Directory</em> field is displayed on the form, as shown below.</p>
+
+<p>
+<a id="pgfId-1081626"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="158" src="images/chap4-25.gif" /></div>
+
+<p>
+<a id="pgfId-1082648"></a>Click the browse button next to the <em>Directory</em> field and browse to the <code>psf</code> directory where the simulation results are saved. The path to the <code>psf</code> directory is displayed in the <em>Directory</em> field. Click <em>Apply</em> and then click <em>OK</em> to close this form.</p>
+<p>
+<a id="pgfId-1082654"></a>The current values for the selected net are displayed in the <em>Terminal Electrical Values</em> table on the <em>EM</em> tab on the details pane.</p>
+<p>
+<a id="pgfId-1082658"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="618" src="images/chap4-26.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1112910"></a>You may not see the terminal current values for the instances that have been modified in schematic.</div>
+<p>
+<a id="pgfId-1082587"></a>You can edit the values in this table. The data is saved in your dataset, which can be reloaded later.</p>
+<p>
+<a id="pgfId-1099047"></a><strong>Schematic CSV</strong><a id="schCSV"></a></p>
+<p>
+<a id="pgfId-1099345"></a>If the current values for schematic objects are available in a CSV file, you can import the data from that file to create a dataset. This option is particularly useful when either you cannot run simulations to get the electrical data in results or the electrical data saved in the simulation results is incomplete. In such cases, you can save the estimated current or voltage details in a CSV, and import the file into Layout EAD to create a user-defined custom dataset.</p>
+<p>
+<a id="pgfId-1100125"></a>The CSV file must be in the following format:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1100198"></a>#TERM_DELIMITER: /<br />#RESULT_TYPES(SCALE_FACTOR): Idc(&lt;scale-factor-Idc&gt;), Iavg(&lt;scale-factor-Iavg&gt;)<br />
+&lt;inst-name&gt;/&lt;instance-terminal-name&gt;, , , ,
+&lt;inst-name&gt;/&lt;instance-terminal-name&gt;, , , ,
+...</pre>
+
+<p>
+<a id="pgfId-1100268"></a>Note the following points for this format:</p>
+<ul><li>
+<a id="pgfId-1100626"></a>In the rows where the electrical data is saved, you can include or exclude placeholders for the current data depending on your requirements. </li><li>
+<a id="pgfId-1100754"></a>You need to provide the scaling factor only for those result types for which you are saving the current data in this file. For example, if you saving only the direct current data, add <code>Idc(&lt;scale-factor-Idc&gt;)</code> in the file header. You do not need to add the scaling factor for <code>Iavg</code>.</li></ul>
+
+<p>
+<a id="pgfId-1100207"></a>An example CSV file is shown below.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1100210"></a>#TERM_DELIMITER: /<br />#RESULT_TYPES(SCALE_FACTOR): Idc(1)<br />
+AVDD,0.00393418
+AVSS,-0.00369249
+M1/B,6.88283e-11
+M1/D,0.000239754 
+M1/G,6.14897e-11
+M1/S,-0.000239754
+M10/B,1.6815e-11
+M10/D,-5e-05
+....</pre>
+
+<p>
+<a id="pgfId-1110831"></a>See Also: <a href="appC.html#32900">eadCreateDataSetFromSchCSV</a></p>
+<p>
+<a id="pgfId-1099537"></a><strong>CSV</strong><a id="CSV"></a></p>
+<p>
+<a id="pgfId-1099542"></a>If the current values for a net are available in a CSV file, you can import that to create a dataset. When you choose this mode, the <em>CSV File</em> field is displayed on the form. Click the browse button next to the <em>CSV File </em>field and browse to the directory where the CSV files is saved. To import multiple CSV files simultaneously, hold down the <em>Ctrl</em> key while you select the CSV files from which you want to import electrical data. The path to the CSV files are displayed in the <em>CSV File</em> field.</p>
+<p>
+<a id="pgfId-1081704"></a></p>
+
+<div class="webflare-div-image">
+<img src="images/eadCurrentsCSV.gif" /></div>
+
+<p>
+<a id="pgfId-1081705"></a>Click <em>Apply</em> and then click <em>OK</em> to close the form.</p>
+<p>
+<a id="pgfId-1082453"></a>New columns for the newly-created dataset are added in the <em>Terminal Electrical Values</em> table and the current values are displayed in them, as shown below.</p>
+<p>
+<a id="pgfId-1082269"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="518" src="images/chap4-28.gif" /></div>
+
+<p>
+<a id="pgfId-1082487"></a>The current values for the nets mentioned in the CSV files are imported and displayed in the <em>Terminal Electrical Values</em> table. If required, you can edit the values in this table. The updated values are then saved in the your dataset.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1082507"></a>A CSV file can contain only the static average or DC op current values for one or more nets. It cannot contain dynamic current data for a net.</div>
+<p>
+<a id="pgfId-1082352"></a>After importing data from the CSV file, run EM checks to view EM violations.</p>
+
+<p>
+<a id="pgfId-1082356"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="284" src="images/chap4-29.gif" /></div>
+
+<p>
+<a id="pgfId-1082139"></a>A sample csv file is shown below. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1081824"></a>#Current Types: &quot;Static-Avg&quot;,&quot;DC Op Current&quot;<br />#Net Name: |I0/net19<br />I0/|NM0:D,420uA,513.2nA<br />I0/|NM1:G,-14.88uA,564.4nA<br />I0/|PM0:D,-380.7uA,-1.078uA<br />I0/|PM1:G,-24.37uA,594.2pA</pre>
+
+<p>
+<a id="pgfId-1096189"></a>The first two lines in the file provide the header information. It is also possible that the source CSV file contains either one of the static average or DC Op current data for one or more nets. In that case, the current values are loaded only for the column name specified in the CSV header. </p>
+
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1096225"></a>
+You can use the template files saved from the EAD Browser to create a source CSV file with current imformation. For more details, refer to <a href="chap4.html#79607">Saving CSV Templates for User-Defined Custom Datasets</a>.</div>
+
+<p>
+<a id="pgfId-1110286"></a><strong>Spectre EM/IR Results</strong><a id="emirRes"></a></p>
+<p>
+<a id="pgfId-1110287"></a>If the current values for a net are available in the results database saved for a Spectre EM/IR analysis, you can import that to create a dataset. When you choose this mode, the <em>Directory</em> field is displayed on the form. Click the browse button next to the <em>Directory </em>field and browse to the directory where the results are saved. Click <em>Apply</em> and then click <em>OK</em> to save the dataset.</p>
+
+<h4>
+<a id="pgfId-1096205"></a><a id="79607"></a>Saving CSV Template<a id="saveTemplates"></a>s for User-Defined Custom Datasets</h4>
+
+<p>
+<a id="pgfId-1096272"></a>When you import the current information from CSV files to create custom datasets, it is important to create the CSV file in the required format. If the format is incorrect, the current information is not imported. </p>
+<p>
+<a id="pgfId-1097099"></a>To ensure that the current details are written in the correct format in the CSV file, you can save template from the EAD browser and edit the current information. These templates have some pre-filled information that you can modify or complete while keeping the format unchanged.</p>
+<p>
+<a id="pgfId-1096288"></a>You can save templates from EAD Browser in the following ways:</p>
+<ul><li>
+<a id="pgfId-1096302"></a>By saving the details of all the nets displayed in the Summary pane of the EAD Browser. For this, click <em>Run EM</em> Checks to open the drop-down list and choose <em>Create CSV Template for User-Defined Dataset</em>. Provide a file name and path for the template file in the EAD Save CSV For EM Dataset form and click <em>OK</em>.<br />
+<a id="pgfId-1096417"></a>A template file in the CSV format is saved, as shown in the following example:<br />
+<a id="pgfId-1096431"></a><div class="webflare-div-image">
+<img width="668" height="365" src="images/chap4-31.gif" /></div>
+<a id="pgfId-1096499"></a>The template file saved in this way contains the following information:<ul><li>
+<a id="pgfId-1096513"></a>A section for each net listed in the Summary pane</li><li>
+<a id="pgfId-1096523"></a>Each net name is followed by the names of terminals connected to it</li><li>
+<a id="pgfId-1096530"></a>A comma-separated blank format where you can enter the current details<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1096568"></a>This template file does not get any information from the datasets.</div></li></ul></li><li>
+<a id="pgfId-1096314"></a>By saving the terminal current information for the nets selected in the Summary pane. For this, perform these steps:<ol><li>
+<a id="pgfId-1097246"></a>In the Summary pane, select one or more nets for which you need to provide the current information. </li><li>
+<a id="pgfId-1097247"></a>Click <em>EM</em> in the Details pane to open the EM tab.</li><li>
+<a id="pgfId-1097333"></a>Click <em>Edit currents</em> (<img width="30" height="31" src="images/chap4-32.gif" />
+) on the EM tab toolbar to display the <em>Terminal Electrical Values</em> table.</li><li>
+<a id="pgfId-1097334"></a>The <em>Export electrical Data to a CSV file</em> (<img width="30" height="31" src="images/chap4-33.gif" />
+) command is also displayed to the right of <em>Edit currents</em>.</li><li>
+<a id="pgfId-1097335"></a>Click<em> Export electrical Data to a CSV file</em>. </li><li>
+<a id="pgfId-1097648"></a>Provide a file name and path for the template file in the EAD Save CSV For EM Dataset form and click <em>OK</em>.</li></ol><br />
+<a id="pgfId-1096581"></a>A template file in the CSV format is saved, as shown in the following example:<br />
+<a id="pgfId-1096585"></a><div class="webflare-div-image">
+<img width="668" height="335" src="images/chap4-34.gif" /></div>
+<a id="pgfId-1096586"></a>The template file saved in this way contains the following information:<ul><li>
+<a id="pgfId-1097751"></a>A section for each net selected in the Summary pane</li><li>
+<a id="pgfId-1097752"></a>Each net name is followed by the names of terminals connected to it</li><li>
+<a id="pgfId-1096588"></a>A comma-separated list of current values exported from the <em>Terminal Electrical Values</em> table</li></ul><br />
+<a id="pgfId-1096749"></a>You can save this template to dump the current details for all or a particular dataset selected in the <em>EM Dataset</em> drop-down list on the Summary pane.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1096807"></a>If the <em>Terminal Electrical Values</em> table shows information for multiple datasets, a separate template file is saved for each dataset. The dataset name is added to the name of the CSV file saved for it.</div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1096824"></a>After modifying the current details in the template files, you can use those to import details and create custom dataset by using the <em>Create User-Defined Dataset</em> command. For more details, refer to <a href="chap4.html#36907">Creating User-Defined Custom Datasets</a>.</p>
+
+<h4>
+<a id="pgfId-1096484"></a><a id="75528"></a>Reloading and Updating User-Defined Custom Datasets</h4>
+
+<p>
+<a id="pgfId-1096192"></a>To reload a user-defined dataset for EM check:</p>
+<ol><li>
+<a id="pgfId-1076240"></a>Choose the name of a user-defined dataset from the <em>EM Dataset</em> drop-down.<br />
+<a id="pgfId-1076058"></a><div class="webflare-div-image">
+<img width="635" height="189" src="images/chap4-35.gif" /></div>
+<a id="pgfId-1076059"></a>All EM information is removed from the <em>summary</em> and <em>detail</em> panes.</li><li>
+<a id="pgfId-1076585"></a>In the summary pane, select the net for which you had saved the electrical currents and click <em>Edit currents</em> on the EM tab toolbar.</li><li>
+<a id="pgfId-1076666"></a>The <em>Terminal Electrical Values</em> table in the <em>detail</em> pane lists all the terminals on the selected net with the electrical values from the dataset.<br />
+<a id="pgfId-1076670"></a><div class="webflare-div-image">
+<img width="635" height="462" src="images/chap4-36.gif" /></div>
+<a id="pgfId-1076277"></a>Now, you can edit the current values for the same or other nets, and run EM checks. The edited values are again saved with the dataset when you save the design.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1077240"></a>You can also choose to show all the datasets together by selecting <code>ALL</code> from the <em>EM Dataset</em> drop-down list, and then edit electrical values for any of the user-defined datasets.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1055241"></a><a id="41641"></a>Viewing <a id="viewingEMInfo"></a>EM Informa<a id="fixViolations"></a>tion in the EAD Browser</h2>
+
+<p>
+<a id="pgfId-1058085"></a>This section describes how to analyze the results of an EM check in the EAD Browser&#8217;s <a href="chap3.html#91740">Detail Pane</a>. To do this,</p>
+<ol><li>
+<a id="pgfId-1058056"></a>Click one of the nets in the s<em>ummary</em> pane to open the <em>EM</em> tab in the <em>detail</em> pane.<br />
+<a id="pgfId-1061474"></a><div class="webflare-div-image">
+<img width="635" height="399" src="images/chap4-37.gif" /></div>
+<a id="pgfId-1061475"></a>You see a detailed breakdown of the EM violations present for the net selected in the summary pane. If there are no violations for the selected net, the table is empty.<br />
+<a id="pgfId-1061476"></a>Each row represents a resistor that was extracted in EAD. The color coding is controlled by the settings in the <a href="appA.html#26574">Environment</a> tab.<br />
+<a id="pgfId-1061483"></a>For information on how to customize the table display, see <a href="chap3.html#10632">Changing Data Display in the EAD Browser</a>.</li><li>
+<a id="pgfId-1061485"></a>Use the <em>Result type</em> menu to choose which values are displayed in the table.<br />
+<a id="pgfId-1061489"></a><div class="webflare-div-image">
+<img width="635" height="247" src="images/chap4-38.gif" /></div><ul><li>
+<a id="pgfId-1061490"></a><em>J/Jmax</em> shows the ratio of current to maximum current. A value greater than or equal to 1.0 is a violation. The higher the value, the more serious the violation.</li><li>
+<a id="pgfId-1061491"></a><em>(J/Jmax)*W</em> shows the ratio of current to maximum current multiplied by the resistor width. In some cases, this value can give an indication of how wide the wire would need to be in order to remove the violation.<br />
+<a id="pgfId-1074472"></a>This value is shown only for the resistors extracted from conductor layers.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1114522"></a>Width that is equal to conductor&#39;s drawn width multiplied by conductor&#39;s <code>J/Jmax</code> ratio is calculated. <code>Jmax</code> is then recalculated at the new width. This step is repeated iteratively to find a recommended width at which the calculated <code>Jmax</code> is closer to the <code>J</code> value by scaling up or down the previously calculated width based on ratio of currents.</div></li><li>
+<a id="pgfId-1074515"></a><em>(J/Jmax)*N</em> shows the ratio of current to maximum current multiplied by the existing number of via cuts. This gives an estimate of the number of via cuts that could possibly fix the EM violation reported for the via resistor.<br />
+<a id="pgfId-1074421"></a>This value is shown only for the resistors extracted from via layers.</li><li>
+<a id="pgfId-1061492"></a><em>Current</em> shows the current from simulation results</li><li>
+<a id="pgfId-1061493"></a><em>Max Current </em>shows the maximum current that can flow through this resistor</li><li>
+<a id="pgfId-1061494"></a><em>Percent of Max Current </em>shows the value as a percentage of the maximum current</li><li>
+<a id="pgfId-1102925"></a><em>Delta T</em> shows additional columns to display the delta T results generated when the self-heating effects are enabled for electromigration, that is, when the <em>Enable Self Heating Effects</em> check box on the <em>EM</em> tab of the <a actuate="user" class="URL" href="../vead/appA.html#eadOptionsForm" show="replace" xml:link="simple">EAD Options</a> form is selected. For more details on how to view delta T results on the <em>EM</em> tab in EAD Browser, refer to <a href="chap4.html#24044">Viewing Delta T Information</a>.</li></ul></li><li>
+<a id="pgfId-1061495"></a>Use the <em>Select layers</em> menu to control which layers are shown in the table.<br />
+<a id="pgfId-1065952"></a><div class="webflare-div-image">
+<img width="635" height="252" src="images/chap4-39.gif" /></div></li><li>
+<a id="pgfId-1065953"></a>Use the <em>Highlight</em> drop-down to choose an overlay in the layout canvas for the selected net. An overlay color-codes the select net on the canvas based on the EM information available for that net. Use the <em>Highlight Transparency</em> slider to change the transparency of the overlay to let you see the underlying design geometry.<br />
+<a id="pgfId-1065954"></a>For more information on using overlays to highlight violations in the canvas, see <a href="chap4.html#83562">Highlighting and Fixing Violations in the Layout Window</a>.</li><li>
+<a id="pgfId-1067821"></a>When <em>Dynamic Analysis</em> is enabled in the <a href="appA.html#15423">EM</a> tab, you can right-click in any <em>J/Jmax Dynamic-Peak</em> or <em>J/Jmax Dynamic-Rms</em> cell and<ul><li>
+<a id="pgfId-1069464"></a>Choose <em>Plot Terminal Currents</em> to view the currents associated with the terminals of the selected net.</li><li>
+<a id="pgfId-1069481"></a>Choose <em>Plot Resistor Currents</em> to view the intermediate currents through the selected resistor. This menu command is available only when the <a href="appB.html#52953">preserveResistorCurrents</a> environment variable is set to <code>t</code>.<br /><ffi2-fig-frame-in-2 id="#id1068074">
+<a id="pgfId-1068074"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="602" height="113" src="images/chap4-40.gif" /></div></li></ul></li><li>
+<a id="pgfId-1069900"></a>Change the columns shown in the EM results table by clicking the right mouse button in any column header and selecting or clearing the check box next to the information you want to show or hide.<br />
+<a id="pgfId-1069751"></a><div class="webflare-div-image">
+<img width="635" height="407" src="images/chap4-41.gif" /></div></li><li>
+<a id="pgfId-1070467"></a>Move your mouse pointer over any cell to see more information about the value shown in that cell. <br />
+<a id="pgfId-1070559"></a>For example, the terminal electrical values table shows multi-pin terminals as <code>0</code> volts (&quot;<code>0V</code>&quot;). This is because the terminal with multiple pins, is treated as a reference terminal and each pin is treated as a voltage source (at <code>0V</code>) instead of a current source. If you position the mouse pointer over the value, you see a tooltip displaying the current at the pin computed during the EM check.<br />
+<a id="pgfId-1069928"></a><div class="webflare-div-image">
+<img width="635" height="192" src="images/chap4-42.gif" /></div>
+<a id="pgfId-1075214"></a>In addition, when you click a terminal row in the table, the display zooms to the terminal shapes.<br />
+<a id="pgfId-1071337"></a>Similarly, if you position the mouse pointer over the length (L) value, you see a tooltip displaying the drawn length and the EM length.<br />
+<a id="pgfId-1071341"></a><div class="webflare-div-image">
+<img width="635" height="295" src="images/chap4-43.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1073117"></a>EM length is the effective length used to determine which EM rule in the ICT file is to be applied. The default method for EM length calculation is <code>centerline</code>, but you can change it by using the <a href="appB.html#99791">segmentLength</a> environment variable. </div></li><li>
+<a id="pgfId-1069992"></a>Click <em>Export table data</em> (<img width="27" height="26" src="images/chap4-44.gif" />
+) in the EAD Browser toolbar to export the data currently displayed in the browser tables in either CSV or HTML format.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1070082"></a>Data contained in columns that are currently hidden is not exported.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1103331"></a><a id="24044"></a>Viewing <a id="viewingDeltaT"></a>Delta T Informa<a id="fixViolations"></a>tion</h2>
+
+<p>
+<a id="pgfId-1103370"></a>When you enable the self-heating effects by setting the <em>Enable Self Heating Effects</em> check box on the <em>EM</em> tab of the <h-hot><a actuate="user" class="URL" href="../vead/appA.html#eadOptionsForm" show="replace" xml:link="simple">EAD Options</a></h-hot> form, Layout EAD saves the delta T values in electromigration results. </p>
+<p>
+<a id="pgfId-1119734"></a><code>delta</code> <code>T</code> = <code>Coupling</code> <code>Delta</code> <code>T</code>  + <code>RMS</code> <code>Delta</code> <code>T</code></p>
+<p>
+<a id="pgfId-1119805"></a>You can view the RMS Delta T and Coupling Delta T values for the corresponding resistance by hovering the mouse pointer over any cell in the <em>Delta T</em> columns on the <em>EM</em> tab of the EAD Browser. The cells that contain a <code>delta T</code> value greater than the value of <em>Delta T</em> specified on the <em>EM</em> tab of the EAD Options form are highlighted in red.</p>
+<p>
+<a id="pgfId-1119732"></a>These delta T values are used in the calculation of the temperature derating factor for a net. The calculation of delta T is dependent on the current flowing through metal conductor associated with the routing of the net and any device underneath the metal layer. While checking the current values to be used for the calculation of delta T, Layout EAD considers the values set for the <a href="appB.html#66102">metalRegionSearchExtent</a> and <a href="appB.html#68970">odRegionSearchExtent</a> environment variables. </p>
+<p>
+<a id="pgfId-1103555"></a>To view delta T results, do this:</p>
+<ol><li>
+<a id="pgfId-1104609"></a>On the <em>EM</em> tab, use the <em>Result type</em> menu to choose <em>Delta T</em>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1103893"></a>The <em>Delta T</em> command appears in the <em>Result type</em> menu only when Delta T values are saved in electromigration results.</div>
+<a id="pgfId-1103693"></a>Note the following changes in the EM results table displayed on the EM tab.<ul><li>
+<a id="pgfId-1104150"></a>The columns that displayed J/Jmax values are hidden.</li><li>
+<a id="pgfId-1104244"></a>Columns to display the delta T values are displayed in the EM results table, as shown below.<br /><ffi2-fig-frame-in-2 id="#id1104257">
+<a id="pgfId-1104257"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="635" height="337" src="images/chap4-45.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1106644"></a>Delta T values are collected due to the flow of RMS currents in the metal resistors. Therefore, to display delta T values, one column is added for each dataset that contains RMS currents.</div></li><li>
+<a id="pgfId-1103868"></a>Two new commands are displayed in the <em>EM</em> tab toolbar:<ul><li>
+<a id="pgfId-1104449"></a>The <em>Highlight delta T Values on Canvas and show Highlight Legend</em> <img width="25" height="21" src="images/chap4-46.gif" />
+ command button to display a heat map of delta T on the layout canvas</li><li>
+<a id="pgfId-1104340"></a>The <em>Electrical dataset to be used for delta T highlighting</em> drop-down list that contains the name of electrical datasets containing delta T values</li></ul><br />
+<a id="pgfId-1104858"></a>You can use these commands to highlight the delta T values on the layout canvas.</li></ul></li><li>
+<a id="pgfId-1105308"></a>To view the RMS Delta T and Coupling Delta T values for the corresponding resistance, move the pointer over any cell in the Delta T columns.<br />
+<a id="pgfId-1105831"></a>The data is displayed in a tooltip, as shown below.<br />
+<a id="pgfId-1108295"></a><div class="webflare-div-image">
+<img width="635" height="337" src="images/chap4-47.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1108353"></a>The cells that contain a delta T value greater than the one specified by the layoutEAD.em deltaT environment variable or the <em>Delta T</em> on the <em>EM</em> tab of EAD Options form are highlighted in red, as shown in the example given below.</div>
+<a id="pgfId-1108399"></a><div class="webflare-div-image">
+<img width="635" height="448" src="images/chap4-48.gif" /></div></li><li>
+<a id="pgfId-1105347"></a>To view the delta T values highlighted on the canvas, select an electrical dataset from the drop-down list and click <img width="25" height="27" src="images/chap4-49.gif" />
+ on the toolbar.<br />
+<a id="pgfId-1105381"></a><div class="webflare-div-image">
+<img width="635" height="496" src="images/chap4-50.gif" /></div>
+<a id="pgfId-1105351"></a>A highlight legend showing the color map to the value ranges is also displayed.<br />
+<a id="pgfId-1120992"></a>You can control the number of rows displayed in the <em>Highlight Legend</em> table using the <em>Number of Bins</em> spin box. The default value set in this spin box is <code>20</code>. You can specify any integer value between <code>1</code>&#8211;<code>60</code> in this spin box.<br />
+<a id="pgfId-1121007"></a><div class="webflare-div-image">
+<img width="635" height="348" src="images/chap4-51.gif" /></div></li><li>
+<a id="pgfId-1105716"></a>For better analysis of the highlighted values, it is better to open the EM results table along with it. For this, click <em>Show/Hide Delta T values in the EM Results table</em> <img width="25" height="27" src="images/chap4-52.gif" />
+ on the toolbar. This command is visible only when you click <img width="25" height="27" src="images/chap4-53.gif" />
+.<br />
+<a id="pgfId-1106069"></a>The EM results table are displayed and the highlight is also maintained on the canvas, as shown below.<br />
+<a id="pgfId-1106192"></a><div class="webflare-div-image">
+<img width="635" height="348" src="images/chap4-54.gif" /></div>
+<a id="pgfId-1105720"></a></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1061713"></a><a id="22984"></a>Viewing Electrical Information in the Layout Window</h2>
+
+<p>
+<a id="pgfId-1064376"></a>EAD provides various features to let you view electrical information in the layout canvas.</p>
+<ul><li>
+<a id="pgfId-1064733"></a><a href="chap4.html#68193">Using Info Balloons</a></li><li>
+<a id="pgfId-1064746"></a><a href="chap4.html#54226">Using Point-To-Point Info Balloons</a></li><li>
+<a id="pgfId-1064754"></a><a href="chap4.html#95941">Using Measurement Display</a></li></ul>
+
+
+
+<h3>
+<a id="pgfId-1064596"></a><a id="68193"></a>Using Info Balloons</h3>
+
+<p>
+<a id="pgfId-1064182"></a>You can use the layout editor&#8217;s <em>Show Info Balloon </em>feature to see the details of EAD parameters when you move the mouse pointer over nets in the layout canvas. To do this,</p>
+<ol><li>
+<a id="pgfId-1058343"></a>From the layout window menu bar, choose <em>Options &#8211; Dynamic Display</em> and enable <em>Show Info Balloon</em> at the top of the form.<br />
+<a id="pgfId-1061780"></a><div class="webflare-div-image">
+<img width="635" height="444" src="images/chap4-55.gif" /></div></li><li>
+<a id="pgfId-1061876"></a>Choose the information you want to display from the<em> Contents</em> pane and click <em>OK</em>.</li><li>
+<a id="pgfId-1064314"></a>Move your mouse pointer over a net in your design to see an info balloon containing the EM information for the highlighted segment.<br />
+<a id="pgfId-1064318"></a><div class="webflare-div-image">
+<img width="635" height="469" src="images/chap4-56.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1117904"></a>Recommended width information is displayed along with the EM violations only when the <em>EM Data</em> parameter is selected in the Dynamic Display form because recommended width is calculated only if EM analysis is performed.</div>
+<a id="pgfId-1066783"></a>The precision of the values displayed in the Info Balloon is controlled by the <a actuate="user" class="URL" href="../vlehelp/leEnvars_re_displaySigDigits.html" show="replace" xml:link="simple">displaySigDigits</a> environment variable. The default is 4 and the maximum value is 10.<br />
+<a id="pgfId-1066875"></a>To change the precision, type the following in the CIW:<pre class="webflare-pre-block webflare-courier-new" id="#id1066838">
+<a id="pgfId-1066838"></a>envSetVal(&quot;layout&quot; &quot;displaySigDigits&quot; &#39;int <code><em>integer_value</em></code>)</pre></li><li>
+<a id="pgfId-1066651"></a>Move your cursor over a different net.<br />
+<a id="pgfId-1066670"></a>The original info balloon disappears and a new one opens containing information on the new net.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1072056"></a>If the calculated information for any EAD parameter is not available for a net, the Info Balloon shows the corresponding value as <code>&lt;undefined&gt;</code>. For example, you performed an R-only extraction (that is, <em>Extraction Mode</em> on the <em>Extraction</em> tab of the Layout EAD Options form is set to <code>R</code>), but on the Dynamic Display form, you have selected the options to display both the resistance and capacitance values. In this case, capacitance values will be displayed as <code>&lt;undefined&gt;</code>, as shown in the figure below.</div>
+<a id="pgfId-1083901"></a><div class="webflare-div-image">
+<img width="668" height="486" src="images/chap4-57.gif" /></div>
+<a id="pgfId-1084254"></a>If you find any inconsistency between the mouse location or the information being displayed in the info balloon; for example, the current limit and J/Jmax are reported as <code>Undefined</code> and <code>0</code>, respectively, or the values of some other object as shown; it could be because the point is getting snapped outside the bounds of the DB object while displaying the info balloon for that object. In this case, you can set either or both of the following two settings in Layout EAD:<ul><li>
+<a id="pgfId-1083922"></a>In the Layout EAD window, choose <em>Options &#8211; Display</em> to open the Display Options form, and reduce the values in the <em>X Snap Spacing</em> and <em>Y Snap Spacing </em>fields.<br /><ffi2-fig-frame-in-2 id="#id1084117">
+<a id="pgfId-1084117"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="668" height="221" src="images/chap4-58.gif" /></div></li><li>
+<a id="pgfId-1084128"></a>In the Layout EAD window, choose <em>Options &#8211; Editor</em> to open the Layout Editor Options form, and select the <em>Gravity On</em> check box.<br /><ffi2-fig-frame-in-2 id="#id1084131">
+<a id="pgfId-1084131"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="668" height="177" src="images/chap4-59.gif" /></div></li></ul></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1083905"></a><a id="54226"></a>Using <a id="usingPointToPointBallons"></a>Point-To-Point Info Balloons</h3>
+
+<p>
+<a id="pgfId-1088756"></a>You can use the Point-To-Point Info Balloon feature to interactively view EAD parameters for the segment between any two points in your design. Point-to-point info balloons remain visible on the canvas until you close them either individually by clicking the &#8216;x&#8217; in the top-right corner or all at once using the <em>Close All Point-To-Point Info Balloons</em> command from the main EAD toolbar or from the EAD Browser toolbar. They are also closed automatically when you exit Layout EAD.</p>
+<p>
+<a id="pgfId-1088757"></a>To show point-to-point info balloons,</p>
+<ol><li>
+<a id="pgfId-1065018"></a>Click <em>Create New Point-To-Point Info Balloon</em> from the main EAD toolbar or from the EAD Browser toolbar.<br />
+<a id="pgfId-1069395"></a><div class="webflare-div-image">
+<img width="635" height="153" src="images/chap4-60.gif" /></div></li><li>
+<a id="pgfId-1065024"></a>(Optional) Change<a id="step2"></a> the snapping mode for the points by pressing the <code>s</code> bindkey. For more details, refer to <a href="chap4.html#32427">Snapping Start and End Points to Existing Nodes</a>.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1107502"></a>The snapping mode is also set by the <a href="appB.html#85396">P2PSnapping</a> environment variable, which is by default set to <code>&quot;node&quot;</code>. Use the <code>s</code> bindkey to use a snapping mode other that the one set by this variable.</div></li><li>
+<a id="pgfId-1084970"></a>Click a start and end point on any net.<br />
+<a id="pgfId-1087976"></a>Layout EAD displays an info balloon showing the EM violation information for the net (across all datasets), the current limit for the path, the resistance value of the limiting resistor, and the total resistance of the path. The limiting resistor refers to the resistor in the point-to-point path that can carry the least amount of current as reported by the current limit information on the info balloon. The title of the info balloon displays a summary of this information, which includes the current limit, point to point path resistance, and the resistance value of the limiting resistor (in parenthesis). <br />
+<a id="pgfId-1087977"></a>Layout EAD also <strong>highlights in red</strong> the <strong>first segment</strong> of the net that contains the <strong>first limiting resistor</strong>.<br />
+<a id="pgfId-1071592"></a><div class="webflare-div-image">
+<img width="635" height="510" src="images/chap4-61.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1094065"></a>Important Points to Note</em></h4>
+
+<ul><li>
+<a id="pgfId-1094612"></a>If the from and to points of an info balloon are within <code>+/- DBUPerUU/10</code>, Layout EAD considers them as the same point and therefore, the path resistance value is <code>0</code>.</li><li>
+<a id="pgfId-1094629"></a>While you are dragging mouse from the first point to the second point, if the <a href="appB.html#31193">updateP2POnDrag</a> environment variable to <code>t</code>, the resistance details are dynamically updated to show the resistance up to the current location of mouse. In case of large nets, frequent dynamic updates might make the info balloon look unresponsive because the tool is taking time to calculate the resistance values from the first point to the current location. Therefore, it is recommended to delay the update frequency by changing the value of the <a href="appB.html#89447">clickClickUpdateDelay</a> environment variable from the default value (<code>0.05</code>) to a higher value.</li><li>
+<a id="pgfId-1097984"></a>If you do not want to update the info balloons while you are dragging the mouse from the first point to the second, set the <a href="appB.html#31193">updateP2POnDrag</a> environment variable to <code>nil</code>.</li><li>
+<a id="pgfId-1098796"></a>If the layout contains mosaic instances corresponding to the instances in the schematic, you need to convert those mosaic instances to regular instances so that the resistance can be extracted from the paths connected to them and added to the R value on the point-to-point info balloon. However, if the mosaic instances are only routing shapes and do not correspond to any instance in the schematic, you can press the <code>Ctrl + N</code> bindkey after selecting the first point for the info balloon to find the nets connected to them and extract resistance.</li><li>
+<a id="pgfId-1108843"></a>By default, Layout EAD processes and extracts all the shapes present on a net while you select points for point-to-point info balloons. However, when the number of shapes on a net is large, this can impact performance. In such a case, you can set the <a href="appB.html#79945">clickClickUseNetCache</a> environment variable to <code>nil</code>.</li></ul>
+
+
+
+
+
+<h4>
+<a id="pgfId-1094066"></a><a id="32427"></a>Snapping Start and End P<a id="snapPoints"></a>oints to Existing Nodes</h4>
+
+<p>
+<a id="pgfId-1094299"></a>When you select points for info balloons, Layout EAD inserts user nodes at the nodes closest to the selected points and re-extracts parasitics. As re-extraction takes time, you can choose to snap the points to the existing nodes or terminals on the same net and reuse the already extracted data. This helps in improving the performance of the point-to-point info balloon display command by avoiding an additional extraction.</p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1108496"></a>
+Though, in general, snapping improves the performance of the point-to-point info balloon display, you may still observe some delay if the net on which you are creating the balloon is highlighted in red in the <em>Summary</em> pane. This is because the red highlight indicates that the parasitics for that net need to be re-extracted due to a change in the design or the extraction setup, which is done when the info balloon is created.</div>
+
+<p>
+<a id="pgfId-1085231"></a>By default, snapping is off and the points selected by the user are considered as the start and end point for an info balloon. You can use any one of the following two snapping modes:</p>
+<ul><li>
+<a id="pgfId-1085778"></a><code>Snap to closest node</code>: In this mode, the start and end points are snapped to the closest nodes, and resistance between those nodes is shown.</li><li>
+<a id="pgfId-1085779"></a><code>Snap to closest terminal</code>: In this mode, the start and end points are snapped to the closest terminals, and resistance between those terminals is shown. </li></ul>
+
+<p>
+<a id="pgfId-1085295"></a>To switch between the snapping modes in <h-hot><a href="chap4.html#step2">step 2</a></h-hot>, press the <code>s</code> bindkey. </p>
+<p>
+<a id="pgfId-1085539"></a>The following figures show how the end points for an info balloon change for different snapping modes:</p>
+<p>
+<a id="pgfId-1094373"></a><strong>Info balloon with snapping off</strong></p>
+
+<p>
+<a id="pgfId-1094527"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="463" src="images/chap4-62.gif" /></div>
+
+<p>
+<a id="pgfId-1094531"></a><strong>Info balloon with snapping to the closest node</strong></p>
+
+<p>
+<a id="pgfId-1094551"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="514" src="images/chap4-63.gif" /></div>
+
+<p>
+<a id="pgfId-1085600"></a><strong>Info balloon with snapping to the closest terminal</strong></p>
+
+<p>
+<a id="pgfId-1085603"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="460" src="images/chap4-64.gif" /></div>
+<h4>
+<a id="pgfId-1085040"></a>Displaying Info Balloons with Start and End Points from Different Layers</h4>
+
+<p>
+<a id="pgfId-1094693"></a>While selecting the start and end points for info balloons, press the <code>l</code> key to traverse through the overlapping interconnect layers. The name of the current layer is displayed on the info balloon to help you choose the correct layer. The CIW also shows the target layer name. This helps in selecting two points across different layers to view the electrical information.</p>
+
+<p>
+<a id="pgfId-1095269"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="462" src="images/chap4-65.gif" /></div>
+<h4>
+<a id="pgfId-1095271"></a><a id="18730"></a>Displaying Resist<a id="resistanceDisplayp2p"></a>ance Paths Between the Start and End Points of an Info Balloon</h4>
+
+<p>
+<a id="pgfId-1095275"></a>You can use the <a href="appB.html#60786">displayP2PResistancePath</a> environment variable to specify your requirements to display resistance paths between the start and end points of an info balloon. The resistance paths are displayed in addition to the halo that highlights the path between the selected points. </p>
+<p>
+<a id="pgfId-1097914"></a>By default, this variable is set to <code>&quot;none&quot;</code> and EAD does not show any resistance path. Set it to <code>&quot;singlePath&quot;</code> to show the shortest path containing the limiting resistance, between the two points, as shown below.</p>
+
+<p>
+<a id="pgfId-1095350"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="297" src="images/chap4-66.gif" /></div>
+
+<p>
+<a id="pgfId-1095352"></a>If you want to display all the resistance paths between the points, as shown below, set the variable to <code>&quot;allPaths&quot;</code>.</p>
+
+<p>
+<a id="pgfId-1094970"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="368" src="images/chap4-67.gif" /></div>
+
+<p>
+<a id="pgfId-1094897"></a>If you do not want to display resistance paths, set this variable to <code>&quot;none&quot;</code>.</p>
+
+<h4>
+<a id="pgfId-1094854"></a>Updating Info Balloons to Reflect Layout Edits</h4>
+
+<p>
+<a id="pgfId-1094802"></a>You can edit any segment between the two points directly on the layout canvas. You can set the update mode to specify whether to update the information on an info balloons as per the layout changes.</p>
+<ul><li>
+<a id="pgfId-1065129"></a>If <em>Automatic Update Mode</em> is set, EAD automatically updates the layout overlay as well as the information shown in the balloon.</li><li>
+<a id="pgfId-1065152"></a>If <em>Manual Update Mode</em> is set, you must click the <em>Update Parasitics &amp; EM</em> button on either of the EAD toolbars (or press <code>Ctrl+u</code>) to update the display and information shown in the info balloon.</li></ul>
+
+
+<h4>
+<a id="pgfId-1088893"></a>Saving Info Balloons to XML Files</h4>
+
+<p>
+<a id="pgfId-1094742"></a>You can use the <em>Save All Point-to-Point Info Balloons</em> command from the EAD toolbar to save the displayed info balloons in an XML file. This helps in saving the details of critical nets that you identified and would need to mark again while reviewing the design.</p>
+<p>
+<a id="pgfId-1094758"></a>To save the info-balloons already displayed on the layout canvas, choose <em>Save Point-to-Point Info Balloons</em> from the EAD toolbar. The Save Point-to-Point Info Balloons form is displayed. Specify the location and name for the XML file in which you want to save the info balloons, and click <em>Save</em>.</p>
+<p>
+<a id="pgfId-1094769"></a>To load the saved info balloons, choose <em>Load Point-to-Point Info Balloons</em> from the EAD toolbar. The Load Point-to-Point Info Balloons form is displayed. Specify the XML file and clock <em>Load</em>. The info balloons are displayed at their original locations. The titles of info balloons loaded from the saved XML file are marked with a <code>*</code>. If the design is changed after saving the info balloons, their title is highlighted with a yellow background to indicate that they are not up-to-date. In this case, you need to click <em>Update Parasitics &amp; EM</em> on the EAD Browser toolbar to update the display in information on the info balloon. However, If <em>Automatic Update Mode</em> is set, EAD updates the info balloons whenever a design is changed.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1089795"></a>The cellview information is also saved along with info balloons in the XML file. This prevents loading info balloons into a cellview other than the one for which it was saved.</div>
+
+<h3>
+<a id="pgfId-1084756"></a><a id="95941"></a>Using Measurement Display</h3>
+
+<p>
+<a id="pgfId-1064626"></a>Use the layout editor&#8217;s <em>Measurement Display On </em>feature to see real-time current information while you are routing your design, for example, using the <em>Create Wire</em> command. To do this,</p>
+<ol><li>
+<a id="pgfId-1064569"></a>Choose <em>Options &#8211; Dynamic Display</em> to open the Dynamic Display form and enable <em>Measurement Display On</em> at the top of the form.<br />
+<a id="pgfId-1064573"></a><div class="webflare-div-image">
+<img width="635" height="165" src="images/chap4-68.gif" /></div></li><li>
+<a id="pgfId-1064574"></a>Enable the EM-related information you want to see; for example, <em>Resistance</em>, <em>CurrentLimit</em>, and <em>EMData</em> as shown above.<br />
+<a id="pgfId-1064575"></a>During <em>Create Wire</em>, you now see the real-time information about the resistance and current limit of the wire being drawn, along with the number of EM violations being generated as you draw the net.<br />
+<a id="pgfId-1064579"></a><div class="webflare-div-image">
+<img width="635" height="399" src="images/chap4-69.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1055606"></a><a id="83562"></a>Highlighting <a id="highlightVios"></a>and Fixing Violations in the Layout Window</h3>
+
+<p>
+<a id="pgfId-1063967"></a>To see a visual representation of the EM violations for a selected net in the layout window,</p>
+<ol><li>
+<a id="pgfId-1062088"></a>Dim the display using the <em>Dim</em> button in the Options toolbar on the VLS XL window.<br />
+<a id="pgfId-1069344"></a><div class="webflare-div-image">
+<img width="635" height="48" src="images/chap4-70.gif" /></div>
+<a id="pgfId-1062196"></a>This dims the display of the cellview components making it easier to see the overlay in the canvas.</li><li>
+<a id="pgfId-1062112"></a>Use the <em>Highlight Worst-Case Violations for All Nets </em>button in the main EAD toolbar to see the worst case violations in the canvas.<br />
+<a id="pgfId-1069359"></a><div class="webflare-div-image">
+<img width="635" height="48" src="images/chap4-71.gif" /></div>
+<a id="pgfId-1063041"></a>The worst case violations for all nets are highlighted.<br />
+<a id="pgfId-1063055"></a><div class="webflare-div-image">
+<img width="635" height="463" src="images/chap4-72.gif" /></div></li><li>
+<a id="pgfId-1062987"></a>To analyze the violations for a specific net in more detail, go to the <em>EM</em> tab and choose an overlay to apply in the layout canvas.<br />
+<a id="pgfId-1062267"></a><div class="webflare-div-image">
+<img width="635" height="174" src="images/chap4-73.gif" /></div></li><li>
+<a id="pgfId-1062103"></a>Select a net in the <em>summary</em> table to highlight the violations on that net in the layout canvas.<br />
+<a id="pgfId-1065281"></a>The layout editor display automatically pans and zooms to the area of the design in question.<br />
+<a id="pgfId-1062311"></a><div class="webflare-div-image">
+<img width="635" height="447" src="images/chap4-74.gif" /></div>
+<a id="pgfId-1061729"></a>The color-coding used for the overlay is based on the settings in the <a href="appA.html#26574">Environment</a> form.</li><li>
+<a id="pgfId-1062598"></a>Use the <em>Highlight Transparency</em> slider to change the transparency of the overlay highlighting.<br />
+<a id="pgfId-1068812"></a>The default is 30%. You can change this using the <a href="appB.html#93506">violationTransparency</a> environment variable.<br />
+<a id="pgfId-1068752"></a><div class="webflare-div-image">
+<img width="635" height="250" src="images/chap4-75.gif" /></div>
+<a id="pgfId-1068825"></a>Slide towards the &#8216;+&#8217; sign to increase the transparency and see more of the underlying geometry.<br />
+<a id="pgfId-1068842"></a><div class="webflare-div-image">
+<img width="635" height="250" src="images/chap4-76.gif" /></div></li><li>
+<a id="pgfId-1068740"></a>Switch on <em>Automatic Update Mode</em> so that parasitic and EM information is updated automatically as you edit your design in the canvas.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1065304"></a>If you have <em>Manual Update Mode</em> enabled, you must click the <em>Update Parasitics &amp; EM</em> button on either of the EAD toolbars (or press <code>Ctrl-u</code>) to update the display.</div></li><li>
+<a id="pgfId-1062674"></a>Select a net segment with an EM violation and perform some interactive edits to resolve the issues. For example:<ul><li>
+<a id="pgfId-1062599"></a>Use <em>Edit &#8211; Basic &#8211; Properties</em> to open the Edit Properties form and widen the wire</li><li>
+<a id="pgfId-1062634"></a><em>Stretch</em> or <em>Move</em> individual segments to better balance the current flowing through them</li><li>
+<a id="pgfId-1062658"></a>Use <em>Create Wire</em> to change the way the net is routed or connected to neighboring components</li></ul><br />
+<a id="pgfId-1062667"></a>With each change you make, EAD re-extracts parasitics for the changed net in real time and reruns the EM check. The color of the net changes in the layout window to reflect the status of any remaining violations on the net.</li><li>
+<a id="pgfId-1062887"></a>When you have finished fixing violations, use <em>File &#8211; Save </em>to save the partial layout.<br />
+<a id="pgfId-1062876"></a>The parasitic information for the design is updated and saved in the layout view, which can be used to rerun simulations in ADE Assembler to check if the specifications are still met.<br />
+<a id="pgfId-1093285"></a>For more information, see <a href="chap5.html#53702">Resimulating Designs with Extracted Parasitics</a>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1093288"></a><a id="38159"></a>Fixing Violations Using <a id="EMTrunkOpt"></a>EM Driven Trunk Optimization</h2>
+
+<p>
+<a id="pgfId-1091694"></a>EM Trunk Optimization is an automatic post-route EM-driven Pin to Trunk optimization feature. This feature automatically extracts the hint data generated by EAD and uses it to fix the EM violations on trunks, twigs, and vias of a completely routed net. The EM Trunk Optimization feature lets you quickly resize trunks to meet EM requirements. The extent of EM Trunk Optimization is controlled by selecting trunks or nets in the design. If no trunk or net is selected, then all the trunks in the design are optimized at once.</p>
+<p>
+<a id="pgfId-1092176"></a>EAD analyzes the design and calculates hints that are used by EM Trunk Optimization to resize the trunk. Pin to Trunk routing is required to create the trunks. EM Trunk Optimization only works on trunks that were created by the Pin to Trunk Router.</p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1091696"></a>
+The EM Pin to Trunk Optimization feature is only available in Virtuoso Layout EAD.</div>
+<p>
+<a id="pgfId-1091716"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="428" src="images/chap4-77.gif" /></div>
+
+<p>
+<a id="pgfId-1091717"></a>The Layout EAD toolbar has the following buttons for automatic EM-driven Pin to Trunk optimization:</p>
+
+<p>
+<a id="pgfId-1091722"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="49" src="images/chap4-78.gif" /></div>
+
+<p>
+<a id="pgfId-1091723"></a></p>
+<ul><li>
+<a id="pgfId-1091727"></a>Optimize Trunk Width for Complete Network <img src="images/FCSEMTrunk123.gif" /></li></ul>
+<p>
+<a id="pgfId-1091728"></a>Starts the <em>Optimize Trunk Width for Complete Network</em> feature. Click the drop-down arrow to see the EM optimization modes listed in the table below. </p>
+<table class="webflareTable" id="#id1091729">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1091731">
+<a id="pgfId-1091731"></a>Command</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1091733">
+<a id="pgfId-1091733"></a>Let&#8217;s you</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091735"></a><em>Expand to Fix EM Violations</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091737"></a>Expand the width of trunks and increases the number of cuts in via arrays according to the hints provided by EAD.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091739"></a><em>Shrink Oversized Trunks</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091741"></a>Reduce the width of the oversized trunks and the number of cuts of oversized via arrays.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091743"></a><em>Shrink and Expand</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091745"></a>This option comprises of two steps:</p>
+
+<ul><li>
+<a id="pgfId-1091746"></a>Shrink trunks and via arrays by running the <em>Shrink Oversized Trunks</em> command.</li><li>
+<a id="pgfId-1091747"></a>Expand trunks and vias by running the <em>Expand To Fix EM Violations</em> command.</li></ul>
+
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091749"></a><em>Options</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091751"></a>Display the P2T EM Optimization form. For more information about the options in this form, see <a href="appA.html#12859">P2T EM Optimization</a>.</p>
+</td>
+</tr>
+</tbody></table>
+<ul><li>
+<a id="pgfId-1091758"></a>Select Trunk Optimization Style <img src="images/FCS_EMTrunkStyle123.gif" /></li></ul>
+<p>
+<a id="pgfId-1091759"></a>Selects the style of optimizing a trunk. Click the drop-down arrow to see the styles for optimizing a trunk to resolve EM violations.</p>
+<table class="webflareTable" id="#id1091760">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1091762">
+<a id="pgfId-1091762"></a>Command</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1091764">
+<a id="pgfId-1091764"></a>Lets you...</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091766"></a><em>Widen - No Stranding</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091768"></a>Widen the trunks to fix EM violations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091770"></a><em>Parallel Stranding</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091772"></a>Insert additional parallel trunks to fix EM violations.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091774"></a><em>Stacked Stranding</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1091776"></a>Stack the trunks to fix EM violations.</p>
+</td>
+</tr>
+</tbody></table>
+<ul><li>
+<a id="pgfId-1091780"></a>Toggle Trunk Tapering for Complete Network <img src="images/FCS_EMTaperTrunk123.gif" /></li></ul>
+<p>
+<a id="pgfId-1091781"></a>Enables trunk tapering during trunk widening. This button turns on or off trunk tapering. By default, trunk tapering is off. Click the button to turn on trunk tapering.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1095821"></a>The <em>Toggle Trunk Tapering for Complete Network</em> button is disabled when the <em>Trunk Optimization Style</em> is selected either as <em>Parallel Stranding</em> or <em>Stacked Stranding</em>. Tapering feature is only supported for widening of trunks and not supported for stacking and stranding of trunks.</div>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1095850"></a>The <em>EM Trunk Optimization</em>, <em>Select Trunk Optimization Style</em>, and <em>Toggle Trunk Tapering for Complete Network</em> buttons in all open cellviews are automatically synchronized; that is, if any of these buttons is reset in one cellview, the corresponding button is automatically reset to the same value in all other open cellviews.</div>
+
+<h4>
+<a id="pgfId-1111422"></a>Important Point to Note</h4>
+
+<p>
+<a id="pgfId-1111464"></a>When no net is selected on the layout canvas or in the <em>Navigator Assistant</em>, the EM trunk optimization is applied to all the nets. However, when one or more nets are selected in the layout canvas or in the <em>Navigator Assistant</em>, the EM trunk optimization is applied only to the selected nets.</p>
+
+<h3>
+<a id="pgfId-1091783"></a><a id="18271"></a>Optimizing EM Driven Trunks</h3>
+
+<p>
+<a id="pgfId-1091784"></a>This section describes the various ways in which you can optimize trunks to fix the EM violations in your design.</p>
+<ul><li>
+<a id="pgfId-1091788"></a><a href="chap4.html#25867">Expanding Trunks to Fix EM Violations</a></li><li>
+<a id="pgfId-1091792"></a><a href="chap4.html#98880">Shrinking Oversized Trunks</a></li><li>
+<a id="pgfId-1091796"></a><a href="chap4.html#90163">Shrinking and Expanding Trunks</a></li></ul>
+
+
+
+<h4>
+<a id="pgfId-1091798"></a><a id="25867"></a>Expanding Trunks to Fix EM Violations</h4>
+
+<p>
+<a id="pgfId-1091799"></a>This section covers how the width of the trunks are expanded and the cuts of vias are increased according to the hint values provided by EAD. You will also see how the width of a trunk is expanded according to the trunk optimization style that is selected.</p>
+<p>
+<a id="pgfId-1091800"></a>To do this:</p>
+<ol><li>
+<a id="pgfId-1091801"></a>Choose a dataset from the <em>EM Dataset</em> drop-down list.</li><li>
+<a id="pgfId-1091802"></a>Click the <em>Extract Parasitics </em>button in the EAD toolbar.</li><li>
+<a id="pgfId-1091803"></a>Click the <em>Run EM Check</em> button in the EAD toolbar.</li><li>
+<a id="pgfId-1091804"></a>Click <em>Highlight Worst-Case Violations for All Nets</em> to view and highlight the violations in the layout canvas.</li><li>
+<a id="pgfId-1091805"></a>Select a net in the <em>summary</em> table to highlight the violations on that net in the layout canvas. You will see a detailed breakdown of the EM violations present for the net selected in the summary pane. If there are no violations for the selected net, the table is empty.<br />
+<a id="pgfId-1091809"></a><div class="webflare-div-image">
+<img src="images/123_EMViolatons.gif" /></div></li><li>
+<a id="pgfId-1091810"></a>Click the <em>Select Trunk Optimization Style</em> button in the EAD toolbar. You can select the trunk optimization style as: <em>Widen - No Stranding</em>, <em>Parallel Stranding</em>, and <em>Stacked Stranding</em>. The result of trunk optimization varies depending upon the trunk optimization style that is selected. To see how the trunk optimization varies depending on the selected trunk optimization style, see <a href="chap4.html#13648">Expand with Widen - No Stranding</a>, <a href="chap4.html#71817">Expand with Parallel Stranding</a>, and <a href="chap4.html#46204">Expand with Stacked Stranding</a>.</li><li>
+<a id="pgfId-1091820"></a>Click the <em>Optimize Trunk Width for Complete Network</em> button with the default option of <em>Expand to Fix EM Violations</em>. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1091822"></a><a id="13648"></a>Expand with Widen - No Stranding</em></h4>
+
+<p>
+<a id="pgfId-1091823"></a>When the trunk optimization style is selected as <em>Widen - No Stranding</em>, the width of the trunk is widened according to the width hint value provided by EAD. If the widened trunk is too close to the neighboring trunks, the neighboring trunks are pushed away to meet the spacing requirement.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1093348"></a>The neighboring rectangles and instances are not pushed.</div>
+<p>
+<a id="pgfId-1091824"></a>To do this:</p>
+<ol><li>
+<a id="pgfId-1091825"></a>Click the <em>Select Trunk Optimization Style</em> button in the EAD toolbar and select <em>Widen - No Stranding</em>. <br />
+<a id="pgfId-1091830"></a><div class="webflare-div-image">
+<img width="633" height="115" src="images/chap4-83.gif" /></div></li><li>
+<a id="pgfId-1091834"></a>Click the <em>Optimize Trunk Width for Complete Network</em> (<img src="images/FCSEMTrunk123.gif" />
+) button with the default option of <em>Expand to Fix EM Violations</em>. As a result, the top trunk is widened. However, the bottom trunk is not completely widened to avoid DRC spacing violations. The EM violations on the bottom trunk and twigs are highlighted in orange.<br />
+<a id="pgfId-1091843"></a><div class="webflare-div-image">
+<img width="633" height="461" src="images/chap4-85.gif" /></div></li><li>
+<a id="pgfId-1091844"></a>To fix the remaining EM violations in the design, click <em>Options</em> from the <em>Optimize Trunk Width for Complete Network</em> drop-down list<em>.</em><br />
+<a id="pgfId-1091849"></a><div class="webflare-div-image">
+<img width="633" height="141" src="images/chap4-86.gif" /></div></li><li>
+<a id="pgfId-1091850"></a>The P2T EM Optimization form is displayed. From this dialog box, select<em> Stack Twigs</em> and <em>Prefer DRC Violations to EM Violations</em> options.<br />
+<a id="pgfId-1091856"></a><div class="webflare-div-image">
+<img width="633" height="168" src="images/chap4-87.gif" /></div>
+<a id="pgfId-1091857"></a>When there is insufficient space for a trunk to expand, the trunk is expanded depending on the setting of the <em>Prefer DRC Violations to EM violations</em> option. By default, the <em>Prefer DRC violations to EM Violations</em> option is deselected. In such a case, the width of the trunk is expanded to a value less than the hint value provided by the EAD analysis engine to keep the layout DRC-error free. When the <em>Prefer DRC Violations to EM Violations</em> option is selected, the width of the trunk is expanded according to the hint value generated by EAD, leaving a short or a spacing violation between the widened trunk and a neighboring shape. </li><li>
+<a id="pgfId-1091858"></a>Click the <em>Optimize Trunk Width for Complete Network</em> button. The following figure shows that there are no more EM violations. All the violations on the twigs and the bottom trunk are resolved. The following figure displays the result of how the trunks are resized in such a case.<br />
+<a id="pgfId-1091869"></a><div class="webflare-div-image">
+<img width="633" height="477" src="images/chap4-88.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1091871"></a><a id="71817"></a>Expand with Parallel Stranding </em></h4>
+
+<p>
+<a id="pgfId-1091872"></a>When the trunk optimization style is selected as <em>Parallel Stranding</em>, the number of strands are calculated based on the hint width provided by EAD divided by the original width of the trunk. The final number of strands are then rounded up to the nearest integer. Also, the strands are arranged in parallel on the same layer. The length of each strand is identical to the length of the original trunk. In addition, vias are added between each strand and all intersecting segments. The adjacent trunks parallel to the strands are pushed away to avoid shorts and the spacing violations.</p>
+<p>
+<a id="pgfId-1091873"></a>To do this:</p>
+<ol><li>
+<a id="pgfId-1091874"></a>Click the <em>Select Trunk Optimization Style</em> button in the EAD toolbar and select <em>Parallel Stranding</em>. <br />
+<a id="pgfId-1091879"></a><div class="webflare-div-image">
+<img width="633" height="115" src="images/chap4-89.gif" /></div></li><li>
+<a id="pgfId-1091883"></a>Click the <em>Optimize Trunk Width for Complete Network</em> (<img src="images/FCSEMTrunk123.gif" />
+) button with the default option of <em>Expand to Fix EM Violations</em>. As a result, additional trunks are added and the EM violations on the selected net are fixed, as shown in the following figure.<br />
+<a id="pgfId-1091888"></a><div class="webflare-div-image">
+<img src="images/123FCS_parallel_stranding.gif" /></div>
+<a id="pgfId-1091889"></a>In case the original trunk is on a track pattern of WSP, the parallel strands are snapped to adjacent tracks. The width of each strand is identical to the width of the original trunk or WSP track width. <br />
+<a id="pgfId-1091893"></a><div class="webflare-div-image">
+<img src="images/123_ParallelStranding_WSP.gif" /></div></li><li>
+<a id="pgfId-1091895"></a>To fix the remaining EM violations in the design, click <em>Options</em> from the <em>Optimize Trunk Width for Complete Network</em> drop-down list<em>.</em></li><li>
+<a id="pgfId-1091896"></a>The P2T EM Optimization form is displayed. From this form, select<em> Stack Twigs</em> and <em>Prefer DRC Violations to EM Violations</em> options. For more information on why should you select stack twigs, see <a href="chap4.html#21996">Stacking Twigs to Fix EM Violations</a>.<br />
+<a id="pgfId-1091900"></a>When there is insufficient space for all the strands to adjust, the number of strands are adjusted depending on the setting of the <em>Prefer DRC Violations to EM violations</em> option. By default, the <em>Prefer DRC violations to EM Violations</em> option is deselected. In such a case, the number of strands are reduced to keep the layout DRC-error free. When the <em>Prefer DRC Violations to EM Violations</em> option is selected, the inserted number of strands are kept as is, leaving shorts and spacing violations with neighboring shapes. </li><li>
+<a id="pgfId-1091901"></a>Click the <em>Optimize Trunk Width for Complete Network</em> button. The following figure shows how the number of strands are adjusted to fix the remaining EM violations.<br />
+<a id="pgfId-1091912"></a><div class="webflare-div-image">
+<img width="668" height="463" src="images/chap4-93.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1091914"></a><a id="46204"></a>Expand with Stacked Stranding</em></h4>
+
+<p>
+<a id="pgfId-1091915"></a>When the trunk optimization style is selected as <em>Stacked Stranding</em>, the EM violations are fixed by creating additional trunks on the layers above or below the original trunk layer.</p>
+<p>
+<a id="pgfId-1091916"></a>Stacking starts from the first layer above the original layer in the same routing direction and stops when the total width of the stacked strands is equal to or greater than the width of the hint value provided by EAD. Also, the width of each strand is equal to the width of the original trunk or the <code>minWidth</code> of the layer of the strand, whichever is larger. The length of each strand is equal to the length of the original trunk. In addition, the strands are connected together by the new via stacks that get added at the locations of existing vias on the original trunks. </p>
+<p>
+<a id="pgfId-1091917"></a>To do this:</p>
+<ol><li>
+<a id="pgfId-1091918"></a>Click the <em>Select Trunk Optimization Style</em> button in the EAD toolbar and select <em>Stacked Stranding</em>. <br />
+<a id="pgfId-1091923"></a><div class="webflare-div-image">
+<img width="633" height="118" src="images/chap4-94.gif" /></div></li><li>
+<a id="pgfId-1091927"></a>Click the <em>Optimize Trunk Width for Complete Network</em> (<img src="images/FCSEMTrunk123.gif" />
+) button with the default option of <em>Expand to Fix EM Violations</em>. If the top-most layer is attained and total width of the strands is still less than the hint width value provided by EAD, additional strands are added to layers below the original layer.<br />
+<a id="pgfId-1091931"></a><div class="webflare-div-image">
+<img src="images/123_EMViolatonResolved.gif" /></div>
+<a id="pgfId-1091932"></a>By default, stacking in each layer is skipped if an obstacle is found at the location of the original trunk. If there is a WSP on a layer but there is no track at the location of the original trunk, the new trunk is snapped to the nearest WSP track. However, if the track does not yield a feasible solution, the command skips the layer and proceeds to the next layer.<br />
+<a id="pgfId-1098933"></a><div class="webflare-div-image">
+<img src="images/123_stackedtrunks.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1091936"></a>To ensure that the stranded trunks are placed on tracks in a design that consists WSPs, select <code>Snap Pattern</code> from the <em>Snap Wires To</em> drop-down list in the Wire Assistant, before clicking <em>Optimize Trunk Width for Complete Network</em>.</div>
+<a id="pgfId-1091938"></a>When the original trunk is connected to a top-level pin shape, additional pin shapes are created to which the new strands are connected.<br />
+<a id="pgfId-1091948"></a><div class="webflare-div-image">
+<img width="633" height="445" src="images/chap4-98.gif" /></div></li><li>
+<a id="pgfId-1091949"></a>Next, click <em>Options</em> from the <em>Optimize Trunk Width for Complete Network</em> drop-down list<em>.</em><br />
+<a id="pgfId-1091954"></a><div class="webflare-div-image">
+<img width="633" height="142" src="images/chap4-99.gif" /></div></li><li>
+<a id="pgfId-1091955"></a>The P2T EM Optimization form is displayed. To continue stacking until the total width of the trunk satisfies the width hint value provided by EAD, select<em> Prefer DRC Violations to EM Violations</em> option from the form.</li><li>
+<a id="pgfId-1091956"></a>While the trunks are stacked, you can fill the stacked trunks with vias for fixing violations. To do this, select the <em>Fill Stacked Trunks with Vias </em>option from the P2T EM Optimization form.<br />
+<a id="pgfId-1091961"></a><div class="webflare-div-image">
+<img width="633" height="168" src="images/chap4-100.gif" /></div></li><li>
+<a id="pgfId-1091962"></a>Click the <em>Optimize Trunk Width for Complete Network</em> button. In the following figure, you can see that vertical stacked strands are created on <code>Metal5</code> and <code>Metal7</code> because these layers have a vertical routing direction and a horizontal stacked strand is created on <code>Metal6</code> layer because it has a horizontal layer direction.<br />
+<a id="pgfId-1091966"></a><div class="webflare-div-image">
+<img src="images/123_stackfilledwithvias.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1091967"></a></p>
+
+<h4><em>
+<a id="pgfId-1091969"></a><a id="21996"></a>Stacking Twigs to Fix EM Violations</em></h4>
+
+<p>
+<a id="pgfId-1091970"></a>This section describes how to fix the EM violations that exist due to the twigs. It also describes how a trunk is widened and how the twigs are stacked to fix the EM violations. To do this:</p>
+<ol><li>
+<a id="pgfId-1091971"></a>Select a net in the <em>summary</em> table to highlight the violations on that net in the layout canvas.</li><li>
+<a id="pgfId-1091972"></a>From the drop-down list, click <em>Options</em>. The P2T EM Optimization form displays.</li><li>
+<a id="pgfId-1091973"></a>Select the <em>Stack Twigs</em> option from the form. <br />
+<a id="pgfId-1091978"></a><div class="webflare-div-image">
+<img width="633" height="168" src="images/chap4-102.gif" /></div></li></ol>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1091979"></a>When the <em>Stack Twigs</em> option is selected, stacked stranding is performed on each twig segment with an EM violation. The stacking of twigs is similar to that of the trunk stacked stranding except that the stacking of twig segments starts from the first layer below the layer of the original twig segment. The layer for stack follows the routing direction of the original twig segment. In addition, vias are added to stitch the stacked segments together. </p>
+<ol><li>
+<a id="pgfId-1091983"></a>In the EAD toolbar, click the <em>Optimize Trunk Width for Complete Network </em>(<img src="images/FCSEMTrunk123.gif" />
+) button. The following figure displays how all the violations on the twigs and trunks were resolved.<br />
+<a id="pgfId-1091987"></a><div class="webflare-div-image">
+<img src="images/123_twigstacking.gif" /></div></li></ol>
+
+
+
+<h4><em>
+<a id="pgfId-1091988"></a>Tapering of Trunks to Fix EM Violations</em></h4>
+
+<p>
+<a id="pgfId-1091989"></a>This section describes how to taper down the width of the trunks when expanding trunks to fix EM violations. </p>
+<p>
+<a id="pgfId-1091990"></a>To do this:</p>
+<ol><li>
+<a id="pgfId-1091991"></a>Select a net in the <em>summary</em> table to highlight the violations on that net in the layout canvas.</li><li>
+<a id="pgfId-1091992"></a>In the EAD toolbar, click the <em>Toggle Trunk Tapering for Complete Network </em>button. When trunk Tapering is enabled, the original trunk is split into multiple trunks. The trunk splitting occurs at each twig or trunk intersection. </li><li>
+<a id="pgfId-1091993"></a>Click the <em>Optimize Trunk Width for Complete Network </em>button.</li></ol>
+
+
+<p>
+<a id="pgfId-1091994"></a>The width of the individual trunks are widened separately according to EAD hints and vias between the splitted trunks are also accordingly adjusted. The tapered trunks are aligned along their centerline. However, the centerline alignment may not be possible if the tapered trunks are pushed as a result of a neighboring trunk being expanded.  In such a case, each trunk in a pair of adjacent trunks is allowed to slide up and down to provide space to the neighbor trunk above or below the tapered trunk. The common edge between the adjacent tapered trunks remains equal to the size of the narrower trunks. The following figure shows an example of how the trunks are tapered during trunk optimization.</p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1091999"></a></p>
+<div class="webflare-div-image">
+<img width="633" height="488" src="images/chap4-105.gif" /></div>
+<h4>
+<a id="pgfId-1092001"></a><a id="98880"></a>Shrinking Oversized Trunks</h4>
+
+<p>
+<a id="pgfId-1092002"></a>This section covers how the width of the oversized trunks and the number of cuts in oversized via arrays in the design are reduced according to the hint values provided by EAD.</p>
+<ol><li>
+<a id="pgfId-1092003"></a>Select a net in the <em>summary</em> table to highlight the violations on that net in the layout canvas.</li><li>
+<a id="pgfId-1092004"></a>In the EAD toolbar, click the <em>Optimize Trunk Width for Complete Network </em>button.</li><li>
+<a id="pgfId-1092005"></a>From the drop-down list, select the <em>Shrink Oversized Trunks</em> command. When this command is run, the width of the oversized trunk is reduced and the cuts of the vias on the trunk are also reduced. It does not reduce the number of strands. Also, no compaction is done after width of trunks is reduced and the width of twigs is not reduced.</li></ol>
+
+
+<p>
+<a id="pgfId-1092006"></a>Here, you can see an example where the wide top trunk that was oversized for the defined EM rules is reduced to the ideal width to meet the EM rules. </p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1092014"></a>. </p>
+<div class="webflare-div-image">
+<img width="668" height="484" src="images/chap4-106.gif" /></div>
+
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1092015"></a>The <em>Shrink Oversized Trunks </em>command only works when the optimization style is set to <em>Widen - No Stranding</em>. The command does not work when the optimization style is set to <em>Parallel Stranding</em> or <em>Stacked Stranding</em>. </div>
+<ol><li>
+<a id="pgfId-1092016"></a>Now, to taper down the width of the optimized trunk, click the <em>Trunk Tapering for Complete Network </em>button.</li><li>
+<a id="pgfId-1092017"></a>Again, click the <em>Optimize Trunk Width for Complete Network </em>button in the EAD toolbar. The following figure displays tapering of the optimized trunk.<br />
+<a id="pgfId-1092026"></a><div class="webflare-div-image">
+<img width="633" height="503" src="images/chap4-107.gif" /></div></li></ol>
+
+
+
+
+<h4>
+<a id="pgfId-1092028"></a><a id="90163"></a>Shrinking and Expanding Trunks</h4>
+
+<p>
+<a id="pgfId-1092029"></a>This section covers how the width of the oversized trunks can be reduced and at the same time the width of the undersized trunks can be expanded using a single command. To do this:</p>
+<ol><li>
+<a id="pgfId-1092030"></a>Select a net in the <em>summary</em> table to highlight the violations on that net in the layout canvas.</li><li>
+<a id="pgfId-1092031"></a>In the EAD toolbar, click the <em>Optimize Trunk Width for Complete Network </em>button.</li><li>
+<a id="pgfId-1092032"></a>From the drop-down list, select <em>Shrink and Expand </em>command. This is an ideal command to run if you want to both reduce the width of the oversized trunks and widen the trunks that violate the EM rules. When you select this command, two actions take place :<ul><li>
+<a id="pgfId-1092033"></a>The width of the oversized trunks and vias is reduced by running the <em>Shrink Oversized Trunks</em> command.</li><li>
+<a id="pgfId-1092034"></a>The width of the trunks and vias is expanded by running the <em>Expand To Fix EM Violations</em> command.</li></ul></li></ol>
+
+
+
+
+<p>
+<a id="pgfId-1092038"></a>For more information on these commands, see <a href="chap4.html#25867">Expanding Trunks to Fix EM Violations</a> and <a href="chap4.html#98880">Shrinking Oversized Trunks</a>.</p>
+<p>
+<a id="pgfId-1092042"></a>In the following figure, you can see that the width of the oversized trunk is reduced to the ideal width. At the same time, the other trunks were widened. </p>
+
+<p>
+<a id="pgfId-1092060"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="781" src="images/chap4-108.gif" /></div>
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1092061"></a>
+Shrinking only works when the Optimization Style is set to Widen &#8211; No Stranding and does not work when the Optimization Style is Parallel Stranding or Stacked Stranding. The Shrinking and Expanding Trunk command only shrinks the oversized trunks and does not reduce the number of strands.</div>
+<h4><em>
+<a id="pgfId-1092062"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1092278"></a><a href="appB.html#54939">p2t</a></p>
+<p>
+<a id="pgfId-1092282"></a><a href="appA.html#12859">P2T EM Optimization</a></p>
+<p>
+<a id="pgfId-1092286"></a><a href="chap3.html#20975">EAD Toolbar</a></p>
+<p>
+<a id="pgfId-1112137"></a></p>
+
+<h2>
+<a id="pgfId-1112134"></a><a id="14329"></a>Running EM An<a id="powerGridAnalysis"></a>alysis on Power Grids</h2>
+
+<p>
+<a id="pgfId-1113323"></a>EAD enables you to check the power grids by running EM analysis for the specified source current even when there are no devices connected to the grid.</p>
+<p>
+<a id="pgfId-1113324"></a>EAD does so by inserting dummy instances as the current sink points at the via that is connected to the lowest metal layers. It then creates a dataset using the specified source current, which is distributed among the sink points in proportion to the number of via cuts at these sink points. This dataset is used to run EM analysis.</p>
+<p>
+<a id="pgfId-1113325"></a>The results of EM analysis show the reported violations and the recommendations to fix these violations. You can then make the suggested modifications in the original grid so that it becomes EM-compliant.</p>
+<p>
+<a id="pgfId-1113326"></a>However, if you do not want to modify the original grid without first analyzing the effects of these modifications, you can choose to run the analysis on a scratch cellview, which is a copy of the original grid. You can then modify the grid in the scratch cellview to resolve the EM violations. After validating the fixes, you can copy these modifications from the scratch cellview to the original grid.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1112165"></a>Ensure that the EAD Browser is initialized before you run power grid analysis. See the <a href="chap3.html#58949">Starting EAD from a Layout Window</a> section for more information.</div>
+<p>
+<a id="pgfId-1113449"></a></p>
+<p>
+<a id="pgfId-1113348"></a>The following workflow shows how to run the EM checks on power grids:</p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1113419"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="797" src="images/chap4-110.gif" /></div>
+<h3>
+<a id="pgfId-1113481"></a>Prerequisites</h3>
+
+<p>
+<a id="pgfId-1113482"></a>Before running EM analysis, ensure that:</p>
+<ul><li>
+<a id="pgfId-1113483"></a>The layout view of your design is open. See <em>Virtuoso Electrically Aware Design Flow Guide</em> for more information.</li><li>
+<a id="pgfId-1113484"></a>The EAD Browser is initialized and the process setup is loaded. See <em>Virtuoso Electrically Aware Design Flow Guide</em> for more information.</li><li>
+<a id="pgfId-1113488"></a>The Source current is specified. See the <a href="chap4.html#83892">Specifying the Source Current</a> section for more information.</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1113503"></a><a id="83892"></a>Specifying the Source Current</h3>
+
+<p>
+<a id="pgfId-1113504"></a>To run EM analysis on a power grid, you can specify the source current by using one of the following methods:</p>
+<ul><li>
+<a id="pgfId-1113508"></a><a href="chap4.html#74024">Using EAD Menu</a></li><li>
+<a id="pgfId-1113512"></a><a href="chap4.html#93364">Using the defaultCurrent Environment Variable</a></li><li>
+<a id="pgfId-1113516"></a><a href="chap4.html#60856">Using the CUSTOM Dataset</a></li></ul>
+
+
+<p>
+<a id="pgfId-1113517"></a>You can then run EM analysis either on the scratch cellview or on the original grid.</p>
+<p>
+<a id="pgfId-1113518"></a>See the following sections for more information:</p>
+<ul><li>
+<a id="pgfId-1113522"></a><a href="chap4.html#17677">Running EM Analysis on the Scratch Cellview</a></li><li>
+<a id="pgfId-1113526"></a><a href="chap4.html#50103">Running EM Analysis on the Original Grid</a></li></ul>
+
+
+<h4>
+<a id="pgfId-1113528"></a><a id="74024"></a>Using EAD Menu</h4>
+
+<p>
+<a id="pgfId-1113529"></a>To specify the source current for a net using EAD menu, do the following:</p>
+<ol><li>
+<a id="pgfId-1113530"></a>Right-click the net in the layout canvas, and then choose <em>EAD</em> &#8211; <em>Specify source current for net</em>.</li><li>
+<a id="pgfId-1113536"></a>In the <em>Current (Ampere)</em> field on the form that appears next, specify the value of the source current.</li><li>
+<a id="pgfId-1113537"></a>Click <em>OK</em>.</li></ol>
+
+
+
+<h4>
+<a id="pgfId-1113539"></a><a id="93364"></a>Using the defaultCurrent Environment Variable</h4>
+
+<p>
+<a id="pgfId-1113540"></a>Specify the source current by setting the <a href="appB.html#45667">defaultCurrent</a> environment variable as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1113541"></a>envSetVal(&quot;layoutEAD.em&quot; &quot;defaultCurrent&quot; &#39;float 0.001)</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1113542"></a>The default value of this environment value is <code>1mA</code>.</div>
+
+<h4>
+<a id="pgfId-1113544"></a><a id="60856"></a>Using the CUSTOM Dataset</h4>
+
+<p>
+<a id="pgfId-1113545"></a>To specify the source current using the CUSTOM dataset, do the following:</p>
+<ol><li>
+<a id="pgfId-1113546"></a>In the EAD Browser, from the <em>Electrical Dataset</em> drop-down list, select <code>CUSTOM</code>.</li><li>
+<a id="pgfId-1113547"></a>In the summary section, select a net, and then click the <em>EM</em> tab.</li><li>
+<a id="pgfId-1113548"></a>Click <em>Edit Currents</em> on the <em>EM</em> tab toolbar.<br />
+<a id="pgfId-1113549"></a>The EM table lists all the terminals of the selected net.</li><li>
+<a id="pgfId-1113567"></a>In the <em>Static-Avg </em>column, specify the value of current for which the power net needs to be analyzed.<br />
+<a id="pgfId-1113808"></a><div class="webflare-div-image">
+<img width="668" height="434" src="images/chap4-111.gif" /></div></li></ol>
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1112211"></a><a id="17677"></a>Running EM An<a id="powerGridScratch"></a>alysis on the Scratch Cellview</h3>
+
+<ol><li>
+<a id="pgfId-1113673"></a>Right-click a net on the layout canvas, and then choose <em>EAD &#8211; Run grid analysis on scratch cellview</em>.<br />
+<a id="pgfId-1113674"></a>EAD creates a scratch cellview, in which dummy instances are inserted as sink points at the lowest vias present in the layout. It then creates a dataset using the specified source current, which is distributed among the sink points in proportion to the number of via cuts at these sink points. This dataset is used to run EM analysis on the scratch cellview.</li><li>
+<a id="pgfId-1113681"></a>Double-click the <em>EM Viol</em> cell to view the results of EM analysis. <br />
+<a id="pgfId-1113682"></a>The reported EM violations are displayed in the EM table. Hover over any of the violations to view the recommended design changes in your grid so that it becomes EM-compliant.<br />
+<a id="pgfId-1113756"></a>After fixing the EM violations by modifying the grid in the scratch cellview, you can update the grid in the original layout with these modifications to make it EM-compliant for the specified source current. To upgrade the grid in the original layout, see the <a href="chap4.html#82159">Modifying the Original Layout</a> section.<br />
+<a id="pgfId-1113752"></a><br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1112261"></a>To discard the results, right-click the net in the layout view, and then choose <em>EAD &#8211; Discard edits from grid analysis</em> from the context menu.</div></li></ol>
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1112208"></a><a id="82159"></a>Mo<a id="powerGridUpdate"></a>difying the Original Layout</h3>
+
+<p>
+<a id="pgfId-1113656"></a>After resolving the EM violations by modifying the grid in the scratch cellview, you can replicate these modifications in the original grid.</p>
+<p>
+<a id="pgfId-1113657"></a>To modify the grid in the original layout, do the following:</p>
+<ol><li>
+<a id="pgfId-1113658"></a>In the scratch cellview, right-click a net and then select <em>EAD &#8211; Upgrade grid in original layout</em>.<br />
+<a id="pgfId-1113659"></a>A message box appears informing you that the scratch layout will be deleted if you choose to continue.</li><li>
+<a id="pgfId-1113660"></a>Click <em>Yes</em> to confirm.<br />
+<a id="pgfId-1113661"></a>The changes are updated in the original grid and the scratch layout is deleted.</li></ol>
+
+
+
+
+<h4><em>
+<a id="pgfId-1112292"></a>Important Points to Note</em></h4>
+
+<ul><li>
+<a id="pgfId-1112346"></a>By default, the scratch layout is created in the same library that contains the original layout. However, you can set the <a href="appB.html#57430">scratchLib</a> environment variable to define a different scratch library.</li><li>
+<a id="pgfId-1112350"></a>After running the EM Analysis on the scratch layout and making the modifications as needed in the original layout, you can delete data from the scratch library. Use the <a href="appC.html#80854">eadDeleteScratchLib</a> SKILL function to delete all data from the scratch library.</li><li>
+<a id="pgfId-1112354"></a>You can also set the default value of the current passing through the power grid (<code>VDD</code>) that you want to be considered during EM analysis. Set the <a href="appB.html#45667">defaultCurrent</a> environment variable to define the default current.</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1112184"></a><a id="50103"></a>Running EM An<a id="powergridOrig"></a>alysis on the Original Grid</h3>
+
+<p>
+<a id="pgfId-1113637"></a>To run EM analysis on the original grid, do the following:</p>
+<ol><li>
+<a id="pgfId-1113638"></a>Right-click a net on the layout canvas, and then choose <em>EAD &#8211; Run Supply Grid Analysis (modifies layout)</em>.<br />
+<a id="pgfId-1113639"></a>A dialog box appears informing you that the layout will be modified if you choose to continue.</li><li>
+<a id="pgfId-1113640"></a>Click <em>Yes</em> to confirm.<br />
+<a id="pgfId-1113641"></a>EAD creates a dataset using the specified source current, which is distributed among the sink points in proportion to the number of via cuts at these sink points. This dataset is used to run EM analysis on original grid.</li><li>
+<a id="pgfId-1113642"></a>Click <em>EM Viol</em> cell to view the results of EM analysis.<br />
+<a id="pgfId-1113643"></a>The reported EM violations are displayed in the EM table. Hover over any of the violations to view the recommended design changes in your grid so that it becomes EM-compliant.</li><li>
+<a id="pgfId-1113644"></a>Fix the EM violations by modifying the grid in the original layout.</li></ol>
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1121452"></a><a id="95015"></a>Specifying Mapping between Nets and Pin Layers for EM Check</h3>
+
+<p>
+<a id="pgfId-1121585"></a>You can specify the mapping between nets and pin layers for EM check. The nets or terminals serve as the voltage source only for the pin layers defined in the mapping.</p>
+<p>
+<a id="pgfId-1121586"></a>To define the mapping between nest and pin layers for EM check:</p>
+<ol><li>
+<a id="pgfId-1121685"></a>Set the environment variable layoutEAD.gui termPinLayersForEMCheck to t.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1121748">
+<a id="pgfId-1121748"></a>envSetVal(&quot;layoutEAD.gui&quot; &quot;termPinLayersForEMCheck&quot; &#39;boolean t)</pre></li><li>
+<a id="pgfId-1121751"></a>In the EAD Browser, select a net.</li><li>
+<a id="pgfId-1121802"></a>In the <em>EM</em> tab of the EAD browser, click <em>Edit currents</em>.</li><li>
+<a id="pgfId-1121867"></a>Specify the name of the metal layer in the <em>PinLayer</em> column next to the net name, as shown in the following figure.<br />
+<a id="pgfId-1122024"></a><div class="webflare-div-image">
+<img width="635" height="455" src="images/chap4-112.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1121530"></a>Example</h4>
+
+<p>
+<a id="pgfId-1121536"></a>Consider the following design where term<code> B</code> has two pins; one is connected to the metal layer <code>Metal2</code> and another one is connected to the metal layer <code>Metal3</code>.</p>
+
+<p>
+<a id="pgfId-1121540"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="291" src="images/chap4-113.gif" /></div>
+
+<p>
+<a id="pgfId-1121541"></a>If you observe the current distribution without considering the pin on <code>Metal3</code> as the voltage source for term <code>B</code>, you find that the current on the pin connected to <code>Metal3</code> is negligible as compared to <code>Metal2</code>.</p>
+
+<p>
+<a id="pgfId-1121547"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="464" src="images/chap4-114.gif" /></div>
+
+<p>
+<a id="pgfId-1121548"></a>To consider the pin on the <code>Metal3</code> as the voltage source for term <code>B</code> for the EM check, specify the environment variable termPinLayersForEMCheck to <code>t</code> and then specify <code>Metal3</code> in the <em>PinLayer</em> column next to the net <code>B</code> in the <em>EM</em> tab of the EAD Browser.</p>
+
+<a id="pgfId-1121549"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+envSetVal(&quot;layoutEAD.em&quot; &quot;termPinLayersForEMCheck&quot; &#39;boolean t)</pre>
+
+<p>
+<a id="pgfId-1121550"></a>Now, if you observe the current distribution, you find that the current on the pins connected to <code>Metal3</code> is now significant.</p>
+
+<p>
+<a id="pgfId-1121555"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="463" src="images/chap4-115.gif" /></div>
+
+<p>
+<a id="pgfId-1121525"></a></p>
+
+<h2>
+<a id="pgfId-1112211"></a><a id="95887"></a>Generating EAD Dataset</h2>
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1114958"></a>
+Before generating EAD dataset, ensure that EAD setup is initialized.</div>
+
+<p>
+<a id="pgfId-1114901"></a>To generate EAD Dataset without running a simulation or without a CSV file:</p>
+<ol><li>
+<a id="pgfId-1115073"></a>Right-click a net either in the layout canvas or in the Navigator assistant, and choose <em>EAD</em> &#8211; <em>Generate Dataset</em>.<br />
+<a id="pgfId-1123598"></a>Alternatively, right-click a net in the EAD Browser, and select <em>Generate</em> <em>Dataset</em>.<br />
+<a id="pgfId-1115176"></a>The Generate EAD Dataset form opens.<br />
+<a id="pgfId-1115285"></a><div class="webflare-div-image">
+<img width="635" height="376" src="images/chap4-116.gif" /></div></li><li>
+<a id="pgfId-1115179"></a>By default, the <em>Net</em> drop-down list displays the name of the net that you selected in the layout canvas, in the Navigator assistant, or in the <em>Net Summary</em> table of the EAD Browser. However, you can also choose another net from this drop-down list.</li><li>
+<a id="pgfId-1115519"></a>In the <em>Dataset Name</em> field, enter the name of the dataset that you want to create. If there are any existing datasets, you can select them from the <em>Dataset Name</em> drop-down list and edit them.</li><li>
+<a id="pgfId-1123799"></a>In the <em>Current</em> field, specify the value of current. The default value is <code>0.001</code>.</li><li>
+<a id="pgfId-1123888"></a>From the <em>Current type</em> options, select one of the following:<ol><li>
+<a id="pgfId-1115880"></a><em>Max Current</em>: Lets you specify the maximum current that can be passed through the net.</li><li>
+<a id="pgfId-1124002"></a><em>Pin Current</em>: Lets you specify the maximum current that can be passed through the pin.</li></ol></li><li>
+<a id="pgfId-1115990"></a>From the <em>Distribution</em> drop-down list, select one of the following current distribution methods:<ul><li>
+<a id="pgfId-1116066"></a><em>Aspect ratio</em>: Distributes the specified current among the devices in proportion to their aspect ratio, that is <code>width</code>/<code>length</code>.<br />
+<a id="pgfId-1117155"></a>For example, if the devices <code>M10</code> and <code>M5</code> have aspect ratios <code>150</code> and <code>75</code>, respectively. The <code>M10</code> gets twice as much current as <code>M5</code> does.<br />
+<a id="pgfId-1120035"></a>Width and length information for a device is read from its CDF parameters. If EAD cannot find width and length properties from device CDF parameters, it checks whether the device is inside a macro Pcell, if yes, then it looks for a property on macro Pcell. The property must have values defined as &quot;<code>...w=0.2 l=0.4...</code>&quot;.<br />
+<a id="pgfId-1120239"></a>For more information, see <code>autoDatasetCustomProc</code>, <code>autoDatasetDeviceLengthPropList</code>, <code>autoDatasetMacroProp</code>, <code>autoDatasetDeviceWidthPropList</code>.</li><li>
+<a id="pgfId-1116084"></a><em>Equal</em>: Distributes the specified current equally among different device terminals connected to the net.</li><li>
+<a id="pgfId-1116092"></a><em>Custom</em>: Distributes the specified current among different device terminals according to the custom current distribution defined in the user-defined function specified by the environment variable <a href="appB.html#68697">autoDatasetCustomProc</a>.</li></ul></li><li>
+<a id="pgfId-1115883"></a>Select the <em>Detailed log</em> check box if you want to print a detailed log in the CIW.</li><li>
+<a id="pgfId-1116249"></a>Click <em>Apply</em> and then click <em>OK</em>.<br />
+<a id="pgfId-1116288"></a>The dataset with the name you specified is created and is available in the <em>Electrical Dataset</em> drop-down list in the EAD Browser.</li><li>
+<a id="pgfId-1116484"></a>Select this dataset from the <em>Electrical Dataset</em> drop-down list in the EAD Browser.</li><li>
+<a id="pgfId-1116594"></a>Select a net in the <em>Summary</em> pane of the EAD Browser.</li><li>
+<a id="pgfId-1116678"></a>On the <em>EM</em> tab, click the Edit currents icon to view the how the specified current is distributed across the different terminals of a net by the dataset.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1117698"></a>Note the following points:</p>
+<ul><li>
+<a id="pgfId-1117758"></a>Passive devices connected to the net are not assigned any current.</li><li>
+<a id="pgfId-1117759"></a>Current is distributed among terminals of those devices that are registered with <code>ciRegisterDevice</code> either as <code>pfet</code> or as <code>nfet</code>.</li><li>
+<a id="pgfId-1120454"></a>Current is distributed among terminals of those devices that are defined as <code>MOS</code> devices in the CPH component class.</li><li>
+<a id="pgfId-1117751"></a>For <em>Max</em> <em>Current</em> distribution, drain terminal of <code>pmos</code> devices are considered to be source and <code>drain</code> terminal of <code>nmos</code> devices are considered to be sink points for current distribution.</li><li>
+<a id="pgfId-1124181"></a>For <em>Pin</em> <em>Current</em> distribution, all device terminals are considered as sink points.</li><li>
+<a id="pgfId-1116986"></a>Note that no current is distributed to bulk and gate terminals.</li></ul>
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1117406"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1117425"></a><a href="appB.html#68697">autoDatasetCustomProc</a></p>
+<p>
+<a id="pgfId-1120185"></a><a href="appB.html#26489">autoDatasetDeviceLengthPropList</a></p>
+<p>
+<a id="pgfId-1120195"></a><a href="appB.html#32241">autoDatasetMacroProp</a></p>
+<p>
+<a id="pgfId-1120201"></a><a href="appB.html#67230">autoDatasetDeviceWidthPropList</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3.html" id="prev" title="Extracting Parasitics in the Layout View">Extracting Parasitics in the L ...</a></em></b><b><em><a href="preEMCalculator.html" id="nex" title="Introduction to EM Calculator">Introduction to EM Calculator</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
