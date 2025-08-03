@@ -1,0 +1,1687 @@
+
+<html><head><title>Data Handling for Incremental Technology Databases</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="komal" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686596360" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to create, update, maintain, and use incremental technology databases and display resources" />
+<meta name="DocTitle" content="Virtuoso Technology Data User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Data Handling for Incremental Technology Databases" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="techfileuser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686596360" />
+<meta name="NextFile" content="appC.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Cadence Shared Tools" />
+<meta name="PrevFile" content="techdata_envars.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Layout Suite,Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite,Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Technology Data User Guide -- Data Handling for Incremental Technology Databases" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="techfileuserIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="techfileuserTOC.html">Contents</a></li><li><a class="prev" href="techdata_envars.html" title="Environment Variables">Environment Variables</a></li><li style="float: right;"><a class="viewPrint" href="techfileuser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appC.html" title="Incremental Technology File Examples">Incremental Technology File Ex ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Technology Data User Guide<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>C
+<a id="pgfId-1013106"></a></h1>
+<h1>
+<a id="pgfId-1013108"></a><hr />
+<a id="20799"></a>Data Handling for Incremental Technology Databases<hr />
+</h1>
+<h2>
+<a id="pgfId-1013174"></a>Major Data Duplication Rules Summary</h2>
+
+<p>
+<a id="pgfId-1015171"></a>You can duplicate some technology data in more than one technology database if doing so accomplishes your design flow objectives. Duplicating most technology data, however, creates conflicts, which must be avoided. </p>
+<p>
+<a id="pgfId-1013173"></a>The following paragraphs summarize the major rules of duplication to use to avoid creating conflicts; they delineate</p>
+<ul><li>
+<a id="pgfId-1013168"></a>what can and cannot be duplicated in multiple technology databases in the same graph</li><li>
+<a id="pgfId-1013169"></a>how the software handles specific conflicts between databases </li><li>
+<a id="pgfId-1013170"></a>how the software handles situations when referenced objects are not where they need to be</li><li>
+<a id="pgfId-1017337"></a>special allowance for creating layers that match Virtuoso reserved system layers using the environment variable <code><a href="appB.html#53652">CDS_ALLOW_VIRTSYSLAY Environment Variable</a><code></code>.</code></li></ul>
+
+
+
+<p>
+<a id="pgfId-1017062"></a>This section does not deal with every possible data specification. For complete information, see the <h-hot><a href="appB.html#82360">Data Handling Table</a></h-hot>, which provides complete information about how the software handles data in every situation, including how it detects and handles conflicts.</p>
+<p>
+<a id="pgfId-1013138"></a>Multiple technology bases in a graph can contain duplicates of the following devices of the same name without conflict:</p>
+<ul><li>
+<a id="pgfId-1013140"></a><code>MPPTemplates</code> of the same name</li><li>
+<a id="pgfId-1017133"></a>user-defined non-<code>viaDef</code> devices</li></ul>
+
+<p>
+<a id="pgfId-1013141"></a>The following subsections can also be duplicated in multiple technology databases:</p>
+<ul><li>
+<a id="pgfId-1017148"></a><code>foundry</code> constraint groups and their contents, with the requirement that the objects referenced exist somewhere in the subgraph</li><li>
+<a id="pgfId-1017140"></a>default constraint groups and their contents, with the requirement that the objects referenced exist somewhere in the subgraph</li><li>
+<a id="pgfId-1013144"></a>layer-purpose pairs and their drawing priority order</li><li>
+<a id="pgfId-1013146"></a><code>techLayerPurposePriorities</code> for the same named layers and purposes</li><li>
+<a id="pgfId-1013147"></a><code>equivalentLayers</code></li><li>
+<a id="pgfId-1013148"></a><code>stampLabels</code></li><li>
+<a id="pgfId-1013149"></a><code>labels</code></li><li>
+<a id="pgfId-1013150"></a><code>leLswLayers</code></li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1013151"></a>You cannot duplicate most other technology data, such as <code>viaDefs</code> or any constraint group with the same name other than a <code>foundry</code> or <code>default</code> constraint group.</p>
+<p>
+<a id="pgfId-1013152"></a>Although you can specify the <code>dbuPerUU</code> value in every technology database, the value must be the same in all of them.</p>
+<p>
+<a id="pgfId-1013153"></a>In certain cases, related data must be specified in the same technology database:</p>
+<ul><li>
+<a id="pgfId-1013154"></a>Any <code>cdsViaDevice</code> and its <code>viaDef</code> must be in the same technology database.</li><li>
+<a id="pgfId-1013155"></a>For any <code>techDisplays</code> definition, the specified layer-purpose pair must be defined in the same technology database.</li></ul>
+
+<p>
+<a id="pgfId-1017086"></a>For information about conflict types and how they occur, see <a href="chap1.html#98222">&#8220;Conflict Avoidance&#8221;</a>.</p>
+
+<h2>
+<a id="pgfId-1015185"></a><a id="82360"></a>Data Handling Table</h2>
+
+<p>
+<a id="pgfId-1015195"></a>The table in this appendix summarizes how the software checks for data conflicts in a graph and handles the data, conflict or not. The conflict checking and resultant behavior defined in this table apply whenever you introduce a new technology database or make any additions or changes to an existing technology database in a graph, whether compiling a technology file or setting or creating data with a SKILL function. When defining technology data, it is important to be cognizant of the incremental technology database graph and how the data you introduce works with or can conflict with the other data in the graph.</p>
+
+<p>
+<a id="pgfId-1016121"></a><a id="ConflictTable"></a></p>
+<table class="webflareTable" id="#id1016136">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="2">
+<span class="tbl-head" id="#id1016138">
+<a id="pgfId-1016138"></a>ASCII technology file section/subsection</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="2">
+<span class="tbl-head" id="#id1016140">
+<a id="pgfId-1016140"></a>S/W checks graph for matching</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="2">
+<span class="tbl-head" id="#id1016142">
+<a id="pgfId-1016142"></a>Allow duplicates in graph?</span>
+</th>
+<th class="webflareTh" colspan="3" rowspan="1">
+<span class="tbl-head" id="#id1016144">
+<a id="pgfId-1016144"></a>Action taken when match is defined in:</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="2">
+<span class="tbl-head" id="#id1016150">
+<a id="pgfId-1016150"></a>Refer-enced objects</span>
+<span class="tbl-head" id="#id1016151">
+<a id="pgfId-1016151"></a></span>
+</th>
+<th class="webflareTh" colspan="3" rowspan="1">
+<span class="tbl-head" id="#id1016153">
+<a id="pgfId-1016153"></a>Action taken when referenced object is defined in:</span>
+</th>
+</tr>
+<tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016165">
+<a id="pgfId-1016165"></a>No db</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016167">
+<a id="pgfId-1016167"></a>local db</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016169">
+<a id="pgfId-1016169"></a>refer-ence db</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016173">
+<a id="pgfId-1016173"></a>No db</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016175">
+<a id="pgfId-1016175"></a>local db</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016177">
+<a id="pgfId-1016177"></a> refer-ence db</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016179"></a><strong>Controls</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016199"></a>techParams</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016201"></a>Parameter name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016203"></a>Disallowed. Issue warning</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016205"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016207"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016209"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016211"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016213"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016215"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016217"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016239"></a>viewTypeUnits</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016241"></a>View type name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016243"></a>Disallowed. Issue error</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016245"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016247"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016249"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016251"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016253"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016255"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016257"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016259"></a>mfgGridResolu-tion</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016261"></a>Construct name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016263"></a>Disallowed. Issue error</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016265"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016267"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016269"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016271"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016273"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016275"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016277"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016279"></a>refTechLibs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016281"></a>Construct name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016283"></a>N/A<sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016285"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016287"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016289"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016291"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016293"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016295"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016297"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016299"></a><strong>layerDefinitions</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016319"></a>techLayers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016321"></a>Layer number or name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016323"></a>Disallowed. Issue warning</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016325"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016327"></a>Warning or do nothing<sup>3</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016329"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016331"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016333"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016335"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016337"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016359"></a>techPurposes</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016361"></a>Purpose number or name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016363"></a>Disallowed. Issue warning</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016365"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016367"></a>Warning or do nothing<sup>3</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016369"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016371"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016373"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016375"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016377"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016379"></a>techLayerPur-posePriorities</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016381"></a>Layer name and purpose name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016383"></a>Allowed<sup>1</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016385"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016387"></a>Reorder in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016389"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016391"></a>Layer, purpose</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016393"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016395"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016397"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016399"></a>techDisplays</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016401"></a>LPP name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016403"></a>Allowed<sup>1</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016405"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016407"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016409"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016411"></a>LPP</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016413"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016415"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016417"></a>Dis-allowed</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016419"></a>techLayerProp-erties</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016421"></a>Layer name and property name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016423"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016425"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016427"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016429"></a>Error<sup>4</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016431"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016433"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016435"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016437"></a>Dis-allowed</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017961"></a>techDerived-Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017963"></a>Derived layer number or name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017965"></a>Disallowed. Issue warning</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017967"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017969"></a>Warning or do nothing<sup>3</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017971"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017973"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017975"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017977"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017979"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016439"></a><strong>layerRules</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016459"></a>functions</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016461"></a>Layer name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016463"></a>N/A<sup>5</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016465"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016467"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016469"></a>Error<sup>4</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016471"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016473"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016475"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016477"></a>Dis-allowed</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016479"></a>mfgResolutions</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016481"></a>Layer name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016483"></a>N/A<sup>5</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016485"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016487"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016489"></a>Error<sup>4</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016491"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016493"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016495"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016497"></a>Dis-allowed</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016499"></a>routingDirec-tions</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016501"></a>Layer name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016503"></a>N/A<sup>5</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016505"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016507"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016509"></a>Error<sup>4</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016511"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016513"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016515"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016517"></a>Dis-allowed</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016519"></a>currentDensity/currentDensity-Tables</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016521"></a>Layer name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016523"></a>N/A<sup>5</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016525"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016527"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016529"></a>Error<sup>4</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016531"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016533"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016535"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016537"></a>Dis-allowed</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016539"></a>equivalent-Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016541"></a>Construct name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016543"></a>Allowed<sup>1</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016545"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016547"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016549"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016551"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016553"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016555"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016557"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016559"></a>stampLabels</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016561"></a>Construct name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016563"></a>Allowed<sup>1</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016565"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016567"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016569"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016571"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016573"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016575"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016577"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016579"></a>labels</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016581"></a>Construct name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016583"></a>Allowed<sup>1</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016585"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016587"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016589"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016591"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016593"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016595"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016597"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016599"></a><strong>constraintGroups</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016619"></a>constraintGroup (foundry/default)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016621"></a>constraint-Group name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016623"></a>Allowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016625"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016627"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016629"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016631"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016633"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016635"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016637"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016639"></a>constraintGroup (non-foundry/default)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016641"></a>constraint-Group name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016643"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016645"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016647"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016649"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016651"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016653"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016655"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016657"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016659"></a>constraints (native OA, in foundry/default constraint group)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016661"></a>CG name, constraint name, layer number or name, or viaDef name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016663"></a>Allowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016665"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016667"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016669"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016671"></a>Layers, viaDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016673"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016675"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016677"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016679"></a>constraints (native OA, in non-foundry/default constraint group)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016681"></a>CG name, constraint name, layer number or name, or viaDef name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016683"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016685"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016687"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016689"></a>N/A<sup>6</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016691"></a>Layers, viaDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016693"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016695"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016697"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016699"></a>LPP based / user defined rule (in foundry/default CG)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016701"></a>CG name, rule name, layer / LPP number or name </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016703"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016705"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016707"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016709"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016711"></a>Layers, LPPs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016713"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016715"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016717"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016719"></a>LPP based / user defined rule (in non-foundry/default CG)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016721"></a>CG name, rule name, layer / LPP number or name </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016723"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016725"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016727"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016729"></a>N/A<sup>6</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016731"></a>Layers, LPPs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016733"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016735"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016737"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016739"></a><strong>siteDefs</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016759"></a>scalarSiteDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016761"></a>siteDef name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016763"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016765"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016767"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016769"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016771"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016773"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016775"></a>N/A</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016777"></a>N/A</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016779"></a>arraySiteDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016781"></a>siteDef name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016783"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016785"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016787"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016789"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016791"></a>siteDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016793"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016795"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016797"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016799"></a><strong>viaDefs</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016819"></a>standardVia-Defs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016821"></a>viaDef name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016823"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016825"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016827"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016829"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016831"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016833"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016835"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016837"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016839"></a>customViaDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016841"></a>viaDef name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016843"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016845"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016847"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016849"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016851"></a>Layers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016853"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016855"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016857"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016859"></a><strong>viaSpecs</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016879"></a>viaSpecs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016881"></a>Layer pair names</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016883"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016885"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016887"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016889"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016891"></a>Layers, viaDefs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016893"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016895"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016897"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016899"></a><strong>Devices</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016919"></a>cdsViaDevice</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016921"></a>Mapped viaDefs name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016923"></a>Disallowed 7</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016925"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016927"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016929"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016931"></a>Layers, LPPs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016933"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016935"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016937"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016939"></a>ruleContact-Device</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016941"></a>Mapped viaDefs name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016943"></a>Disallowed 7</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016945"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016947"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016949"></a>Conflict</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016951"></a>Layers, LPPs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016953"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016955"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016957"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016979"></a>multiplepart-PathTemplates</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016981"></a>Device name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016983"></a>Allowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016985"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016987"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016989"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016991"></a>Layers, LPPs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016993"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016995"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016997"></a>Update in local</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="10" rowspan="1">
+<p>
+<a id="pgfId-1016999"></a><strong>leRules</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017019"></a>leLswLayers</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017021"></a>Construct name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017023"></a>Allowed 1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017025"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017027"></a>Overwrite in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017029"></a>Create in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017031"></a>LPPs</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017033"></a>Disallowed</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017035"></a>Update in local</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017037"></a>Update in local</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1017098"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="418" src="images/appB-2.gif" /></div>
+<p>
+<a id="pgfId-1013127"></a></p>
+<h3>
+<a id="pgfId-1018121"></a><a id="53652"></a>CDS_ALLOW_VIRTSYSLAY <a id="reservedObj"></a>Environment Variable</h3>
+
+<p>
+<a id="pgfId-1018122"></a>A special allowance has been made to let you create, in a technology database, an OpenAccess layer that matches a Virtuoso reserved system layer using the environment variable <code>CDS_ALLOW_VIRTSYSLAY</code>.</p>
+
+<h4>
+<a id="pgfId-1018107"></a>Creating layers</h4>
+
+<p>
+<a id="pgfId-1017282"></a>With <code>CDS_ALLOW_VIRTSYSLAY</code> enabled, create user-defined reserved layers with the SKILL function <code>techCreateLayer()</code>. After the layer is created, Virtuoso adds (mark internally) the specified user-defined reserved layers to the techDB. </p>
+<p>
+<a id="pgfId-1017283"></a>Only layer creation is affected by this environment variable, no other Virtuoso operations are affected. This process should be done as a one-time setup for the entire DFII session in order to keep consistency in creating (marking) user-defined reserved layers.</p>
+<p>
+<a id="pgfId-1017284"></a>As set by CDS_ALLOW_VIRTSYSLAY, the internally marked user-defined reserved layer will be temporarily created before saving the techDB. After the save operation is complete, the newly-created reserved layer is deleted and remarked to its original state as before the save operation.</p>
+
+<h4>
+<a id="pgfId-1017285"></a>Deleting layers</h4>
+
+<p>
+<a id="pgfId-1017286"></a>The environment variable does not delete user-defined reserved layers rather <code>techDeleteLayer()</code> resets the marking of the layer, and the layer is not saved to disk.</p>
+
+<h4>
+<a id="pgfId-1017287"></a>Modifying layers</h4>
+
+<p>
+<a id="pgfId-1017288"></a>Modifying user-defined reserved layers is not supported. You cannot use functions such as the following in this situation: <code>techSetLayerProp()</code>, <code>techSetLayerFunction()</code>, <code>techSetLayerMaskNumber()</code>, <code>techSetLayerName()</code>.</p>
+
+<h4>
+<a id="pgfId-1017289"></a>Loading an ASCII technology file</h4>
+
+<p>
+<a id="pgfId-1017290"></a>With the environment variable set, the specified user-defined reserved layers in the ASCII techfile</p>
+<ul><li>
+<a id="pgfId-1017291"></a>are marked as created in the techDB</li><li>
+<a id="pgfId-1017292"></a>can be saved to disk</li><li>
+<a id="pgfId-1017293"></a>can be dumped to another ASCII techfile <br />
+<a id="pgfId-1017294"></a>Only the specified user-defined reserved layers are dumped, not all reserved layers.</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1017295"></a>Without the environment variable set, the specified user-defined reserved layers in ASCII techfile</p>
+<ul><li>
+<a id="pgfId-1017296"></a>are not marked as created in the techDB</li><li>
+<a id="pgfId-1017297"></a>do not issue a warming message to be compatible with previous releases</li><li>
+<a id="pgfId-1017298"></a>can not be saved to disk because layers are not marked</li><li>
+<a id="pgfId-1017299"></a>can not be dumped to new ASCII techfile because layers are not marked</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1017300"></a>Enabling <code>CDS_ALLOW_VIRTSYSLAY</code></h4>
+
+<p>
+<a id="pgfId-1017301"></a>This Boolean environment variable is set in a shell window (not in the CIW or through a DFII GUI nor is it listed in the sample <code>.cdsenv</code> file). And it should be used by experienced Virtuoso and techDB users only.</p>
+<p>
+<a id="pgfId-1017302"></a>To enable the environment variable, type in a Shell window</p>
+
+<a id="pgfId-1017303"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>setenv CDS_ALLOW_VIRTSYSLAY t</code></pre>
+
+<p>
+<a id="pgfId-1017304"></a>To disable, type</p>
+
+<a id="pgfId-1017305"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>unsetenv CDS_ALLOW_VIRTSYSLAY</code></pre>
+
+<p>
+<a id="pgfId-1017331"></a>or </p>
+<p>
+<a id="pgfId-1017332"></a><code>CDS_ALLOW_VIRTSYSLAY nil</code></p>
+<p>
+<a id="pgfId-1017306"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017307"></a>setenv CDS_ALLOW_VIRTSYSLAY t</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017308"></a>env | grep CDS_ALLOW_VIRTSYSLAY </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017309"></a>echo &#39;tfID = techOpenTechFile(&quot;tech_lib_name&quot; &quot;tech.db&quot;)&#39; &gt;&gt; test1.au</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017310"></a>echo &#39;layer = techCreateLayer(tfID 235 &quot;prBoundary&quot;)&#39; &gt;&gt; test1.au</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017311"></a>virtuoso -log test1.log -test test1.au</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017312"></a>unsetenv CDS_ALLOW_VIRTSYSLAY</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017313"></a></pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="techdata_envars.html" id="prev" title="Environment Variables">Environment Variables</a></em></b><b><em><a href="appC.html" id="nex" title="Incremental Technology File Examples">Incremental Technology File Ex ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
