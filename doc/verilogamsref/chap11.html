@@ -1,0 +1,1193 @@
+
+<html><head><title>Mixed-Signal Aspects of Verilog-AMS</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="shubh" />
+<meta name="CreateDate" content="2022-04-18" />
+<meta name="CreateTime" content="1650344755" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the analog and mixed-signal aspects of the Cadence Verilog-AMS language. With Verilog-AMS, you can create and use modules that describe the high-level behavior and structure of analog, digital, and mixed-signal components and systems." />
+<meta name="DocTitle" content="Cadence Verilog-AMS Language Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Mixed-Signal Aspects of Verilog-AMS" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-3.3.1" />
+<meta name="Keyword" content="verilogamsref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2022-04-18" />
+<meta name="ModifiedTime" content="1650344755" />
+<meta name="NextFile" content="chap12.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification" />
+<meta name="PrevFile" content="chap10.html" />
+<meta name="c_product" content="Xcelium" />
+<meta name="Product" content="Xcelium" />
+<meta name="ProductFamily" content="Xcelium" />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2022 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence Verilog-AMS Language Reference -- Mixed-Signal Aspects of Verilog-AMS" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="22.09" />
+<meta name="SpaceKey" content="verilogamsref2209" />
+<meta name="webflare-version" content="2.2" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="verilogamsrefTOC.html">Contents</a></li><li><a class="prev" href="chap10.html" title="Instantiating Modules and Primitives">Instantiating Modules and Prim ...</a></li><li style="float: right;"><a class="viewPrint" href="verilogamsref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap12.html" title="Controlling the Compiler">Controlling the Compiler</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence Verilog-AMS Language Reference<br />Product Version 22.09, April 2022</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>11
+<a id="pgfId-1033656"></a></h1>
+<h1>
+<a id="pgfId-1033657"></a><hr />
+<a id="34962"></a>Mixed-Signal Aspects of Verilog-AMS<hr />
+</h1>
+
+<p>
+<a id="pgfId-1031357"></a>The Cadence<sup>&#174; </sup>Verilog<sup>&#174;</sup>-AMS language brings analog and digital modeling together in a single language. This chapter describes the mixed-signal features of Verilog-AMS and how the continuous (analog) and discrete (digital) domains interact.</p>
+
+<h2>
+<a id="pgfId-1038751"></a>Fundamental Mixed-Signal Concepts</h2>
+
+<p>
+<a id="pgfId-1041827"></a>Becoming familiar with the following terms will help you understand the discussion in this chapter.</p>
+
+<h3>
+<a id="pgfId-1038522"></a>Domains</h3>
+
+<p>
+<a id="pgfId-1038526"></a>The domain of a value refers to the method used to calculate the value. In Verilog-AMS, </p>
+<ul><li>
+<a id="pgfId-1038664"></a>The potentials and flows described in natures are calculated in the continuous domain.</li><li>
+<a id="pgfId-1038665"></a>Register contents and the states of gate primitives are calculated in the discrete domain.</li><li>
+<a id="pgfId-1038913"></a>The values of real and integer variables are calculated in either the continuous or discrete domain, depending on the context in which their values are assigned. The domain of a variable is that of the context from which its value is assigned.</li></ul>
+
+
+<p>
+<a id="pgfId-1040000"></a>Values calculated in the discrete domain change value instantaneously and only at integer multiples of a minimum resolvable time. Values calculated in the continuous domain vary continuously.</p>
+
+<h3>
+<a id="pgfId-1040001"></a>Contexts</h3>
+
+<p>
+<a id="pgfId-1038539"></a>Statements in a Verilog-AMS module description can appear in the body of an <code>analog</code> block, in the body of an <code>initial</code> or <code>always</code> block, or outside of any block. Statements that appear in an <code>analog</code> block are in the <a href="glossary.html#70145">continuous context</a>; statements in any other location are in the <a href="glossary.html#57170">discrete context</a>. A particular variable can be assigned values in either context, but not in both contexts.</p>
+
+<h3>
+<a id="pgfId-1038669"></a>Nets, Nodes, Ports, and Signals</h3>
+
+<p>
+<a id="pgfId-1038674"></a>In Verilog-AMS, hierarchical structures are created when higher-level modules create instances of lower level modules and communicate with those instances through input, output, and bidirectional ports. A <em>port</em> represents the physical connection of an expression in the instantiating or parent module with an expression in the instantiated or child module. The expressions, which can include registers, variables, and nets of both continuous and discrete disciplines, are referred to as <em>connections</em>. A port of an instantiated module has two nets, the upper connection, which is a net in the instantiating module, and the lower connection, which is a net in the instantiated module.</p>
+<p>
+<a id="pgfId-1038676"></a>A net is said to be in the discrete domain if it has an associated discrete discipline. A net is in the continuous domain if it has an associated continuous discipline. A <em>signal</em> is a hierarchical collection of nets that, because of port connections, are contiguous. If all the nets that make up a signal are in the discrete domain, the signal is a <em>digital signal</em>. If all the nets that make up a signal are in the continuous domain, the signal is an <em>analog signal</em>. A signal that consists of nets from both domains is called a <em>mixed signal</em>. Similarly, a port whose connections are both analog is an <em>analog port</em>, a port whose connections are both digital is a <em>digital port</em>, and a port with one analog connection and one digital connection is a <em>mixed port</em>.</p>
+<p>
+<a id="pgfId-1038678"></a>Nets and variables in the continuous domain are termed <em>continuous nets</em> and <em>continuous variables.</em> Nets and variables in the discrete domain are termed <em>discrete nets</em> and <em>discrete variables</em>.</p>
+<p>
+<a id="pgfId-1038959"></a>If a signal is analog or mixed, then it is associated with a node. Regardless of the number of analog nets in an analog or mixed signal, and regardless of how the analog nets in a mixed signal are interspersed with digital nets, the analog portion of an analog or mixed signal is represented by only a single electrical node. This guarantees that at any instant in time the analog portion of a mixed or analog signal has one, and only one, value that represents its potential with respect to ground.</p>
+<p>
+<a id="pgfId-1048006"></a>Analog nodes and branches are allowed only as arguments to signal access functions, analog functions, and analog primitive and module instantiations. They cannot be connected to digital primitives.</p>
+<p>
+<a id="pgfId-1047546"></a>For additional information, see <a href="appA.html#40937">Appendix A, &#8220;Nodal Analysis.&#8221;</a></p>
+
+<h3>
+<a id="pgfId-1038680"></a>Mixed-signal and Net Disciplines</h3>
+
+<p>
+<a id="pgfId-1038682"></a>The discipline of a continuous net specifies the tolerance (<code>abstol</code>) used to calculate the potential of the associated node. A mixed signal might have multiple continuous nets of different compatible continuous disciplines, with different <code>abstol</code> values. In this case, the <code>abstol</code> of the associated node is the smallest of the <code>abstol</code> values specified in the disciplines associated with the continuous nets of the signal.</p>
+
+<h2>
+<a id="pgfId-1048343"></a>Behavioral Interaction</h2>
+
+<p>
+<a id="pgfId-1048344"></a>Verilog-AMS supports various types of blocks used to describe behavior. In general, digital behavior is described in <code>initial</code> and <code>always</code> blocks and analog behavior is described in <code>analog</code> blocks. In a Verilog-AMS module, you can have, at most, one <code>analog</code> block and any number of <code>initial</code> and <code>always</code> blocks.</p>
+<p>
+<a id="pgfId-1038770"></a>The nets and variables of each domain can be referenced in the other context, which is how information passes between the continuous and discrete domains. Read operations of nets and variables in both domains are allowed from both contexts. Write operations of nets and variables are only allowed from within the context of their domain.</p>
+<p>
+<a id="pgfId-1047779"></a>The following example illustrates some of these capabilities.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1049797"></a>`timescale 1ns/1ns<br />module mod (in);<br />integer abve;      // Will be an analog-owned variable.<br />integer below;     // Will be an analog-owned variable.<br />integer d;         // Will be a digital-owned variable.<br />
+electrical in;
+
+always begin&#160;&#160;     // Enter the digital context.<br />    if ( abve )    // Read the analog variable in the digital context.<br />        d = 1;     // Write the variable d in the digital context.<br />
+&#160;&#160;  if ( below )<br />        d = 0;     // d, because written in digital context, is owned by digital.<br />    #5;<br />end<br />
+analog begin&#160;&#160;     // Enter the analog context.<br />    @ (cross (V(in) - 2.5, +1 ) )<br />        abve = 1;   // Write to the variable abve in the analog context.<br />    @ (cross (V(in) - 2.5, -1 ) )<br />        abve = 0;   // abve, because written in analog context,is owned by analog.<br />
+&#160;&#160;  if ( d == 1 )   // Read the value of d in the analog context.<br />        $strobe(&quot; d is still high\n&quot;); end<br />
+endmodule</pre>
+
+<p>
+<a id="pgfId-1049805"></a>Using Verilog-AMS, you can</p>
+<ul><li>
+<a id="pgfId-1049806"></a>Access discrete primaries, such as nets and variables, from a continuous context</li><li>
+<a id="pgfId-1038776"></a>Access continuous primaries, such as flows, potentials and variables, from a <a href="glossary.html#57170">discrete context</a></li><li>
+<a id="pgfId-1038778"></a>Detect discrete events from a continuous context</li><li>
+<a id="pgfId-1038780"></a>Detect continuous events from a discrete context</li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1043725"></a>Accessing Discrete Nets and Variables from a Continuous Context</h3>
+
+<p>
+<a id="pgfId-1038974"></a>Using Verilog-AMS, you can access discrete nets and variables from a continuous context. The following table shows how values map from the discrete context to the <a href="glossary.html#56602">analog context</a>.</p>
+
+<p>
+<a id="pgfId-1049219"></a></p>
+<table class="webflareTable" id="#id1038981">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1038983">
+<a id="pgfId-1038983"></a>Type of discrete net or variable</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1038985">
+<a id="pgfId-1038985"></a>Example</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1038987">
+<a id="pgfId-1038987"></a>Equivalent continuous variable type</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1038989">
+<a id="pgfId-1038989"></a>Mapping from discrete to continuous</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1038991"></a><code>real</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1038993"></a><code>real r;<br />real rm[0:8];</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1038995"></a><code>real</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1038997"></a>Discrete real values are accessed in the continuous context as real numbers.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1038999"></a><code>integer</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039001"></a><code>integer i;<br />integer im[0:4];</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039003"></a><code>integer</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039005"></a>Discrete integer values are accessed in the continuous context as integer numbers.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039007"></a><code>bit</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039009"></a><code>reg r1;<br />wire w1;<br />reg [0:9] r[0:7];<br />reg r[0:66];<br />reg [0:34] rb;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039011"></a><code>integer</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1039013"></a>Discrete bit and bit groupings (buses and part selects) are accessed in the continuous context as integer numbers. <code>x</code> and <code>z</code> values cannot be represented as analog integers. Furthermore, it is illegal in the analog context to reference digital bits that are set to <code>x</code> or <code>z</code>.</p>
+<p>
+<a id="pgfId-1047429"></a>The sign bit (bit 31) of the integer is always set to zero, and the lowest bit of the bit grouping is mapped to the 0th bit of the integer. Then, the next bit of the bus is mapped to the 1st bit of the integer and so on. If the bus width is less than 31 bits, the higher bits of the integer are set to zero. It is illegal to access a discrete bit grouping with more than 31 bits.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1038967"></a>The following example shows code that accesses the value of a discrete primary from a continuous context.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1039030"></a>module onebit_dac (in, out) ;<br />input in ;<br />inout out ;<br />wire in ;<br />logic in ;<br />electrical out ;<br />real vout ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047565"></a>analog
+&#160;&#160;&#160;&#160;if (in==0)          // &quot;in&quot; is a discrete primary.
+&#160;&#160;&#160;&#160;    vout = 0.0 ;
+&#160;&#160;&#160;&#160;else
+&#160;&#160;&#160;&#160;    vout 3.0 ;
+&#160;&#160;&#160;&#160;V(out) &lt;+ vout ;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047433"></a>endmodule</pre>
+<h3>
+<a id="pgfId-1039210"></a>Accessing Continuous Nets and Variables from a Discrete Context</h3>
+
+<p>
+<a id="pgfId-1039214"></a>Using access functions, you can probe continuous nets from within a <a href="glossary.html#57170">discrete context</a>. All probes that are legal in the continuous context of a module are also legal from within the discrete context. For more information on access functions, see <a href="chap9.html#34735">&#8220;Obtaining and Setting Signal Values&#8221;</a>.</p>
+<p>
+<a id="pgfId-1039219"></a>The following example illustrates how you might access a continuous net from the discrete context.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040081"></a>module sampler (in, clk, out);
+inout in;
+input clk;
+output out;
+electrical in;   // &quot;in&quot; is a continuous net.
+wire clk;
+reg out;
+always @(posedge clk)   // Entering the discrete context.
+&#160;&#160;&#160;&#160;out = V(in);       // Access the continuous net.<br />endmodule</pre>
+
+<p>
+<a id="pgfId-1039239"></a>Continuous variables can be accessed for reading from any discrete context in the same module that the continuous variables are declared. Because the discrete domain can fully represent all continuous types, a continuous variable is fully visible when it is read in a discrete context.</p>
+<p>
+<a id="pgfId-1047876"></a>The following example illustrates this capability.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047877"></a>real aVar;            // Will be a continuous analog variable.<br />electrical in;<br />reg dReg;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047882"></a>analog begin          // Enter the analog context.
+&#160;&#160;&#160;&#160;@ (cross (V(in) - 2.5, +1 ) )
+&#160;&#160;&#160;&#160;   aVar = 1;     // Write to variable, so aVar is now owned by analog.<br />end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047887"></a>always begin          // Enter the digital context.
+&#160;&#160;&#160;&#160;#5 dReg = aVar;  // Read value of analog aVar within digital context.<br />end</pre>
+<h3>
+<a id="pgfId-1039263"></a>Detecting Discrete Events from a Continuous Context</h3>
+
+<p>
+<a id="pgfId-1039264"></a>You can detect discrete events from within a <a href="glossary.html#70145">continuous context</a>. The arguments to discrete events in continuous contexts are considered part of the discrete context. A discrete event in a continuous context is non-blocking, like the other events allowed in continuous contexts.</p>
+<p>
+<a id="pgfId-1039272"></a>The following example illustrates a discrete event being detected in a continuous context.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1039277"></a>module sampler3 (in, clk1, clk2, out);
+input in, clk1, clk2;
+output out;
+wire clk1;
+real vout ;
+electrical in, clk2, out;
+analog begin                               // Enter the continuous context.
+&#160;&#160;&#160;&#160;@(posedge clk1, 1))                   // Detect discrete event posedge clk1.
+&#160;&#160;&#160;&#160;    vout = V(in);
+&#160;&#160;&#160;&#160;V(out) &lt;+ vout;<br />end<br />endmodule</pre>
+<h3>
+<a id="pgfId-1039265"></a>Detecting Continuous Events from a Discrete Context</h3>
+
+<p>
+<a id="pgfId-1039298"></a>You can detect analog (continuous) events from within a discrete context. The arguments to these events are considered part of the continuous context. An analog event used in a discrete context is blocking like other discrete events.</p>
+<p>
+<a id="pgfId-1039303"></a>The following example illustrates an analog event being detected in a discrete context.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046727"></a>module sampler2 (in, clk, out);
+input in, clk;
+output out;
+wire in;
+reg out;
+electrical clk;
+always @(cross(V(clk) - 2.5, 1))   // Code to detect the analog event.
+&#160;&#160;&#160;&#160;out = in;<br />endmodule</pre>
+<h2>
+<a id="pgfId-1046729"></a><a id="19605"></a>Connect Mod<a id="connectmodules"></a>ules</h2>
+
+<p>
+<a id="pgfId-1046730"></a>The Verilog-AMS language allows you to describe analog and digital components and to connect these components together. A <em>connect module</em> is a module automatically or manually inserted to connect the continuous and discrete disciplines (mixed-nets) of the design hierarchy together. A connect module contains the code required to translate and propagate signals between the analog and digital components. This section contains details about the following aspects of using connect modules.</p>
+<ul><li>
+<a id="pgfId-1031360"></a>Coding connect modules</li><li>
+<a id="pgfId-1031361"></a>Understanding the factors affecting the placement of connect modules</li><li>
+<a id="pgfId-1031362"></a>Understanding the behavior of connect modules</li></ul>
+
+
+<p>
+<a id="pgfId-1047724"></a>Some additional examples of connect modules can be found at:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1049290"></a><code><em>your_install_dir</em></code>/tools/affirma_ams/etc/connect_lib</pre>
+<h3>
+<a id="pgfId-1031363"></a>Coding Connect Modules</h3>
+
+<p>
+<a id="pgfId-1031366"></a>Connect modules have the following syntax.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040902"></a>connectmodule_declaration ::= 
+&#160;&#160;&#160;&#160;    <strong>connectmodule</strong> module_identifier <strong>(</strong> port<strong>,</strong> port <strong>)</strong> <strong>;<br /></strong> [   connectmodule_items ] <br /> &#160;&#160;  <strong>endmodule</strong> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047435"></a>port ::=
+&#160;&#160;&#160;&#160;    port_identifier</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047437"></a>connectmodule_items ::=
+&#160;&#160;&#160;&#160;    { connectmodule_item }
+&#160;&#160;&#160;&#160;|&#160;&#160; analog_block </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047439"></a>connectmodule_item ::= 
+&#160;&#160;&#160;&#160;    connectmodule_item_declaration 
+&#160;&#160;&#160;&#160;|   defparam_override 
+&#160;&#160;&#160;&#160;|   analog_primitive_instantiation
+&#160;&#160;&#160;&#160;|   digital_continuous_assignment
+&#160;&#160;&#160;&#160;|   digital_gate_instantiation
+&#160;&#160;&#160;&#160;|   digital_udp_instantiation
+&#160;&#160;&#160;&#160;|   digital_specify_block
+&#160;&#160;&#160;&#160;|   digital_initial_construct
+&#160;&#160;&#160;&#160;|&#160;&#160; digital_always_construct</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047441"></a>connectmodule_item_declaration ::= 
+&#160;&#160;&#160;&#160;    parameter_declaration 
+&#160;&#160;&#160;&#160;|   input_declaration 
+&#160;&#160;&#160;&#160;|   output_declaration 
+&#160;&#160;&#160;&#160;|   inout_declaration 
+&#160;&#160;&#160;&#160;|   integer_declaration 
+&#160;&#160;&#160;&#160;|   net_discipline_declaration 
+&#160;&#160;&#160;&#160;|&#160;&#160; real_declaration</pre>
+<h4>
+<a id="pgfId-1040903"></a>Specifying Port Directions in Connect Modules</h4>
+
+<p>
+<a id="pgfId-1040906"></a>The disciplines associated with the two specified ports, and the directions declared in the module, together determine when the connect module can be used to connect the discrete and continuous domains of a mixed net. </p>
+<p>
+<a id="pgfId-1040889"></a>For example, the following connect module, <code>d2a</code>, can bridge</p>
+<ul><li>
+<a id="pgfId-1040858"></a>A mixed input port whose upper connection is compatible with the logic discipline and whose lower connection is compatible with the electrical discipline</li><li>
+<a id="pgfId-1040859"></a>A mixed output port whose upper connection is compatible with the electrical discipline and whose lower connection is compatible with the logic discipline.</li></ul>
+
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040860"></a>connectmodule d2a(in,out);
+&#160;&#160;&#160;&#160;input in ;
+&#160;&#160;&#160;&#160;output out ;
+&#160;&#160;&#160;&#160;logic in ;
+&#160;&#160;&#160;&#160;electrical out ;<br />endmodule</pre>
+
+<p>
+<a id="pgfId-1040828"></a>The next example, <code>a2d</code>, defines a connect module that can bridge</p>
+<ul><li>
+<a id="pgfId-1040863"></a>A mixed output port whose upper connection is compatible with the logical discipline and whose lower connection is compatible with the electrical discipline</li><li>
+<a id="pgfId-1040868"></a>A mixed input port whose upper connection is compatible with the electrical discipline and whose lower connection is compatible with the logic discipline</li></ul>
+
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040869"></a>connectmodule a2d(out, in) ;
+&#160;&#160;&#160;&#160;output out ;
+&#160;&#160;&#160;&#160;input in ;
+&#160;&#160;&#160;&#160;logic out ;
+&#160;&#160;&#160;&#160;electrical in ;<br />endmodule</pre>
+
+<p>
+<a id="pgfId-1040861"></a>The final example, <code>bidir</code>, defines a connect module that can bridge any mixed port where one connection is compatible with the logic discipline and the other connection is compatible with the electrical discipline.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040883"></a>connectmodule bidir(out, in) ;
+&#160;&#160;&#160;&#160;inout out ;
+&#160;&#160;&#160;&#160;inout in ;
+&#160;&#160;&#160;&#160;logic out ;
+&#160;&#160;&#160;&#160;electrical in ;<br />endmodule</pre>
+
+<p>
+<a id="pgfId-1040884"></a>The <code>d2a</code>, <code>a2d</code>, and <code>bidir</code> examples illustrate all the direction combinations that are allowed in a connect module. You must not define a connect module that declares both ports as input or both ports as output.</p>
+
+<h4>
+<a id="pgfId-1040862"></a>Coding to Meet Connect Module Requirements</h4>
+
+<p>
+<a id="pgfId-1040907"></a>Connect modules have two functions:</p>
+<ul><li>
+<a id="pgfId-1031368"></a>Translating between the analog and digital domains</li><li>
+<a id="pgfId-1031369"></a>Using analog information to control the propagation of digital signals </li></ul>
+
+<p>
+<a id="pgfId-1031370"></a>This section presents examples that illustrate how to code connect modules to handle these requirements. For more information, see <a href="chap11.html#12495">&#8220;Driver-Receiver Segregation&#8221;</a>.</p>
+
+<h4><em>
+<a id="pgfId-1031371"></a>Example: Using Analog Data to Control Digital Propagation</em></h4>
+
+<p>
+<a id="pgfId-1031372"></a>In the following connect module, the analog code determines when the ordinary driver outputs propagate to the ordinary receivers. The <code>c2e</code> connect module drives the digital port <code>d</code> (through the register <code>tmp</code>) only when the analog value rises above or falls below a 2.5-volt threshold.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1031373"></a>connectmodule c2e(d,a);<br />inout d;<br />inout a;<br />cmos1 d; <br />electrical a;<br />reg tmp;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047443"></a>assign d = tmp ;&#160;&#160;    // Bind d to a register.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047445"></a>analog                // Translate from digital to analog.<br />    V(a) &lt;+ transition( d == 1 ? 5.0 : 0.0, 3n, 3n);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047447"></a>always @( cross ( V(a) - 2.5, +1 ) )<br />    tmp = 1&#8216;b1;       // Propagate the digital signal when<br />                      // the analog value rises to 2.5v.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047449"></a>always @( cross ( V(a) - 2.5, -1 ) )<br />    tmp = 1&#8216;b0;       // Propagate the digital signal when<br />                      // the analog value falls to 2.5v.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047451"></a>endmodule</pre>
+<h4><em>
+<a id="pgfId-1031375"></a><a id="40193"></a>Example: Using Driver Access Functions to Control Digital Propagation </em></h4>
+
+<p>
+<a id="pgfId-1031376"></a>The connect module described in this section uses driver access functions to examine the values of individual digital drivers. The module uses assumptions about the analog characteristics of a <code>cmos1 (logic)</code> driver to present to port <code>a</code> an accurate analog equivalent of the digital signal. The module then uses the voltage at port <code>a</code> to determine the logic state that propagates to the receivers of the digital signal.</p>
+<p>
+<a id="pgfId-1031377"></a>The module embodies the following assumptions about <code>cmos1 (logic)</code>:</p>
+<ul><li>
+<a id="pgfId-1031378"></a>The equivalent analog circuit of an output is a function of the rail-to-ground supply voltage <code>supply</code>.</li><li>
+<a id="pgfId-1031379"></a>The equivalent analog circuit when a gate output in <code>cmos1 (logic)</code> is driven high can be approximated by a resistance <code>impedence1</code> between the output and the rail.</li><li>
+<a id="pgfId-1031380"></a>The equivalent analog circuit when a gate output in <code>cmos1 (logic)</code> is driven low can be approximated by a resistance <code>impedence0</code> between the output and ground.</li><li>
+<a id="pgfId-1031381"></a>The effect of the impedance between output and rail when the output is driven low, and of the impedance between output and ground when the output is driven high, is negligible.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1048428"></a>This connect module effectively adds another parallel resistor from output to ground whenever a digital output connected to the net goes low and adds another parallel resistor from output to rail (<code>supply</code>) whenever a digital output connected to the net goes high.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048429"></a>&#8216;include &quot;disciplines.vams&quot;<br />&#8216;timescale 1ns/1ps</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048498"></a>connectmodule d2a(d,a);<br />input d;<br />output a;<br />logic d;<br />electrical rail, a, gnd;<br />reg out;<br />ground gnd;<br />branch (rail,a) pull_up;<br />branch (a,gnd) pull_down;<br />branch (rail,gnd) power;<br />parameter real impedence0 = 120.0;<br />parameter real impedence1 = 100.0;<br />parameter real impedenceOff = 1e6;<br />parameter real vt_hi = 3.5;<br />parameter real vt_lo = 1.5;<br />parameter real supply = 5.0;<br />integer i, num_ones, num_zeros;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048454"></a>// net_resolution(d, out);
+&#160;&#160;&#160;&#160;assign d=out;&#160;&#160;// Cadence method used instead of net_resolution</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048457"></a>initial begin
+&#160;&#160;&#160;&#160;num_ones=0;
+&#160;&#160;&#160;&#160;num_zeros=0;<br />end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048462"></a>always @(driver_update(d)) begin
+&#160;&#160;&#160;&#160;num_ones = 0;
+&#160;&#160;&#160;&#160;num_zeros = 0;
+&#160;&#160;&#160;&#160;for ( i = 0; i &lt; $driver_count(d); i=i+1 )
+&#160;&#160;&#160;&#160; if ( $driver_state(d,i) == 1 )<br />   num_ones = num_ones + 1;<br />  else<br />   num_zeros = num_zeros + 1;<br />end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048472"></a>always @(cross(V(a) - vt_hi, -1) or cross(V(a) - vt_lo, +1))
+&#160;&#160;&#160;&#160;out = 1&#8217;bx;
+always @(cross(V(a) - vt_hi, +1))
+&#160;&#160;&#160;&#160;out = 1&#8217;b1;
+always @(cross(V(a) - vt_lo, -1))
+&#160;&#160;&#160;&#160;out = 1&#8217;b0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048479"></a>analog begin
+// Approximately one impedence1 resistor to rail per high output
+// connected to the digital net.
+&#160;&#160;&#160;&#160;V(pull_up) &lt;+ 1/((1/impedence1)*num_ones+(1/impedenceOff)) * I(pull_up);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048484"></a>// Approximately one impedence0 resistor to ground per low output
+// connected to the digital net.
+&#160;&#160;&#160;&#160;V(pull_down) &lt;+ 1/((1/impedence0)*num_zeros+(1/impedenceOff)) *I(pull_down);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048488"></a> V(power) &lt;+ supply;<br />end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1048491"></a>endmodule</pre>
+
+<p>
+<a id="pgfId-1048430"></a>If this module is used as the <code>d2a</code> in the following schematic, </p>
+<ul><li>
+<a id="pgfId-1031385"></a>The delay from digital drivers to the digital receiver is a function of the value of the capacitor</li><li>
+<a id="pgfId-1047234"></a>The delay with two gates driving the signal is approximately half as long as the delay with one gate driving the signal<br />
+<a id="pgfId-1047280"></a><a id="usingConnectModules"></a><div class="webflare-div-image">
+<img width="670" height="273" src="images/chap11-2.gif" /></div></li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1051391"></a>Using String Parameter in Connect Modules</h4>
+
+<p>
+<a id="pgfId-1051401"></a>You can use the string parameter in a connect module to indicate a global supply, as shown in the following example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051416"></a>connectmodule elect_to_logic(el, cm);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051417"></a>    input el;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051418"></a>    output cm;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051419"></a>    reg cm;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051420"></a>    electrical el;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051421"></a>    ddiscrete cm;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051422"></a>    string parameter vdd = &quot;(not_given)&quot;; // Set via the CR</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051423"></a>    ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051408"></a>endmodule</pre>
+
+<p>
+<a id="pgfId-1051438"></a>You can also use the string parameter in the <code>connect</code> statement to override the string parameter inside connect module, as shown below.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051471"></a>connectrules mixedsignal;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051472"></a>    connect elect_to_logic #(.vdd(&quot;$root.global_supply.vdd&quot;));</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051473"></a>    connect logic_to_elect #(.vdd(&quot;$root.global_supply.vdd&quot;));</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051463"></a>endconnectrules</pre>
+<h3>
+<a id="pgfId-1047287"></a>Using Automatically-Inserted Connect Modules</h3>
+
+<p>
+<a id="pgfId-1047281"></a>To make use of an automatically-inserted connect module, you must specify the circumstances in which it is to be used. To do that, use the connect specification discussed in the next section. After that, the simulator automatically inserts the connect module according to the criteria that you specify. For an example of a design that uses automatically inserted connect modules, see <a href="chap11.html#27947">&#8220;Example: Automatic Insertion of Connect Modules&#8221;</a>.</p>
+
+<h4>
+<a id="pgfId-1040913"></a>Choosing and Specializing Connect Modules</h4>
+
+<p>
+<a id="pgfId-1040919"></a>Use the <code>connect</code> specification to declare which connect modules are to be automatically inserted in mixed ports. There can be multiple connect module declarations with port disciplines and directions that match each discrete/continuous discipline pair. The <code>connect</code> specification specifies which to use.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1045848"></a>connect_specification ::=
+&#160;&#160;&#160;&#160;    <strong>connectrules</strong> <code><em>connectrule_identifier</em></code> ;
+&#160;&#160;&#160;&#160;    { connect_spec_item }
+&#160;&#160;&#160;&#160;    <strong>endconnectrules</strong></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047483"></a>connect_spec_item ::=
+&#160;&#160;&#160;&#160;    connect_insertion
+&#160;&#160;&#160;&#160;|&#160;&#160; connect_resolution</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047485"></a>connect_insertion ::= 
+&#160;&#160;&#160;&#160;    <strong>connect</strong> <code><em>connect_module_identifier</em></code> [connect_mode] [<strong>#(</strong>attribute_list<strong>)</strong>] 
+&#160;&#160;&#160;&#160;    [ [direction] <code><em>discipline_iden</em></code><strong>,</strong> [direction]<code><em> discipline_iden</em></code> ] <strong>;</strong></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047487"></a>connect_mode ::= 
+&#160;&#160;&#160;&#160;    <strong>merged</strong> 
+&#160;&#160;&#160;&#160;|&#160;&#160; <strong>split</strong> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041195"></a>attribute_list ::=
+&#160;&#160;&#160;&#160;    attribute 
+&#160;&#160;&#160;&#160;|&#160;&#160; attribute_list <strong>,</strong> attribute </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047489"></a>attribute ::= 
+&#160;&#160;&#160;&#160;    <strong>.</strong><code><em>parameter_identifier</em></code> ( <code><em>expression</em></code> ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047491"></a>direction ::= 
+&#160;&#160;&#160;&#160;    <strong>input</strong> 
+&#160;&#160;&#160;&#160;|&#160;&#160; <strong>output</strong> 
+&#160;&#160;&#160;&#160;|&#160;&#160; <strong>inout</strong> </pre>
+
+<p>
+<a id="pgfId-1040992"></a><span class="webflare-courier-new" style="white-space:pre"><em>connect_module_identifier</em></span> is the connect module to be used to connect mixed nets that have the disciplines declared in the connect module. For example, if <code>d2a</code> is defined as</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040960"></a>connectmodule d2a(in,out);
+&#160;&#160;&#160;&#160;input in ;
+&#160;&#160;&#160;&#160;output out ;
+&#160;&#160;&#160;&#160;logic in ;
+&#160;&#160;&#160;&#160;electrical out ;<br />endmodule</pre>
+
+<p>
+<a id="pgfId-1040958"></a>then the specification</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040947"></a>connect d2a ;</pre>
+
+<p>
+<a id="pgfId-1040948"></a>designates the <code>d2a</code> module as the connect module to insert automatically to bridge a mixed input port whose upper connection is compatible with the logic discipline and whose lower connection is compatible with the electrical discipline.</p>
+<p>
+<a id="pgfId-1040965"></a><code>connect_resolution</code> is further defined as follows.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1045854"></a>connect_resolution ::=
+&#160;&#160;&#160;&#160;    <strong>connect</strong> discipline_list <strong>resolveto</strong> <code><em>discipline_identifier</em></code> <strong>;</strong></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047493"></a>discipline_list ::=
+&#160;&#160;&#160;&#160;    <code><em>discipline_identifier<br /></em></code> |&#160;&#160; discipline_list<strong>,</strong> <code><em>discipline_identifier</em></code></pre>
+
+<p>
+<a id="pgfId-1045855"></a>You use the <code>connect_resolution</code> statement to specify a single discipline to use during the discipline resolution process when multiple nets with compatible discipline are part of the same mixed net.</p>
+<p>
+<a id="pgfId-1045853"></a><code>connect_mode</code> specifies whether all ports of a common discrete discipline and port direction share a single connect module or have individual connect modules. This attribute is discussed further in <a href="chap11.html#32094">&#8220;connect_mode Attribute Affects Connect Module Placement&#8221;</a>.</p>
+<p>
+<a id="pgfId-1049235"></a><code>attribute_list</code> allows you to override the default parameter values of the connect module. The expressions that specify the overriding values must not be out-of-module references. For example, the following statement specifies values for <code>tt</code> and <code>vcc</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040977"></a>connect d2a_035u #(.tt(3.5n), .vcc(3.3)) ;</pre>
+
+<p>
+<a id="pgfId-1040984"></a><code>direction</code> allows you to override the port directions specified in the connect module. For example, using the connect module <code>d2a</code>, defined above, the statement</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040987"></a>connect d2a output logic, input electrical ;</pre>
+
+<p>
+<a id="pgfId-1040988"></a>designates the <code>d2a</code> module as the connect module to insert automatically to bridge a mixed input port whose upper connection is compatible with the electrical discipline and whose lower connection is compatible with the logic discipline or a mixed output port whose lower connection is compatible with electrical and whose upper connection is compatible with logic.</p>
+<p>
+<a id="pgfId-1040993"></a>You can use the discipline identifiers to specify different discipline combinations for the connect module. For example, the connect module <code>d2a</code>, as it is coded, can only be used to bridge the logic and electrical disciplines. However, you can use it for other discipline pairs by coding something like this.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040996"></a>connect d2a logic, sig_flow_i ;</pre>
+
+<p>
+<a id="pgfId-1040997"></a>To use this discipline override form of the connect specification, the discipline you specify for the continuous domain must be compatible with the continuous discipline specified in the connect module. Similarly, the discipline you specify for the discrete domain must be compatible with the discrete discipline specified in the connect module.</p>
+
+<h4>
+<a id="pgfId-1048742"></a>Where AMS Designer Searches for Connect Rules and Connect Modules</h4>
+
+<p>
+<a id="pgfId-1048782"></a>On the <code>xmelab</code> command line, you can list multiple <code>connectrules</code> blocks, each of which can contain many connect rules. Each connect rule specifies a connect module to be inserted when the connect rule is selected. A connect rule and the connect module it specifies can be in different libraries.</p>
+<p>
+<a id="pgfId-1048792"></a>The AMS elaborator uses the following approach to determine which <code>connectrules</code> block and which connect rule to use.</p>
+<ol><li>
+<a id="pgfId-1048789"></a>The elaborator searches, in order, as many of the <code>connectrules</code> blocks listed on the command line as necessary to find a valid connect rule. For example, if the command line is<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1048793">
+<a id="pgfId-1048793"></a>xmelab cRuleBlockA cRuleBlockB</pre>
+<a id="pgfId-1048794"></a>the elaborator looks first at the connect rules in <code>cRuleBlockA</code>. If there are no valid connect rules in <code>cRuleBlockA</code>, then the elaborator looks at the connect rules in <code>cRuleBlockB</code>. </li><li>
+<a id="pgfId-1048834"></a>To determine whether a connect rule is valid, the elaborator attempts to locate (as described in the next step) a connect module that matches the name specified by the connect rule and the discipline and direction requirements for the port and net being connected. </li><li>
+<a id="pgfId-1048922"></a>The elaborator searches the following locations, in order, for a connect module that matches each connect rule in the <code>connectrules</code> block.<ul><li>
+<a id="pgfId-1048923"></a>The parent library of the connect module instance.<br />
+<a id="pgfId-1048930"></a>The elaborator inserts connect modules between a lower port and an upper net. The <em>parent library</em> is the library containing the module in which the upper net is located.</li><li>
+<a id="pgfId-1048944"></a>The library that contains the <code>connectrules</code> block.</li><li>
+<a id="pgfId-1048945"></a>The libraries listed in the <code>cds.lib</code> file.</li></ul><br />
+<a id="pgfId-1048946"></a>If, in any single one of these libraries, the elaborator finds one (and only one) connect module that matches the selected connect rule, the connect rule is valid. After finding a connect module that makes the connect rule valid, the elaborator searches the rest of the current library, but does not go on to other libraries.<br />
+<a id="pgfId-1048950"></a>If any single one of these libraries contains more than one connect module that matches the selected connect rule, the elaborator issues an error.</li><li>
+<a id="pgfId-1048917"></a>If, in a <code>connectrules</code> block, there are multiple valid connect rules, the elaborator selects the last such valid connect rule listed. If there are no valid connect rules, the elaborator looks in the next <code>connectrules</code> block listed on the <code>xmelab</code> command.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1048784"></a><a id="27947"></a>Example: Automatic Insertion of Connect Modules</h4>
+
+<p>
+<a id="pgfId-1041730"></a>This example describes a ring of digital and analog inverters. To bridge between the discrete and continuous domains, the design uses two connect modules: <code>elec_to_logic</code> and <code>logic_to_elect</code>. The simulator automatically inserts the <code>elec_to_logic</code> connect module between the <code>out</code> port of instance <code>a3</code> and net <code>n1</code>, which is bound to the <code>in</code> port of instance <code>d1</code>. The simulator automatically inserts the <code>logic_to_elect</code> connect module between the <code>out</code> port of instance <code>d2</code> and net <code>n3</code>, which is bound to the <code>in</code> port of instance <code>a3</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047651"></a>module ring;
+&#160;&#160;&#160;&#160;dig_inv d1 (n1, n2);
+&#160;&#160;&#160;&#160;dig_inv d2 (n2, n3);
+&#160;&#160;&#160;&#160;analog_inv a3 (n3, n1);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047652"></a>endmodule</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041753"></a>module dig_inv(in, out);
+&#160;&#160;&#160;&#160;input in;
+&#160;&#160;&#160;&#160;output out;
+&#160;&#160;&#160;&#160;logic in, out</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047495"></a> always begin<br />     out = #10 ~in;<br /> end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047497"></a>endmodule</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041754"></a>module analog_inv(in, out);
+&#160;&#160;&#160;&#160;input in;
+&#160;&#160;&#160;&#160;output out;
+&#160;&#160;&#160;&#160;electrical in, out;
+&#160;&#160;&#160;&#160;parameter real vth =2.5;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047499"></a> analog begin<br />     if (V(in) &gt; vth)) outval = 0;<br /> else <br />     outval = 5 ;<br /> V(out) &lt;+ transition(outval);<br /> end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047501"></a>endmodule</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041786"></a>connectmodule elect_to_logic(el,cm);
+&#160;&#160;&#160;&#160;input el;
+&#160;&#160;&#160;&#160;output cm;
+&#160;&#160;&#160;&#160;reg cm;
+&#160;&#160;&#160;&#160;electrical el;
+&#160;&#160;&#160;&#160;logic cm;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047505"></a> always <br /> &#160;&#160;  @(cross(V(el) - 2.5, 1) cm = 1;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047507"></a> always <br /> &#160;&#160;  @(cross(V(el) - 2.5, -1) cm = 0;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047509"></a>endmodule</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041787"></a>connectmodule logic_to_elect(cm,el);
+&#160;&#160;&#160;&#160;input cm;
+&#160;&#160;&#160;&#160;output el;
+&#160;&#160;&#160;&#160;logic cm;
+&#160;&#160;&#160;&#160;electrical el;
+&#160;&#160;&#160;&#160;analog 
+&#160;&#160;&#160;&#160;    V(el) &lt;+ transition((cm == 1) ? 5.0 : 0.0);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047511"></a>endmodule</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041763"></a>
+connectrules crules ;
+&#160;&#160;&#160;&#160;connect elect_to_logic; // Specifies which appropriate connect module to use.
+&#160;&#160;&#160;&#160;connect logic_to_elect;<br />endconnectrules</pre>
+<h4>
+<a id="pgfId-1041871"></a>Names for Automatically Inserted Connect Module Instances</h4>
+
+<p>
+<a id="pgfId-1041880"></a>Parameters of automatically inserted connection instances can be individually set by using the <code>defparam</code> statement. To facilitate this, the instance names for the automatically inserted modules are entirely predictable.</p>
+<p>
+<a id="pgfId-1041887"></a>To determine the name of a connect module instance when the <code>connect_mode</code> attribute value is <code>merged</code></p>
+<ol><li>
+<a id="pgfId-1041923"></a>Identify the discipline, <span class="webflare-courier-new" style="white-space:pre"><em>DisciplineName</em></span>, at the bottom connection.</li><li>
+<a id="pgfId-1041925"></a>Identify the common signal, <span class="webflare-courier-new" style="white-space:pre"><em>Net</em></span>.</li><li>
+<a id="pgfId-1041927"></a>Identify the connect module, <span class="webflare-courier-new" style="white-space:pre"><em>ModuleName</em></span>.</li></ol>
+
+
+<p>
+<a id="pgfId-1041926"></a>The instance name of the connect module is </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041894"></a><code><em>Net__ModuleName__DisciplineName</em></code> </pre>
+
+<p>
+<a id="pgfId-1045875"></a>where the name sections are joined by double underscores.</p>
+<p>
+<a id="pgfId-1041889"></a>To determine an instance name when the <code>connect_mode</code> attribute value is <code>split</code></p>
+<ol><li>
+<a id="pgfId-1041955"></a>Identify the discipline of the common net, <span class="webflare-courier-new" style="white-space:pre"><em>Net</em></span>, at the top connection.</li><li>
+<a id="pgfId-1045878"></a>Identify the local instance name (non-hierarchical name) at the bottom connection, <span class="webflare-courier-new" style="white-space:pre"><em>InstName</em></span>.</li><li>
+<a id="pgfId-1045879"></a>Identify the port name at the bottom connection, <span class="webflare-courier-new" style="white-space:pre"><em>PortName</em></span>.</li></ol>
+
+
+<p>
+<a id="pgfId-1041956"></a>The instance name of the connect module is, </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041895"></a><code><em>Net</em></code>__<code><em>InstName</em></code>__<code><em>PortName</em></code> </pre>
+
+<p>
+<a id="pgfId-1041896"></a>where the name sections are joined by double underscores.</p>
+
+<h3>
+<a id="pgfId-1041732"></a>Understanding the Factors Affecting Connect Module Placement</h3>
+
+<p>
+<a id="pgfId-1031436"></a>By definition, connect modules are inserted between analog nets and digital nets. There are several factors, however, that affect where the boundary between analog and digital nets is drawn. These factors include</p>
+<ul><li>
+<a id="pgfId-1031437"></a>The value of the <code>connect_mode</code> attributes of <code>connect</code> statements</li><li>
+<a id="pgfId-1031438"></a>The disciplines used to explicitly declare nets</li><li>
+<a id="pgfId-1031439"></a>The result of discipline resolution, which assigns disciplines and domains to nets whose disciplines and domains are otherwise unknown</li><li>
+<a id="pgfId-1049240"></a>The use of aliased ports, which can result in the insertion of connect modules.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1031440"></a><a id="32094"></a>connect_mode Attribute Affects Connect Module Placement</h4>
+
+<p>
+<a id="pgfId-1031441"></a>The <code>connect_mode</code> attribute of the <code>connect</code> statement controls the segmentation of the signal at each level of the hierarchy when a connect module is inserted. This attribute applies only when there is more than one port of discrete discipline on a signal for which the connect statement applies. The attribute has two possible values: <code>split</code> and <code>merged</code>. The <code>split</code> value indicates that there should be one connect module inserted per port. The <code>merged</code> value, which is the default, specifies that there is to be only one connect module inserted for all the ports on a signal that match a given <code>connect</code> statement.</p>
+
+<h4><em>
+<a id="pgfId-1041187"></a>connect_mode Merged</em></h4>
+
+<p>
+<a id="pgfId-1041188"></a>The <code>merged</code> value for the <code>connect_mode</code> attribute instructs the elaborator to group all ports (whether <code>input</code>, <code>output</code>, or <code>inout</code>) and to insert just one connect module for all of them, provided that the needed connect module is the same for all the ports. </p>
+<p>
+<a id="pgfId-1041203"></a>The following figure illustrates the effect of the <code>merged</code> value in three connect statements.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041209"></a>connectrules example ;
+&#160;&#160;&#160;&#160;connect d2a merged input ttl, output electrical ;
+&#160;&#160;&#160;&#160;connect bidir merged output electrical, input ttl ;
+&#160;&#160;&#160;&#160;connect bidir merged inout ttl, inout electrical ;<br />endconnectrules</pre>
+
+<p>
+<a id="pgfId-1041211"></a>Notice how connecting the electrical signal to the TTL input and inout ports results in the insertion of a single connect module, <code>bidir</code>. Connecting the electrical signal to the TTL output ports results in the insertion of a single, but different, module, <code>d2a</code>.</p>
+
+<p>
+<a id="pgfId-1041417"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="412" src="images/chap11-3.gif" /></div>
+<h4><em>
+<a id="pgfId-1041424"></a>connect_mode Split</em></h4>
+
+<p>
+<a id="pgfId-1041418"></a>The <code>split</code> value for the <code>connect_mode</code> attribute instructs the simulator to insert a connect module for each port. The following figure illustrates the effect of the <code>split</code> value in three connect statements.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041514"></a>connectrules example ;
+&#160;&#160;&#160;&#160;connect d2a split input ttl, output electrical ;
+&#160;&#160;&#160;&#160;connect a2d merged output electrical, input ttl ;
+&#160;&#160;&#160;&#160;connect bidir merged inout ttl, inout electrical ;<br />endconnectrules</pre>
+
+<p>
+<a id="pgfId-1041523"></a>With this specification, connecting the electrical signal to the TTL input ports results in the insertion of a single instance of the <code>a2d</code> connect module, as specified by the <code>merged</code> value. Similarly, a single instance of the <code>bidir</code> connect module is inserted for the inout ports. However, the <code>split</code> value used for the <code>d2a</code> connect statement results in the insertion of a distinct instance of the connect module for each output port.</p>
+
+<p>
+<a id="pgfId-1041440"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="426" src="images/chap11-4.gif" /></div>
+<h4>
+<a id="pgfId-1041422"></a>Disciplines Used to Declare Nets Affect Connect Module Placement</h4>
+
+<p>
+<a id="pgfId-1041419"></a>Connect modules are inserted at the boundary between the analog and digital domains. It follows that changing the location of the boundary can affect where connect modules are placed. For example, if the wires in the following schematic are digital, a single connect module is inserted between the analog capacitor and the digital inverters.</p>
+
+<p>
+<a id="pgfId-1031478"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="157" src="images/chap11-5.gif" /></div>
+
+<p>
+<a id="pgfId-1031482"></a>However, if net <code>n1</code> is analog, two connect modules are inserted.</p>
+
+<p>
+<a id="pgfId-1031527"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="159" src="images/chap11-6.gif" /></div>
+
+<p>
+<a id="pgfId-1031531"></a>In this case, the <code>c2e</code> module translates the digital output of inverter <code>d1</code> into analog voltage for <code>n1</code>, and the <code>e2c</code> module translates analog voltage back into a digital signal for inverter <code>d2</code>. The analog capacitor connects directly to analog net <code>n1</code>.</p>
+
+<h4>
+<a id="pgfId-1031532"></a>Discipline Resolution Affects Connect Module Placement</h4>
+
+<p>
+<a id="pgfId-1041008"></a>Another factor that affects the location of the boundary between the analog and digital domains and, therefore, where connect modules are inserted, is <em>discipline resolution</em>. Discipline resolution is the process of assigning a domain and discipline to nets whose domain and discipline are otherwise unknown (or whose discipline is <code>wire</code>).</p>
+<p>
+<a id="pgfId-1041027"></a>The factors that affect discipline resolution are listed in the following table.</p>
+
+<p>
+<a id="pgfId-1049221"></a></p>
+<table class="webflareTable" id="#id1041048">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1041113">
+<a id="pgfId-1041113"></a>Factor</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1041115">
+<a id="pgfId-1041115"></a>For more information, see</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041117"></a>The disciplines that are used in the design, including the disciplines used for inherited connections</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041122"></a><a href="chap4.html#36963">&#8220;Disciplines&#8221;</a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041124"></a>The value of the <code>&#8216;default_discipline</code> compiler directive</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041128"></a><a href="chap12.html#31624">&#8220;Setting a Default Discrete Discipline for Signals&#8221;</a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041131"></a>The use of discipline resolution connect statements</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041135"></a><a href="chap11.html#29081">&#8220;Using Discipline Resolution Connect Statements&#8221;</a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041138"></a>The discipline resolution method selected</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041143"></a><a href="chap11.html#20411">&#8220;Discipline Resolution Methods&#8221;</a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1048063"></a>The way that mixed-domain buses are used</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1048065"></a><a href="chap11.html#38334">&#8220;Discipline Resolution in Buses&#8221;</a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1049242"></a>The use of aliased ports.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1049244"></a>&#8220;How Aliased Signals Are Netlisted&#8221; in chapter 4, of the <em>Virtuoso AMS Designer Environment User Guide</em>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1041034"></a><a id="29081"></a>Using Discipline Resolution Connect Statements</em></h4>
+
+<p>
+<a id="pgfId-1041146"></a>Use the discipline resolution connect statement to specify a single discipline to resolve to when multiple nets with compatible disciplines are part of the same mixed net.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041164"></a>connect_resolution ::=
+&#160;&#160;&#160;&#160;    <strong>connect</strong> discipline_list <strong>resolveto</strong> <code><em>discipline_to_use</em></code><strong>;</strong></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047513"></a>discipline_list ::=
+&#160;&#160;&#160;&#160;    <code><em>discipline_identifier<br /></em></code> |&#160;&#160; discipline_list<strong>,</strong> <code><em>discipline_identifier</em></code></pre>
+
+<p>
+<a id="pgfId-1041165"></a><span class="webflare-courier-new" style="white-space:pre"><em>discipline_to_use</em></span> is the single discipline to be used for the net.</p>
+<p>
+<a id="pgfId-1041168"></a><code>discipline_list</code> is the list of compatible disciplines that are to resolve to a single discipline.</p>
+<p>
+<a id="pgfId-1047686"></a>For example,</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047687"></a>connect electrical, electrical_hi_cur, electrical_low_power resolveto electrical</pre>
+<h4><em>
+<a id="pgfId-1041035"></a><a id="20411"></a>Discipline Resolution <a id="disciplineResolutionMethod"></a>Methods</em></h4>
+
+<p>
+<a id="pgfId-1047290"></a>Verilog-AMS provides two methods of discipline resolution: default and detailed. The two methods assign domains and disciplines to unknown signal segments in different ways, resulting in different boundaries between the analog and digital domains. If you do not want to use the default method, you can specify the detailed method using the<code> -disres detailed</code> elaborator option. </p>
+<p>
+<a id="pgfId-1047309"></a>The default and detailed methods have different effects, as follows: </p>
+
+<p>
+<a id="pgfId-1049030"></a></p>
+<table class="webflareTable" id="#id1047292">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1047294">
+<a id="pgfId-1047294"></a>Default method</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1047296">
+<a id="pgfId-1047296"></a>Detailed method</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1047298"></a>Propagates both continuous and discrete disciplines up the hierarchy, which typically results in <em>fewer</em> connections between the analog and digital domains.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1047300"></a>Propagates continuous disciplines up and back down the hierarchy to meet discrete disciplines, which typically results in <em>more</em> connections between the analog and digital domains.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1047302"></a>Produces connection elements between the analog and digital domains that tend to be <em>higher</em> in the hierarchy.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1047304"></a>Produces connection elements between the analog and digital domains that tend to be <em>lower</em> in the hierarchy.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1047306"></a>Assigns <em>digital</em> disciplines to more nets on a mixed signal.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1047308"></a>Assigns <em>analog</em> disciplines to more nets on a mixed signal.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1049902"></a>Discipline resolution applies to the following kinds of nets: <code>wire</code>, <code>tri</code>, <code>wor</code>, <code>trireg</code>, <code>wand</code>, <code>tri0</code>, <code>tri1</code>, <code>supply0</code>, <code>supply1</code>, <code>wreal</code>, and nets of unknown disciplines. If a net resolves to the analog domain, the software ignores any digital property the net has. If a net resolves to the digital domain, the software considers any digital property that it has during further processing.</p>
+<p>
+<a id="pgfId-1047310"></a>The methods use the following steps to assign domains and disciplines:</p>
+<ol><li>
+<a id="pgfId-1047311"></a>Traverse each signal hierarchically, starting at the bottom, until a net is found that has no assigned discipline.</li><li>
+<a id="pgfId-1047313"></a><a id="42027"></a>Examine the connections of the segment and assign a domain to the segment.<ul><li>
+<a id="pgfId-1047314"></a>For the default method, examine the connections of the segment to <em>only the upper</em> parts of ports. If all such connections are digital, assign the segment to the digital domain. If any such connection is analog, assign the segment to the analog domain.</li><li>
+<a id="pgfId-1047315"></a>For the detailed method, examine the connections of the segment to <em>both the upper and the lower</em> parts of ports. If all such connections are digital, assign the segment to the digital domain. If any such connection is analog, assign the segment to the analog domain.</li></ul></li><li>
+<a id="pgfId-1047316"></a>Apply <code>&#8216;default_discipline</code> directives, as appropriate, to nets with digital domains.</li><li>
+<a id="pgfId-1047317"></a>For each net that has not yet been assigned a discipline, examine the ports to which the segment is connected.<ul><li>
+<a id="pgfId-1047318"></a>For the default method, examine all ports to which the segment forms the <em>upper</em> connection. Create a list of all the disciplines at the lower connections of these ports whose domains match the domain of the net.</li><li>
+<a id="pgfId-1047319"></a>For the detailed method, examine all ports to which the segment forms the <em>upper or lower</em> connection. Create a list of all the disciplines at the other connections of these ports whose domains match the domain of the net.</li></ul></li><li>
+<a id="pgfId-1047321"></a><a id="19635"></a>Use the list created in the previous step to determine the discipline of the net.<ul><li>
+<a id="pgfId-1047322"></a>If there is only a single discipline in the list, assign that discipline to the net.</li><li>
+<a id="pgfId-1047323"></a>If there is more than one discipline in the list, and the contents of the list match the discipline list of a resolution connect statement (the <code>connect&#8230;using</code> syntax), assign to the net the resolved discipline given by the statement.</li><li>
+<a id="pgfId-1047324"></a>If there is more than one discipline in the list but the contents of the list do not match the discipline list of a resolution connect statement, the discipline of the net remains unknown.</li></ul></li><li>
+<a id="pgfId-1047325"></a>(detailed method only.) Traverse each signal hierarchically, starting at the top. When a net is found that has no assigned discipline, repeat <a href="chap11.html#42027">step 2</a> through <a href="chap11.html#19635">step 5</a>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1048114"></a><a id="38334"></a>Discipline Resolution in Buses</em></h4>
+
+<p>
+<a id="pgfId-1048134"></a>The individual nets in a bus with an unknown domain are assigned domains according to the following rules.</p>
+<ul><li>
+<a id="pgfId-1048115"></a>If any net in a bus with an unknown domain is used in a behavioral statement, every net in the bus is assigned to the digital domain.</li><li>
+<a id="pgfId-1048135"></a>If any net in a bus with an unknown domain is connected to an analog primitive, every net in the bus is assigned to the analog domain.</li><li>
+<a id="pgfId-1048136"></a>The nets in buses that are used only to establish connectivity can, according to how they are connected, all be assigned to the analog domain, all be assigned to the digital domain, or some nets can be assigned to the analog domain and some to the digital domain. This latter kind of bus is known as a <em>mixed bus</em>.<br />
+<a id="pgfId-1048147"></a>In a mixed bus, the domains of each net are individually determined by the connections of that particular net, using the discipline resolution methods described in <a href="chap11.html#20411">&#8220;Discipline Resolution Methods&#8221;</a>.</li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1031575"></a>Understanding How Connect Modules Operate</h3>
+
+<p>
+<a id="pgfId-1031576"></a>The previous sections discuss the factors that affect where the software inserts connect modules in a design. The following sections discuss the behavior of connect modules after the software inserts them. The issues include </p>
+<ul><li>
+<a id="pgfId-1031577"></a>Driver-receiver segregation</li><li>
+<a id="pgfId-1031578"></a>Digital islands</li><li>
+<a id="pgfId-1031579"></a>The independent behavior of connect modules</li></ul>
+
+
+
+<h4>
+<a id="pgfId-1031581"></a><a id="12495"></a>Driver-Receiver <a id="driverreceiversegregation"></a>Segregation<a id="marker-1049934"></a></h4>
+
+<p>
+<a id="pgfId-1031582"></a>In a purely digital net, drivers generate signals that propagate directly to receivers. In a mixed net, analog components can affect the propagation of the digital signals. To allow for this possibility, the AMS Designer simulator uses a technique called <em>driver-receiver segregation</em>. With driver-receiver segregation, which occurs with every mixed net, digital signals propagate only through connect modules inserted between the drivers and receivers.</p>
+<p>
+<a id="pgfId-1031583"></a>Digital nets connected to the ports of manually-inserted connect modules behave as mixed nets and are subject to driver-receiver segregation. </p>
+
+<h4><em>
+<a id="pgfId-1031587"></a>Conceptual Overview of Driver-Receiver Segregation</em></h4>
+
+<p>
+<a id="pgfId-1031588"></a>Consider the following purely digital circuit containing two inverters.</p>
+
+<p>
+<a id="pgfId-1031604"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="66" src="images/chap11-7.gif" /></div>
+
+<p>
+<a id="pgfId-1031608"></a>The driver, <code>d1</code>, contributes a value directly to the receiver, <code>d2</code>. </p>
+<p>
+<a id="pgfId-1031609"></a>Adding an analog capacitor to the circuit, turns the net between <code>d1</code> and <code>d2</code> into a mixed net: </p>
+
+<p>
+<a id="pgfId-1031635"></a></p>
+<div class="webflare-div-image">
+<img width="671" height="161" src="images/chap11-8.gif" /></div>
+
+<p>
+<a id="pgfId-1031639"></a>Because the net is mixed, it is subject to driver-receiver segregation, which severs the direct connection between <code>d1</code> and <code>d2</code>. After driver-receiver segregation, the circuit looks like this: </p>
+
+<p>
+<a id="pgfId-1031667"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="161" src="images/chap11-9.gif" /></div>
+
+<p>
+<a id="pgfId-1031671"></a>A connect module, <code>c2e</code>, reestablishes the link between the digital components and translates between the analog and digital domains. Conceptually, the circuit has the following schematic with the connect module added: </p>
+
+<p>
+<a id="pgfId-1031707"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="213" src="images/chap11-10.gif" /></div>
+
+<p>
+<a id="pgfId-1031711"></a>The connect module, <code>c2e</code>, has both a digital input side and a digital output side, even when <code>c2e</code> is coded with only a single digital port. The <code>c2e</code> module must have two sides because part of its function is reading values from <code>d1</code> and propagating them to <code>d2</code>. This is an important point. To ensure that digital values propagate through a connect module, the connect module code must be written to handle the task. Otherwise, the drivers have no effect on the receivers.</p>
+<p>
+<a id="pgfId-1031712"></a>In a connect module, as in regular modules, all digital ports behave like <code>inout</code> ports, whether they are coded as <code>inout</code>, <code>input</code>, or <code>output</code> ports. For example, in the following code for the connect module <code>c2e</code>, the single digital port is both read and driven, in spite of the fact that the port is defined as <code>input</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1031713"></a>module c2e(d,a);<br />
+input d;&#160;&#160;      // Define a digital port as input.<br />output a;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047515"></a>cmos1 d;<br />electrical a;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047708"></a>assign d = d ;&#160;&#160;// Both read and drive the digital port.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1047517"></a>analog          // Perform digital to analog translation.<br />     V(a) &lt;+ transition( d == 1 ? 5.0 : 0.0 );<br />endmodule</pre>
+
+<p>
+<a id="pgfId-1031715"></a>To summarize the basic concepts in driver-receiver segregation:</p>
+<ul><li>
+<a id="pgfId-1031716"></a>Every mixed net is subject to driver-receiver segregation.</li><li>
+<a id="pgfId-1031717"></a>Drivers segregated from receivers by a connect module can drive signals to receivers only if the connect module propagates the signals.</li><li>
+<a id="pgfId-1031718"></a>Digital ports in connect modules can be both read and driven, regardless of the way they are defined.</li></ul>
+
+
+
+<h4><em>
+<a id="pgfId-1031719"></a>Digital Islands Limit the Range of Connect <a id="digitalIslands"></a>Modules<a id="marker-1049953"></a></em></h4>
+
+<p>
+<a id="pgfId-1031720"></a>An important aspect of driver-receiver segregation has to do with the concept of <em>digital islands</em>. A digital island is the set of drivers and receivers interconnected by a purely digital net. Digital islands end at any connection to a mixed or analog net. For example, the following schematic contains three digital islands, each identified with dashed lines.</p>
+
+<p>
+<a id="pgfId-1031831"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="289" src="images/chap11-11.gif" /></div>
+
+<p>
+<a id="pgfId-1031835"></a>In this schematic, <code>e2c1</code>, <code>c2e1</code>, and <code>c2e2</code> are connect modules, each connecting a digital island to the analog wire, <code>W1</code>. </p>
+<p>
+<a id="pgfId-1031836"></a>A connect module receives digital signals only from within the digital island isolated by the connect module and drives only the receivers located in the digital island. For example, referring to the above schematic, the digital port on the <code>c2e1</code> module receives signals only from <code>d1</code> and <code>d3</code>, which are the drivers in the digital island connected to the module. The <code>c2e1</code> module does not receive signals from <code>d4</code> and <code>d5</code>, which are located in a different digital island. Similarly, <code>c2e1</code> propagates digital values only to the receiver <code>d2</code>. The <code>c2e1</code> module does not propagate digital values to <code>d6</code>, which is in a different digital island.</p>
+
+<h4>
+<a id="pgfId-1031837"></a>Multiple Connect Modules Act Independently</h4>
+
+<p>
+<a id="pgfId-1031838"></a>In a purely digital circuit with multiple drivers, the digital value acted on by the receiver is resolved from all of the digital values written by drivers. In the following schematic, for example, the Verilog-AMS simulator resolves the values written by <code>d3</code> and <code>d1</code> and propagates the result to <code>d2</code>.</p>
+
+<p>
+<a id="pgfId-1031868"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="128" src="images/chap11-12.gif" /></div>
+
+<p>
+<a id="pgfId-1031872"></a>When connect modules act as drivers and receivers, however, there is another consideration: each connect module behaves as though it is the only connect module involved. For example, add an analog source and an analog capacitor to the previous schematic so that it looks like this.</p>
+
+<p>
+<a id="pgfId-1031934"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="276" src="images/chap11-13.gif" /></div>
+
+<p>
+<a id="pgfId-1031938"></a>The <code>e2c</code> connect module behaves as though the <code>c2e</code> connect module does not exist, so the only drivers that affect <code>e2c</code> are the ordinary drivers <code>d3</code> and <code>d1</code>. Similarly, <code>c2e</code> is affected only by drivers <code>d3</code> and <code>d1</code>, not by any digital value that <code>e2c</code> might contribute.</p>
+<p>
+<a id="pgfId-1031939"></a>The connect modules <code>e2c</code> and <code>c2e</code> both write to their digital ports as they propagate digital values from the ordinary drivers to the ordinary receivers. Again, each connect module operates independently of the other, so each one sends a digital signal. The simulator resolves the two signals and sends the resolved signal to <code>d2</code>.</p>
+<p>
+<a id="pgfId-1031940"></a>The independence of connect modules is also apparent when you use the driver access functions. For example, applying the <code>driver_count</code> function to the digital port of <code>e2c</code> returns the value 2, indicating that there are two drivers associated with that signal. Similarly, applying <code>driver_count</code> to the digital port of <code>c2e</code> returns the value 2, indicating that there are two drivers associated with the signal. Neither count includes the other connect module because each connect module behaves as though the other does not exist.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap10.html" id="prev" title="Instantiating Modules and Primitives">Instantiating Modules and Prim ...</a></em></b><b><em><a href="chap12.html" id="nex" title="Controlling the Compiler">Controlling the Compiler</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2022, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
