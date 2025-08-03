@@ -1,0 +1,214 @@
+
+<html><head><title>Running Cosimulation from ADE Using the simulinkCoupler</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="shubh" />
+<meta name="CreateDate" content="2023-06-13" />
+<meta name="CreateTime" content="1686640367" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to cosimulate a system containing analog and mixed-signal subsystems using the Virtuoso AMS Designer simulator and MathWorks MATLAB/Simulink" />
+<meta name="DocTitle" content="Spectre AMS Designer Cosimulation with MathWorks MATLAB/Simulink" />
+<meta name="DocType" content="Getting Started" />
+<meta name="FileTitle" content="Running Cosimulation from ADE Using the simulinkCoupler" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="amsdMatSim" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-13" />
+<meta name="ModifiedTime" content="1686640367" />
+<meta name="NextFile" content="tutorial3.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Custom IC Design" />
+<meta name="PrevFile" content="tutorial1.html" />
+<meta name="c_product" content="AMS Designer,Virtuoso Analog Design Environment" />
+<meta name="Product" content="AMS Designer,Virtuoso Analog Design Environment" />
+<meta name="ProductFamily" content="AMS Designer,Virtuoso Analog Design Environment" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre AMS Designer Cosimulation with MathWorks MATLAB/Simulink -- Running Cosimulation from ADE Using the simulinkCoupler" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="amsdMatSimIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="amsdMatSimTOC.html">Contents</a></li><li><a class="prev" href="tutorial1.html" title="Running Cosimulation from ADE Using the Fixed-Cell Coupler">Running Cosimulation from ADE  ...</a></li><li style="float: right;"><a class="viewPrint" href="amsdMatSim.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="tutorial3.html" title="Running Cosimulation from MATLAB/Simulink">Running Cosimulation from MATL ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre AMS Designer Cosimulation with MathWorks MATLAB/Simulink<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>3
+<a id="pgfId-1032955"></a></h1>
+<h1>
+<a id="pgfId-1035250"></a><hr />
+<a id="19874"></a>Running Cosimulation from ADE Using the simulinkCoupler<hr />
+</h1>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1037049"></a><em>AMS-MATLAB/Simulink cosimulation</em> stands for cosimulation using the Spectre AMS Designer simulator and The MathWorks MATLAB<sup>&#174;</sup>/Simulink<sup>&#174;</sup>. <em>ADE</em> stands for the Virtuoso Analog Design Environment. </div>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1037083"></a>
+Use IC 6.1.3, IUS 8.1 or later, and MATLAB704R14 or MATLAB R2007b or MATLAB R2008a for this tutorial. The estimated time to complete this tutorial is about one hour. </div>
+
+<p>
+<a id="pgfId-1040362"></a>The <code>simulinkCoupler</code> is a parameterized cell (<h-hot><a actuate="user" class="URL" href="../pcellref/pcellOverview.html#firstpage" show="replace" xml:link="simple">Pcell</a></h-hot>) that does not have a fixed number of pins: You can change the number of pins to fit different designs. </p>
+<p>
+<a id="pgfId-1040848"></a>To run cosimulation from ADE using the <code>simulinkCoupler</code> block from the Cadence <code>analogLib</code> library, do the following: </p>
+<ol><li>
+<a id="pgfId-1040651"></a><a href="tutorial2.html#place_simulinkCoupler">Replace the coupler_2_3_a block with the simulinkCoupler block</a>. </li><li>
+<a id="pgfId-1040655"></a><a href="tutorial2.html#autogenerateVerilogAMS">Specify automatic generation of the Verilog-AMS module</a>. </li><li>
+<a id="pgfId-1040959"></a><a href="tutorial1.html#cosimADEseparate">Run cosimulation by starting two simulations separately</a>. </li></ol>
+
+
+
+<h2>
+<a id="pgfId-1040633"></a>Replacing the coupler_2_3_a with the <a id="place_simulinkCoupler"></a>simulinkCoupler</h2>
+
+<p>
+<a id="pgfId-1040668"></a>To replace the <code>coupler_2_3_a</code> coupler block on the Virtuoso schematic with the <code>simulinkCoupler</code> block from the Cadence <code>analogLib</code> Library, do the following: </p>
+<ol><li>
+<a id="pgfId-1040669"></a>In the schematic window, click the <em>coupler_2_3_a</em> instance and press <em>Delete</em>. </li><li>
+<a id="pgfId-1040693"></a>Type <code>i</code> to open the Add Instance form. </li><li>
+<a id="pgfId-1040710"></a>Click <em>Browse</em> to open the Library Browser. </li><li>
+<a id="pgfId-1040714"></a>In the <em>Library</em> column, select <em>analogLib</em>. </li><li>
+<a id="pgfId-1040727"></a>In the <em>Cell</em> column, scroll down and select <em>simulinkCoupler</em>. <br />
+<a id="pgfId-1040734"></a><div class="webflare-div-image">
+<img width="515" height="358" src="images/tutorial2-3.gif" /></div></li><li>
+<a id="pgfId-1040735"></a>On the Add Instance form, change the number of input pins to 2 and the number of output pins to 3 as follows: <br />
+<a id="pgfId-1040830"></a><div class="webflare-div-image">
+<img width="439" height="464" src="images/tutorial2-4.gif" /></div><ol><li>
+<a id="pgfId-1040767"></a>In the <em>Number on input pins</em> field, type <code>2</code>. </li><li>
+<a id="pgfId-1040771"></a>In the <em>Number of output pins</em> field, type <code>3</code>. </li></ol></li><li>
+<a id="pgfId-1040664"></a>In the schematic window, place the <code>simulinkCoupler</code> instance. <br />
+<a id="pgfId-1040812"></a><div class="webflare-div-image">
+<img width="353" height="198" src="images/tutorial2-5.gif" /></div></li><li>
+<a id="pgfId-1041033"></a>Choose <em>File &#8211; Check and Save</em>. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1040793"></a>Specifying Automatic Generation of the Verilog-AMS <a id="autogenerateVerilogAMS"></a>Module</h2>
+
+<p>
+<a id="pgfId-1040841"></a>To specify automatic generation of a Verilog-AMS module for the <code>simulinkCoupler</code> block, do the following: </p>
+<ol><li>
+<a id="pgfId-1040845"></a>In ADE, choose <em>Setup &#8211; MATLAB/Simulink &#8211; Create Pcell coupler file</em>. <br />
+<a id="pgfId-1040891"></a>The Create Pcell Coupler File form appears. <br />
+<a id="pgfId-1042458"></a><div class="webflare-div-image">
+<img src="images/createpcell.gif" /></div></li><li>
+<a id="pgfId-1042459"></a>Verify that <em>Auto-create Pcell while netlisting</em> is turned on. <br />
+<a id="pgfId-1042460"></a>When <em>Auto-create Pcell while netlisting</em> is turned on, ADE generates the Verilog-AMS module automatically. </li><li>
+<a id="pgfId-1040892"></a>Click <em>OK</em>. <br />
+<a id="pgfId-1040978"></a>You are ready to <a href="tutorial1.html#cosimADEseparate">run cosimulation by starting two simulations separately</a>. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1040968"></a>Viewing and Modifying the Verilog-AMS <a id="modifyVerilogAMS"></a>Module</h2>
+
+<p>
+<a id="pgfId-1040993"></a>To view and modify the Verilog-AMS module for the <code>simulinkCoupler</code> that ADE generates, do the following: </p>
+<ol><li>
+<a id="pgfId-1041011"></a>In ADE, choose <em>Setup &#8211; MATLAB/Simulink &#8211; Create Pcell coupler file</em>. </li><li>
+<a id="pgfId-1041017"></a>On the Create Pcell Coupler File form, turn off <em>Auto-create Pcell while netlisting</em>. <br />
+<a id="pgfId-1041051"></a><div class="webflare-div-image">
+<img src="images/autoCreateTurnedOff.gif" /></div></li><li>
+<a id="pgfId-1041019"></a>Click <em>Select</em> twice. <br />
+<a id="pgfId-1041062"></a>The RF Transmitter System Testbench schematic appears in the foreground.</li><li>
+<a id="pgfId-1041066"></a>Select the <em>CouplerToSimulink</em> instance. <br />
+<a id="pgfId-1041073"></a>The instance name appears in the <em>Coupler instance</em> field on the Create Pcell Coupler File form. <br />
+<a id="pgfId-1041084"></a><div class="webflare-div-image">
+<img width="465" height="194" src="images/tutorial2-8.gif" /></div></li><li>
+<a id="pgfId-1041058"></a>Click <em>Generate Verilog-AMS</em> to create the Verilog-AMS code for the Pcell coupler. <br />
+<a id="pgfId-1041133"></a>The following success message appears in the output area of the CIW: <pre class="webflare-pre-block webflare-courier-new" id="#id1041137">
+<a id="pgfId-1041137"></a>Generated Verilog-AMS file successfully. </pre></li><li>
+<a id="pgfId-1041129"></a>On the Create Pcell Coupler File form, click <em>Edit Verilog-AMS</em>. <br />
+<a id="pgfId-1041157"></a>The Verilog-AMS code for the <code>simulinkCoupler</code> cell appears in a text editing window. </li><li>
+<a id="pgfId-1041153"></a>Quit the text editor window. </li><li>
+<a id="pgfId-1041207"></a>(Optional) You can <a href="tutorial1.html#cosimADEseparate">run cosimulation by starting two simulations separately</a>. </li><li>
+<a id="pgfId-1041174"></a>To exit Cadence software and MATLAB, choose <em>File &#8211; Exit</em> in the CIW. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="tutorial1.html" id="prev" title="Running Cosimulation from ADE Using the Fixed-Cell Coupler">Running Cosimulation from ADE  ...</a></em></b><b><em><a href="tutorial3.html" id="nex" title="Running Cosimulation from MATLAB/Simulink">Running Cosimulation from MATL ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
