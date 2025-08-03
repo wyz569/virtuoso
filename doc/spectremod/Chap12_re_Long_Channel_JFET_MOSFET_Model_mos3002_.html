@@ -1,0 +1,670 @@
+
+<html><head><title>Long Channel JFET/MOSFET Model (mos3002)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="TopicTags" content="TRUE" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686594950" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Long Channel JFET/MOSFET Model (mos3002)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686594950" />
+<meta name="NextFile" content="Chap12_re_Compact_MOS-Transistor_Model_mos705_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap12_re_MOS_Model_40_Level_40_mos40t_.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Long Channel JFET/MOSFET Model (mos3002)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="Philips" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap12_re_MOS_Model_40_Level_40_mos40t_.html" title="MOS Model 40, Level 40 (mos40t)">MOS Model 40, Level 40 (mos40t ...</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap12_re_Compact_MOS-Transistor_Model_mos705_.html" title="Compact MOS-Transistor Model (mos705)">Compact MOS-Transistor Model ( ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a name="Filename:re_Long_Channel_JFET_MOSFET_Model_mos3002_" title="Long Channel JFET/MOSFET Model (mos3002)"></a><h2>
+<a name="pgfId-1040113"></a><a name="89040"></a>Long Channel JFET/MOSFET Model (mos3002)<a name="marker-1040112"></a></h2>
+
+<p>
+<a name="pgfId-1040114"></a>This long channel JFET/MOSFET model is specially developed to describe the drift region of LDMOS, EPMOS and VDMOS devices. It is described in the Philips MOST Modelbook (Dec.98) as MOS model, level 3002 (Used for DMOS). Information on how to obtain this document can be found on Source Link by searching for Philips. </p>
+<p>
+<a name="pgfId-1040115"></a>Note: In noise analysis, mos3002 instances will not generate any contribution, since there are no noise sources included in the mos3002 model.</p>
+<p>
+<a name="pgfId-1040116"></a> (c) Philips Electronics N.V. 1993, 1994, 1996, 1998</p>
+<p>
+<a name="pgfId-1040117"></a>This device is supported within altergroups.</p>
+<p>
+<a name="pgfId-1040118"></a>This device is dynamically loaded from the shared object /&lt;install_dir&gt;/tools.lnx86/cmi/lib/5.0/libphilips_sh.so.</p>
+
+<h4>
+<a name="pgfId-1040119"></a>Sample Instance Statement</h4>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-1040120"></a>mn3 (1 2 0 0) nch3002 area=1 m=2</pre>
+<h4>
+<a name="pgfId-1040121"></a>Sample Model Statement</h4>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-1040122"></a>model nch3002 mos3002 ron=20 rsat=150 vsat=1 tox=1.23e-5 dch=1.1e16 vsub=0.58 csub=5.43e-13 tausc=1.2e-12 kf=1 tref=27 psat=1 dta=0</pre>
+<h4>
+<a name="pgfId-1040124"></a>Instance Syntax<a name="marker-1040123"></a></h4>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-1040125"></a>Name&#160;&#160;d&#160;&#160;g&#160;&#160;s&#160;&#160;[b] ModelName parameter=value ...</pre>
+<h4>
+<a name="pgfId-1040127"></a>Instance Parameters<a name="marker-1040126"></a></h4>
+<table class="webflareTable" id="#id1110990">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316745"></a><code>mult=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316747"></a>Number of devices in parallel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316749"></a> <code>area=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316751"></a>Alias of mult.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316753"></a> <code>region=triode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316755"></a>Estimated DC operating region, used as a convergence aid. Possible values are <code>off</code>, <code>triode</code>, <code>sat</code>, or <code>subth</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316757"></a> <code>m=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316759"></a>Multiplicity factor.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a name="pgfId-1040133"></a>Model Syntax<a name="marker-1040132"></a></h4>
+<pre class="webflare-courier-new codeContent">
+<a name="pgfId-1040134"></a>model modelName mos3002 parameter=value ...</pre>
+<h4>
+<a name="pgfId-1040136"></a>Model Parameters<a name="marker-1040135"></a></h4>
+<table class="webflareTable" id="#id1111053">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316769"></a><code>type=n</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316771"></a>Transistor gender. Possible values are <code>n</code> or <code>p</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316773"></a> <code>ron=1.0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316775"></a>Ohmic resistance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316777"></a> <code>rsat=1.0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316779"></a>Space charge resistance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316781"></a> <code>vsat=10.0 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316783"></a>Critical drain-source voltage for hot carriers.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316785"></a> <code>psat=1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316787"></a>Velocity saturation coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316789"></a> <code>vp=-1.0 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316791"></a>Pinch off voltage at zero gate and substrate voltages.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316793"></a> <code>tox=-1.0 cm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316795"></a>Gate oxide thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316797"></a> <code>dch=1.0e15 cm</code><sup>-3</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316799"></a>Doping level channel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316801"></a> <code>dsub=1.0e15 cm</code><sup>-3</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316803"></a>Doping level substrate.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316805"></a> <code>vsub=0.6 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316807"></a>Substrate diffusion voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316809"></a> <code>vgap=1.2 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316811"></a>Band gap voltage channel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316813"></a> <code>cgate=0.0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316815"></a>Gate capacitance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316817"></a> <code>csub=0.0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316819"></a>Substrate capacitance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316821"></a> <code>tausc=0.0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316823"></a>Space charge transit time of the channel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316825"></a> <code>ach=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316827"></a>Temperature coefficient resistivity of the channel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316829"></a> <code>kf=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316831"></a>Flickernoise coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316833"></a> <code>af=1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316835"></a>Flickernoise exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316837"></a> <code>tr (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316839"></a>Reference temperature. Default set by option <code>tnom</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316841"></a> <code>tref (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316843"></a>Alias of tr. Default set by option <code>tnom</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316845"></a> <code>tnom (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316847"></a>Alias of tr. Default set by option <code>tnom</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316849"></a> <code>dta=0.0 K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316851"></a>Temperature offset of the device.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316853"></a> <code>trise=0.0 K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316855"></a>Alias of <code>dta</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a name="pgfId-1040160"></a>Output Parameters<a name="marker-1040159"></a></h4>
+<table class="webflareTable" id="#id1111201">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316857"></a><code>ront (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316859"></a>Ohmic resistance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316861"></a> <code>rsat (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316863"></a>Space charge resistance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316865"></a> <code>vsatt (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316867"></a>Critical drain-source voltage for hot carriers.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316869"></a> <code>vsubt (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316871"></a>Substrate diffusion voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316873"></a> <code>cgate (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316875"></a>Gate capacitance at zero bias.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316877"></a> <code>csubt (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316879"></a>Substrate capacitance at zero bias.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a name="pgfId-1040168"></a>Operating-Point Parameters</h4>
+<p>
+<a name="pgfId-1316968"></a><a name="marker-1040167"></a></p>
+<table class="webflareTable" id="#id1111271">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316881"></a><code>pwr (W)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316883"></a>Power.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316885"></a> <code>ids (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316887"></a>Total current including velocity saturation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316889"></a> <code>qb (Coul)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316891"></a>Substrate charge.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316893"></a> <code>qg (Coul)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316895"></a>Gate charge.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316897"></a> <code>qds (Coul)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316899"></a>Space charge in the channel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316901"></a> <code>gdsd (S)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316903"></a>Conductance (d ids / d vd).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316905"></a> <code>gdsg (S)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316907"></a>Conductance (d ids / d vg).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316909"></a> <code>gdss (S)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316911"></a>Conductance (d ids / d vs).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316913"></a> <code>gdsb (S)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316915"></a>Conductance (d ids / d vb).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316917"></a> <code>cbd (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316919"></a>Capacitance (d qb / d vd).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316921"></a> <code>cbg (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316923"></a>Capacitance (d qb / d vg).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316925"></a> <code>cbs (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316927"></a>Capacitance (d qb / d vs).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316929"></a> <code>cbb (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316931"></a>Capacitance (d qb / d vb).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316933"></a> <code>cgd (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316935"></a>Capacitance (d qg / d vd).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316937"></a> <code>cgg (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316939"></a>Capacitance (d qg / d vg).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316941"></a> <code>cgs (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316943"></a>Capacitance (d qg / d vs).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316945"></a> <code>cgb (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316947"></a>Capacitance (d qg / d vb).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316949"></a> <code>cdsd (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316951"></a>Capacitance (d qds / d vd).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316953"></a> <code>cdsg (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316955"></a>Capacitance (d qds / d vg).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316957"></a> <code>cdss (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316959"></a>Capacitance (d qds / d vs).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316961"></a> <code>cdsb (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a name="pgfId-1316963"></a>Capacitance (d qds / d vb).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a name="pgfId-1316972"></a>Related Topics</em></h4>
+
+<p>
+<a name="pgfId-1316976"></a><a href="Chap12.html#22290">Philips Models</a></p>
+<p>
+<a name="pgfId-1316980"></a><a href="Chap12_re_Long_Channel_JFET_MOSFET_Model_mos30_.html#99169">Long Channel JFET/MOSFET Model (mos30)</a></p>
+<p>
+<a name="pgfId-1316984"></a><a href="Chap12_re_JFETIDG_Model_jfetidg_.html#88443">JFETIDG Model (jfetidg)</a></p>
+
+<!-- [TOPIC_END] -->
+  <!--  [TOPIC_START_OPEN]type=cmdref
+
+[TOPIC_START_ATTR]text=Compact MOS-Transistor Model (mos705)
+
+[TOPIC_START_ATTR]description=
+
+[TOPIC_START_ATTR]keyword=
+
+[TOPIC_START_CLOSE] -->
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap12_re_MOS_Model_40_Level_40_mos40t_.html" id="prev" title="MOS Model 40, Level 40 (mos40t)">MOS Model 40, Level 40 (mos40t ...</a></em></b><b><em><a href="Chap12_re_Compact_MOS-Transistor_Model_mos705_.html" id="nex" title="Compact MOS-Transistor Model (mos705)">Compact MOS-Transistor Model ( ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

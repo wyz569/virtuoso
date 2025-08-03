@@ -1,0 +1,1155 @@
+
+<html><head><title>Linear N Port (nport)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686594941" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Linear N Port (nport)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686594941" />
+<meta name="NextFile" content="Chap1_re_Current_Probe_iprobe_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap1_re_Independent_Resistive_Source_port_.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Linear N Port (nport)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="Circuit Components" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap1_re_Independent_Resistive_Source_port_.html" title="Independent Resistive Source (port)">Independent Resistive Source ( ...</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap1_re_Current_Probe_iprobe_.html" title="Current Probe (iprobe)">Current Probe (iprobe)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Linear_N_Port_nport_" title="Linear N Port (nport)"></a><h2>
+<a id="pgfId-1038940"></a><a id="22065"></a>Linear N Port (nport)<a id="nport"></a></h2>
+
+<p>
+<a id="pgfId-1038941"></a>An N-port takes its characteristics from an S, Y, or Z-parameter data file. An N-port can have as many ports as described in the data file. Each pair of terminals in the `nport&#39; instance statement represents one port. Because there is no limit to the number of ports, there is no limit to the number of terminals. However, the terminals must be specified in pairs and you must specify at least one pair. The order of the pairs is the same as the order of the ports in the data file. Any missing ports are ignored.</p>
+<p>
+<a id="pgfId-1038942"></a>The S, Y, or Z-parameter data file specifies the characteristics of the N-port. You can scale the frequency axis with the <code>scale</code> parameter. The frequencies in the data file are then multiplied by <code>scale</code> before the simulator uses them. The default scale factor is unity. In addition to Spectre&#39;s native format, the S, Y, or Z-parameters can be in Touchstone or CITIfile format, and the data can be given as: real-imag, mag-deg, mag-rad, db-deg, or db-rad.</p>
+<p>
+<a id="pgfId-1038943"></a>An internal thermal noise model is used in noise analysis. However, if you provide frequency-dependent noise data, this data is used to build a noise model. Currently, the Touchstone format accepts the two-port noise parameters (NFmin, Gamma (Gopt, Bopt) and Rn), while Spectre&#39;s native format accepts both two-port noise parameters and noise correlation matrix. </p>
+<p>
+<a id="pgfId-1038944"></a>If <code>interp=linear</code> or <code>spline</code> is specified, the impulse response is calculated and the convolution-based method is used for simulation in the time domain. It is assumed that the S, Y, or Z-parameter data is complete and smooth enough to be safely interpolated or extrapolated in the frequency range from fdelta to fmax, and to DC. N-port can be used to model different kinds of systems. The default setting of the impulse response and convolution algorithm is made for typical N-port applications. See the notes below on when and how to set some of the controlling parameters. </p>
+<p>
+<a id="pgfId-1038945"></a>Linear interpolation or cubic spline is used for data in polar form. A simple algorithm removes 2 pi jumps in the phase data. Frequency points where the data is measured must therefore be close enough to avoid an excessive number of jumps. Unfortunately, noisy phase data can cause unnecessary warning messages. The number of frequency domain samples used for FFT is <code>fmax</code>/<code>fdelta</code> with the upper limit of <code>maxn</code>. It might be necessary to increase <code>maxn</code> for extremely large average group delays. When <code>usewindow</code> is set to <code>yes</code>, the data in the frequency domain is multiplied by the Kaiser-Bessel window function with smoothing parameter set to one. </p>
+<p>
+<a id="pgfId-1038946"></a>If <code>interp=rational</code> is specified, the data is interpolated and extrapolated using a rational function fit to the data. The degree of rational interpolation is automatically selected based on the values of <code>abserr</code> and <code>relerr</code>, unless <code>ratorder</code> is given, in which case <code>relerr</code> and <code>abserr</code> are ignored in selecting the order of the rational function interpolation. It is recommended to allow the simulator to automatically select the rational interpolation order.</p>
+<p>
+<a id="pgfId-1067730"></a>When <code>interp=bbspice</code> and <code>nport_bbspice_to_linear=yes</code> are specified, then if:</p>
+<ul><li>
+<a id="pgfId-1067909"></a>bbspice fails, interpolation method will switch to linear for all analysis.</li><li>
+<a id="pgfId-1067936"></a>bbspice gives large fitting error, interpolation method will switch to linear for dc, ac, xf, sp, noise, stb analyses, and hb analysis on HB Newton stage.</li></ul>
+
+<p>
+<a id="pgfId-1038948"></a>If the S, Y, or Z-parameter data contains noise, <code>abserr</code> and <code>relerr</code> should be set so that the fitting procedure can ignore the noise, for example, by setting <code>abserr</code> above the noise floor and/or relaxing <code>relerr</code> as necessary. </p>
+<p>
+<a id="pgfId-1038949"></a>Because the fitting procedure can take a long time for complicated data, the reduced order model (ROM) file option is available to store and re-use the rational interpolation function in subsequent simulations.</p>
+<p>
+<a id="pgfId-1038950"></a>It is not practical to rely on extrapolated data. </p>
+<p>
+<a id="pgfId-1038951"></a>If the <code>matrixform</code> parameter is set to <code>yes</code>, nport becomes a state-space model. A state-space model is a set of state space equations in matrix form describing a linear system. The equations are in the following form:</p>
+<p>
+<a id="pgfId-1038952"></a>E(dx/dt) = Ax + Bu </p>
+<p>
+<a id="pgfId-1038953"></a>y = Cx + K(du/dt) + Du </p>
+<p>
+<a id="pgfId-1038954"></a>where u is the input vector, y is the output vector, and x is the internal-state vector. A, B, C, D, E, and K are coefficient matrices. </p>
+<p>
+<a id="pgfId-1038955"></a>Refer to the notes on state-space models for detailed information on how to use the parameters. </p>
+
+<h3>
+<a id="pgfId-1038956"></a>Sample Instance Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038957"></a>x1 (a1 0 b1 0 b3 0) ndata file=&quot;sparam2.data&quot;</pre>
+<h3>
+<a id="pgfId-1038958"></a>Sample Model Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038959"></a>model ndata nport file=&quot;sparam.data&quot; scale=1</pre>
+
+<p>
+<a id="pgfId-1038960"></a>This device is not supported within altergroup.</p>
+
+<h3>
+<a id="pgfId-1038961"></a>Synopsis</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038962"></a>Name&#160;&#160;t1&#160;&#160;b1&#160;&#160;[t2]&#160;&#160;[b2] ... ModelName &lt;parameter=value&gt; ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038963"></a>Name&#160;&#160;t1&#160;&#160;b1&#160;&#160;[t2]&#160;&#160;[b2] ... nport &lt;parameter=value&gt; ...</pre>
+
+<p>
+<a id="pgfId-1038964"></a>Terminals must be given in pairs.</p>
+
+<h3>
+<a id="pgfId-1038965"></a>Model Synopsis</h3>
+
+<p>
+<a id="pgfId-1038966"></a>model ModelName nport &lt;parameter=value&gt; ...</p>
+
+<h3>
+<a id="pgfId-1038968"></a>Instance Parameters</h3>
+<p>
+<a id="pgfId-1059158"></a><a id="marker-1038967"></a></p>
+<table class="webflareTable" id="#id1059109">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092049"></a><code>m=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092051"></a>Multiplicity factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092053"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092055"></a>S-parameter data file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092057"></a><code>com_file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092059"></a>S-parameter data compress file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092061"></a><code>datafmt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092063"></a>The format of the S-parameter data file. If this parameter is not specified, Spectre detects the format by itself. Possible values are <code>spectre</code>, <code>touchstone</code>, <code>citi</code>, <code>rfm</code>, and<code> bnp</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092065"></a><code>scale=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092067"></a>Frequency scale factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1092069"></a><code>interp=nport_default_interp</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092073"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092075"></a>Method to interpolate S-parameter data, only valid for datafmt=spectre/touchstone/citi/bnp. Where &#39;interp&#39; is not specified, by default it adheres to the global option nport_default_interp.<br />Possible values are <code>spline</code>, <code>rational</code>, <code>linear</code> and <code>bbspice</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092077"></a><code>matrixform=no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092079"></a>Flag for matrix form input. Possible values are <code>yes </code>and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092081"></a><code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092083"></a>Should nport generate noise. Possible values are <code>yes </code>and <code>no</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1059243"></a>Spline/Linear interpolation parameters</h4>
+<table class="webflareTable" id="#id1059255">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092085"></a><code>fmax (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092087"></a>Maximum frequency of interest. Default is three times the highest frequency found in the S-parameter file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092089"></a><code>fdelta (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092091"></a>Frequency sampling interva, automatically calculated by the simulator. If you specify the parameter explicitly, adaptive sampling is disabled.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092093"></a><code>maxn=131072</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092095"></a>Maximal order of impulse response. Cannot exceed 262144.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1092097"></a><code>impnoiselevel=1.0e-4</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092101"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092103"></a>Noise level threshold for impulse responses used in causality enforcement.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092105"></a><code>imptrunc=1.0e-4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092107"></a>Impulse response truncation threshold relative to the maximum absolute value. The head and tail of the impulse response below imptrunc is removed to speed up the simulation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092109"></a><code>gmin=1.0e-9</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092111"></a>Adding gmin (minimum conductance) to nport terminals for tran and hb analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092113"></a><code>datatrunc=1.0e-4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092115"></a>Relative truncation threshold for the S-parameter data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092117"></a><code>usewindow=no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092119"></a>Use smooth data windowing function. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092121"></a><code>dcextrap=constant</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092123"></a><code>&#160;&#160;&#160;&#160;</code> Long delay DC extrapolation method. dcextrap = bbspice is valid only for freq-domain analysis.<br />Possible values are <code>constant</code>, <code>unwrap</code>, <code>hpunwrap</code> and <code>bbspice</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092125"></a><code>hfextrap=constant</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092127"></a>High-frequency extrapolation method for frequency-domain simulation. hfextrap = bbspice is valid only for freq-domain analysis.<br />Possible values are <code>constant</code>, <code>linear</code> and <code>bbspice.</code></p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1059252"></a>Passivity checking and enforcement parameters</h3>
+<table class="webflareTable" id="#id1059308">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092129"></a><code>passivity=check</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092131"></a>Check and enforce passivity of S parameters. For <code>interp=bbspice</code>, default value is <code>fit_enforce</code>. For more information, see passivity.<br />Possible values are <code>no</code>, <code>check</code>, <code>enforce</code>, <code>fit_weak_enforce</code>, and <code>fit_enforce</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092133"></a><code>pabstol=-1.0e-6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092135"></a>Absolute tolerance of passivity criteria for original s-parameter data.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1047571"></a>Causality correction parameters</h4>
+<table class="webflareTable" id="#id1059325">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092137"></a><code>causality=fmax</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092139"></a>Correct the S-parameter data to ensure that the system is causal. <code>auto</code> takes long time to perform causality correction. <code>fmax_active</code> can be used for active data. Possible values are <code>no</code>, <code>fmax</code>, <code>auto</code>, <code>fmax_active</code>, and <code>bbspice</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1047573"></a>Rational interpolation parameters</h4>
+<table class="webflareTable" id="#id1059336">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092141"></a><code>relerr=0.01</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092143"></a>Maximum relative allowed tolerance for rational interpolation errors. Deviations of the nport model from the supplied S-parameter data of relative magnitude less than <code>relerr</code> are mostly ignored.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092145"></a><code>abserr=1e-4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092147"></a>Maximum absolute allowed tolerance for rational interpolation errors. Deviations of the nport model from the supplied S-parameter data of absolute magnitude less than <code>abserr</code> are ignored.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092149"></a><code>romdatfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092151"></a>File used for storing time-domain reduced order model (ROM).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092153"></a><code>ratorder</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092155"></a>Order of rational function to use in fitting the S-parameter data. If this argument is given, <code>relerr</code> and <code>abserr</code> are ignored in selecting the order of the rational function interpolation. If <code>ratorder</code> is not specified, the simulator attempts to select an order of rational interpolation that satisfies the criteria implied by <code>abserr</code> and <code>relerr</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1047578"></a>Noise parameters</h4>
+<table class="webflareTable" id="#id1059365">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092157"></a><code>trise (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092159"></a>Temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092161"></a><code>thermalnoise=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092163"></a>Should nport generate noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092165"></a><code>noisemodel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092167"></a>Use either the internal thermal noise model or the externally supplied noise data in the S-parameter data file. The default behavior is to use external data whenever it is available. When <code>interp=bbspice</code>, externally supplied noise data is ignored and the broadbandspice rational fitting model is used to get the noise model. Possible values are <code>internal</code> and <code>external</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092169"></a><code>noisecorr=complex</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092171"></a>Setting <code>noisecorr</code> to <code>real</code> forces the nport noise correlation matrix to be real-valued. The parameter is used for backward compatibility only. Its value is determined automatically and its use is not recommended because it can lead to an incorrect answer. The simulator generates a warning if the noise correlation matrix is complex while the value of <code>noisecorr</code> is set to <code>real</code>. Possible values are <code>real</code> and <code>complex</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1047583"></a>Matrixform state-space model parameter</h4>
+<table class="webflareTable" id="#id1059400">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092194"></a><code>porttypes=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092196"></a>A vector of integers that defines the types of ports. Use 0 for input port, 1 for output port, and 2 for both input and output ports.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092198"></a><code>portquantities=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092200"></a>A vector of integers that defines the quantities of ports. Use 0 for voltage and 1 for current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092202"></a><code>matrixfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092204"></a>Matrix entry data file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092206"></a><code>matrixA=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092208"></a>Non-zero entries in coefficient matrix A. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092210"></a><code>matrixB=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092212"></a>Non-zero entries in coefficient matrix B. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092214"></a><code>matrixC=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092216"></a>Non-zero entries in coefficient matrix C. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092218"></a><code>matrixD=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092220"></a>Non-zero entries in coefficient matrix D. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092222"></a><code>matrixE=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092224"></a>Non-zero entries in coefficient matrix E. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092226"></a><code>matrixK=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092228"></a>Non-zero entries in coefficient matrix K. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1092230"></a><code>acmodel=freqdomain</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092234"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092236"></a>Alters nport behavior in small signal analyses: sp, ac, and xf. The default value is <code>freqdomain</code>. Possible values are <code>freqdomain</code> and <code>timedomain</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092238"></a><code>outfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092240"></a>File used for storing the equivalent S-parameter data based on corresponding time-domain model. The file format is touchstone. The instance name is added as a suffix and the file extension is added automatically.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092242"></a><code>bbsfreqband=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092244"></a>The frequency band of interest. More weight will be added to this frequency band to increase the accuracy of BBspice fitting at this band. The parameter takes a vector with the first element is the start frequency point and the second element is the end freq point..</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092246"></a><code>maxdelay (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092248"></a></p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1092423"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1092431"></a><a href="Chap1_re_Linear_N_Port_nport_.html#55968">Model Syntax</a></p>
+<p>
+<a id="pgfId-1092419"></a><a href="Chap1_re_Linear_N_Port_nport_.html#92271">Important note about spline and linear interpolation parameters</a></p>
+<p>
+<a id="pgfId-1094171"></a><a href="Chap1.html#44786">Circuit Components</a></p>
+
+<h3>
+<a id="pgfId-1047596"></a><a id="55968"></a>Model Syntax<a id="marker-1047595"></a></h3>
+<a id="pgfId-1047597"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+model modelName nport parameter=value ...</pre>
+<h3>
+<a id="pgfId-1059523"></a>Model Parameters<a id="marker-1059522"></a></h3>
+<table class="webflareTable" id="#id1059532">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092256"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092258"></a>S-parameter data file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092260"></a><code>datafmt</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092262"></a>The format of the S-parameter data file. If this parameter is not specified, Spectre detects the format by itself. Possible values are <code>spectre</code>, <code>touchstone</code>, <code>citi</code>, <code>rfm</code>, and <code>bnp</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092264"></a><code>scale=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092266"></a>Frequency scale factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092268"></a><code>dcextrap=constant</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092270"></a>Long delay DC extrapolation method, dcextrap = bbspice is valid only for freq-domain analysis.<br />Possible values are <code>constant</code>, <code>unwrap</code>, <code>hpunwrap</code> and <code>bbspice</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092272"></a><code>matrixform=no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092274"></a>Flag for matrix form input. Possible values are <code>yes </code>and <code>no</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1059529"></a>Spline/Linear interpolation parameters</h4>
+<table class="webflareTable" id="#id1059571">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092276"></a><code>interp=linear</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092278"></a>Method to interpolate S-parameter data, only valid for datafmt=spectre/touchstone/citi/bnp.<br />Possible values are <code>spline</code>, <code>rational</code>, <code>linear</code> and <code>bbspice</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092280"></a><code>fmax (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092282"></a>Maximum frequency of interest. Default is three times the highest frequency provided in the S-parameter file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092284"></a><code>fdelta (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092286"></a>Frequency sampling interval automatically calculated by the simulator. If you specify the parameter explicitly, adaptive sampling is disabled.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092288"></a><code>maxn=131072</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092290"></a>Maximal order of impulse response. Cannot exceed 262144.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1092292"></a><code>impnoiselevel=1.0e-4</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092296"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092298"></a>Noise level threshold for the impulse responses used in causality enforcement.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092300"></a><code>imptrunc=1.0e-4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092302"></a>Relative truncation threshold for the impulse response.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092304"></a><code>gmin=1.0e-9</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092306"></a>Adding gmin (minimum conductance) to nport terminals for tran and hb analysis.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092308"></a><code>datatrunc=1.0e-4</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092310"></a>Relative truncation threshold for the S-parameter data.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092312"></a><code>usewindow=no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092314"></a>Use smooth data windowing function. Possible values are <code>yes </code>and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1092316"></a><code>hfextrap=constant</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092320"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092322"></a>Long delay high-frequency extrapolation method. hfextrap = bbspice is valid only for freq-domain analysis.<br />Possible values are <code>constant</code>, <code>linear</code> and <code>bbspice</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1047614"></a>Passivity checking and enforcement parameters</h4>
+<table class="webflareTable" id="#id1059631">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092333"></a><code>passivity=check</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092335"></a>Check and enforce passivity of s parameters. For <code>interp=bbspice</code>, default value is <code>fit_enforce</code>. For more information, see <code>passivity</code>. Possible values are <code>no</code>, <code>check</code>, <code>enforce</code>, <code>fit_weak_enforce</code>, and <code>fit_enforce</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092337"></a><code>pabstol=-1.0e-6</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092339"></a>Absolute tolerance of passivity criteria.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1047617"></a>Causality correction parameters</h4>
+<table class="webflareTable" id="#id1059652">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092341"></a><code>causality=fmax</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092343"></a>Correct the S-parameter data to ensure that the system is causal. The default value is <code>fmax</code>. <code>auto</code> takes a long time to perform causality correction. Possible values are <code>no</code>, <code>fmax</code>, and <code>auto</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1059716"></a>Noise parameters</h4>
+<table class="webflareTable" id="#id1059725">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092345"></a><code>trise=0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092347"></a>Default temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092349"></a><code>thermalnoise=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092351"></a>Should nport generate noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092353"></a><code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092355"></a>Should nport generate noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092357"></a><code>noisemodel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092359"></a>Use either the internal thermal noise model or the externally supplied noise data in the S-parameter data file. The default behavior is to use external data whenever it is available. When <code>interp=bbspice</code>, externally supplied noise data is ignored and broadbandspice rational fitting model is used to get the noise model. Possible values are <code>internal</code> and <code>external</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092361"></a><code>noisecorr=complex</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092363"></a>Setting <code>noisecorr</code> to <code>real</code> forces the nport noise correlation matrix to be real-valued. The parameter is used for backward compatibility only. Its value is determined automatically and&#160;&#160;                its use is not recommended because it can lead to an incorrect answer. The simulator generates a warning if the noise correlation matrix is complex while the value of <code>noisecorr</code> is set to <code>real</code>. Possible values are <code>real</code> and <code>complex</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1059722"></a>Matrixform state-space model parameter</h4>
+<table class="webflareTable" id="#id1059760">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092368"></a><code>porttypes=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092370"></a>A vector of integers that defines the types of ports. Use 0 for input port, 1 for output port, and 2 for both input and output ports.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092372"></a><code>portquantities=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092374"></a>A vector of integers that defines the quantities of ports. Use 0 for voltage and 1 for current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092376"></a><code>matrixfile</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092378"></a>Matrix entry data file name.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092380"></a><code>matrixA=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092382"></a>Non-zero entries in coefficient matrix A. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092384"></a><code>matrixB=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092386"></a>Non-zero entries in coefficient matrix B. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092388"></a><code>matrixC=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092390"></a>Non-zero entries in coefficient matrix C. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092392"></a><code>matrixD=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092394"></a>Non-zero entries in coefficient matrix D. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092396"></a><code>matrixE=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092398"></a>Non-zero entries in coefficient matrix E. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092400"></a><code>matrixK=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1092402"></a>Non-zero entries in coefficient matrix K. Its format is [ ... row_i col_j value_ij ... ].</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1092459"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1092463"></a><a href="Chap1_re_Linear_N_Port_nport_.html#22065">Linear N Port (nport)</a></p>
+<p>
+<a id="pgfId-1092467"></a><a href="Chap1_re_Linear_N_Port_nport_.html#92271">Important note about spline and linear interpolation parameters</a></p>
+<p>
+<a id="pgfId-1094190"></a><a href="Chap1.html#44786">Circuit Components</a></p>
+
+<h3>
+<a id="pgfId-1039041"></a><a id="92271"></a>Important note about spline and linear interpolation parameters</h3>
+
+<p>
+<a id="pgfId-1039042"></a><code>interp</code></p>
+<p>
+<a id="pgfId-1039043"></a>To calculate impulse response, either linear or spline interpolation is used to sample data points in the frequency domain, based on the S-parameter data file. When the input data points are sufficient, linear and spline interpolation produce comparable model accuracy. However, when the input data points are scarce, linear interpolation is preferred to bound jumps between data points. Interpolation/extrapolation can be avoided all together if the S-parameter data is provided from zero frequency to fmax with uniform step fdelta, and number of samples is a power of 2.</p>
+<p>
+<a id="pgfId-1039044"></a><code>fmax</code></p>
+<p>
+<a id="pgfId-1039045"></a>The default value of fmax is three times the highest frequency in the S-parameter data file. Impulse response is calculated by sampling frequency points between DC and `fmax&#39;. The purpose of this extrapolation is to preserve high-frequency model accuracy. However, if you have enough bandwidth in the S-parameter data file, `fmax&#39; needs to be set to the original highest frequency in the S-parameter data file. In general, fmax must be larger than the expected signal bandwidth.</p>
+<p>
+<a id="pgfId-1039046"></a><code>fdelta</code></p>
+<p>
+<a id="pgfId-1039047"></a>Frequency sampling interval automatically calculated by the simulator. If <code>causality=no</code>, it is the default of <code>fmax</code>/4096. If <code>causality=fmax/auto</code>, it is adaptively optimized. This interval is also limited by <code>fmax</code>/<code>maxn</code>. If you specify the parameter explicitly, adaptive sampling is disabled. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1066555"></a><code>fdelta</code> can be further reduced so that <code>fmax</code>/<code>fdelta</code> is a power of 2. This is required by the FFT algorithm.</div>
+<p>
+<a id="pgfId-1039048"></a><code>maxn</code></p>
+<p>
+<a id="pgfId-1039049"></a>Maximal order of impulse response, or the maximum number of sampling points in the frequency domain. You should increase this value only when modeling a system with large average group delay, such as transmission line. Setting this parameter to an unnecessarily large value slows down the time-domain simulation. The absolute upper limit for <code>maxn</code> is 262144.</p>
+<p>
+<a id="pgfId-220773"></a><code>impnoiselevel</code></p>
+<p>
+<a id="pgfId-1069664"></a>Noise level threshold for impulse responses used in causality enforcement.</p>
+<p>
+<a id="pgfId-1053116"></a><code>imptrunc</code></p>
+<p>
+<a id="pgfId-1053117"></a>Relative truncation threshold for impulse response. The head and tail of the impulse response with absolute values below <code>imptrunc</code> is removed to speed up the simulation.</p>
+<p>
+<a id="pgfId-1053081"></a><code>datatrunc</code></p>
+<p>
+<a id="pgfId-1053083"></a>S-parameter data truncation threshold relative to the maximum element in the same row. The S-parameter data below datatrunc is dropped. This improves the capability and performance for simulating large-scale nport systems. Set <code>datatrunc=0</code> to keep all S-parameter data.</p>
+<p>
+<a id="pgfId-1039052"></a><code>usewindow</code></p>
+<p>
+<a id="pgfId-1039053"></a>Kaiser-Bessel window with smoothing parameter 1 is used to regulate the stability of S-parameter data. This parameter trades off model accuracy with model stability and is particularly useful for S-parameter data with insufficient bandwidth. Window must be used for all-pass type systems, where S-parameters are non-zero for frequencies beyond <code>fmax</code>.</p>
+<p>
+<a id="pgfId-1039054"></a><code>dcextrap</code></p>
+<p>
+<a id="pgfId-1039055"></a>For long delay, the DC extrapolation method can be set to <code>constant</code>, <code>unwrap</code>, or <code>hpunwrap</code>. The default is <code>constant</code>, where, without a dc point, the low-frequency magnitude is held at the lowest data point and the dc phase is set to the real axis near the lowest-frequency data point and interpolated elsewhere. If the parameter is set to <code>unwrap</code> and there is no dc point, the DC magnitude is set based on a regression of some low-frequency data, and the DC phase is set by unwrapping the phase and then setting it onto the real axis. If the dc point is specified, the magnitude is interpolated while the phase is still determined using the unwrapped estimate. <code>hpunwrap</code> is similar to <code>unwrap</code> for DC phase extrapolation but provides an alternative approach for DC magnitude extrapolation, which may be preferred for high-pass characteristics. </p>
+<p>
+<a id="pgfId-1050651"></a><code>hfextrap</code></p>
+<p>
+<a id="pgfId-1050653"></a>For an all-pass system or nearly all-pass system, the high frequency extrapolation method can be set to <code>constant</code> or <code>linear</code>. The default is <code>constant</code>, which causes the out-of-band frequency magnitude and phase to be held at the highest data point. For the &#39;linear&#39; case, the out-of-band frequency magnitude is still held at the highest data point, but the phase is linearly extrapolated based on the phase of the in-band high frequency data.</p>
+<p>
+<a id="pgfId-1050654"></a><code>passivity</code></p>
+<p>
+<a id="pgfId-1061048"></a>Due to poor measurement accuracy, the S-parameter data may be non-passive. Non-passive S-parameter data may lead to non-converging or even unstable time domain simulations. . The <code>passivity</code> option controls the detection and enforcement of S-parameter simulation model passivity. The <code>passivity</code> option can be set to <code>no</code>, <code>check</code>, or <code>enforce </code>for <code>interp</code>=<code>spline</code>|<code>linear</code>. The default is <code>check</code>, which causes the simulator to check the S-parameter data at each frequency point and report non-passive data. If the parameter is set to <code>enforce</code>, the simulator corrects the data to ensure passivity, if the original data is non-passive. This can cause accuracy loss. </p>
+<p>
+<a id="pgfId-1061082"></a>For <code>interp=bbspice</code>, <code>passivity</code> may be set to <code>fit_weak_enforce</code> or <code>fit_enforce</code>, The default value is <code>fit_enforce</code>. With <code>passivity=fit_enforce</code>, the simulator always attempts to create a passive simulation model and favors passivity over accuracy. With <code>passivity=fit_weak_enforce</code>, the simulator does not create a passive model if the passivity enforcement phase results in a significant accuracy loss.</p>
+<p>
+<a id="pgfId-1061985"></a>For i<code>nterp=bbspice</code>, the simulator always checks if the S-parameter data is passive. Passivity options <code>fit_weak_enforce</code> and <code>fit_enforce</code> are only available for <code>interp=bbspice</code> and are interpreted as <code>passivity=check</code> for i<code>nterp=linear|spline</code>. Passivity options <code>no</code>, <code>check</code>, and <code>enforce</code> are only available for <code>interp=linear|spline</code> and are interpreted as <code>passivity=fit_enforce</code> for <code>interp=bbspice</code>.</p>
+<p>
+<a id="pgfId-1050657"></a><code>pabstol</code></p>
+<p>
+<a id="pgfId-1050659"></a>When checking or enforcing passivity, the default tolerance of the passivity criteria is -1.0e-6. If the parameter is set to a higher value, the passivity checking criteria loosens.</p>
+<p>
+<a id="pgfId-1050660"></a><code>causality</code></p>
+<p>
+<a id="pgfId-1053219"></a>For convolution-based time-domain simulation, causality is an important factor that affects the simulation accuracy. If <code>causality=fmax</code>, the simulator corrects the S-parameter causality up to <code>fmax</code>, as specified by the existing parameter. If <code>causality=auto</code>, the simulator corrects the S-parameter causality up to the automatically optimized fmax and ignores the existing parameter <code>fmax</code>. The parameters <code>usewindow</code> and <code>hfextrap</code> are ignored when <code>causality=fmax</code> or <code>causality=auto</code>. </p>
+<p>
+<a id="pgfId-1053220"></a>It is recommended to use <code>causality=fmax</code> to obtain good simulation accuracy. For certain cases, if <code>causality=fmax</code> does not provide the expected accuracy, you can try <code>causality=auto</code>. However, it is slow to perform causality correction for large systems if <code>causality=auto</code>. </p>
+
+<h4>
+<a id="pgfId-1050664"></a>Important note about parameters for validation tool</h4>
+
+<p>
+<a id="pgfId-1050666"></a>An S-parameter time-domain validation tool is used to compare the original S-parameter data with the equivalent S-parameter data based on the corresponding time-domain model. The simulator uses the equivalent S-parameter data instead of the original S-parameter data in small signal analyses: sp, ac, and xf.</p>
+<p>
+<a id="pgfId-1050667"></a><code>acmodel</code></p>
+<p>
+<a id="pgfId-1050669"></a>This parameter alters the nport behavior in small signal analyses: sp, ac, and xf. The default value is <code>freqdomain</code>. When <code>acmodel=freqdomain</code>, the frequency domain data is used directly in small signal analysis after interpolation/extrapolation to a set of frequency sweep points. When <code>acmodel=timedomain</code>, frequency domain data is converted to a time-domain model in the same way it is done in the transient initialization step. Then, the time-domain model is converted back to the frequency domain, which is used in small signal analysis.</p>
+<p>
+<a id="pgfId-1050670"></a><code>outfile</code></p>
+<p>
+<a id="pgfId-1050672"></a>This parameter is used to specify the name of the file used for storing the equivalent S-parameter data based on the corresponding time-domain model. The file format is touchstone. The instance name is added as a suffix and the file extension is added automatically. If the corresponding impulse responses are not generated, this parameter is ignored.</p>
+<p>
+<a id="pgfId-1050673"></a>You can run ac analysis with <code>acmodel=timedomain</code> and compare the results with <code>acmodel=freqdomain</code> to see if the time-domain model is accurate. In addition, you can plot the equivalent S-parameters (outfile) and compare the results with the original S-parameter data using VIVA.</p>
+<p>
+<a id="pgfId-1050801"></a>If <code>interp=bbspice</code>, this file is the same as the fitted sp file in the cache directory.</p>
+
+<h4>
+<a id="pgfId-1050674"></a>Important note about impulse responses (IR) reuse feature</h4>
+
+<p>
+<a id="pgfId-1070564"></a>Spectre checks there is a corresponding IR file. If yes, it loads the data from the IR file. If an IR file is not found, Spectre computes it and saves the IR file to the directory specified by the global option <code>nportirfiledir</code>. If the directory name is not specified, the file is written to /<code>home/&lt;username&gt;/.cadence/mmsim/</code>. To store the file in a location other than the default, you must specify either an absolute or a relative path. If a relative path is specified, the path is relative to the current working directory.</p>
+<p>
+<a id="pgfId-1050676"></a>The global option <code>nportirreuse={yes|no}</code> can be used to enable or disable the IR reuse feature for all nport instances.</p>
+<p>
+<a id="pgfId-1067198"></a><code>nportirreuse</code> and <code>nportirfiledir</code> also work for <code>interp=bbspice</code>. The stored file named with &#39;_encrypt&#39; is the encrypted rational fitting model (RFM) from bbspice. The stored file named with &#39;_save&#39; is the fitting error report, it is created only when large fitting errors show up.</p>
+<p>
+<a id="pgfId-1067194"></a>With <code>interp=bbspice</code>, there are some output files from bbspice run, they are located in <code>BBSpiceOutput</code> directory. This directory is under the current working directory unless the <code>-outdir</code> command line option is specified.</p>
+
+<h4>
+<a id="pgfId-1050677"></a>Important note about parameters for state-space models</h4>
+
+<p>
+<a id="pgfId-1050679"></a><code>porttype</code> and <code>portquantities</code></p>
+<p>
+<a id="pgfId-1050681"></a>Both parameters have the same number of entries as the number of ports, and each entry corresponds to a port. The entries are in the same order as the port order in the terminal specification of the instance. The <code>porttype</code> parameter specifies the type of each port of nport. A port can be of type input, output, or both. The <code>portquantities</code> parameter specifies whether each input/output is a voltage or current. Each entry in <code>portquantities</code> corresponds to one entry in <code>porttypes</code>. It specifies the quantity of input for input and both ports and the quantity of output for the output port. For both input and output ports, if the input quantity is set to voltage, the output quantity will be current and vice-versa.</p>
+<p>
+<a id="pgfId-1050682"></a><code>matrixfile</code></p>
+<p>
+<a id="pgfId-1050684"></a>Matrix entry data file name.</p>
+<p>
+<a id="pgfId-1050685"></a>File format:</p>
+<p>
+<a id="pgfId-1050686"></a>Any line beginning with &quot;;&quot;, &quot;#&quot;, or &quot;%&quot; is treated as a comment and discarded.</p>
+<p>
+<a id="pgfId-1050687"></a>Remaining lines should have a first character as A, B, C, D, E, or K, two integers, and a floating-point number. Such a line denotes an entry in the appropriate matrix with given row column indexes and matrix element.</p>
+<p>
+<a id="pgfId-1050688"></a>For example, a file may look like this:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050689"></a>;matrix A, 3x3</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050690"></a>A 1 1 1234.5678</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050691"></a>...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050692"></a>;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050693"></a>;matrix E, 3x3</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050694"></a>E 1 1 1.0</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050695"></a>...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050696"></a>;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050697"></a>;matrix B, 3x1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050698"></a>B 2 1 4.28</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050699"></a>...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050700"></a>;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050701"></a>;matrix C, 2x3</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050702"></a>C 2 1 3.14</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050703"></a>...</pre>
+
+<p>
+<a id="pgfId-1050704"></a>If a matrix is not specified in the file, it is treated as a zero matrix for A, B, C, D, and K. Matrix E is treated as an identity matrix, if it is not specified in the file.</p>
+<p>
+<a id="pgfId-1050705"></a>matrixA matrixB matrixC matrixD matrixE matrixK</p>
+<p>
+<a id="pgfId-1050707"></a>Coefficient matrices of the state-space model. The syntax of the vector is in sparse form, that is:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050708"></a>[ Row_1, Column_1, Value_11,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050709"></a>  ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050710"></a>  Row_i, Column_j, Value_ij,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1050711"></a>  ... ]</pre>
+
+<p>
+<a id="pgfId-1039088"></a>If a matrix is not specified, it is treated as a zero matrix for A, B, C, D, and K. Matrix E is treated as an identity matrix, if it is not specified.</p>
+
+<h4><em>
+<a id="pgfId-1092489"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1092493"></a><a href="Chap1_re_Linear_N_Port_nport_.html#55968">Model Syntax</a></p>
+<p>
+<a id="pgfId-1092497"></a><a href="Chap1_re_Linear_N_Port_nport_.html#22065">Linear N Port (nport)</a></p>
+<p>
+<a id="pgfId-1094209"></a><a href="Chap1.html#44786">Circuit Components</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap1_re_Independent_Resistive_Source_port_.html" id="prev" title="Independent Resistive Source (port)">Independent Resistive Source ( ...</a></em></b><b><em><a href="Chap1_re_Current_Probe_iprobe_.html" id="nex" title="Current Probe (iprobe)">Current Probe (iprobe)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

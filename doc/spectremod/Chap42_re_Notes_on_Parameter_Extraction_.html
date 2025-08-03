@@ -1,0 +1,255 @@
+
+<html><head><title>Notes on Parameter Extraction</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686595073" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Notes on Parameter Extraction" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686595073" />
+<meta name="NextFile" content="Chap42_re_Reference.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap42_re_Statistical_Variation_.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Notes on Parameter Extraction" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="R3" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap42_re_Statistical_Variation_.html" title="Statistical Variation">Statistical Variation</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap42_re_Reference.html" title="Reference">Reference</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Notes_on_Parameter_Extraction_" title="Notes on Parameter Extraction"></a><h2>
+<a id="pgfId-1035925"></a><a id="24373"></a>Notes on Parameter Extraction</h2>
+
+<p>
+<a id="pgfId-1035926"></a>This section provides some information that can help in setting up parameter extraction algorithms. It describes techniques to get initial values that can then be refined by optimization. It does not give a complete and perfect procedure for parameter extraction. As this section does not deal with the details of the model, but how to determine parameters from measured data, <code>V</code> and <code>I</code> have been used in this section only as the voltage across, and current through, the complete resistor (and not just the core resistor body, as is done in previous sections).</p>
+<p>
+<a id="pgfId-1035927"></a>Techniques for extraction of basic parameters, such as <code>rsh</code>, <code>xl</code>, and <code>xw</code>, some temperature coefficients and their geometric scaling, etc. are provided earlier and are not repeated here. Additional extraction techniques for the core bias dependence are provided here.</p>
+<p>
+<a id="pgfId-1035928"></a>The fundamental depletion (<code>p-n</code> junction or MOS) pinching component of the model is given earlier. Velocity saturation and self-heating affect the bias dependence for <code>E=VL</code>  significantly different from zero. Therefore the basic parameters&#160;&#160;&#160;&#160; of the model for one geometry, <code>gf</code>, <code>df</code>, and <code>dp</code>, should come from analysis of data where depletion pinching dominates,&#160;&#160;&#160;&#160; i.e. from low&#160;&#160;&#160;&#160;<code>V</code>,&#160;&#160;ideally&#160;&#160;extrapolated&#160;&#160;to, or measured&#160;&#160;(from&#160;&#160;small-signal AC excitation) at <code>V=0</code>. (The large  signal&#160;&#160;&#160;&#160; conductanc <code>eg=IV</code> cannot be directly calculated at <code>V=0</code>, but is equal to the small signal conductance <code>g=I/V</code> at that bias).&#160;&#160;&#160;&#160;           </p>
+<p>
+<a id="pgfId-1035929"></a>There are at least three approaches to determine the basic depletion pinching parameters, for diffused resistors. If the conductanc <code>e&#160;&#160;&#160;&#160;g</code> is known from measurements at three different biases, then the parameters can be calculated as&#160;&#160;&#160;&#160; follows. For these biases, (<code>V</code>i=V+2V1c for the i<sup>th</sup> values of <code>V</code> and <code>V</code>1c)</p>
+
+<p><strong>(-43)
+<a id="pgfId-1047254"></a></strong></p>
+<p>
+<a id="pgfId-1035933"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_49.gif" /></div>
+
+<p>
+<a id="pgfId-1037634"></a>therefore&#160;&#160;&#160;&#160;            </p>
+
+<p><strong>(-44)
+<a id="pgfId-1047260"></a></strong></p>
+<p>
+<a id="pgfId-1037638"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_50.gif" /></div>
+
+<p>
+<a id="pgfId-1037639"></a>and manipulating the above equation for two pairs of biases, and forming the difference, gives</p>
+
+<p><strong>(-45)
+<a id="pgfId-1047266"></a></strong></p>
+<p>
+<a id="pgfId-1035943"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_51.gif" /></div>
+
+<p>
+<a id="pgfId-1035944"></a>Starting with an initial estimate of <code>dp</code> = 2 , the equation can be solved using Newton-Raphson iteration. Then&#160;&#160;&#160;&#160;</p>
+
+<p><strong>(-46)
+<a id="pgfId-1047272"></a></strong></p>
+<p>
+<a id="pgfId-1035948"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_52.gif" /></div>
+
+<p>
+<a id="pgfId-1035949"></a>and</p>
+
+<p><strong>(-47)
+<a id="pgfId-1047278"></a></strong></p>
+<p>
+<a id="pgfId-1035953"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_53.gif" /></div>
+
+<p>
+<a id="pgfId-1035954"></a>An alternative is to, assuming that the depletion pinching effect is small, initialize <code>gf</code> to <code>g</code> at the lowest (zero) <code>Vi</code>, set <code>dp</code> = 2 , and then calculate an initial <code>df</code>  at the highest <code>Vi</code>.A 3 dimensional Newton-Raphson iteration can then&#160;&#160;&#160;&#160; be used to solve for <code> gf</code>, <code>df</code>, and <code>dp</code> at the three <code>V</code>i values.&#160;&#160;&#160;&#160; </p>
+<p>
+<a id="pgfId-1035955"></a>A direct solution also exists.</p>
+
+<p><strong>(-48)
+<a id="pgfId-1047284"></a></strong></p>
+<p>
+<a id="pgfId-1035959"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_54.gif" /></div>
+
+<p>
+<a id="pgfId-1035960"></a>and forming the difference between this quantity for two combinations of the selected three bias points gives&#160;&#160;&#160;&#160;</p>
+
+<p><strong>(-49)
+<a id="pgfId-1047290"></a></strong></p>
+<p>
+<a id="pgfId-1035964"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_55.gif" /></div>
+
+<p>
+<a id="pgfId-1035965"></a>where</p>
+
+<p><strong>(-50)
+<a id="pgfId-1047296"></a></strong></p>
+<p>
+<a id="pgfId-1035969"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_55a.gif" /></div>
+
+<p>
+<a id="pgfId-1035970"></a>These two quantities can be calculated from the <code>Vi</code> &#160;&#160;&#160;&#160;and <code>gi</code> data using the above equation&#160;&#160;&#160;&#160;</p>
+
+<p><strong>(-51)
+<a id="pgfId-1047302"></a></strong></p>
+<p>
+<a id="pgfId-1035974"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_56.gif" /></div>
+
+<p>
+<a id="pgfId-1035975"></a>The nonlinearity from the depletion pinching has the greatest sensitivity to <code>dp</code> for small <code>V</code>i, therefore one bias should be at as small a <code>V</code> as possible (zero, if small-signal conductance is being used as opposed to large signal conductance) and <code>V1c=0</code>.</p>
+<p>
+<a id="pgfId-1035976"></a>Preferably data should be taken for 3 or more <code>V1c</code> values (including zero). If such data are available then the other points used for extraction should be at the smallest <code>Vds</code> and the second lowest <code>V1c</code>, and the smallest <code>V</code> and the highest <code>V</code>1c. If data for only two <code>V</code>1c values (including zero) are available, besides the lowest <code>V</code> and lowest <code>V1c</code> point, use the lowest <code>V1c</code> point with a <code>V</code> higher than the smallest value and both small enough to ensure self-heating and velocity saturation effects are negligible and large enough to be sufficiently different from the lowest <code>V</code> value (so as not to be sensitive to measurement noise), and again as a third bias use the smallest <code>V</code> and the highest <code>V1c</code> point.</p>
+<p>
+<a id="pgfId-1035977"></a>For poly resistors, the <em>pinching</em> effect is from the depletion region at the bottom of the resistor, and the conductance of a poly resistor is</p>
+
+<p><strong>(-52)
+<a id="pgfId-1047308"></a></strong></p>
+<p>
+<a id="pgfId-1035981"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_57.gif" /></div>
+
+<p>
+<a id="pgfId-1035982"></a>where <code>X</code>, <code>W</code> and <code>L</code> are the thickness, width, and length of the polysilicon film that makes up the resistor, <code>k</code>Si and <code>k</code>ox are the relative dielectric permittivities of silicon and silicon dioxide, <code>T</code>ox is the oxide thickness, <img width="13" height="21" src="images/Chap42-73.gif" />
+ is the resistivity, and <code>V</code>0=q<img width="11" height="21" src="images/Chap42-74.gif" />
+SiN/C2ox. This can be seen to have the same general form, which is why the basic depletion pinching bias dependence of the <code>r3</code> model is also, with appropriate parameters, suitable for modeling poly resistors.</p>
+<p>
+<a id="pgfId-1035989"></a>For typical poly resistors on relatively thick oxides, the V<sub>0</sub>, which can be identified as the several tens or hundreds of volts, compared to the 1-2V value (twice the built-in potential) for <code>dp</code> resistor. Therefore the resistor conductance is</p>
+
+<p><strong>(-53)
+<a id="pgfId-1047314"></a></strong></p>
+<p>
+<a id="pgfId-1035993"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_58.gif" /></div>
+
+<p>
+<a id="pgfId-1035994"></a>which, as measured data also shows, has a linear&#160;&#160;<code>g(V1c)</code> &#160;&#160;&#160;&#160;dependence. This means that there are only two independent&#160;&#160;&#160;&#160; quantities&#160;&#160;&#160;&#160; that &#160;&#160;&#160;&#160; can be extracted from measured  data,   the&#160;&#160; zero-bias value <img width="170" height="37" src="images/Chap42-76.gif" />
+ &#160;&#160;&#160;&#160;and &#160;&#160;&#160;&#160;the slope&#160;&#160;&#160;&#160; <img width="155" height="25" src="images/Chap42-77.gif" />
+.&#160;&#160;&#160;&#160;   Yet&#160;&#160;there&#160;&#160;&#160;&#160;are three parameters&#160;&#160;&#160;&#160; for &#160;&#160;&#160;&#160;the model. Physical &#160;&#160;&#160;&#160;quantities are&#160;&#160;&#160;&#160;needed&#160;&#160;&#160;&#160; to&#160;&#160;&#160;&#160;break&#160;&#160;&#160;&#160; this&#160;&#160;&#160;&#160; indeterminacy.</p>
+<p>
+<a id="pgfId-1036004"></a>The value of <code>V0=q<img width="11" height="21" src="images/Chap42-78.gif" />
+SiN/C2ox</code> &#160;&#160;&#160;&#160;can be calculated; however because of incomplete dopant&#160;&#160;&#160;&#160; activation this can overestimate its value. It is better to calculate it from the poly sheet resistance</p>
+
+<p><strong>(-54)
+<a id="pgfId-1047320"></a></strong></p>
+<p>
+<a id="pgfId-1036008"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_59.gif" /></div>
+
+<p>
+<a id="pgfId-1036012"></a>where µ<sub>0</sub> &#160;&#160;&#160;&#160;and <img width="20" height="25" src="images/Chap42-80.gif" />
+ &#160;&#160;&#160;&#160;  are the low field mobility and sheet resistance of the poly, respectively. Therefore from the slope and  zero-bias conductance          </p>
+
+<p><strong>(-55)
+<a id="pgfId-1047326"></a></strong></p>
+<p>
+<a id="pgfId-1036016"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_60.gif" /></div>
+
+<p>
+<a id="pgfId-1036017"></a>Calculating large signal conductance <code>g=I/V</code> for small <code>V</code> &#160;&#160;&#160;&#160;can be problematic; <code>V</code> needs to be small enough so that self-&#160;&#160;&#160;&#160;heating and velocity saturation effects do not affect the device, but large enough so that <code>g</code> can be calculated reliably. For&#160;&#160;&#160;&#160; poly&#160;&#160;resistors, there is an alternative&#160;&#160;method to characterize the depletion pinching parameters. If <code>V1c&#160;&#160;&#160;&#160;=0</code>, and <code>V</code> &#160;&#160;&#160;&#160;is&#160;&#160;&#160;&#160; swept from a negative to a positive value (this is not possible for diffused resistors, as the parasitic junction diodes would&#160;&#160;&#160;&#160; become forward biased), then the conductance <code>g(V)</code> has a roughly parabolic shape near <code>V=0</code>. For poly resistors with&#160;&#160;&#160;&#160; negative  temperature  coefficients  of  resistance,  the conductance increases (from self-heating) as the magnitude of the&#160;&#160;&#160;&#160; applied <code>V</code> bias increases (for sufficiently high <code>V</code> the conductance starts to decrease from velocity saturation, leading to a&#160;&#160;&#160;&#160; <em>horned</em> characteristic in the plot). If the temperature coefficient of resistance is positive, the conductance will&#160;&#160;&#160;&#160; decrease as&#160;&#160;<code>V</code> &#160;&#160;&#160;&#160;increases (in roughly the same manner as the effect of velocity saturation, which makes them difficult to&#160;&#160;&#160;&#160; distinguish, without including additional data such as the frequency dependence of the output conductance).&#160;&#160;&#160;&#160;  </p>
+<p>
+<a id="pgfId-1036018"></a>For some magnitude of applied <code>V</code>, of both positive and negative signs, the effects of velocity saturation and self-heating&#160;&#160;&#160;&#160; should be the same (with the difference noted below). Therefore the plot of <code>g(V)</code> should, to first order, be symmetric about <code>V=0</code>.</p>
+<p>
+<a id="pgfId-1036019"></a>However because the <code>V2c</code>  bias differs between the positive and negative <code>V</code> cases, the amount of depletion&#160;&#160;&#160;&#160; pinching is different, and this introduces a slight asymmetry in the characteristic. (If the currents differ then so will the self-heating, but this should be a second order effect and so is ignored here). Because the effects of velocity saturation and&#160;&#160;&#160;&#160; self-heating affect the zero bias conductance and the mobility reduction parts of the model, the ratio of the magnitudes of currents with positive and negative <code>V</code> of equal magnitude cancel these</p>
+
+<p><strong>(-56)
+<a id="pgfId-1047332"></a></strong></p>
+<p>
+<a id="pgfId-1036023"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_61.gif" /></div>
+
+<p>
+<a id="pgfId-1036024"></a>and therefore reveal the effect of depletion pinching. As with the low <code>V</code> bias analysis above,&#160;&#160;<code>dp</code> can be calculated and then <code>df</code> , or at least in initial value of it for optimization, can be determined from the slope of the ratio in the above equation versus <code>V</code> (once it stabilizes, the ratio tends to be <em>noisy</em> for low <code>V</code>).&#160;&#160;&#160;&#160;  </p>
+<p>
+<a id="pgfId-1036025"></a>For poly resistors where self-heating dominates the non-linearity, at low <code>V,</code>the <code>g(V)</code>parabolic  shape is primarily&#160;&#160;&#160;&#160; determined from mobility reduction due to self-heating, therefore</p>
+
+<p><strong>(-57)
+<a id="pgfId-1047338"></a></strong></p>
+<p>
+<a id="pgfId-1036029"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_62.gif" /></div>
+
+<p>
+<a id="pgfId-1036030"></a><code>gtha</code> is allowed to be estimated.</p>
+<p>
+<a id="pgfId-1036031"></a>One other recommendation is that one basic goal of the model is to model the deviation from linearity (which is important for distortion modeling), and to extract model parameters. </p>
+<p>
+<a id="pgfId-1036032"></a>Because of local variation (mismatch), it can be difficult to merge data from different devices for model parameter extraction. Therefore extraction from individual devices can be beneficial. Modeling the deviation from linearity for individual devices does both of these.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap42_re_Statistical_Variation_.html" id="prev" title="Statistical Variation">Statistical Variation</a></em></b><b><em><a href="Chap42_re_Reference.html" id="nex" title="Reference">Reference</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

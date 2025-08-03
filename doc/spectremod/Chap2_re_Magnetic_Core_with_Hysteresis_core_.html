@@ -1,0 +1,564 @@
+
+<html><head><title>Magnetic Core with Hysteresis (core)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686594972" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Magnetic Core with Hysteresis (core)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686594972" />
+<meta name="NextFile" content="Chap2_re_Winding_for_Magnetic_Core_winding_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap2_re_Mutual_Inductor_mutual_inductor_.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Magnetic Core with Hysteresis (core)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="Passive Components" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap2_re_Mutual_Inductor_mutual_inductor_.html" title="Mutual Inductor (mutual_inductor)">Mutual Inductor (mutual_induct ...</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap2_re_Winding_for_Magnetic_Core_winding_.html" title="Winding for Magnetic Core (winding)">Winding for Magnetic Core (win ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Magnetic_Core_with_Hysteresis_core_" title="Magnetic Core with Hysteresis (core)"></a><h2>
+<a id="pgfId-1038217"></a><a id="91025"></a>Magnetic Core with Hysteresis (core)</h2>
+
+<p>
+<a id="pgfId-1038218"></a>This component models the magnetic hysteresis, with air gap, frequency, and temperature effects. The model is based on the AWB model for magnetic cores and windings. The user has to specify the cores material and geometric parameters to model the hysteresis.</p>
+<p>
+<a id="pgfId-1038219"></a>The material parameters to specify are the <code>Br</code>, <code>Bm</code> and <code>Hc</code> of the core. The geometric parameters are the area, magnetic path length and the air gap of the core.</p>
+<p>
+<a id="pgfId-1038220"></a>You can specify the magnetic path length in one of the following ways:</p>
+<p>
+<a id="pgfId-1038221"></a>Give the length directly in cm.</p>
+<p>
+<a id="pgfId-1038222"></a>Or give the outer and inner diameter of the core.</p>
+<p>
+<a id="pgfId-1038223"></a>Cores without terminals represent complete magnetic loops. Cores with terminals are fragments that you can use as building blocks to build models of complicated core structures. For example, you can use the following set of core fragments to model an <code>E</code> core:</p>
+<p>
+<a id="pgfId-1038224"></a>    W1  e1p  e1m  winding turns=80 core=C1</p>
+<p>
+<a id="pgfId-1038225"></a>    W3a e2p  e2c  winding turns=80 core=C3</p>
+<p>
+<a id="pgfId-1038226"></a>    W3b e2c  e2m  winding turns=80 core=C3</p>
+<p>
+<a id="pgfId-1038227"></a>    C1  m1   0    permalloy area=1 len=2</p>
+<p>
+<a id="pgfId-1038228"></a>    C2  m1   0    permalloy area=2 len=2</p>
+<p>
+<a id="pgfId-1038229"></a>    C3  m1   0    permalloy area=1 len=2</p>
+<p>
+<a id="pgfId-1038230"></a>    model permalloy core ...</p>
+<p>
+<a id="pgfId-1038231"></a>There are three parallel core fragments representing each of the three fingers on the <code>E</code>. One 80 turn winding is connected to core fragment <code>C1</code>. A center-tapped 160 turn winding (implemented as a pair of windings) is wrapped around core fragment <code>C3</code>. Node <code>m1</code> is a <code>magnetic</code> node whose value is in magnetomotive force and flow is flux.</p>
+<p>
+<a id="pgfId-1038232"></a>You can calculate the frequency and temperature dependency of the core model by specifying the frequency loss parameters and the temperature effects parameters. You can make all the core parameters vary in temperature, including the permeability, saturation flux, and core loss. For frequency losses, a static model refers to a value that you type in for frequency. This model does not adjust the shape of the B-H loop in response to power dissipation or rate of rise of the applied currents and voltages during transient analysis.</p>
+<p>
+<a id="pgfId-1038233"></a>This device is not supported within altergroup.</p>
+<p>
+<a id="pgfId-1038234"></a>The hysteresis is modeled by different regions whose equations are:</p>
+<p>
+<a id="pgfId-1038235"></a>    phi = phir + (phis - phir) F/(F + Ha)  for region number 1</p>
+<p>
+<a id="pgfId-1038236"></a>    phi = phis * (F - Fc)/(F - Hb)         for region number 2</p>
+<p>
+<a id="pgfId-1038237"></a>where phi&#160;&#160;= flux density</p>
+<p>
+<a id="pgfId-1038238"></a>      F    = magnetomotive force</p>
+<p>
+<a id="pgfId-1038239"></a>      phir = residual flux density</p>
+<p>
+<a id="pgfId-1038240"></a>      phis = Saturated flux density</p>
+<p>
+<a id="pgfId-1038241"></a>      Fc   = Coercive magnetic force</p>
+<p>
+<a id="pgfId-1038242"></a>      Ha and Hb are shape parameters.</p>
+
+<h3>
+<a id="pgfId-1038243"></a>Sample Instance Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038244"></a>c1 (1 0) core_mod area=1.2 len=8.1 id=0.55 gap=0.25</pre>
+<h3>
+<a id="pgfId-1038245"></a>Sample Model Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038246"></a>model core_mod core len=7.7 area=0.85 br=1e3 bm=5e3 hc_t1=0.2 p1_f1=2.08 f1=10e3 p2_f2=50 f2=100K bflux=1e3 density=4.75</pre>
+<h3>
+<a id="pgfId-1038248"></a>Instance Syntax<a id="marker-1038247"></a></h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038249"></a>Name&#160;&#160;[1]&#160;&#160;[2] ModelName parameter=value ...</pre>
+<h3>
+<a id="pgfId-1038251"></a>Instance Parameters<a id="marker-1069572"></a></h3>
+<table class="webflareTable" id="#id1069529">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1069531"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069537"></a><code>area</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069539"></a><code> (cm</code><sup>2</sup><code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069541"></a>Effective magnetic cross-sectional area of core.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069543"></a><code>len</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069545"></a><code> (cm)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069547"></a>Effective length of magnetic path.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069549"></a><code>id</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069551"></a><code> (cm)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069553"></a>Inner diameter of toroidal core.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069555"></a><code>od</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069557"></a><code> (cm)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069559"></a>Outer diameter of toroidal core.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069561"></a><code>gap</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069563"></a><code> (cm)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069565"></a>Gap length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069567"></a><code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069569"></a><code>1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069571"></a>Multiplicity factor.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1038259"></a>Model Syntax<a id="marker-1038258"></a></h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038260"></a>model modelName core parameter=value ...</pre>
+<h3>
+<a id="pgfId-1038262"></a>Model Parameters<a id="marker-1069655"></a></h3>
+<table class="webflareTable" id="#id1069600">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1069602"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069608"></a><code>br</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069610"></a><code>1 gauss</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069612"></a>Residual flux density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069614"></a><code>bm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069616"></a><code>1 gauss</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069618"></a>Saturation flux density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069620"></a><code>hc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069622"></a><code>1 oersteds</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069624"></a>Coercive magnetizing force (value of H where B equals 0).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069626"></a><code>area</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069628"></a><code>1 cm</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069630"></a>Effective magnetic cross-sectional area of core.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069632"></a><code>len</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069634"></a><code>1 cm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069636"></a>Effective length of magnetic path.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069638"></a><code>id</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069640"></a><code> (cm)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069642"></a>Inner diameter of toroidal core.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069644"></a><code>od</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069646"></a><code> (cm)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069648"></a>Outer diameter of toroidal core.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069650"></a><code>gap</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069652"></a><code>0.0 cm</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069654"></a>Gap length.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1038271"></a>Initial Conditions</h4>
+<table class="webflareTable" id="#id1069694">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1069696"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069702"></a><code>b0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069704"></a><code> (gauss)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069706"></a>Initial condition for core.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1038273"></a>Frequency Loss Parameters</h4>
+<table class="webflareTable" id="#id1069734">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1069736"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069742"></a><code>freq</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069744"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069746"></a>Core operating frequency.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069748"></a><code>p1_f1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069750"></a><code> (W/Kg)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069752"></a>Core power loss at frequency <code>f1</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069754"></a><code>f1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069756"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069758"></a>Reference frequency for power loss.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069760"></a><code>p2_f2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069762"></a><code> (W/Kg)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069764"></a>Core power loss at frequency <code>f2</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069766"></a><code>f2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069768"></a><code> (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069770"></a>Reference frequency for power loss.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069772"></a><code>bflux</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069774"></a><code> (gauss)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069776"></a>Reference flux density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069778"></a><code>density</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069780"></a><code> (g/cm</code><sup>3</sup><code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069782"></a>Core density.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1038281"></a>Temperature Effects Parameters</h4>
+<table class="webflareTable" id="#id1069824">
+<caption style="text-align:left;"><p>
+</p><pre class="webflare-courier-new codeContent">
+<a id="pgfId-1069826"></a></pre></caption>
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069832"></a><code>temp</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069834"></a><code> (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069836"></a>Core operating temperature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069838"></a><code>bm_t1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069840"></a><code> (gauss)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069842"></a>Saturated flux density <code>Bm</code> at <code>T1</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069844"></a><code>br_t1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069846"></a><code> (gauss)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069848"></a>Residual flux density <code>Br</code> at <code>T1</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069850"></a><code>hc_t1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069852"></a><code> (oersteds)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069854"></a>Coercive force <code>Hc</code> at <code>T1</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069856"></a><code>t1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069858"></a><code> (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069860"></a>Reference temperature.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1060567"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1060571"></a><a href="Chap2_re_Two_Terminal_Inductor_inductor_.html#61427">Two Terminal Inductor (inductor)</a></p>
+<p>
+<a id="pgfId-1060575"></a><a href="Chap2_re_Mutual_Inductor_mutual_inductor_.html#72686">Mutual Inductor (mutual_inductor)</a></p>
+<p>
+<a id="pgfId-1060579"></a><a href="Chap2_re_Winding_for_Magnetic_Core_winding_.html#75724">Winding for Magnetic Core (winding)</a></p>
+<p>
+<a id="pgfId-1060583"></a><a href="Chap2_re_Linear_Inductance_Reluctance_Resistance_and_Capacitance_Matrix_rlck_matrix_.html#71801">Linear Inductance, Reluctance, Resistance, and Capacitance Matrix (rlck_matrix)</a></p>
+<p>
+<a id="pgfId-1060587"></a><a href="Chap2.html#51225">Passive Components</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap2_re_Mutual_Inductor_mutual_inductor_.html" id="prev" title="Mutual Inductor (mutual_inductor)">Mutual Inductor (mutual_induct ...</a></em></b><b><em><a href="Chap2_re_Winding_for_Magnetic_Core_winding_.html" id="nex" title="Winding for Magnetic Core (winding)">Winding for Magnetic Core (win ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

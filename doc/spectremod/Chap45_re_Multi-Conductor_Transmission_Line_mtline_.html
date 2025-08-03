@@ -1,0 +1,1521 @@
+
+<html><head><title>Multi-Conductor Transmission Line (mtline)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686595074" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Multi-Conductor Transmission Line (mtline)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686595074" />
+<meta name="NextFile" content="Chap45_re_Delay_Line_delay_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap45_re_Microstrip_Line_msline_.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Multi-Conductor Transmission Line (mtline)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="Distributed Components" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap45_re_Microstrip_Line_msline_.html" title="Microstrip Line (msline)">Microstrip Line (msline)</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap45_re_Delay_Line_delay_.html" title="Delay Line (delay)">Delay Line (delay)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Multi-Conductor_Transmission_Line_mtline_" title="Multi-Conductor Transmission Line (mtline)"></a><h2>
+<a id="pgfId-1037143"></a><a id="43682"></a>Multi-Conductor Transmission Line (mtline)<a id="marker-1037142"></a></h2>
+
+<p>
+<a id="pgfId-1042569"></a></p>
+
+<div class="webflare-div-image">
+<img width="667" height="306" src="images/Chap45-2.gif" /></div>
+
+<p>
+<a id="pgfId-1035537"></a>A multi-conductor transmission line (MTLINE) is characterized by constant RLGC matrices or frequency-dependent RLGC data. An MTLINE can have as many conductors as there are described in the input. However, there must be at least two conductors with one conductor used as reference to define terminal voltages. The reference conductor can be ground. The order of the conductors is the same as the order of the data in the input.</p>
+<p>
+<a id="pgfId-1035538"></a>All of the conductors are assumed to have the same length, and to be uniform along the length.</p>
+<p>
+<a id="pgfId-1035539"></a>MTLINE accepts five different types of input: per-unit-length constant RLGC matrices, per-unit-length frequency-dependent RLGC data, 2-D field solver geometry and material property information, S-parameter data, and the old single-conductor TLINE parameters. These inputs are explained below.</p>
+<p>
+<a id="pgfId-1035540"></a>All transmission line parameters (other than conductor length) can be provided through an instance line or model line. When a parameter is specified on both the instance and the model lines, the parameter specified on the instance line takes higher priority.</p>
+
+<h3>
+<a id="pgfId-1035541"></a>Constant RLGC Matrices </h3>
+
+<p>
+<a id="pgfId-1035542"></a>For narrow band applications, transmission line characteristics are often assumed to be constant over the frequency of interest. The input to MTLINE are per-unit-length resistance (R), inductance (L), conductance (G), and capacitance (C) matrices, and they are usually generated by a third-party field solver. Because these matrices are generally symmetric, MTLINE accepts both full matrix description and lower half matrix description.</p>
+<p>
+<a id="pgfId-1035543"></a>For example, the following describes the resistance matrix of a four conductor line system: </p>
+<p>
+<a id="pgfId-1035544"></a><code>                [ 50 10 1  ]            </code></p>
+<p>
+<a id="pgfId-1035545"></a><code>            R = [ 10 50 10 ] Ohm/meter  </code></p>
+<p>
+<a id="pgfId-1035546"></a><code>                [ 1  10 50 ]            </code></p>
+<p>
+<a id="pgfId-1035547"></a>The following two model descriptions are equivalent: </p>
+<p>
+<a id="pgfId-1035548"></a><code>    model line mtline </code></p>
+<p>
+<a id="pgfId-1035549"></a><code>    + r=[ 50 10 1 </code></p>
+<p>
+<a id="pgfId-1035550"></a><code>    +     10 50 10 </code></p>
+<p>
+<a id="pgfId-1035551"></a><code>    +     1  10 50 ] </code></p>
+<p>
+<a id="pgfId-1035552"></a><code>    + ...</code></p>
+<p>
+<a id="pgfId-1035553"></a><code>    model line mtline </code></p>
+<p>
+<a id="pgfId-1035554"></a><code>    + r=[ 50 </code></p>
+<p>
+<a id="pgfId-1035555"></a><code>    +     10 50 </code></p>
+<p>
+<a id="pgfId-1035556"></a><code>    +     1  10 50 ] </code></p>
+<p>
+<a id="pgfId-1035557"></a><code>    + ...</code></p>
+
+<h3>
+<a id="pgfId-1035558"></a>Skin Effect and Dielectric Loss</h3>
+
+<p>
+<a id="pgfId-1035559"></a>The following equations are used to model skin effect and dielectric loss in addition to the constant RLGC matrices:</p>
+<p>
+<a id="pgfId-1038179"></a>If <code>rskin</code> matrix is given, then:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035560"></a>R(f) = r + sqrt(f) * (1 + j) * rskin </pre>
+
+<p>
+<a id="pgfId-1035561"></a>If <code>gdloss</code> matrix is given, then:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035562"></a>G(f) = g + f * <code>gdloss</code> </pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1038212"></a>This dielectric loss term is noncausal, because it&#39;s imaginary part is zero. Using this overly simplified and non-physical version of the dielectric loss model often produces inaccurate results. </div>
+<p>
+<a id="pgfId-1038213"></a>Physical dielectric loss model requires you to specify the cut-off frequency <code>fgdloss</code> and the onset frequency <code>fgdloss1</code>. Dielectric loss equation then becomes:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035564"></a>G(f) = g + f * <code>gdloss</code> * 2/pi*j*log((fgdgloss+jf)/(fgdgloss1+jf))</pre>
+<h3>
+<a id="pgfId-1035568"></a>Frequency-Dependent RLGC Data </h3>
+
+<p>
+<a id="pgfId-1035569"></a>Frequency-dependent RLGC data is described in a data file through a parameter <code>file</code>. The frequency axis can be scaled with the <code>scale</code> parameter. The frequencies in the data file are then multiplied by <code>scale</code> before the simulator uses them. The default scale factor is unity. </p>
+<p>
+<a id="pgfId-1035570"></a>An example data file is listed below:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043455"></a>: Comments: rlc.dat</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043456"></a>FORMAT FREQ:&#160;&#160;R1:1&#160;&#160;R2:1&#160;&#160;R2:2 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043457"></a> L1:1&#160;&#160;L2:1&#160;&#160;L2:2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043458"></a> C1:1&#160;&#160;C2:1&#160;&#160;C2:2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043459"></a>0.001e+9:&#160;&#160;  4.444  0.000383  4.444</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043460"></a> 4.565&#160;&#160;0.3545&#160;&#160;4.565</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043461"></a> 4.565&#160;&#160;0.3545&#160;&#160;4.565</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043462"></a>0.010e+9:&#160;&#160;  4.447  0.003834  4.447</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043463"></a> 4.565&#160;&#160;0.3545&#160;&#160;4.565</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043464"></a> 4.565&#160;&#160;0.3545&#160;&#160;4.565</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043465"></a>0.100e+9:&#160;&#160;  4.476  0.03834  4.476</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043466"></a> 4.565&#160;&#160;0.3545&#160;&#160;4.565</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043467"></a> 4.565&#160;&#160;0.3545&#160;&#160;4.565</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043468"></a>1.000e+9:&#160;&#160;  4.762  0.3834  4.762</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043469"></a> 3.103&#160;&#160;0.2357&#160;&#160;3.103</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043470"></a> 3.103&#160;&#160;0.2357&#160;&#160;3.103</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043471"></a>10.00e+9:&#160;&#160;  13.96  1.082  13.96</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043472"></a> 2.718&#160;&#160;0.2058  &#160;&#160;&#160;&#160;2.718</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043473"></a> 2.718&#160;&#160;0.2058  &#160;&#160;&#160;&#160;2.718</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043474"></a>100.0e+9:&#160;&#160; 56.88&#160;&#160;3.294&#160;&#160;56.88</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043475"></a> 2.531&#160;&#160;0.1866&#160;&#160;2.531 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043476"></a> 2.531&#160;&#160;0.1866&#160;&#160;2.531 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1043451"></a>: end of file rlc.dat</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1038402"></a>Lines starting with : are interpreted as comment lines. The data file has a format section and a data section. In addition, both full matrix and lower half matrix descriptions are accepted. </div>
+<p>
+<a id="pgfId-1038403"></a>You can mix the constant RLGC parameters with frequency-dependent RLGC data. When a particular parameter (R, L, G or C) is specified in both constant matrix and frequency-dependent data file, the constant matrix is the first choice of input. If only one frequency point is specified in the file, the RLGC data is assumed to be constant over the frequency of interest. </p>
+<p>
+<a id="pgfId-1038404"></a>When providing the frequency-dependent RLGC data, one should always try to provide accurate and sufficient data points. There should be enough data points to cover low-frequency characteristics, and there should be enough data points to capture the changing nature in the high-frequency range. A rule of thumb is that the lowest frequency point should be down to 1kHz, and there should be at least 5 points per decade, particularly in the high-frequency range where RLGC data tends to change rapidly.</p>
+
+<h3>
+<a id="pgfId-1035590"></a>2-D Field Solver Information </h3>
+
+<p>
+<a id="pgfId-1035591"></a>MTLINE directly supports a built-in 2-D field solver. The output of the 2-D field solver is RLGC data. The data can be stored for re-use through the <code>file</code> parameter if the global option <code>mtlinereuse</code> is set to <code>no</code>. If the global option <code>mtlinereuse</code> is set to <code>yes</code>, the RLGC data can be stored for re-use through a file which is located in the path specified by <code>mtlinecachedir</code>. This makes the actual RLGC model generation a one-time cost, provided the field solver input is unchanged.</p>
+
+<h3>
+<a id="pgfId-1035592"></a>Line Configuration (linetype) </h3>
+
+<p>
+<a id="pgfId-1035593"></a>MTLINE supports four interconnect line configurations: microstrip line, strip line, coplanar waveguide, and substrate lossy line. </p>
+
+<h3>
+<a id="pgfId-1035594"></a>Model Type (modeltype) </h3>
+
+<p>
+<a id="pgfId-1035595"></a>For each line configuration, you can choose between three model types. In the lossless model, the internal inductance of the conductor is disregarded by setting the frequency value high; 50 GHz for cases without substrate loss and 15 GHz for cases with substrate loss, and ignoring the value of <code>fmax</code>. For the narrow band model, the RLGC data is calculated at frequency <code>fmax</code> and assumed to be constant over the frequency of interest. The third choice is the wideband model where true frequency dependent RLGC data is calculated over the frequency of interest. For most applications, you should choose the wideband model as it provides the best model accuracy. </p>
+
+<h3>
+<a id="pgfId-1035596"></a>Ground Plane (numgnd) </h3>
+
+<p>
+<a id="pgfId-1035597"></a>For microstrip line, the number of ground planes is fixed to 1, at the bottom of the 2-D interconnect cross section. </p>
+<p>
+<a id="pgfId-1035598"></a>For strip line, the number of ground planes is fixed to 2, at both the bottom and top of the 2-D interconnect cross section. </p>
+<p>
+<a id="pgfId-1035599"></a>For coplanar waveguide and substrate lossy line, the number of ground planes can be 1 or 2, at the bottom and top of the 2-D interconnect cross section.&#160;&#160;For coplanar waveguide, you can also specify 0 ground planes because there will be two ground strips added automatically to the cross section. The width, height, thickness, and spacing of these ground strips can be specified in the same way as conductors are specified.</p>
+<p>
+<a id="pgfId-1035600"></a>The <code>gndthickness</code> parameter can be used to specify the thickness of the ground plane(s), and the <code>gndsigma</code> parameter can be used to specify the ground plane conductivity. </p>
+
+<h3>
+<a id="pgfId-1035601"></a>Dielectric Layer (numlayer) </h3>
+
+<p>
+<a id="pgfId-1035602"></a>Dielectric layers are either stacked above the ground plane (when <code>numgnd=1</code>), or between the ground planes (when <code>numgnd=2</code>). There can be many dielectric layers. </p>
+<p>
+<a id="pgfId-1035603"></a>The thickness of the dielectric layer can be provided through the <code>layerthickness</code> parameter, and the relative dielectric constant of the dielectric layer can be provided through the <code>er</code> parameter. Both the <code>layerthickness</code> and <code>er</code> parameters are of vector type to handle different layer geometries and layer properties. When the number of elements in the vector is less than the number of layers, the value of the last element in the vector is applied to all of the remaining layers. </p>
+<p>
+<a id="pgfId-1035604"></a>A particular dielectric layer can be lossy, and either the loss tangent parameter (tan = sigma/(w*ep0)) or the loss sigma parameter (sigma = tan*w*ep0) can be used. This is decided through the <code>dlosstype</code> parameter and the actual loss value(s) is provided through the <code>dloss</code> vector parameter.</p>
+
+<h3>
+<a id="pgfId-1035605"></a>Signal Line</h3>
+
+<p>
+<a id="pgfId-1035606"></a>The signal line conductivity can be specified using the <code>linesigma</code> parameter. </p>
+<p>
+<a id="pgfId-1035607"></a>There can be many signal lines. The geometry of the signal line(s) are decided through parameters <code>linewidth</code>, <code>linethickness</code>, <code>lineheight</code>, and <code>linespace</code>. The parameter <code>lineheight</code> specifies the distance between the signal line and ground plane at the bottom of the 2-D interconnect cross section. The parameter <code>linespace</code> specifies the distance between the signal lines; it can be set to a negative value to describe overlapping signal lines. </p>
+
+<h3>
+<a id="pgfId-1035608"></a>RLGC Reuse</h3>
+
+<p>
+<a id="pgfId-1038517"></a>If the geometry and material property information of the mtline instance is not specified, the <code>file</code> parameter must be given. Spectre reads the <code>file</code> parameter to reuse the RLGC data directly. If any one of the geometry and material property information of the mtline instance is specified and the global option parameter <code>mtlinereuse</code> is set to <code>yes</code>, you can calculate the MD5 code by using this information. If the MD5 file exists in the path set by the global option parameter <code>mtlinecachedir</code>, Spectre reads the MD5 file directly. </p>
+<p>
+<a id="pgfId-1038553"></a>The parameter <code>mtlinecachedir</code> can be used to specify the directory where the mtline RLGC data file will be written to or reused from. If an absolute path is not given, the file will be written to the <code>/home/&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>username</em></span><code>&gt;/.cadence/mmsim/</code> directory. If the MD5 file is not specified using <code>mtlinecachedir</code>, Spectre checks for the existence of the file . If the file does not exist, the RLGC model is generated by the field solver and the output is stored in the directory specified by <code>mtlinecachedir</code>. However if the file exists, Spectre checks if the RLGC data stored in the file matches the MTLINE 2-D field solver input. If the data does not match, a new set of RLGC data is generated and the MD5 file is stored in the directory specified by <code>mtlinecachedir</code>. Otherwise, the data is re-used from the file. If the <code>mtlinereuse</code> option is set to <code>no</code>, Spectre stores the RLGC data in the specified file or <code>%C:t:r_InstanceName.rlgc </code>file after the simulation. </p>
+
+<h3>
+<a id="pgfId-1038589"></a>Stackup-based Input of Cross-section Geometry and Material Properties</h3>
+
+<p>
+<a id="pgfId-1045044"></a>The side dielectric always has the thickness of the conductor and cannot be changed. The side dielectric is always the same material on both sides. The field solver cannot handle different materials on the two sides.</p>
+<p>
+<a id="pgfId-1045047"></a>The names definition describes the <code>stackup</code> from bottom to top. The next dielectric name after the conductor is the side dielectric.</p>
+<p>
+<a id="pgfId-1045049"></a>If you want to have side dielectrics in the top layer, add a very thin dielectric layer above the top conductor, which causes the side dielectric to be added automatically. The material must be the same on both sides.</p>
+<p>
+<a id="pgfId-1038619"></a>The <code>stackup</code> and <code>layer</code> parameters can be used to specify the cross-section geometry and material properties for the 2-D field solver. Three extra Spectre primitives: <code>stackup</code>, <code>conductor</code>, and <code>dielectric</code> have been added for this purpose.</p>
+<p>
+<a id="pgfId-1038623"></a>The <code>stackup</code> parameter is used to specify the ID (name) of the stackup instance that contains the cross-section geometry and material properties. The syntax is:</p>
+
+<a id="pgfId-1038627"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+stackup=&lt;ID of stackup instance&gt;</pre>
+
+<p>
+<a id="pgfId-1038628"></a>Example: <code>stackup=stk1</code></p>
+<p>
+<a id="pgfId-1038629"></a><code>layer=[&lt;vector of layer names &gt;]</code>. The size of this vector should be equal to the number of signal conductors. If the size of <code>layer</code> vector is less than the number of signal conductors, the last value is used.</p>
+<p>
+<a id="pgfId-1038632"></a>Example: <code>layer=[&quot;Strip&quot;]</code></p>
+<p>
+<a id="pgfId-1038633"></a>For more information on <code>stackup</code>, <code>dielectric</code>, and <code>conductor</code> , use</p>
+<p>
+<a id="pgfId-1038634"></a><code>spectre -h stackup</code>, <code>spectre -h conductor</code>, and <code>spectre -h</code> dielectric respectively.</p>
+
+<h3>
+<a id="pgfId-1038611"></a>S-Parameter Data File </h3>
+
+<p>
+<a id="pgfId-1038750"></a>MTLINE also supports S-parameter data file input describing a transmission line system using the <code>file</code> parameter. MTLINE converts the frequency-dependent S-parameter to frequency-dependent RLGC data and stores the results in the file <code>%C:t:r_InstanceName.rlgc</code> for reuse in subsequent simulations. </p>
+<p>
+<a id="pgfId-1038751"></a>If the <code>file</code> parameter corresponds to S-parameter data, MTLINE first checks the existence of the file <code>%C:t:r_InstanceName.rlgc</code> to determine if the S-to-RLGC extraction has been performed in a previous simulation. </p>
+<p>
+<a id="pgfId-1038752"></a>The S-parameter data file formats supported include Touchstone, Spectre, and Citi. </p>
+<p>
+<a id="pgfId-1038753"></a>The physical length of the line must also be specified using the <code>len</code> parameter. </p>
+<p>
+<a id="pgfId-1038807"></a>The ordering of the S-parameter input file should be in the format of input ports followed by the output ports of the transmission line system, for example, <code>Pin1, Pin2, Pin3, ..., Pout1, Pout2, Pout3, ...</code> </p>
+
+<h3>
+<a id="pgfId-1038808"></a>Old TLINE Parameters </h3>
+
+<p>
+<a id="pgfId-1038822"></a>MTLINE directly supports the old single-conductor TLINE parameters to ease migration, as MTLINE has a more accurate and robust modeling algorithm.</p>
+<p>
+<a id="pgfId-1038823"></a>Due to a name conflict, the TLINE parameter <code>r</code> has been renamed to <code>seriesr</code> in MTLINE, and the TLINE parameter <code>g</code> has been renamed to <code>shuntg</code> in MTLINE. </p>
+<p>
+<a id="pgfId-1038824"></a>In addition, the terminal maps between TLINE and MTLINE are different. The following TLINE syntax</p>
+
+<a id="pgfId-1038825"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ( t1 b1 t2 b2 ) tline &lt;parameter=value&gt; ... </pre>
+
+<p>
+<a id="pgfId-1038826"></a>should be mapped to the following MTLINE syntax </p>
+
+<a id="pgfId-1038827"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+Name ( t1 t2 b1 b2 ) mtline &lt;parameter=value&gt; ... </pre>
+
+<p>
+<a id="pgfId-1038828"></a>For a detailed explanation of TLINE parameters, refer to the TLINE help page (<code>spectre -h tline</code>).</p>
+<p>
+<a id="pgfId-1038809"></a>This device is not supported within altergroup.</p>
+
+<h3>
+<a id="pgfId-1035627"></a>Sample Instance Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035628"></a>x1 (a1 b1 a2 b2 0 0) mtline len=0.01</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035629"></a>+ r=[ 0.3 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035630"></a>+&#160;&#160;   0.0 0.3 ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035631"></a>+ c=[ 0.35p </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035632"></a>+&#160;&#160;  -0.03p 0.35p ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038875"></a>MTL1 (net01 net02 0 0) mtline len=0.1 linewidth=[ 79u ]&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038876"></a> stackup=stk layer=[&quot;Strip&quot;] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038877"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038878"></a>stk stackup&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038879"></a> names=[&quot;RefBottom&quot; &quot;dielBelow&quot; &quot;Strip&quot; &quot;dielStrip&quot;&#160;&#160;&quot;dielAbove&quot; &quot;RefTop&quot; ]&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038880"></a> thickness=[15u 138u 5u 5u 60u 10u]&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038881"></a> type=[&quot;Ref&quot; &quot;Diel&quot; &quot;Cond&quot;&#160;&#160;&quot;Diel&quot; &quot;Diel&quot; &quot;Ref&quot;]&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038882"></a> material=[cu d34 cu d34 d34 cu] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038883"></a>d34 dielectric type= &quot;const&quot; nd=2 data= [3.4 0] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038884"></a>cu conductor nd=1 data=[ 5.8e7] type=&quot;smooth&quot;&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038885"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038886"></a>MTL2 (a1 b1 a2 b2 0 0) mtline len=0.037&#160;&#160;linewidth=[ 101.6u ]&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038887"></a> stackup=stack1 layer=[&quot;top&quot; &quot;top&quot;] linespace=[ 203.2u ]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038888"></a>// linespace is the edge to edge distance, *not* between the </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038889"></a>// centerlines of the conductors.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038890"></a>stack1 stackup&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038891"></a> type=[&quot;Ref&quot; &quot;Diel&quot; &quot;Cond&quot;] thickness=[19.558u 58.42u 30.48u]&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038892"></a> names=[&quot;reference&quot;&#160;&#160;&quot;dielectric&quot; &quot;top&quot;] material=[copper wd4p1 copper] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038893"></a>wd4p1 dielectric type= &quot;wideband_debye&quot; nd=5&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038894"></a> data= [1e9 4.1 0.01 628318.5307179586 6.283185307179586e12] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038895"></a>// Note: both &#39;hammerstad&#39; and &#39;hammerstadt&#39;&#160;&#160;work correctly </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038896"></a>copper conductor nd=1 data=[ 5.8e7 1u] type=&quot;hammerstad&quot; </pre>
+<h3>
+<a id="pgfId-1035633"></a>Sample Model Statement</h3>
+
+<p>
+<a id="pgfId-1035634"></a>model mtmodel mtline </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035635"></a>+ r=[ 0.3 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035636"></a>+&#160;&#160;   0.0 0.3 ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035637"></a>+ c=[ 0.35p </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035638"></a>+&#160;&#160;  -0.03p 0.35p ] </pre>
+
+<p>
+<a id="pgfId-1035639"></a>model mtmodel mtline </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035640"></a>+ r=[ 0.3 0.0 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035641"></a>+&#160;&#160;   0.0 0.3 ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035642"></a>+ c=[ 0.35p -0.03p </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035643"></a>+&#160;&#160;  -0.03p  0.35p ] </pre>
+
+<p>
+<a id="pgfId-1035644"></a>model mtmodel mtline </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035645"></a>+ c=[ 0.35p </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035646"></a>+&#160;&#160;  -0.03p 0.35p ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035647"></a>+ file=&quot;rl.data&quot; scale=1</pre>
+<h4>
+<a id="pgfId-1035649"></a>Instance Syntax<a id="marker-1035648"></a></h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035650"></a>Name&#160;&#160;in1&#160;&#160;out1&#160;&#160;in2&#160;&#160;[out2] ... ModelName parameter=value ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035651"></a>Name&#160;&#160;in1&#160;&#160;out1&#160;&#160;in2&#160;&#160;[out2] ... mtline parameter=value ...</pre>
+
+<p>
+<a id="pgfId-1035652"></a>The last two terminals are used as <code>refin</code> and <code>refout</code> respectively.</p>
+
+<h4>
+<a id="pgfId-1038923"></a>Instance Parameters<a id="marker-1038922"></a></h4>
+<table class="webflareTable" id="#id1039495">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044433"></a> <code>len=0.01 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044435"></a>Physical length of line.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044437"></a> <code>m=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044439"></a>Multiplicity factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044441"></a> <code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044443"></a>Should mtline generate noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038927"></a>RLGC data parameters</em></h4>
+<table class="webflareTable" id="#id1039548">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044445"></a> <code>r=[...] </code>&#x2126;<code>/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044447"></a>Resistance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044449"></a> <code>l=[...] H/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044451"></a>Inductance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044453"></a> <code>g=[...] S/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044455"></a>Conductor matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044457"></a> <code>c=[...] F/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044459"></a>Capacitance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044461"></a> <code>rskin=[...] </code>&#x2126;<code>/m </code><code>Hz </code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044465"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044467"></a>Skin effect resistance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044469"></a> <code>gdloss=[...] S/m Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044471"></a>Dielectric loss conductance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044473"></a> <code>fgdloss (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044475"></a>Dielectric loss cut-off frequency.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044477"></a> <code>fgdloss1 (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044479"></a>Dielectric loss onset frequency.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044481"></a> <code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044483"></a>RLGC data file that contains the frequency-dependent RLGC data or S-parameter data file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044485"></a> <code>freqscale=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044487"></a>Frequency scale factor for frequency-dependent RLGC data and S-parameter data.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039758"></a>2-D Field Solver parameters</em></h4>
+<table class="webflareTable" id="#id1039784">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044489"></a><code>linetype=sublossline</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044491"></a>Transmission line type. Possible values are <code>microstrip</code>, <code>stripline</code>, <code>coplanar</code>, and <code>sublossline</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044493"></a> <code>modeltype=wideband</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044495"></a>Model type. Possible values are <code>lossless</code>, <code>narrowband</code>, and <code>wideband</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044497"></a> <code>numlayer</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044499"></a>Number of dielectric layers.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044501"></a> <code>numgnd</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044503"></a>Number of ground planes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044505"></a> <code>er=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044507"></a>Relative dielectric constant.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044509"></a> <code>layerthickness=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044511"></a>Dielectric layer thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044513"></a> <code>dlosstype=tangent</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044515"></a>Dielectric loss type. The loss value is specified using the <code>dloss</code> parameter. Possible values are <code>sigma</code> and <code>tangent</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044517"></a> <code>dloss=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044519"></a>Dielectric layer loss. The loss can be in terms of dielectric conductivity or tangent loss, determined by the <code>dlosstype</code> parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044521"></a> <code>linewidth=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044523"></a>Signal line width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044525"></a> <code>linethickness=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044527"></a>Signal line thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044529"></a> <code>lineheight=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044531"></a>Signal line height.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044533"></a> <code>linespace=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044535"></a>Signal line spacing.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044537"></a> <code>linesigma (S/m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044539"></a>Signal line conductivity.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044541"></a> <code>gndthickness=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044543"></a>Ground plane thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044545"></a> <code>gndsigma (S/m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044547"></a>Ground plane conductivity.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039774"></a>Rational fitting parameters</em></h4>
+<table class="webflareTable" id="#id1039895">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044549"></a><code>fmax=2.5e10 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044551"></a>Maximum signal frequency used to determine the relevant range of rational fitting or used in the 2D field solver.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038956"></a>TLINE-related parameters</em></h4>
+<table class="webflareTable" id="#id1039943">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044553"></a><code>z0=50 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044555"></a>Characteristic impedance of lossless line.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044557"></a><code>td (s)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044559"></a>Time delay of a lossless line in seconds; a measure of the electrical length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044561"></a><code>f (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044563"></a>Reference frequency (used in conjunction to the normalized length to specify electrical length of line).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044565"></a><code>nl=0.25</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044567"></a>Normalized electrical length in wavelengths at <code>f</code> of a lossless line.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044569"></a><code>vel=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044571"></a>Propagation velocity of the line given as a multiple of <code>c</code>, the speed of light in free space. (vel &lt;= 1).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038962"></a>TLINE conductor loss parameters</em></h4>
+<table class="webflareTable" id="#id1040004">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044573"></a><code>corner=0 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044575"></a>Corner frequency for skin effect; frequency where skin depth equals the conductor&#39;s wall thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044577"></a> <code>dcr=0 </code>&#x2126;<code>/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044579"></a>DC series resistance per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044581"></a> <code>fc (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044583"></a>Conductor loss measurement frequency (use with <code>r</code>, <code>qc</code>, or <code>alphac</code>).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044585"></a> <code>seriesr=0 </code>&#x2126;<code>/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044587"></a>Conductor (series) resistance per unit length at <code>fc</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044589"></a> <code>alphac=0 dB/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044591"></a>Conductor loss at <code>fc</code> (low loss approximation).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044593"></a> <code>qc=infinity</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044595"></a>Conductor loss quality factor at <code>fc</code> (low loss approximation).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038969"></a>TLINE dielectric loss parameters</em></h4>
+<p>
+<a id="pgfId-1040125"></a></p>
+<table class="webflareTable" id="#id1040048">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044597"></a><code>fd (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044599"></a>Dielectric loss measurement frequency (use with <code>qd</code>).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044601"></a><code>shuntg=0 S/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044603"></a>Dielectric (shunt) conductance per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044605"></a><code>alphad=0 dB/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044607"></a>Dielectric loss (low loss approximation).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044609"></a><code>qd=infinity</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044611"></a>Dielectric loss quality factor at <code>fd</code> (low loss approximation).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038974"></a>Noise parameters</em></h4>
+<table class="webflareTable" id="#id1040080">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044613"></a><code>trise (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044615"></a>Temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044617"></a><code>thermalnoise=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044619"></a>Should mtline generate noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044621"></a><code>noisemodel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044623"></a>Use the internal thermal noise model, or the externally-supplied noise data in the S-parameter data file. The default behavior is to use external data whenever it is available. Possible values are <code>internal</code> and <code>external</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044625"></a><code>formulation=statespace</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044627"></a>Recursive convolution can be used instead of state space formulation. Possible values are <code>statespace</code> and <code>recursive</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038979"></a>Stackup Parameters</em></h4>
+<table class="webflareTable" id="#id1040157">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044629"></a><code>layer=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044631"></a>Layer name for the signal conductor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044633"></a><code>stackup</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044635"></a>The name of the stackup instance.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1038983"></a>Model Syntax<a id="marker-1038982"></a></h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038984"></a>model modelName mtline parameter=value ...</pre>
+<h4>
+<a id="pgfId-1038986"></a>Model Parameters</h4>
+
+<p>
+<a id="pgfId-1045243"></a>This topic lists the model parameters for mtline.<a id="marker-1038985"></a></p>
+
+<h4><em>
+<a id="pgfId-1038987"></a>RLGC data parameters</em></h4>
+<table class="webflareTable" id="#id1040204">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044637"></a><code>r=[...] </code>&#x2126;<code>/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044639"></a>Resistance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044641"></a><code>l=[...] H/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044643"></a>Inductance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044645"></a><code>g=[...] S/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044647"></a>Conductor matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044649"></a><code>c=[...] F/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044651"></a>Capacitance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044653"></a><code>rskin=[...] </code>&#x2126;<code>/m </code><code>Hz </code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044657"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044659"></a>Skin effect resistance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044661"></a><code>gdloss=[...] S/m Hz</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044665"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044667"></a>Dielectric loss conductance matrix per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044669"></a><code>fgdloss (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044671"></a>Dielectric loss cut-off frequency.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044673"></a><code>fgdloss1 (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044675"></a>Dielectric loss onset frequency.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044677"></a><code>file</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044679"></a>RLGC data file that contains the frequency-dependent RLGC data or S-parameter data file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044681"></a><code>freqscale=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044683"></a>Frequency scale factor for frequency-dependent RLGC data and S-parameter data.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1038998"></a>2-D Field Solver parameters</em></h4>
+<table class="webflareTable" id="#id1040324">
+<tbody><tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044685"></a><code>linetype=sublossline</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044689"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044691"></a>Transmission line type. Possible values are <code>microstrip</code>, <code>stripline</code>, <code>coplanar</code>, and <code>sublossline</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044693"></a> <code>modeltype=wideband</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044697"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044699"></a>Model type. Possible values are <code>lossless</code>, <code>narrowband</code>, and <code>wideband</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044701"></a> <code>numlayer</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044703"></a>Number of dielectric layers.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044705"></a> <code>numgnd=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044707"></a>Number of ground planes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044709"></a> <code>er=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044711"></a>Relative dielectric constant.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044713"></a> <code>layerthickness=[...] m</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044717"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044719"></a>Dielectric layer thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044721"></a> <code>dlosstype=tangent</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044723"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044725"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044727"></a>Dielectric loss type. The loss value is specified using the <code>dloss</code> parameter. Possible values are <code>sigma</code> and <code>tangent</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044729"></a> <code>dloss=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044731"></a>Dielectric layer loss. Loss can be in terms of dielectric conductivity or tangent loss determined by <code>dlosstype</code> parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044733"></a> <code>linewidth=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044735"></a>Signal line width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044737"></a> <code>linethickness=[...] m</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044741"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044743"></a>Signal line thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044745"></a> <code>lineheight=[...] m</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044749"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044751"></a>Signal line height.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044753"></a> <code>linespace=[...] m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044755"></a>Signal line spacing.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044757"></a> <code>linesigma (S/m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044759"></a>Signal line conductivity.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1044761"></a> <code>gndthickness=[...] m</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044765"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044767"></a>Ground plane thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044769"></a> <code>gndsigma (S/m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044771"></a>Ground plane conductivity.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039014"></a>Rational fitting parameters</em></h4>
+<table class="webflareTable" id="#id1040550">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044773"></a><code>fmax=2.5e10 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044775"></a>Maximum signal frequency used to determine the relevant range of rational fitting used in the 2-D field solver.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039016"></a>TLINE-related parameters</em></h4>
+<table class="webflareTable" id="#id1040567">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044777"></a><code>z0=50 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044779"></a>Characteristic impedance of lossless line.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044781"></a> <code>f (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044783"></a>Reference frequency (used in conjunction to the normalized length to specify electrical length of line).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044785"></a> <code>vel=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044787"></a>Propagation velocity of the line given as a multiple of <code>c</code>, the speed of light in free space. (vel &lt;= 1).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039020"></a>TLINE conductor loss parameters</em></h4>
+<table class="webflareTable" id="#id1040595">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044789"></a><code>corner=0 Hz</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044791"></a>Corner frequency for skin effect; frequency where skin depth equals the conductor&#39;s wall thickness.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044793"></a> <code>dcr=0 </code>&#x2126;<code>/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044795"></a>DC series resistance per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044797"></a> <code>fc (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044799"></a>Conductor loss measurement frequency (use with <code>r</code>, <code>qc</code>, or <code>alphac</code>).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044801"></a> <code>seriesr=0 </code>&#x2126;<code>/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044803"></a>Conductor (series) resistance per unit length at <code>fc</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044805"></a> <code>alphac=0 dB/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044807"></a>Conductor loss at <code>fc</code> (low loss approximation).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044809"></a> <code>qc=infinity</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044811"></a>Conductor loss quality factor at <code>fc</code> (low loss approximation).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039027"></a>TLINE dielectric loss parameters</em></h4>
+<table class="webflareTable" id="#id1040673">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044813"></a><code>fd (Hz)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044815"></a>Dielectric loss measurement frequency (use with <code>qd</code>).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044817"></a> <code>shuntg=0 S/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044819"></a>Dielectric (shunt) conductance per unit length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044821"></a> <code>alphad=0 dB/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044823"></a>Dielectric loss (low loss approximation).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044825"></a> <code>qd=infinity</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044827"></a>Dielectric loss quality factor at <code>fd</code> (low loss approximation).</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1039032"></a>Noise parameters</em></h4>
+<table class="webflareTable" id="#id1040715">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044829"></a><code>trise=0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044831"></a>Default temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044833"></a> <code>thermalnoise=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044835"></a>Should mtline generate noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044837"></a> <code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044839"></a>Thermal noise. Possible values are <code>yes</code> and <code>no</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044841"></a> <code>noisemodel</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1044843"></a>To use the internal thermal noise model, or the externally supplied noise data in the S-parameter data file. The default behavior is to use external data whenever it is available. Possible values are <code>internal</code> and <code>external</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1035760"></a>Rational Fitting</h3>
+
+<p>
+<a id="pgfId-1035761"></a>Spectre uses rational fitting algorithm to build a stable model that approximates the desired transmission line characteristics. Maximum signal frequency <code>fmax</code> is used to determine the relevant range of rational fitting. The accuracy of the mtline model is solely dependent on how well the rational approximation is over the frequency range [<code>fmin</code>, <code>fmax</code>]. </p>
+<p>
+<a id="pgfId-1035762"></a>When constant RLGC matrices are provided, 1Hz is used as <code>fmin</code> and <code>fmax</code> defaults to 25GHz. Three times the inverse of rise time in the input signal can be used as a good estimation of <code>fmax</code>. When RLGC data file is provided, the lowest frequency point in the data file is used as <code>fmin</code>, and the largest frequency point in the data file is used as <code>fmax</code>. You should provide sufficient data points to cover both low frequency and high frequency for an accurate, stable model. </p>
+
+<h3>
+<a id="pgfId-1035763"></a>Modeling Frequency Dependent Effects</h3>
+
+<p>
+<a id="pgfId-1035764"></a>One can model the frequency-dependent RLGC matrices by providing data using the <code>file </code>parameter. One should always try to provide accurate and sufficient data to describe the frequency-dependent RLGC matrices.</p>
+
+<h4><em>
+<a id="pgfId-1043962"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1043982"></a><a href="Chap45.html#65011">Distributed Components</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap45_re_Microstrip_Line_msline_.html" id="prev" title="Microstrip Line (msline)">Microstrip Line (msline)</a></em></b><b><em><a href="Chap45_re_Delay_Line_delay_.html" id="nex" title="Delay Line (delay)">Delay Line (delay)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

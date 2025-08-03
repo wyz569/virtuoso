@@ -1,0 +1,125 @@
+
+<html><head><title>Statistical Variation</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686595073" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Statistical Variation" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686595073" />
+<meta name="NextFile" content="Chap42_re_Notes_on_Parameter_Extraction_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap42_re_Operating_Point_Information.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Statistical Variation" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="R3" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap42_re_Operating_Point_Information.html" title="Operating Point Information">Operating Point Information</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap42_re_Notes_on_Parameter_Extraction_.html" title="Notes on Parameter Extraction">Notes on Parameter Extraction</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Statistical_Variation_" title="Statistical Variation"></a><h2>
+<a id="pgfId-1035894"></a><a id="27420"></a>Statistical Variation</h2>
+
+<p>
+<a id="pgfId-1035895"></a>The <code>r3</code> model includes both global (inter-die, correlated between individual devices) and local (mismatch, uncorrelated between individual devices) variations. These can be added &#8220;on top&#8221; of a core model using subcircuits, however this can involve increased complexity in model parameter files and increased computational overhead during simulation. Therefore statistical variation is &#8220;built-in&#8221; to the <code>r3</code> model, including instance parameters for control of mismatch variation for individual devices.</p>
+<p>
+<a id="pgfId-1035896"></a>Besides convenience and efficiency, the statistical variation modeling in<code> r3</code> naturally embodies the geometry dependence of total variation in a device, which is not possible with statistical modeling based on a geometry-independent global variation and geometry dependent correlation coefficients. Since it is based on independent statistical parameters for global variation and instance specific local variation, it does not require generation of correlated samples for distributional (i.e. Monte Carlo-like) simulation; if correlations were used then N (N ?1) 2 of them are required for each statistical parameter for each of N devices.</p>
+<p>
+<a id="pgfId-1035897"></a>Statistical variations are modeled in three parameters; the sheet resistance, the effective length variation, and the effective width variation. These are considered as the primary physical process parameters that determine the resistor behavior. At present, there is no variation (global or local) in other physical quantities such as contact resistance, other parasitics (zero-bias depletion capacitance for diffused resistors varies with doping), or the parameters that control the nonlinearity of the model. If experimental data shows that linkage to more fundamental physical quantities such as doping levels and layer thicknesses is required to model correlations and statistical variations, this will be added in the future.</p>
+<p>
+<a id="pgfId-1035898"></a>The local variation of the effective width is controlled by line edge roughness in the length dimension; its variance is therefore inversely proportional to the resistor length <code>L</code>. The local variation of the effective length is controlled by line edge roughness in the width dimension; its variance is therefore inversely proportional to the resistor width <code>W</code>.The local variation of the sheet resistance is controlled by random dopant fluctuations; its variance is therefore inversely proportional to the area of the resistor, <code>WL</code>. For flexibility in fitting experimental data, the <code>sw_mmgeo</code> flag allows the controlling geometries <code>W</code> and <code>L</code> to be either drawn or effective (as calculated before the statistical variations are applied, to avoid an implicit dependency that requires an iterative solution).</p>
+<p>
+<a id="pgfId-1035899"></a>The total variance of a parameter is the sum of the variances of the global variance (which is independent of geometry) and the local variance (which depends on geometry <code>g</code> , which can include area, width, and length),</p>
+
+<p><strong>(-40)
+<a id="pgfId-1047236"></a></strong></p>
+<p>
+<a id="pgfId-1035903"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_45.gif" /></div>
+
+<p>
+<a id="pgfId-1035904"></a>This naturally embodies the geometry dependence of the overall variance of a particular parameter. For statistical simulation, the perturbations of the global variation and the individual instance variation are expected to be statistically independent. But &#8220;proper&#8221; statistical simulation of a circuit requires inclusion of both global parameters and local parameters for every instance of a device type in a circuit. This can cause the number of statistical parameters included in a statistical simulation to increase proportionally with the number of devices in the circuit, with a concomitant explosion in the number of (local) statistical parameters needed to be included for a &#8220;proper&#8221; analysis. This is, for brute force statistical simulation, clearly impractical.</p>
+<p>
+<a id="pgfId-1035905"></a>The <code>r3</code> model therefore includes a mechanism for more efficiently accounting for the geometry dependence of the overall variation. The <code>sw_mman</code> switch is provided to allow specification on an instance-by-instance basis of whether a device is being included in mismatch analysis. If yes, then both global and local (instance specific) statistical variation parameters are expected to be generated for each device instance, and the global and local variations are modeled separately. If no, which is appropriate for devices for which local variation is not expected to affect circuit performance, then the global variance for a device is adjusted to be the total variance for that device. This appropriately models the geometry dependent total variance for the device, with the consequence that it makes the total variation completely</p>
+<p>
+<a id="pgfId-1035906"></a>correlated between all devices (that are not selected for individual mismatch analysis); this will cause overestimation of the variation of the circuit performances, i.e. the simulations from this will be pessimistic.</p>
+<p>
+<a id="pgfId-1035907"></a>If mismatch analysis is selected, then the statistical variations are</p>
+
+<p><strong>(-41)
+<a id="pgfId-1047242"></a></strong></p>
+<p>
+<a id="pgfId-1035911"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_46.gif" /></div>
+
+<p>
+<a id="pgfId-1035912"></a>where the nominal values are those defined in the section on geometry dependence. (The above expressions are used to update the effective geometries and resistance values, and all previous model equations use the values calculated earlier. However, for clarity of presentation and ease of interpretation, the previous equations are not cluttered with the statistical variations).</p>
+<p>
+<a id="pgfId-1035913"></a>The variations in effective length and width are absolute, and are additive, and that the variation in sheet resistance is multiplicative. For small variations <code>exp<img width="115" height="21" src="images/Chap42-61.gif" /><br /></code> hence the <code>rsh</code> variation is relative (it is more natural to think in terms of a % variation than an absolute variation). For large variations, as can be seen in some resistors, statistical sampling can generate small or negative values of <code>rsh</code>, which are unphysical. Quantities with large variations typically exhibit a log-normal distribution, and the exponential mapping transforms the normally distributed basic statistical parameters into a log-normal distribution for <code>rsh</code> if the variation is large. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1044808"></a>Strictly the unit &#8220;%&#8221; for the standard deviations of rsh is only for a small variation; if the variation is large then the exponential transformation modifies this.</div>
+<p>
+<a id="pgfId-1035917"></a>This approach allows statistical modeling via uncorrelated normal variables, yet can capture log-normal distributions and correlations between parameters, via the dependencies on the fundamental process parameters that control the device behavior. Mismatch is modeled via independent perturbations in individual devices, which is physically correct. To simulate mismatch between two devices the mismatch instance parameters for both devices must be selected for statistical perturbation, and this easily extends to more than two devices, and implicitly accounts for geometry differences between different devices. If mismatch is characterized from differential measurements between two identically sized devices, then the measured standard deviations need to be divided by 2 when mapped into the model parameters <code>smm_w</code>, <code>smm_l</code>, and <code>smm_rsh</code>.</p>
+<p>
+<a id="pgfId-1035918"></a>If mismatch analysis is not selected, then the total variance is used as the global variance,</p>
+
+<p><strong>(-42)
+<a id="pgfId-1047248"></a></strong></p>
+<p>
+<a id="pgfId-1035922"></a></p>
+<div class="webflare-div-image">
+<img src="images/r3/r3_48.gif" /></div>
+
+<p>
+<a id="pgfId-1035923"></a>The <code>nsig</code> parameters should be equated to global statistical variables in model files, as they are model parameters, not instance parameters. These parameters then should vary with case/corner and distributional simulations.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap42_re_Operating_Point_Information.html" id="prev" title="Operating Point Information">Operating Point Information</a></em></b><b><em><a href="Chap42_re_Notes_on_Parameter_Extraction_.html" id="nex" title="Notes on Parameter Extraction">Notes on Parameter Extraction</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

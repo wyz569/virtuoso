@@ -1,0 +1,1225 @@
+
+<html><head><title>R2 Model (r2)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686594971" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="R2 Model (r2)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686594971" />
+<meta name="NextFile" content="Chap2_re_Fractional_Impedance_Admittance_Pole_fracpole_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap2_re_Physical_Resistor_phy_res_.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- R2 Model (r2)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="Passive Components" />
+<meta name="new_topic" content="Yes" />
+<meta name="spotlight_topic" content="" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap2_re_Physical_Resistor_phy_res_.html" title="Physical Resistor (phy_res)">Physical Resistor (phy_res)</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap2_re_Fractional_Impedance_Admittance_Pole_fracpole_.html" title="Fractional Impedance/Admittance Pole (fracpole)">Fractional Impedance/Admittanc ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_R2_Model_r2_" title="R2 Model (r2)"></a><h2>
+<a id="pgfId-1036377"></a><a id="29136"></a>R2 Model (r2)</h2>
+
+<p>
+<a id="pgfId-1036378"></a>The R2 model is a nonlinear 2-terminal resistor model. The model does not include parasitic capacitances. As an option, the model can include self-heating. The nonlinearity form is from Agere Systems, and effectively implements first and second order electric field coefficients of resistance. The R2 model does not have the numerical problems that can arise in polynomial models. Although empirical, the form of the nonlinearity can model data reasonably well, especially for velocity saturation effects which are important in short resistors.</p>
+
+<h3>
+<a id="pgfId-1036379"></a>Usage</h3>
+
+<p>
+<a id="pgfId-1036380"></a>With model card:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036381"></a>r&lt;instanceName&gt; (&lt;node1&gt; &lt;node2&gt; [dt]) &lt;modelName&gt; &lt;instanceParameters&gt; model &lt;modelName&gt; r2 &lt;modelParameters&gt;</pre>
+
+<p>
+<a id="pgfId-1036382"></a>Without model card:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036383"></a>r&lt;name&gt; (&lt;node1&gt; &lt;node2&gt; [dt]) r2 r=&lt;resistanceValue&gt; [tc1=&lt;tc1Value&gt;] [tc2=&lt;tc2Value&gt;]</pre>
+
+<p>
+<a id="pgfId-1061423"></a>The dt node is the rise above the local temperature caused by the thermal power dissipated by the device being modeled.</p>
+<p>
+<a id="pgfId-1036384"></a>Examples</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036385"></a>r137 (n1 n2) rnpoly1 w=1u l=10u<br />model rnpoly1 r2<br />+ rsh=100.0 xl=0.2u xw=-0.05u<br />+ p3=0.12 q3=1.63 p2=0.014 q2=3.79</pre>
+<h3>
+<a id="pgfId-1036387"></a><a id="40280"></a>Equivalent Circuit</h3>
+<p>
+<a id="pgfId-1036391"></a></p>
+<div class="webflare-div-image">
+<img src="images/eq_circuit.GIF" /></div>
+<p><strong>Figure -1
+<a id="pgfId-1036392"></a>Model Equivalent Network (the thermal sub-network is optional)</strong></p>
+<h3>
+<a id="pgfId-1036394"></a><a id="81672"></a>Bias Dependence</h3>
+
+<p>
+<a id="pgfId-1036395"></a>If V is the voltage between the terminals node1 and node2, then the current flowing from node1 to node2 is</p>
+
+<p><strong>(-1)
+<a id="pgfId-1036400"></a><a id="79751"></a></strong></p>
+<p>
+<a id="pgfId-1039506"></a></p>
+<div class="webflare-div-image">
+<img width="58" height="35" src="images/Chap2-27.gif" /></div>
+
+<p>
+<a id="pgfId-1036401"></a>the DC bias dependent resistance is</p>
+
+<p><strong>(-2)
+<a id="pgfId-1036406"></a><a id="29968"></a></strong></p>
+<p>
+<a id="pgfId-1039519"></a></p>
+<div class="webflare-div-image">
+<img width="146" height="23" src="images/Chap2-28.gif" /></div>
+
+<p>
+<a id="pgfId-1036407"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>R</em></span><sub>0</sub><span class="webflare-courier-new" style="white-space:pre"><em>(T)</em></span> is the zero-bias resistance at the device temperature (which includes self-heating for the electrothermal version of the model), and the bias-dependent resistance factor is</p>
+
+<p><strong>(-3)
+<a id="pgfId-1036412"></a><a id="55596"></a></strong></p>
+<p>
+<a id="pgfId-1039532"></a></p>
+<div class="webflare-div-image">
+<img width="346" height="29" src="images/Chap2-29.gif" /></div>
+
+<p>
+<a id="pgfId-1036413"></a>The electric field <span class="webflare-courier-new" style="white-space:pre"><em>E</em></span> can be calculated based on either the design length or the effective electrical length, depending on the switch parameter <code>sw_efgeo</code>. This is because, depending upon how the model is used and the model parameters are characterized, there can be effects in the value of <code>xl</code> (the parameter that defines the difference between the design length and the effective electrical length) that are not related to velocity saturation (e.g. if end spreading and/or contact resistance are included in xl). If <code>sw_efgeo</code> is <code>1</code> (<code>true</code>), the electric field is calculated from the effective geometry.</p>
+
+<p><strong>(-4)
+<a id="pgfId-1036417"></a></strong></p>
+<p>
+<a id="pgfId-1039545"></a></p>
+<div class="webflare-div-image">
+<img width="122" height="35" src="images/Chap2-30.gif" /></div>
+
+<p>
+<a id="pgfId-1036418"></a>otherwise it is calculated from the design geometry,</p>
+
+<p><strong>(-5)
+<a id="pgfId-1036422"></a></strong></p>
+<p>
+<a id="pgfId-1039558"></a></p>
+<div class="webflare-div-image">
+<img width="106" height="35" src="images/Chap2-31.gif" /></div>
+
+<p>
+<a id="pgfId-1036423"></a>In both cases, an additional length offset dxle is included to allow flexibility and optimization in fitting data by separating the lengths used for resistance and field nonlinearity calculation. Although there is a singularity at V = E = 0 because of the absolute value operation in <a href="Chap2_re_R2_Model_r2_.html#55596">Equation&#160;2-3</a>, the derivative of <a href="Chap2_re_R2_Model_r2_.html#79751">Equation&#160;2-1</a> with respect to voltage is defined and continuous up to third order. The fourth order derivative does not exist at V = 0 and its left limit does not equal its right limit there.</p>
+<p>
+<a id="pgfId-1036430"></a>For the electrothermal version of the model, the thermal power is calculated as</p>
+
+<p><strong>(-6)
+<a id="pgfId-1036434"></a></strong></p>
+<p>
+<a id="pgfId-1039571"></a></p>
+<div class="webflare-div-image">
+<img width="76" height="23" src="images/Chap2-32.gif" /></div>
+
+<p>
+<a id="pgfId-1036435"></a>and the powers that flow through the thermal resistance and thermal capacitance are</p>
+
+<p><strong>(-7)
+<a id="pgfId-1036439"></a></strong></p>
+<p>
+<a id="pgfId-1039584"></a></p>
+<div class="webflare-div-image">
+<img width="187" height="23" src="images/Chap2-33.gif" /></div>
+
+<p>
+<a id="pgfId-1036440"></a>and</p>
+
+<p><strong>(-8)
+<a id="pgfId-1036444"></a></strong></p>
+<p>
+<a id="pgfId-1039597"></a></p>
+<div class="webflare-div-image">
+<img width="163" height="23" src="images/Chap2-34.gif" /></div>
+
+<p>
+<a id="pgfId-1036445"></a>respectively, where T(dt) is the local temperature rise due to self-heating and the thermal conductance and capacitance are <span class="webflare-courier-new" style="white-space:pre"><em>g</em></span><sub>TH</sub> and <span class="webflare-courier-new" style="white-space:pre"><em>c</em></span><sub>TH</sub>, respectively. The thermal admittance is<br /><em>yTH</em> = <em>gTH</em> + <em>j</em>ω<em>cTH</em>.</p>
+<p>
+<a id="pgfId-1043615"></a>The thermal power after simulation convergence is:</p>
+
+<p><strong>(-9)
+<a id="pgfId-1043616"></a></strong></p>
+<p>
+<a id="pgfId-1043620"></a></p>
+<div class="webflare-div-image">
+<img width="360" height="23" src="images/Chap2-35.gif" /></div>
+<h3>
+<a id="pgfId-1036447"></a><a id="83938"></a>Geometry Dependence</h3>
+
+<p>
+<a id="pgfId-1036448"></a>The basic calculation for the (zero bias) resistance of a resistor is <em>R</em><sub>0 </sub>= <code>rsh</code><em>L/W</em>. Because of several physical effects, the length and width used in this calculation differ from the design (or mask) length and width that define the resistor layout.</p>
+<p>
+<a id="pgfId-1036449"></a>The <code>r2</code> model incorporates a simple, fixed offset between design and effective (electrical) length and width. Because subcircuit models for resistors can consist of multiple resistance sections connected in series, it is desirable to be able to switch on and off the end corrections for length to facilitate implementation of such multi-section models. This is the function of the <code>c1</code> and <code>c2</code> instance parameters of the <code>r2</code> model. The effective length offset is</p>
+
+<p><strong>(-10)
+<a id="pgfId-1036453"></a></strong></p>
+<p>
+<a id="pgfId-1039610"></a></p>
+<div class="webflare-div-image">
+<img width="139" height="18" src="images/Chap2-36.gif" /></div>
+
+<p>
+<a id="pgfId-1036454"></a>(which is zero if neither end is contacted, <code>xl</code> if both ends are contacted, and <code>xl/2</code> if only one end is contacted).</p>
+<p>
+<a id="pgfId-1036455"></a>The design length and width, in units of microns, are</p>
+
+<p><strong>(-11)
+<a id="pgfId-1036459"></a></strong></p>
+<p>
+<a id="pgfId-1039623"></a></p>
+<div class="webflare-div-image">
+<img width="243" height="25" src="images/Chap2-37.gif" /></div>
+<p><strong>(-12)
+<a id="pgfId-1036463"></a></strong></p>
+<p>
+<a id="pgfId-1039636"></a></p>
+<div class="webflare-div-image">
+<img width="248" height="25" src="images/Chap2-38.gif" /></div>
+
+<p>
+<a id="pgfId-1036464"></a>where conversions from optical shrinking and unit scale conversion are included. If <code>scale</code> is <code>1</code> then <code>l</code> and <code>w</code> should be specified on model instances in meters. If scale is <code>1.0e-6</code> then <code>l</code> and <code>w</code> should be specified in units if microns. The effective electrical dimensions are</p>
+
+<p><strong>(-13)
+<a id="pgfId-1036468"></a></strong></p>
+<p>
+<a id="pgfId-1039649"></a></p>
+<div class="webflare-div-image">
+<img width="148" height="18" src="images/Chap2-39.gif" /></div>
+<p><strong>(-14)
+<a id="pgfId-1036472"></a></strong></p>
+<p>
+<a id="pgfId-1039662"></a></p>
+<div class="webflare-div-image">
+<img width="144" height="18" src="images/Chap2-40.gif" /></div>
+
+<p>
+<a id="pgfId-1036473"></a>There are three modes of geometric calculation based on the instance parameters <code>w</code>, <code>l</code>, and <code>r</code>. All modes are based on resistance being specified (or calculated), at zero applied bias and at the nominal device temperature specified by the parameter <code>tnom</code>. The order of importance of considering the instance parameters is (in order of from most to least important) width, length, and resistance. If all are specified, the instance <code>r</code> value is ignored, and resistance is calculated from the specified length and width.</p>
+
+<p><strong>(-15)
+<a id="pgfId-1036477"></a></strong></p>
+<p>
+<a id="pgfId-1039675"></a></p>
+<div class="webflare-div-image">
+<img width="75" height="23" src="images/Chap2-41.gif" /></div>
+
+<p>
+<a id="pgfId-1036478"></a>and the effective width is calculated</p>
+
+<p><strong>(-16)
+<a id="pgfId-1036482"></a></strong></p>
+<p>
+<a id="pgfId-1039688"></a></p>
+<div class="webflare-div-image">
+<img width="172" height="40" src="images/Chap2-42.gif" /></div>
+
+<p>
+<a id="pgfId-1036483"></a>and possibilities of zero resistance or length, and error conditions of negative length or width, are handled.</p>
+<p>
+<a id="pgfId-1036484"></a>If resistance is specified, and length is not specified, then</p>
+
+<p><strong>(-17)
+<a id="pgfId-1036488"></a></strong></p>
+<p>
+<a id="pgfId-1039701"></a></p>
+<div class="webflare-div-image">
+<img width="75" height="23" src="images/Chap2-43.gif" /></div>
+<p><strong>(-18)
+<a id="pgfId-1036492"></a></strong></p>
+<p>
+<a id="pgfId-1039714"></a></p>
+<div class="webflare-div-image">
+<img width="172" height="40" src="images/Chap2-44.gif" /></div>
+
+<p>
+<a id="pgfId-1036493"></a>and again possibilities of zero resistance and error conditions of negative length or width are handled.</p>
+<p>
+<a id="pgfId-1036494"></a>For any other combination of instance parameter specification (resistance is not specified, or if it is then both width and length, which override resistance specification, are also specified), then the resistance is calculated from the geometry,</p>
+
+<p><strong>(-19)
+<a id="pgfId-1036498"></a></strong></p>
+<p>
+<a id="pgfId-1039727"></a></p>
+<div class="webflare-div-image">
+<img width="144" height="35" src="images/Chap2-45.gif" /></div>
+
+<p>
+<a id="pgfId-1036499"></a>and zero resistance or conductance, and negative length or width errors, are handled.</p>
+<p>
+<a id="pgfId-1036500"></a>Although end effects, such as spreading resistance and contact resistance, are assumed to be modeled via the <code>xl</code> parameter, the temperature coefficients of the end effects may differ from those of the body of the resistor. Simple analysis shows that these different temperature coefficients can be accounted for by introducing inverse length dependence to the temperature coefficients. A width dependence of temperature coefficients of resistance is also included in the model. Therefore in the R2 model,</p>
+
+<p><strong>(-20)
+<a id="pgfId-1036505"></a><a id="92594"></a></strong></p>
+<p>
+<a id="pgfId-1039753"></a></p>
+<div class="webflare-div-image">
+<img width="249" height="35" src="images/Chap2-46.gif" /></div>
+<p><strong>(-21)
+<a id="pgfId-1036510"></a><a id="68660"></a></strong></p>
+<p>
+<a id="pgfId-1039766"></a></p>
+<div class="webflare-div-image">
+<img width="249" height="35" src="images/Chap2-47.gif" /></div>
+
+<p>
+<a id="pgfId-1036511"></a>where the length dependence is switched on, off, or halved, depending on whether the resistor is contacted at both ends, not contacted, or contacted at only one end, respectively. The dependence of the temperature coefficients on whether a resistor is contacted or not enables consistent modeling of temperature coefficients for single or multiple section models.</p>
+<p>
+<a id="pgfId-1036512"></a>The thermal conductance and capacitance include area, perimeter, and fixed components. Asymptotically for a large area device, the heat flow is perpendicular to the plane of heat generation in the resistor, and the heat energy stored in a device depends on its volume, hence the area dependent component. For a long resistor, as it becomes narrower, more of the heat flow is conducted by a fringe path at the edges of the device, hence the perimeter dependent component. As both length and width decrease, the thermal conditions in the device asymptotically approach that of a point source in an infinite medium, hence the fixed component. The thermal conductance and capacitance are therefore</p>
+
+<p><strong>(-22)
+<a id="pgfId-1036517"></a><a id="97896"></a></strong></p>
+<p>
+<a id="pgfId-1039740"></a></p>
+<div class="webflare-div-image">
+<img width="260" height="23" src="images/Chap2-48.gif" /></div>
+<p><strong>(-23)
+<a id="pgfId-1036521"></a></strong></p>
+<p>
+<a id="pgfId-1039779"></a></p>
+<div class="webflare-div-image">
+<img width="258" height="23" src="images/Chap2-49.gif" /></div>
+
+<p>
+<a id="pgfId-1036522"></a>where the area and perimeter are calculated as</p>
+
+<p><strong>(-24)
+<a id="pgfId-1036526"></a></strong></p>
+<p>
+<a id="pgfId-1039792"></a></p>
+<div class="webflare-div-image">
+<img width="139" height="18" src="images/Chap2-50.gif" /></div>
+<p><strong>(-25)
+<a id="pgfId-1036530"></a></strong></p>
+<p>
+<a id="pgfId-1039805"></a></p>
+<div class="webflare-div-image">
+<img width="199" height="18" src="images/Chap2-51.gif" /></div>
+
+<p>
+<a id="pgfId-1036531"></a>The calculated perimeter therefore depends on whether the ends are contacted or not. Often, the design dimensions of the body of a resistor differ from the overall dimensions of the device, for example if the design length is considered to be the unsolicited length of a poly resistor, the total resistor length will typically include silicided contact regions. So it is not readily apparent what dimension should be used in calculation of the thermal conductance and capacitance. That is why the design dimensions, rather than some effective dimensions (whose value is calculated to best fit DC electrical data), are used. This turns out to be fine (with the exception that differences between the perimeter components along length and width dimensions are ignored), because if there is some difference Δ between design and effective dimensions for thermal conductance modeling, then for a device contacted at both ends</p>
+
+<p><strong>(-26)
+<a id="pgfId-1036535"></a></strong></p>
+<p>
+<a id="pgfId-1039825"></a></p>
+<div class="webflare-div-image">
+<img width="652" height="65" src="images/Chap2-52.gif" /></div>
+
+<p>
+<a id="pgfId-1036536"></a>therefore, any difference between design and effective dimensions can be taken into account by appropriate characterization of the fixed, perimeter, and area component parameters.</p>
+<p>
+<a id="pgfId-1036537"></a>Because the local thermal conductance differs between the edge of a device and the center of a device, it is higher at the edge because of fringing conductance, the temperature of a resistor undergoing self-heating is not spatially uniform, but is lower at the edges than in the middle. This is not taken into account in the R2 model.</p>
+
+<h3>
+<a id="pgfId-1036539"></a><a id="33967"></a>Temperature Dependence</h3>
+
+<p>
+<a id="pgfId-1036540"></a>The zero-bias resistance <span class="webflare-courier-new" style="white-space:pre"><em>R</em></span>0 varies with temperature as</p>
+
+<p><strong>(-27)
+<a id="pgfId-1036544"></a></strong></p>
+<p>
+<a id="pgfId-1039838"></a></p>
+<div class="webflare-div-image">
+<img width="247" height="31" src="images/Chap2-53.gif" /></div>
+
+<p>
+<a id="pgfId-1036545"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>R0,nom</em></span> is the nominal value of the zero-bias resistance, at the nominal temperature <code>tnom</code>, <span class="webflare-courier-new" style="white-space:pre"><em>dT</em></span> is the temperature difference (including self-heating, if that form of the model is used) with respect to <code>tnom</code>, and </p>
+
+<p>
+<a id="pgfId-1039897"></a></p>
+<div class="webflare-div-image">
+<img width="26" height="31" src="images/Chap2-54.gif" /></div>
+<p>
+<a id="pgfId-1036552"></a>and </p>
+<p>
+<a id="pgfId-1039851"></a></p>
+<div class="webflare-div-image">
+<img width="26" height="31" src="images/Chap2-55.gif" /></div>
+
+<p>
+<a id="pgfId-1036553"></a>are first (linear) and second (quadratic) order temperature coefficients. These coefficients have both a width dependence and a length dependence, the latter to enable modeling of resistors that have different temperature coefficients for end resistance (which includes contacts and contact enhancement regions) compared to body resistance without having to implement a sectional (subcircuit) model with explicit end and body resistance components. The width and length dependency is detailed in the section on geometry dependence &#8212; see <a href="Chap2_re_R2_Model_r2_.html#92594">Equation&#160;2-20</a> and <a href="Chap2_re_R2_Model_r2_.html#68660">Equation&#160;2-21</a>. Smooth limiting of the resistance temperature coefficient in (<a href="Chap2_re_R2_Model_r2_.html#97896">Equation&#160;2-22</a>) is implemented to limit its lower value to 0.01.</p>
+<p>
+<a id="pgfId-1036563"></a>For the isothermal version of the model the temperature difference <span class="webflare-courier-new" style="white-space:pre"><em>dT</em></span> is calculated statically based on the device temperature (which can vary from the circuit ambient temperature by setting the instance parameter <code>trise</code>, which is the local device temperature difference with respect to the circuit ambient temperature). For the electrothermal version of the model dT is calculated dynamically and self-consistently with the power dissipation of the device.</p>
+<p>
+<a id="pgfId-1036564"></a>The flicker noise coefficient varies with temperature as</p>
+
+<p><strong>(-28)
+<a id="pgfId-1036569"></a><a id="66227"></a></strong></p>
+<p>
+<a id="pgfId-1039920"></a></p>
+<div class="webflare-div-image">
+<img width="182" height="23" src="images/Chap2-56.gif" /></div>
+
+<p>
+<a id="pgfId-1036570"></a>where <code>kfn</code> and <code>tc1kfn</code> are model parameters.</p>
+
+<h3>
+<a id="pgfId-1036572"></a><a id="90868"></a>Noise</h3>
+
+<p>
+<a id="pgfId-1036573"></a>The noise model comprises two components, a thermal (white) noise component and a flicker ker (<span class="webflare-courier-new" style="white-space:pre"><em>1/f</em></span> ) noise component. These components are noise current spectral density (in <span class="webflare-courier-new" style="white-space:pre"><em>A2/Hz</em></span> ) that are implemented as a noise current sources in parallel with the resistance element.</p>
+<p>
+<a id="pgfId-1036574"></a>The thermal noise component is based on the DC conductance of the device,</p>
+
+<p><strong>(-29)
+<a id="pgfId-1036578"></a></strong></p>
+<p>
+<a id="pgfId-1039937"></a></p>
+<div class="webflare-div-image">
+<img width="202" height="31" src="images/Chap2-57.gif" /></div>
+
+<p>
+<a id="pgfId-1036579"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>k</em></span> is Boltzmann&#8217;s constant, <span class="webflare-courier-new" style="white-space:pre"><em>T</em></span><code><sub><em>K</em></sub></code> is the device temperature (in Kelvin, including the effect of self-heating), <span class="webflare-courier-new" style="white-space:pre"><em>G</em></span><code><sub><em>0</em></sub></code> is the zero-bias conductance of the resistor (at the temperature <code>T</code>), and <span class="webflare-courier-new" style="white-space:pre"><em>rFactor</em></span> is the bias-dependent (DC) resistance factor (<a href="Chap2_re_R2_Model_r2_.html#55596">Equation&#160;2-3</a>).</p>
+<p>
+<a id="pgfId-1036586"></a>The flicker noise component is DC current dependent (<a href="Chap2_re_R2_Model_r2_.html#29968">Equation&#160;2-2</a>), and scales with geometry per the physical restrictions noted in <a href="Chap2_re_R2_Model_r2_.html#55596">Equation&#160;2-3</a>.</p>
+
+<p><strong>(-30)
+<a id="pgfId-1036593"></a></strong></p>
+<p>
+<a id="pgfId-1039950"></a></p>
+<div class="webflare-div-image">
+<img width="206" height="44" src="images/Chap2-58.gif" /></div>
+
+<p>
+<a id="pgfId-1036594"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>f</em></span> is frequency (in Hz), <code>afn</code> and <code>bfn</code> are model parameters, <span class="webflare-courier-new" style="white-space:pre"><em>K</em></span><code><sub><em>FN</em></sub></code><span class="webflare-courier-new" style="white-space:pre"><em>(T)</em></span> is the temperature dependent flicker noise coefficient (<a href="Chap2_re_R2_Model_r2_.html#66227">Equation&#160;2-28</a>), <span class="webflare-courier-new" style="white-space:pre"><em>I</em></span> is the DC current in the resistor, and <span class="webflare-courier-new" style="white-space:pre"><em>W</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>L</em></span> are the resistor width and length, respectively, in units of micron. If the switch parameter for flicker noise geometry calculation <code>sw_fngeo</code> is 0 (<code>false</code>) then <span class="webflare-courier-new" style="white-space:pre"><em>W</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>L</em></span> are design geometries, <span class="webflare-courier-new" style="white-space:pre"><em>w_um</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>l_um </em></span>respectively, else if it is 1 (<code>true</code>) then <span class="webflare-courier-new" style="white-space:pre"><em>W</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>L</em></span> are effective geometries, <span class="webflare-courier-new" style="white-space:pre"><em>weff_um</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>leff_um</em></span> respectively.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1036598"></a>If self-heating is included, then possibly there is a frequency dependence to the flicker noise because of the thermal time constant. There is no data to verify this at present so a frequency independent noise current spectral density is used.</div>
+
+<h3>
+<a id="pgfId-1036600"></a><a id="11637"></a>Description and Details</h3>
+
+<p>
+<a id="pgfId-1036601"></a>The voltage nonlinearity of the device resistance is</p>
+
+<p><strong>(-31)
+<a id="pgfId-1036605"></a></strong></p>
+<p>
+<a id="pgfId-1039963"></a></p>
+<div class="webflare-div-image">
+<img width="368" height="39" src="images/Chap2-59.gif" /></div>
+
+<p>
+<a id="pgfId-1036606"></a>where <span class="webflare-courier-new" style="white-space:pre"><em>R</em></span><code><sub><em>0</em></sub></code> is the zero bias resistance of the resistor, <span class="webflare-courier-new" style="white-space:pre"><em>E=V/L</em></span> is the electric field across the device, <code>p3</code> and <code>q3</code> are parameters of the effective first order (linear) electric field coefficient, and <code>p2</code> and <code>q2</code> are parameters of the effective second order (quadratic) electric field coefficient. Because the nonlinearity is based on field, rather than voltage, it scales with geometry.</p>
+<p>
+<a id="pgfId-1036607"></a>For q3E somewhat greater than 1, the cubic component of the model becomes</p>
+
+<p><strong>(-32)
+<a id="pgfId-1036611"></a></strong></p>
+<p>
+<a id="pgfId-1039976"></a></p>
+<div class="webflare-div-image">
+<img width="183" height="23" src="images/Chap2-60.gif" /></div>
+
+<p>
+<a id="pgfId-1036612"></a>therefore this term approximates a linear (first order) field dependence of resistance with a coefficient of value <code>p3</code>.<code>q3</code>.</p>
+<p>
+<a id="pgfId-1036613"></a>For q2E somewhat less than 1, the quadratic component of the model becomes</p>
+
+<p><strong>(-33)
+<a id="pgfId-1036618"></a><a id="49163"></a></strong></p>
+<p>
+<a id="pgfId-1039989"></a></p>
+<div class="webflare-div-image">
+<img width="186" height="31" src="images/Chap2-61.gif" /></div>
+
+<p>
+<a id="pgfId-1036619"></a>therefore this term approximates a quadratic (second order) field dependence of resistance with a coefficient of value <code>0.5p2²q2</code><code><sup>2</sup></code>. For high fields this component becomes</p>
+
+<p><strong>(-34)
+<a id="pgfId-1036624"></a><a id="29746"></a></strong></p>
+<p>
+<a id="pgfId-1040002"></a></p>
+<div class="webflare-div-image">
+<img width="183" height="23" src="images/Chap2-62.gif" /></div>
+
+<p>
+<a id="pgfId-1036630"></a>and it turns out that the behavior embodied in <a href="Chap2_re_R2_Model_r2_.html#49163">Equation&#160;2-33</a> and <a href="Chap2_re_R2_Model_r2_.html#29746">Equation&#160;2-34</a> is quite accurate for modeling velocity saturation, which is a significant component of nonlinearity for shorter resistors.</p>
+<p>
+<a id="pgfId-1036632"></a>To ensure that the resistance does not become negative,</p>
+
+<p><strong>(-35)
+<a id="pgfId-1036636"></a></strong></p>
+<p>
+<a id="pgfId-1040015"></a></p>
+<div class="webflare-div-image">
+<img width="63" height="18" src="images/Chap2-63.gif" /></div>
+
+<p>
+<a id="pgfId-1036637"></a>and</p>
+
+<p><strong>(-36)
+<a id="pgfId-1036641"></a></strong></p>
+<p>
+<a id="pgfId-1040028"></a></p>
+<div class="webflare-div-image">
+<img width="93" height="18" src="images/Chap2-64.gif" /></div>
+
+<p>
+<a id="pgfId-1036642"></a>are enforced. This also precludes the model exhibiting a negative differential resistance (NDR). NDR is observed in some devices, but this is from self-heating effects in resistors with positive temperature coefficients. This behavior should therefore be modeled using the electrothermal version of the model.</p>
+<p>
+<a id="pgfId-1036643"></a>In SPICE-like simulators, which are based on modified nodal analysis (MNA), it is preferable to formulate models as voltage controlled current sources (VCCS&#8217;s). This is the default for the R2 model. For small resistance values this can cause numerical problems, and the MNA formulation is not possible for zero valued resistors (which have infinite conductance). For small resistance values it is better to switch to a current controlled voltage source (CCVS) formulation. Implicitly, this increases the matrix size for MNA analysis, as the current through the CCVS becomes a system variable. The R2 model includes a parameter <code>rthresh</code>, and if the total (not per segment, but r/m) resistance at zero bias is less than <code>rthresh</code>, the model switches to a CCVS formulation for numerical stability and to be able to work properly for zero valued resistors. This makes the model implicit as the formulation is effectively <br /><span class="webflare-courier-new" style="white-space:pre"><em>V=I·R(V )</em></span>.</p>
+
+<h4><em>
+<a id="pgfId-1057262"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1057266"></a><a href="Chap2_re_Two_Terminal_Resistor_resistor_.html#18021">Two Terminal Resistor (resistor)</a></p>
+<p>
+<a id="pgfId-1057270"></a><a href="Chap2_re_Physical_Resistor_phy_res_.html#48800">Physical Resistor (phy_res)</a></p>
+<p>
+<a id="pgfId-1057285"></a><a href="Chap2_re_Component_Statements.html#19550">Component Statements</a></p>
+<p>
+<a id="pgfId-1057274"></a><a href="Chap2.html#51225">Passive Components</a></p>
+
+<a id="Filename:re_Component_Statements" title="Component Statements"></a><h2>
+<a id="pgfId-1036644"></a><a id="19550"></a>Component Statements</h2>
+<h3>
+<a id="pgfId-1036646"></a>Instance Syntax<a id="marker-1036645"></a></h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036647"></a>Name&#160;&#160;1&#160;&#160;2 ModelName parameter=value ...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036648"></a>Name&#160;&#160;1&#160;&#160;2 r2 parameter=value ...</pre>
+<h3>
+<a id="pgfId-1036650"></a>Instance Parameters<a id="marker-1036649"></a></h3>
+<table class="webflareTable" id="#id1045384">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057471"></a><code>m=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057473"></a>Multiply factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057475"></a> <code>w=1e-6 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057477"></a>Default width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057479"></a> <code>l=1e-6 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057481"></a>Resistor length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057483"></a> <code>r=100.0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057485"></a>Resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057487"></a> <code>c1=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057489"></a>Contact terminal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057491"></a> <code>c2=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057493"></a>Contact terminal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057495"></a> <code>trise=0.0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057497"></a>Temperature rise.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057499"></a> <code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057501"></a>Should resistor generate noise. Possible values are <code>no</code> or <code>yes</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057503"></a> <code>sw_et=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057505"></a>switch for turning off self-heating.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057507"></a> <code>tc1=0.0 /K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057509"></a>resistance linear.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057511"></a> <code>tc2=0.0 /K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057513"></a>resistance linear.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1036663"></a>Model Syntax<a id="marker-1036662"></a></h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036664"></a>model modelName r2 parameter=value ...</pre>
+<h3>
+<a id="pgfId-1036666"></a>Model Parameters<a id="marker-1036665"></a></h3>
+<table class="webflareTable" id="#id1045513">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057515"></a><code>version=1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057517"></a> Model version selector. The available versions are 1.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057519"></a> <code>revision=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057521"></a> Model sub-version selector. The available versions are 0.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057523"></a> <code>shrink=0.0 %</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057525"></a>Shrink factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057527"></a> <code>tmin=-100 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057529"></a>The minimal temperature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057531"></a> <code>tmax=500.0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057533"></a>The maximal temperature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057535"></a> <code>rthresh=1e-3 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057537"></a>threshold.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057539"></a> <code>level=1002</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057541"></a>r2 model selector. The available level are 1002.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057543"></a> <code>tnom=27.0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057545"></a>Reference temperature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057547"></a><code>rsh=</code>∞<code> </code>&#x2126;<code>/sqr</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057549"></a>Sheet resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057551"></a> <code>lmin=0.0 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057553"></a>Minimum channel length for which the model is valid.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057555"></a> <code>lmax=9.9e99 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057557"></a>Maximum channel length for which the model is valid.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057559"></a> <code>wmin=0.0 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057561"></a>Minimum channel width for which the model is valid.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057563"></a> <code>wmax=9.9e99 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057565"></a>Maximum channel width for which the model is valid.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057567"></a> <code>xw=0.0 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057569"></a>Width offset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057571"></a> <code>xl=0.0 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057573"></a>Length offset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057575"></a> <code>dxle=0.0 </code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057577"></a>Length delta.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057579"></a> <code>sw_efgeo=no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057581"></a>Switch for electric field geometry calculation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057583"></a> <code>q3=0.0 </code>μ<code>m/V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057585"></a>Threshold for the linear field coefficient activities.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057587"></a> <code>p3=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057589"></a>Coefficient for linear field.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057591"></a> <code>q2=0.0 </code>μ<code>m/V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057593"></a>Threshold for the quadratic field coefficient activities.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057595"></a> <code>p2=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057597"></a>Coefficient for quadratic field.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057599"></a> <code>kfn=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057601"></a>Coefficient for flicker noise.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057603"></a> <code>afn=2.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057605"></a>Flicker noise current exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057607"></a> <code>bfn=1.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057609"></a>Coefficient for quadratic field.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057611"></a> <code>sw_fngeo=no</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057613"></a>Switch for flicker noise geometry calculation.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057615"></a> <code>jmax=100.0 A/</code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057617"></a>Maximum allowable current density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057619"></a> <code>tminclip=-100.0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057621"></a>Clip minimum temperature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057623"></a> <code>tmaxclip=500.0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057625"></a>clip maximum temperature.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057627"></a> <code>tc1=0.0 /K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057629"></a>Resistance linear.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057631"></a> <code>tc2=0.0 /K</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057633"></a>Resistance quadratic.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057635"></a> <code>tc1l=0.0 </code>μ<code>m/K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057637"></a>tc length coefficient for resistance linear.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057639"></a> <code>tc2l=0.0 </code>μ<code>m/K</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057641"></a>tc length coefficient for resistance quadratic.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057643"></a> <code>tc1w=0.0 </code>μ<code>m/K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057645"></a>tc width coefficient for resistance linear.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057647"></a> <code>tc2w=0.0 </code>μ<code>m/K</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057649"></a>tc width coefficient for resistance quadratic.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057651"></a> <code>tc1kfn=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057653"></a>Coefficient for flicker noise linear tc1.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057655"></a> <code>gth0=1.0e6 W/K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057657"></a>Thermal conductance fixed component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057659"></a> <code>gthp=0.0 W/K</code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057661"></a>Thermal conductance perimeter component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057663"></a> <code>gtha=0.0 W/K</code>μ<code>m</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057665"></a>Thermal conductance area component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057667"></a> <code>cth0=0.0 sW/K</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057669"></a>Thermal capacitance fixed component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057671"></a> <code>cthp=0.0 sW/K</code>μ<code>m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057673"></a>Thermal capacitance perimeter component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057675"></a> <code>ctha=0.0 sW/K</code>μ<code>m</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057677"></a>Thermal capacitance area component.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057679"></a> <code>c1=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057681"></a>Resistance contact terminal.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057683"></a> <code>c2=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057685"></a>Resistance contact terminal.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1036711"></a>Operating-Point Parameters</h3>
+<p>
+<a id="pgfId-1057738"></a><a id="marker-1036710"></a></p>
+<table class="webflareTable" id="#id1045817">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057687"></a><code>v (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057689"></a>Voltage at operating point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057691"></a> <code>i (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057693"></a>Current through the resistor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057695"></a> <code>power (W)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057697"></a>Power dissipated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057699"></a><code>pwr (W)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057701"></a>Power dissipated.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057703"></a> <code>r0 (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057705"></a>zero bias resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057707"></a> <code>leff_um (</code>μ<code>m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057709"></a>effective length in um.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057711"></a> <code>weff_um (</code>μ<code>m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057713"></a>effective width in um.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057715"></a> <code>r_dc (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057717"></a>DC Resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057719"></a> <code>r_ac (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057721"></a>AC Resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057723"></a> <code>rth (K/W)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057725"></a>Thermal Resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057727"></a>0&#160;&#160;<code>cth (sW/K)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057729"></a>Thermal capacitance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057731"></a>1&#160;&#160;<code>dt_et (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057733"></a>The self-heating temperature rise.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1057742"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1057746"></a><a href="Chap2_re_Two_Terminal_Resistor_resistor_.html#18021">Two Terminal Resistor (resistor)</a></p>
+<p>
+<a id="pgfId-1057750"></a><a href="Chap2_re_Physical_Resistor_phy_res_.html#48800">Physical Resistor (phy_res)</a></p>
+<p>
+<a id="pgfId-1057754"></a><a href="Chap2_re_R2_Model_r2_.html#29136">R2 Model (r2)</a></p>
+<p>
+<a id="pgfId-1057758"></a><a href="Chap2.html#51225">Passive Components</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap2_re_Physical_Resistor_phy_res_.html" id="prev" title="Physical Resistor (phy_res)">Physical Resistor (phy_res)</a></em></b><b><em><a href="Chap2_re_Fractional_Impedance_Admittance_Pole_fracpole_.html" id="nex" title="Fractional Impedance/Admittance Pole (fracpole)">Fractional Impedance/Admittanc ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

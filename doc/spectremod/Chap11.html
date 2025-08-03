@@ -1,0 +1,1379 @@
+
+<html><head><title>JFET Model (jfet)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686594945" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="JFET Model (jfet)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686594945" />
+<meta name="NextFile" content="Chap12.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap10a.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- JFET Model (jfet)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="jfet" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap10a.html" title="HBT Model (version 2)">HBT Model (version 2)</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap12.html" title="Philips Models">Philips Models</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>11
+<a id="pgfId-1032955"></a></h1>
+<h1>
+<a id="pgfId-1035250"></a><hr />
+<a id="73273"></a>JFET Model (jfet)<hr />
+</h1>
+
+<p>
+<a id="pgfId-1035481"></a>The JFET model is derived from the FET model of Shichman and Hodges. This topic contains the following information for the JFET model:</p>
+<ul><li>
+<a id="pgfId-1035485"></a><a href="Chap11.html#34586">Drain Current for the Subthreshold Region</a></li><li>
+<a id="pgfId-1035489"></a><a href="Chap11.html#14358">Drain Current for the Triode Region</a></li><li>
+<a id="pgfId-1035493"></a><a href="Chap11.html#27785">Drain Current for the Saturation Region</a></li><li>
+<a id="pgfId-1035497"></a><a href="Chap11.html#23689">Gate Junction Currents</a></li><li>
+<a id="pgfId-1035501"></a><a href="Chap11.html#40860">Gate Junction Capacitance</a></li><li>
+<a id="pgfId-1035505"></a><a href="Chap11.html#23277">Temperature Effect</a></li><li>
+<a id="pgfId-1035509"></a><a href="Chap11.html#10743">Noise Model</a></li><li>
+<a id="pgfId-1035513"></a><a href="Chap11.html#20802">Scaling Effects</a></li><li>
+<a id="pgfId-1035517"></a><a href="Chap11.html#58485">Component Statements</a></li></ul>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1035688"></a><a id="12696"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="472" src="images/Chap11-2.gif" /></div>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035689"></a>The back gate (enclosed by dotted lines) is available for <em>level</em> = 3 only.</div>
+<p>
+<a id="pgfId-1035694"></a><img width="153" height="28" src="images/Chap11-3.gif" />
+<a id="marker-1035693"></a></p>
+
+<p>
+<a id="pgfId-1035695"></a>where</p>
+
+<p>
+<a id="pgfId-1035705"></a><img width="340" height="60" src="images/Chap11-4.gif" /></p>
+<p>
+<a id="pgfId-1035709"></a><img width="277" height="32" src="images/Chap11-5.gif" /></p>
+<h3>
+<a id="pgfId-1035712"></a><a id="34586"></a>Drain Current for the Subthreshold Region <a id="marker-1035711"></a></h3>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035713"></a>These equations apply when <em>V</em><sub>GST</sub> ≤ 0.</div>
+<p>
+<a id="pgfId-1035724"></a><img width="530" height="95" src="images/Chap11-6.gif" />
+<a id="marker-1035723"></a></p>
+
+<p>
+<a id="pgfId-1035725"></a>where</p>
+
+<p>
+<a id="pgfId-1035729"></a><img width="146" height="32" src="images/Chap11-7.gif" /></p>
+<p>
+<a id="pgfId-1035733"></a><img width="286" height="34" src="images/Chap11-8.gif" /></p>
+<h3>
+<a id="pgfId-1035736"></a><a id="14358"></a>Drain Current for the Triode Region<a id="marker-1035735"></a></h3>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035737"></a>These equations apply when <em>V</em><sub>GST</sub> ≥ 0 and <em>V</em><sub>DS</sub> ≤ <em>V</em><sub>GST</sub>.</div>
+<p>
+<a id="pgfId-1035751"></a><img width="516" height="173" src="images/Chap11-9.gif" />
+<a id="marker-1035750"></a></p>
+
+<p>
+<a id="pgfId-1035752"></a>where</p>
+
+<p>
+<a id="pgfId-1035756"></a><img width="186" height="48" src="images/Chap11-10.gif" /></p>
+<p>
+<a id="pgfId-1035760"></a><img width="243" height="28" src="images/Chap11-11.gif" /></p>
+<h3>
+<a id="pgfId-1035763"></a><a id="27785"></a>Drain Current for the Saturation Region<a id="marker-1035762"></a></h3>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035764"></a>These equations apply when <em>V</em><sub>GST</sub> ≥ 0 and <em>V</em><sub>DS</sub> ≥ <em>V</em><sub>GST</sub>.</div>
+<p>
+<a id="pgfId-1035778"></a><img width="560" height="173" src="images/Chap11-12.gif" />
+<a id="marker-1035777"></a></p>
+<h3>
+<a id="pgfId-1035785"></a>Substrate Leakage Currents<a id="marker-1035784"></a></h3>
+
+<p>
+<a id="pgfId-1035786"></a>If <span class="webflare-courier-new" style="white-space:pre"><em>ai</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>bi</em></span> are both greater than 0, and <span class="webflare-courier-new" style="white-space:pre"><em>VDS</em></span>&gt;<span class="webflare-courier-new" style="white-space:pre"><em>VDSAT</em></span>,</p>
+
+<p>
+<a id="pgfId-1035791"></a><img width="383" height="48" src="images/Chap11-13.gif" />
+<a id="marker-1035790"></a></p>
+
+<p>
+<a id="pgfId-1035794"></a>For information on bulk junction models <span class="webflare-courier-new" style="white-space:pre"><em>IBS</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>IBD</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>CGBS</em></span>, and <span class="webflare-courier-new" style="white-space:pre"><em>CGBD</em></span>, see <a href="Chap13.html#14505">Common MOSFET Equations</a></p>
+
+<h3>
+<a id="pgfId-1035798"></a><a id="23689"></a>Gate Junction Currents<a id="marker-1035797"></a></h3>
+<p>
+<a id="pgfId-1035810"></a><img width="456" height="117" src="images/Chap11-14.gif" />
+<a id="marker-1035809"></a></p>
+
+<p>
+<a id="pgfId-1035811"></a>where <em>V</em><sub>t</sub> is the thermal voltage given by </p>
+
+<p>
+<a id="pgfId-1035815"></a><img width="63" height="41" src="images/Chap11-15.gif" />
+,</p>
+<p>
+<a id="pgfId-1035820"></a><img width="212" height="47" src="images/Chap11-16.gif" />
+ <a id="marker-1035819"></a></p>
+
+<p>
+<a id="pgfId-1035821"></a>is the forward explosion voltage,</p>
+
+<p>
+<a id="pgfId-1035825"></a><img width="166" height="48" src="images/Chap11-17.gif" /></p>
+
+<p>
+<a id="pgfId-1035826"></a>is the conductance at <em>V</em><sub>Expl</sub>, and</p>
+
+<p>
+<a id="pgfId-1035830"></a><img width="221" height="30" src="images/Chap11-18.gif" /></p>
+
+<p>
+<a id="pgfId-1035831"></a>is the current linearly extrapolated to <em>V</em> = 0 from <em>V</em><sub>Expl</sub>.</p>
+
+<h3>
+<a id="pgfId-1035834"></a><a id="40860"></a>Gate Junction Capacitance<a id="marker-1035833"></a></h3>
+<p>
+<a id="pgfId-1035842"></a><img width="619" height="145" src="images/Chap11-19.gif" />
+<a id="marker-1035841"></a></p>
+<h3>
+<a id="pgfId-1035845"></a><a id="23277"></a>Temperature Effect<a id="marker-1035844"></a></h3>
+<h4>
+<a id="pgfId-1035847"></a>Gate-Source and Gate-Drain Capacitance<a id="marker-1035846"></a></h4>
+<p>
+<a id="pgfId-1035852"></a><img width="461" height="60" src="images/Chap11-20.gif" />
+<a id="marker-1035851"></a> </p>
+<p>
+<a id="pgfId-1035857"></a><img width="463" height="60" src="images/Chap11-21.gif" />
+<a id="marker-1035856"></a> </p>
+<h4>
+<a id="pgfId-1035859"></a>Junction Potential<a id="marker-1035858"></a></h4>
+<p>
+<a id="pgfId-1035864"></a><img width="430" height="47" src="images/Chap11-22.gif" />
+<a id="marker-1035863"></a></p>
+<h4>
+<a id="pgfId-1035866"></a>Transconductance Temperature<a id="marker-1035865"></a></h4>
+<p>
+<a id="pgfId-1035871"></a><img width="231" height="50" src="images/Chap11-23.gif" />
+<a id="marker-1035870"></a></p>
+<p>
+<a id="pgfId-1035876"></a><img width="276" height="50" src="images/Chap11-24.gif" />
+<a id="marker-1035875"></a></p>
+<p>
+<a id="pgfId-1035881"></a><img width="294" height="50" src="images/Chap11-25.gif" />
+<a id="marker-1035880"></a></p>
+<h4>
+<a id="pgfId-1035883"></a>Gate Junction Current<a id="marker-1035882"></a></h4>
+<p>
+<a id="pgfId-1035888"></a><img width="310" height="61" src="images/Chap11-26.gif" />
+<a id="marker-1035887"></a></p>
+
+<p>
+<a id="pgfId-1035889"></a>where, if SPICE-compatibility is required (set by the options),</p>
+
+<p>
+<a id="pgfId-1035893"></a><img width="204" height="45" src="images/Chap11-27.gif" /></p>
+<p>
+<a id="pgfId-1035897"></a><img width="269" height="45" src="images/Chap11-28.gif" /></p>
+
+<p>
+<a id="pgfId-1035898"></a>otherwise,</p>
+
+<p>
+<a id="pgfId-1035902"></a><img width="206" height="45" src="images/Chap11-29.gif" /></p>
+<p>
+<a id="pgfId-1036399"></a><img width="277" height="45" src="images/Chap11-30.gif" /></p>
+
+<p>
+<a id="pgfId-1036400"></a>For equations on parameters <code>tlev</code>, <code>tlevc</code>, <code>gap1</code>, and <code>gap2</code>, see <a href="Chap13.html#14505">Common MOSFET Equations</a></p>
+
+<h4>
+<a id="pgfId-1036402"></a>Threshold Voltage<a id="marker-1036401"></a></h4>
+
+<p>
+<a id="pgfId-1035913"></a>For <span class="webflare-courier-new" style="white-space:pre"><em>tcv</em></span>,</p>
+
+<p>
+<a id="pgfId-1035918"></a><img width="252" height="28" src="images/Chap11-31.gif" />
+<a id="marker-1035917"></a></p>
+<p>
+<a id="pgfId-1035923"></a><img width="274" height="28" src="images/Chap11-32.gif" />
+<a id="marker-1035922"></a></p>
+<h4>
+<a id="pgfId-1035925"></a>Parasitic Resistors<a id="marker-1035924"></a></h4>
+<p>
+<a id="pgfId-1035930"></a><img width="355" height="21" src="images/Chap11-33.gif" />
+<a id="marker-1035929"></a></p>
+<p>
+<a id="pgfId-1035934"></a><img width="185" height="28" src="images/Chap11-34.gif" /></p>
+<p>
+<a id="pgfId-1035938"></a><img width="185" height="28" src="images/Chap11-35.gif" /></p>
+<p>
+<a id="pgfId-1035942"></a><img width="185" height="28" src="images/Chap11-36.gif" /></p>
+<p>
+<a id="pgfId-1035946"></a><img width="185" height="28" src="images/Chap11-37.gif" /></p>
+<h3>
+<a id="pgfId-1035949"></a><a id="10743"></a>Noise Model<a id="marker-1035948"></a></h3>
+<h4>
+<a id="pgfId-1035951"></a>Source Series Resistance Thermal Noise<a id="marker-1035950"></a></h4>
+<p>
+<a id="pgfId-1035956"></a><img width="100" height="41" src="images/Chap11-38.gif" />
+<a id="marker-1035955"></a></p>
+<h4>
+<a id="pgfId-1035958"></a>Drain Series Resistance Thermal Noise<a id="marker-1035957"></a></h4>
+<p>
+<a id="pgfId-1035963"></a><img width="105" height="41" src="images/Chap11-39.gif" />
+<a id="marker-1035962"></a></p>
+<h4>
+<a id="pgfId-1035965"></a>Channel Thermal and Flicker Noise<a id="marker-1035964"></a></h4>
+<p>
+<a id="pgfId-1035970"></a><img width="374" height="63" src="images/Chap11-40.gif" />
+<a id="marker-1035969"></a></p>
+
+<p>
+<a id="pgfId-1035971"></a>where</p>
+
+<p>
+<a id="pgfId-1035975"></a><img width="215" height="28" src="images/Chap11-41.gif" /></p>
+
+<p>
+<a id="pgfId-1035976"></a><em>g</em><sub>m</sub> is the transconductance, <em>g</em><sub>ds</sub> is the channel conductance, <em>kf</em> and <em>af</em> are constants for a given device. The Spectre<sup>&#174;</sup> circuit simulator defaults for <em>kf</em> and <em>af</em> are 0.0 and 1.0, respectively.</p>
+
+<h4>
+<a id="pgfId-1035978"></a>Gate Junction Noise<a id="marker-1035977"></a></h4>
+<p>
+<a id="pgfId-1035983"></a><img width="211" height="52" src="images/Chap11-42.gif" />
+<a id="marker-1035982"></a></p>
+<p>
+<a id="pgfId-1035988"></a><img width="218" height="52" src="images/Chap11-43.gif" />
+<a id="marker-1035987"></a></p>
+<h3>
+<a id="pgfId-1035991"></a><a id="20802"></a>Scaling Effects<a id="marker-1035990"></a></h3>
+
+<p>
+<a id="pgfId-1035992"></a>The following are the Spectre scaling effects:</p>
+<ul><li>
+<a id="pgfId-1035993"></a><em>is</em>, <em>cgs</em>, <em>cgd</em>, and <em>beta</em> are multiplied by <em>area</em>.</li><li>
+<a id="pgfId-1035994"></a><em>rs</em> and <em>rd</em> are divided by <em>area</em>.</li><li>
+<a id="pgfId-1035995"></a>All noises are multiplied by <em>area</em>.</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1035997"></a><a id="58485"></a>Component Statements</h3>
+<h4>
+<a id="pgfId-1035998"></a>Sample Instance Statement:</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035999"></a>jf1 (net1 net2 0) jmod area=1</pre>
+<h4>
+<a id="pgfId-1036000"></a>Sample Model Statement</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036001"></a>model jmod jfet beta=9e-5 lambda=0 type=n vt0=-18.7 rd=10 rs=10 cgs=1.3e-13 pb=0.65</pre>
+<h4>
+<a id="pgfId-1036003"></a>Instance Syntax<a id="marker-1036002"></a></h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036004"></a>Name&#160;&#160;d&#160;&#160;g&#160;&#160;s&#160;&#160;[b] ModelName parameter=value ...</pre>
+
+<p>
+<a id="pgfId-1036005"></a>You do not have to specify the back gate terminal when you use the four-terminal model. If left unspecified, the substrate is connected to ground.</p>
+
+<h4>
+<a id="pgfId-1036007"></a>Instance Parameters</h4>
+<p>
+<a id="pgfId-1037842"></a><a id="marker-1036006"></a></p>
+<table class="webflareTable" id="#id1040132">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041861"></a><code>area=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041863"></a>Junction area factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041865"></a> <code>m=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041867"></a>Multiplicity factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041869"></a> <code>region=triode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041871"></a>Estimated operating region. Spectre generates output number (0-4) in a rawfile. Possible values are <code>off</code>, <code>triode</code>, <code>sat</code>, <code>subth</code>, or <code>breakdown</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041873"></a> <code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041875"></a>Should resistor generate noise. Possible values are <code>no</code> or <code>yes</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041877"></a> <code>trise=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041879"></a>Temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041881"></a><code>dtemp=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041883"></a>Alias of trise.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036014"></a>Model Syntax<a id="marker-1036013"></a></h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036015"></a>model modelName jfet parameter=value ...</pre>
+<h4>
+<a id="pgfId-1036017"></a>Model Parameters<a id="marker-1036016"></a></h4>
+<h4><em>
+<a id="pgfId-1036018"></a>Device type parameters</em></h4>
+<table class="webflareTable" id="#id1037852">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041885"></a><code>type=n</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041887"></a>Transistor type. Possible values are <code>n</code> or <code>p</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036020"></a>Drain current model parameters</em></h4>
+<table class="webflareTable" id="#id1037889">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041889"></a><code>level=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041891"></a>Drain current model level selector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041893"></a> <code>vto=-2 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041895"></a>Pinchoff voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041897"></a> <code>beta=0.0001 A/V</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041899"></a>Transconductance parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041901"></a> <code>lambda=0 1/V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041903"></a>Channel length modulation parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041905"></a> <code>lambda1=0 1/V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041907"></a>Gate dependence of channel length modulation parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041909"></a> <code>np=2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041911"></a>Power-law exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041913"></a> <code>alpha=2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041915"></a>Triode-to-saturation transition parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041917"></a> <code>io=0 A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041919"></a>Subthreshold current parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041921"></a> <code>ns=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041923"></a>Subthreshold swing parameter.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041925"></a> <code>ai=0 1/V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041927"></a>Impact ionization current coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041929"></a> <code>bi=0 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041931"></a>Impact ionization current exponent.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036032"></a>Four terminal threshold voltage parameters</em></h4>
+<table class="webflareTable" id="#id1037960">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041933"></a><code>vtop=0.6 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041935"></a>Back gate to channel junction potential.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041937"></a> <code>vtos=1.2 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041939"></a>Threshold voltage slope.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041941"></a> <code>vtoe=0.33</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041943"></a>Threshold voltage exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041945"></a> <code>vtoc=-3.3 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041947"></a>Threshold voltage constant.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036037"></a>Parasitic resistance parameters</em></h4>
+<table class="webflareTable" id="#id1038001">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041949"></a><code>rd=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041951"></a>Drain resistance (/area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041953"></a> <code>rs=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041955"></a>Source resistance (/area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041957"></a> <code>rg=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041959"></a>Gate resistance (/area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041961"></a> <code>rb=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041963"></a>Back gate resistance (/area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041965"></a> <code>minr=0.1 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041967"></a>Minimum source/drain/gate resistance.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036043"></a>Junction diode model parameters</em></h4>
+<table class="webflareTable" id="#id1038043">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041969"></a><code>is=1e-14 A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041971"></a>Gate saturation current (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041973"></a> <code>n=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041975"></a>Emission coefficient for G-D and G-S junctions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041977"></a> <code>imelt=`imax&#39; A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041979"></a>Explosion current (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041981"></a> <code>dskip=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041983"></a>Use simple piece-wise linear model for diode currents below 0.1*<code>iabstol</code>. Possible values are <code>no</code> or <code>yes</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036048"></a>Junction capacitance model parameters</em></h4>
+<table class="webflareTable" id="#id1038081">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041985"></a><code>tt=0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041987"></a>Transit time.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041989"></a> <code>cgs=0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041991"></a>Gate-source zero-bias junction capacitance (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041993"></a> <code>cgd=0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041995"></a>Gate-drain zero-bias junction capacitance (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041997"></a> <code>mj=1/2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041999"></a>Junction grading coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042001"></a> <code>pb=1 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042003"></a>Gate-junction potential.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042005"></a> <code>fc=0.5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042007"></a>Junction capacitor forward-bias threshold.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036055"></a>Four terminal junction parameters</em></h4>
+<table class="webflareTable" id="#id1038127">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042009"></a><code>isb=1e-14 A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042011"></a>Back gate-saturation current (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042013"></a> <code>nb=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042015"></a>Emission coefficient for back gate-junctions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042017"></a> <code>cgbs=0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042019"></a>Back gate-source zero-bias junction capacitance (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042021"></a> <code>cgbd=0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042023"></a>Back gate-drain zero-bias junction capacitance (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042025"></a> <code>mjb=1/2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042027"></a>Back gate-junction grading coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042029"></a> <code>pbb=1 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042031"></a>Back gate-junction potential.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036062"></a>Temperature effect parameters</em></h4>
+<table class="webflareTable" id="#id1038184">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042033"></a><code>tnom (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042035"></a>Parameters measurement temperature. Default set by <code>options</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042037"></a> <code>trise=0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042039"></a>Temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042041"></a> <code>xti=3</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042043"></a>Temperature exponent for effect on <code>is</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042045"></a> <code>tlev=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042047"></a>DC temperature selector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042049"></a> <code>tlevc=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042051"></a>AC temperature selector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042053"></a> <code>eg=1.12452 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042055"></a>Energy band gap.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042057"></a> <code>gap1=7.02e-4 V/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042059"></a>Band gap temperature coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042061"></a> <code>gap2=1108 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042063"></a>Band gap temperature offset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042065"></a> <code>eglev=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042067"></a>DC temperature selector.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042069"></a> <code>tcv=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042071"></a>Threshold voltage temperature coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042073"></a> <code>bto=0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042075"></a>Transconductance parameter temperature offset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042077"></a> <code>bte=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042079"></a>Transconductance parameter temperature exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042081"></a> <code>lto=0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042083"></a>Channel length modulation parameters temperature offset.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042085"></a> <code>lte=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042087"></a>Channel length modulation parameters temperature exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042089"></a> <code>tc1=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042091"></a>Linear temperature coefficient for parasitic resistors.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042093"></a> <code>tc2=0 C</code><sup>-2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042095"></a>Quadratic temperature coefficient for parasitic resistors.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042097"></a> <code>pta=0 V/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042099"></a>Junction potential temperature coefficient.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036080"></a>Operating region warning control parameters</em></h4>
+<p>
+<a id="pgfId-1038350"></a></p>
+<table class="webflareTable" id="#id1038293">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042101"></a><code>alarm=none</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042103"></a>Forbidden operating region. Possible values are <code>none</code>, <code>off</code>, <code>triode</code>, <code>sat</code>, <code>subth</code>,&#160;&#160;or <code>rev</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042105"></a> <code>imax=1 A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042107"></a>Maximum allowable current (*area).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042109"></a> <code>bvj=</code>∞<code> V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042111"></a>Junction reverse breakdown voltage.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036084"></a>Noise parameters</em></h4>
+<table class="webflareTable" id="#id1038319">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042113"></a><code>kf=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042115"></a>Flicker noise (1/f) coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042117"></a> <code>af=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042119"></a>Flicker noise (1/f) exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042121"></a> <code>kfd=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042123"></a>Flicker noise (1/f) coefficient for gate diodes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042125"></a> <code>afg=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042127"></a>Flicker noise (1/f) exponent for gate diodes.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1036089"></a>Compatibility model parameters</em></h4>
+<table class="webflareTable" id="#id1038367">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042129"></a><code>ldel=0 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042131"></a>Difference between drawn and actual or optical device length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042133"></a> <code>wdel=0 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042135"></a>Difference between drawn and actual or optical device Width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042137"></a> <code>rsh=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042139"></a> heavily doped region, sheet resistance (ohm/sq).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042141"></a> <code>rshg=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042143"></a>Gate sheet resistance (ohm/sq).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042145"></a> <code>rshl=0 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042147"></a>lightly doped region, sheet resistance (ohm/sq).</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042149"></a> <code>hdif=0 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042151"></a>distance of the heavily diffused or low resistance region from source or drain contact to lightly doped region.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042153"></a> <code>ldif=0 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042155"></a>distance of the lightly doped region from heavily doped region to transistor edge.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042157"></a> <code>trd=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042159"></a>temperature coefficient for drain resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042161"></a> <code>trs=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042163"></a>temperature coefficient for source resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042165"></a> <code>acm=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042167"></a>area calculation method. acm=0 area=w/l, acm=1 area=w.l.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1036100"></a>Imax and Imelt</p>
+<p>
+<a id="pgfId-1036101"></a>The <code>imax</code> parameter aids convergence and prevents numerical overflow. The junction characteristics of the device are accurately modeled for current up to <code>imax</code>. If <code>imax</code> is exceeded during iterations, the linear model is substituted until the current drops below imax or until convergence is achieved. If convergence is achieved with the current exceeding <code>imax</code>, the results are inaccurate, and Spectre prints a warning. </p>
+<p>
+<a id="pgfId-1036102"></a>A separate model parameter, <code>imelt</code>, is used as a limit warning for the junction current. This parameter can be set to the maximum current rating of the device. When any component of the junction current exceeds <code>imelt</code>, the base and collector currents are composed of many exponential terms, Spectre issues a warning and the results become inaccurate. The junction current is linearized above the value of <code>imelt</code> to prevent arithmetic exception, with the exponential term replaced by a linear equation at <code>imelt</code>.</p>
+<p>
+<a id="pgfId-1036103"></a>The <code>bv</code> parameter is used to detect the junction breakdown only. The breakdown currents of the junctions are not modeled.</p>
+
+<h4>
+<a id="pgfId-1036105"></a>Operating-Point Parameters</h4>
+<p>
+<a id="pgfId-1038577"></a><a id="marker-1036104"></a></p>
+<table class="webflareTable" id="#id1038458">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042169"></a><code>type=n</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042171"></a>Transistor type. Possible values are <code>n</code> or <code>p</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042173"></a> <code>region=triode</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042175"></a>Estimated operating region. Spectre generates output number (0-4) in a rawfile. Possible values are <code>off</code>, <code>triode</code>, <code>sat</code>, <code>subth</code>, or <code>breakdown</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042177"></a> <code>ids (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042179"></a>Resistive drain current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042181"></a> <code>id (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042183"></a>Id drain current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042185"></a> <code>vgs (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042187"></a>Gate-source voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042189"></a> <code>vds (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042191"></a>Drain-source voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042193"></a> <code>vth (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042195"></a>Threshold at op point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042197"></a> <code>vdsat (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042199"></a>Drain saturation voltage.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042201"></a> <code>gm (S)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042203"></a>Common-source transconductance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042205"></a> <code>gds (S)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042207"></a>Common-source output conductance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042209"></a> <code>cgs (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042211"></a>Gate-source capacitance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042213"></a> <code>cgd (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042215"></a>Gate-drain capacitance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042217"></a> <code>ig (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042219"></a>Resistive gate current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042221"></a> <code>pwr (W)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042223"></a>Power at op point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042225"></a> <code>qd (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042227"></a>Threshold at op point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042229"></a> <code>qg (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042231"></a>Threshold at op point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042233"></a> <code>qs (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042235"></a>Threshold at op point.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042237"></a> <code>qb (V)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1042239"></a>Threshold at op point.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1042246"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1042250"></a><a href="Chap10.html#35978">HBT Model (ucsd_hbt)</a></p>
+<p>
+<a id="pgfId-1042254"></a><a href="Chap9.html#57305">VBIC Model (vbic)</a></p>
+<p>
+<a id="pgfId-1042262"></a><a href="Chap12.html#22290">Philips Models</a></p>
+
+<p>
+<a id="pgfId-1042263"></a></p>
+
+<p>
+<a id="pgfId-1035457"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap10a.html" id="prev" title="HBT Model (version 2)">HBT Model (version 2)</a></em></b><b><em><a href="Chap12.html" id="nex" title="Philips Models">Philips Models</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

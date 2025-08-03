@@ -1,0 +1,1187 @@
+
+<html><head><title>Physical Resistor (phy_res)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686594971" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the model equations for Cadence circuit simulators" />
+<meta name="DocTitle" content="Spectre Circuit Simulator Components and Device Models Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Physical Resistor (phy_res)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectremod" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686594971" />
+<meta name="NextFile" content="Chap2_re_R2_Model_r2_.html" />
+<meta name="Group" content="Spectre Simulator" />
+<meta name="Platform" content="Analog RF  Mixed-Signal Design" />
+<meta name="PrevFile" content="Chap2_re_Component_Statements.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Components and Device Models Reference -- Physical Resistor (phy_res)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Models" />
+<meta name="prod_subfeature" content="Passive Components" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectremod231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectremodTOC.html">Contents</a></li><li><a class="prev" href="Chap2_re_Component_Statements.html" title="Component Statements">Component Statements</a></li><li style="float: right;"><a class="viewPrint" href="spectremod.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap2_re_R2_Model_r2_.html" title="R2 Model (r2)">R2 Model (r2)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Components and Device Models Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_Physical_Resistor_phy_res_" title="Physical Resistor (phy_res)"></a><h2>
+<a id="pgfId-1036034"></a><a id="48800"></a>Physical Resistor (phy_res)<a id="marker-1036033"></a></h2>
+
+<p>
+<a id="pgfId-1036035"></a>A physical resistor consists of a two terminal resistor (tied between <code>t1</code> and <code>t2</code>) and two diodes (tied between <code>t1</code>-<code>t0</code> and <code>t2</code>-<code>t0</code>). The diodes are junction diodes. Under normal operation, the two diodes are reverse biased, but the parameter <code>subtype</code> can reverse the direction of the diodes. If you do not specify <code>t0</code>, ground is assumed. The instance parameters always override model parameters. If you do not specify the instance resistance value, it is calculated from the model parameters.</p>
+<p>
+<a id="pgfId-1036036"></a>This device is supported within altergroups.</p>
+<p>
+<a id="pgfId-1036037"></a>If R(inst) is not given and R(model) is given,</p>
+<p>
+<a id="pgfId-1036038"></a>    R(inst) = R(model).</p>
+<p>
+<a id="pgfId-1036039"></a>Otherwise,</p>
+<p>
+<a id="pgfId-1036040"></a>    R(inst) = Rsh * (L - 2 * etchl) / (W - 2 * etch).</p>
+<p>
+<a id="pgfId-1036041"></a>If the polynomial coefficients vector (coeffs=[c1 c2 ...]) is specified, the resistor is nonlinear. When <code>nonlinform</code> is set to <code>g</code>, the conductance is</p>
+<p>
+<a id="pgfId-1036042"></a>    G(V) = dI / dV</p>
+<p>
+<a id="pgfId-1036043"></a>         = (1 + c1 * V + c2 * V^2 + ...) / R(inst)</p>
+<p>
+<a id="pgfId-1036044"></a>where</p>
+<p>
+<a id="pgfId-1036045"></a>    V =  V(t1) - V(t2)</p>
+<p>
+<a id="pgfId-1036046"></a>Here V is the controlling voltage across the resistor. It is also the controlling voltage when the model parameter <code>polyarg</code> is set to <code>diff</code>. In this form, the physical resistor is symmetric with respect to V(t1) and V(t2). The branch current as a function of the applied voltage is given by </p>
+<p>
+<a id="pgfId-1036047"></a>    I(V) = (V / R(inst)) * (1 + 1/2 * c1 * V + 1/3 * c2 * V^2 + ...)</p>
+<p>
+<a id="pgfId-1036048"></a>where ck is the kth entry in the coefficient vector.</p>
+<p>
+<a id="pgfId-1036049"></a>If the model parameter <code>polyarg</code> is set to <code>sum</code>, then the controlling voltage is defined as </p>
+<p>
+<a id="pgfId-1036050"></a>    Vsum = ( (V(t1) - V(t0)) + (V(t2) - V(t0)) )/2 </p>
+<p>
+<a id="pgfId-1036051"></a>Here, Vsum is the controlling voltage between the resistor and the substrate, <code>t0</code>. In this case, the device becomes asymmetric with respect to V(t1) and V(t2). The branch current as a function of the applied voltage for this case is given by </p>
+<p>
+<a id="pgfId-1036052"></a>    I(Vsum) = (V / R(inst)) * (1 + c1 * Vsum + c2 * Vsum^2 + ...) </p>
+<p>
+<a id="pgfId-1036053"></a>The large-signal conductance is given by </p>
+<p>
+<a id="pgfId-1036054"></a>    G(Vsum) = I/V = (1 + c1 * Vsum + c2 * Vsum^2 + ...) / R(inst) </p>
+<p>
+<a id="pgfId-1036055"></a>Note, since the device is asymmetrical, the small-signal model is more complicated then a simple conductance.</p>
+<p>
+<a id="pgfId-1036056"></a>When <code>nonlinform</code> is set to <code>r</code>, the resistance is</p>
+<p>
+<a id="pgfId-1036057"></a>    R(V) = dV / dI</p>
+<p>
+<a id="pgfId-1036058"></a>         = R(inst) * (1 + c1 * V + c2 * V^2 + ...).</p>
+<p>
+<a id="pgfId-1036059"></a>The resistance as a function of temperature is given by:</p>
+<p>
+<a id="pgfId-1036060"></a>    R(T) = R(tnom) * [1 + tc1 * (T - tnom) + tc2 * (T - tnom)^2].</p>
+<p>
+<a id="pgfId-1036061"></a>where</p>
+<p>
+<a id="pgfId-1036062"></a>    T = trise(inst) + temp</p>
+<p>
+<a id="pgfId-1036063"></a>if trise(inst) is given, and</p>
+<p>
+<a id="pgfId-1036064"></a>    T = trise(model) + temp</p>
+<p>
+<a id="pgfId-1036065"></a>otherwise.</p>
+<p>
+<a id="pgfId-1036066"></a>If you do not specify the junction leakage current (<code>is</code>) and <code>js</code> is specified, the leakage current is calculated from <code>js</code> and the device dimensions.</p>
+<p>
+<a id="pgfId-1036067"></a>    is = js * 0.5 * (L - 2 * etchl) * (W - 2 * etch)</p>
+<p>
+<a id="pgfId-1036068"></a>If you specify the instance capacitance or the linear model capacitance, linear capacitors are used between <code>t1</code>-<code>t0</code> and <code>t2</code>-<code>t0</code>. Otherwise, nonlinear junction capacitors are used and the zero-bias capacitance values are calculated from the model parameters.</p>
+<p>
+<a id="pgfId-1036069"></a>If C(inst) is not given and C(model) is given,</p>
+<p>
+<a id="pgfId-1036070"></a>    C(inst) = C(model).</p>
+<p>
+<a id="pgfId-1036071"></a>Otherwise,</p>
+<p>
+<a id="pgfId-1036072"></a>    C(inst) = 0.5 * Cj * (L - 2 * etchlc) * (W - 2 * etchc) + Cjsw * (W + L - 2 * etchc - 2 * etchlc).</p>
+<p>
+<a id="pgfId-1036073"></a>If the capacitance is nonlinear, the temperature model for the junction capacitance is used. Otherwise, the following equation is used.</p>
+<p>
+<a id="pgfId-1036074"></a>    C(T) = C(tnom) * [1 + tc1c * (T - tnom) + tc2c * (T - tnom)^2].</p>
+
+<h3>
+<a id="pgfId-1040413"></a>Thermal Noise</h3>
+<p>
+<a id="pgfId-1040424"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="51" src="images/Chap2-22.gif" /></div>
+
+<p>
+<a id="pgfId-1040470"></a>where:</p>
+<p>
+<a id="pgfId-1040486"></a>R is the resistor value and T is the temperature.</p>
+
+<h3>
+<a id="pgfId-1040493"></a>Shot Noise for the Junctions</h3>
+
+<p>
+<a id="pgfId-1040506"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="39" src="images/Chap2-23.gif" /></div>
+
+<p>
+<a id="pgfId-1040525"></a>Where I is the current flow through the junction.</p>
+
+<h3>
+<a id="pgfId-1040532"></a>Flicker Noise for the Resistor</h3>
+<p>
+<a id="pgfId-1040542"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="78" src="images/Chap2-24.gif" /></div>
+
+<p>
+<a id="pgfId-1040571"></a>Where KF, AF, FEXP, WEEXP, LEEXP, WDEXP and LDEXP are model parameters, I is the current, W and L are the device width and length, <code>Weff=W-2ETCH</code> and <code>Leff=L-2ETCHL</code>.</p>
+
+<h3>
+<a id="pgfId-1040598"></a>Flicker Noise for the Junctions</h3>
+<p>
+<a id="pgfId-1040629"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="76" src="images/Chap2-25.gif" /></div>
+
+<p>
+<a id="pgfId-1040660"></a>Where:</p>
+<p>
+<a id="pgfId-1040667"></a>Where KF, AF and FEXP are model parameters, I is the current, and f is the frequency.</p>
+
+<h3>
+<a id="pgfId-1036075"></a>Sample Instance Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036076"></a>res1 (net9 vcc) resphy l=1e-3 w=2e-6</pre>
+<h3>
+<a id="pgfId-1036077"></a>Sample Model Statement</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036078"></a>model resphy phy_res rsh=85 tc1=1.53e-3 tc2=4.67e-7 etch=0 cj=1.33e-3 cjsw=3.15e-10 tc1c=9.26e-4</pre>
+<h3>
+<a id="pgfId-1036080"></a>Instance Syntax<a id="marker-1036079"></a></h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036081"></a>Name&#160;&#160;1&#160;&#160;2&#160;&#160;[0] ModelName parameter=value ...</pre>
+<h3>
+<a id="pgfId-1036083"></a>Instance Parameters<a id="marker-1036082"></a></h3>
+<table class="webflareTable" id="#id1044678">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056812"></a><code>r (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056814"></a>Resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056816"></a><code>c (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056818"></a>Linear capacitance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056820"></a><code>l (m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056822"></a>Line length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056824"></a><code>w (m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056826"></a>Line width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056828"></a><code>region=normal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056830"></a>Estimated operating region. Spectre generates output number (0-1) in a rawfile. Possible values are <code>normal</code> or <code>breakdown</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056832"></a><code>tc1=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056834"></a>Linear temperature coefficient of resistor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056836"></a><code>tc2=0 C</code><sup>-2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056838"></a>Quadratic temperature coefficient of resistor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056840"></a><code>tc1c=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056842"></a>Linear temperature coefficient of linear capacitor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056844"></a><code>tc2c=0 C</code><sup>-2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056846"></a>Quadratic temperature coefficient of linear capacitor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056848"></a><code>trise (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056850"></a>Temperature rise from ambient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056852"></a><code>isnoisy=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056854"></a>Should resistor generate noise. Possible values are <code>no</code> or <code>yes</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056856"></a><code>m=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056858"></a>Multiplicity factor.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1036096"></a>The <code>w</code> and <code>l</code> parameters are scaled by the option parameters <code>scale</code> and <code>scalem</code>. The values of <code>w</code> and <code>l</code> printed by Spectre are those given in the input file. These values may not have the correct units if the scaling factors are not unity. The correct effective resistor dimensions are stored in the output parameters. You can obtain these dimensions with the info statement. You can delete the diodes from the device by either setting <code>is</code>=0 or <code>subtype</code>=<code>poly</code>. You can also set both <code>mj</code> and <code>mjsw</code> to zero to make the capacitance linear but still calculated from the device geometry. If <code>subtype</code>=<code>poly</code>, the linear capacitors will always be used irrespective of the values of <code>mj</code> and <code>mjsw</code>.</p>
+
+<h3>
+<a id="pgfId-1036098"></a>Model Syntax<a id="marker-1036097"></a></h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036099"></a>model modelName phy_res parameter=value ...</pre>
+<h3>
+<a id="pgfId-1036101"></a>Model Parameters</h3>
+<p>
+<a id="pgfId-1044793"></a><a id="marker-1036100"></a></p>
+<h4>
+<a id="pgfId-1036102"></a>Substrate type parameters</h4>
+<p>
+<a id="pgfId-1044803"></a></p>
+<table class="webflareTable" id="#id1044776">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056869"></a><code>subtype=p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056871"></a>Substrate type. Possible values are <code>n</code>, <code>p</code> or <code>poly</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036104"></a>Resistance parameters</h4>
+<table class="webflareTable" id="#id1044817">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056879"></a><code>r=</code>∞<code> </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056881"></a>Default resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056883"></a><code>rsh=</code>∞<code> </code>&#x2126;<code>/sqr</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056885"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056887"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056889"></a>Sheet resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056891"></a><code>minr=0.1 </code>&#x2126;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056893"></a>Minimum resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056895"></a><code>coeffs=[...]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056897"></a>Vector of polynomial conductance or resistance coefficients.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056899"></a><code>nonlinform=g</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056901"></a>The form of the nonlinear resistance. Possible values are <code>g</code> or <code>r</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056903"></a><code>polyarg=diff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056905"></a>Polynomial model argument type. Possible values are <code>sum</code> or <code>diff</code>.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036111"></a>Temperature effects parameters</h4>
+<table class="webflareTable" id="#id1044866">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056907"></a><code>tc1=0 1/C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056909"></a>Linear temperature coefficient of resistor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056911"></a><code>tc2=0 C</code><sup>-2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056913"></a>Quadratic temperature coefficient of resistor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056915"></a><code>tc1c=0 C</code><sup>-2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056917"></a>Linear temperature coefficient of linear capacitor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056919"></a><code>tc2c=0 C</code><sup>-2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056921"></a>Quadratic temperature coefficient of linear capacitor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056923"></a><code>tnom (C)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056925"></a>Parameters measurement temperature. Default set by <code>options</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056927"></a><code>trise=0 C</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056929"></a>Temperature rise from ambient.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036118"></a>Junction diode model parameters</h4>
+<table class="webflareTable" id="#id1044907">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056931"></a><code>is (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056933"></a>Saturation current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056935"></a><code>js=0 A/m</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056937"></a>Saturation current density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056939"></a><code>n=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056941"></a>Emission coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056943"></a><code>eg=1.11 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056945"></a>Band gap.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056947"></a><code>xti=3</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056949"></a>Saturation current temperature exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056951"></a><code>imelt=`imax&#8217; A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056953"></a>Explosion current, diode is linearized beyond this current to aid convergence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1056955"></a><code>jmelt=`jmelt&#8217; A/m</code><sup>2</sup></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056959"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056961"></a>Explosion current density, diode is linearized beyond this current to aid convergence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056963"></a><code>imax=1 A</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056965"></a>Maximum current, currents above this limit generate a warning.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056967"></a><code>jmax=1e8 A/m</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056969"></a>Maximum current density, currents above this limit generate a warning.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056971"></a><code>dskip=yes</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056973"></a>Use simple piece-wise linear model for diode currents below 0.1*<code>iabstol</code>. Possible values are <code>no</code> or <code>yes</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056975"></a><code>bvj=</code>∞<code> V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056977"></a>Junction reverse breakdown voltage.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036130"></a>Junction capacitance model parameters</h4>
+<table class="webflareTable" id="#id1044984">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056985"></a><code>c=0 F</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056987"></a>Default linear capacitance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056989"></a> <code>cj=0 F/m</code><sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056991"></a>Zero-bias junction bottom capacitance density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056993"></a> <code>cjsw=0 F/m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056995"></a>Zero-bias junction sidewall capacitance density.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056997"></a> <code>mj=1/2</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1056999"></a>Junction bottom grading coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057001"></a> <code>mjsw=1/3</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057003"></a>Junction sidewall grading coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057005"></a> <code>pb=0.8 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057007"></a>Junction bottom built-in potential.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057009"></a> <code>pbsw=0.8 V</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057011"></a>Junction sidewall built-in potential.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057013"></a> <code>fc=0.5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057015"></a>Junction bottom capacitor forward-bias threshold.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057017"></a> <code>fcsw=0.5</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057019"></a>Junction sidewall capacitor forward-bias threshold.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057021"></a> <code>tt=0 s</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057023"></a>Transit time.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036141"></a>Device size parameters</h4>
+<table class="webflareTable" id="#id1045053">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057025"></a> <code>l=</code>∞<code> m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057027"></a>Default line length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057029"></a> <code>w=1e-6 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057031"></a>Default line width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057033"></a> <code>etch=0 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057035"></a>Narrowing due to etching.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057037"></a> <code>etchl=0 m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057039"></a>Length reduction due to etching.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057041"></a> <code>etchc=etch m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057043"></a>Narrowing due to etching for capacitances.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057045"></a> <code>etchlc=etchl m</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057047"></a>Length reduction due to etching for capacitances.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057049"></a><code>scaler=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057051"></a>Resistance scaling factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057053"></a> <code>scalec=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057055"></a>Capacitance scaling factor.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036150"></a>Noise model parameters</h4>
+<table class="webflareTable" id="#id1045106">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057060"></a><code>kf=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057062"></a>Flicker (1/f) noise coefficient.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057064"></a> <code>af=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057066"></a>Flicker (1/f) noise exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057068"></a> <code>wdexp=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057070"></a>Flicker (1/f) noise W exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057072"></a> <code>ldexp=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057074"></a>Flicker (1/f) noise L exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057076"></a> <code>weexp=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057078"></a>Flicker (1/f) noise W effective exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057080"></a> <code>leexp=0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057082"></a>Flicker (1/f) noise L effective exponent.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057084"></a> <code>fexp=1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057086"></a>Flicker (1/f) noise frequency exponent.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1036158"></a>DC-mismatch model parameters</h4>
+<table class="webflareTable" id="#id1045158">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057091"></a><code>mr=0.0 </code>&#x2126;<sup>2</sup></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057093"></a>Resistor mismatch dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1057095"></a> <code>mrl=0.0 </code>&#x2126;<sup>2</sup><code>/m^mrlp</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057099"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057101"></a>Resistor mismatch length dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057103"></a> <code>mrlp=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057105"></a>Resistor mismatch length power dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1057107"></a> <code>mrw=0.0 </code>&#x2126;<sup>2</sup><code>/m^mrwp</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057111"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057113"></a>Resistor mismatch width dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057115"></a> <code>mrwp=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057117"></a>Resistor mismatch width power dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1057119"></a> <code>mrlw1=0.0 </code>&#x2126;<sup>2</sup><code>/m^(2 mrlw1p)</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057123"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057125"></a>Resistor mismatch area 1 dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057127"></a> <code>mrlw1p=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057129"></a>Resistor mismatch area 1 power dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1057131"></a> <code>mrlw2=0.0 </code>&#x2126;<sup>2</sup><code>/m^(2 mrlw2p)</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057135"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057137"></a>Resistor mismatch area 2 dependence.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057139"></a> <code>mrlw2p=0.0</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057141"></a>Resistor mismatch area 2 power dependence.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1036169"></a>Output Parameters<a id="marker-1036168"></a></h3>
+<table class="webflareTable" id="#id1045246">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057149"></a><code>leff (m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057151"></a>Effective line length.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057153"></a> <code>weff (m)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057155"></a>Effective line width.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057157"></a> <code>iseff (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057159"></a>Effective saturation current.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057161"></a> <code>reff (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057163"></a>Effective resistance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057165"></a> <code>ceff (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057167"></a>Effective zero-bias capacitance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057169"></a><code>meff</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057171"></a>Effective multiplicity factor (m-factor).</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1036176"></a>Operating-Point Parameters<a id="marker-1036175"></a></h3>
+<table class="webflareTable" id="#id1045297">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057173"></a><code>subtype=p</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057175"></a>Substrate type. Possible values are <code>n</code>, <code>p</code> or <code>poly</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057177"></a><code>region=normal</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057179"></a>Estimated operating region. Spectre generates output number (0-1) in a rawfile. Possible values are <code>normal</code> or <code>breakdown</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057181"></a><code>i (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057183"></a>Current through the resistor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057185"></a> <code>capd1 (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057187"></a>Capacitance at the positive node.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057189"></a> <code>capd2 (F)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057191"></a>Capacitance at the negative node.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057193"></a> <code>id1 (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057195"></a>Current between nodes <code>t1</code> and <code>t0</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057197"></a> <code>id2 (A)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057199"></a>Current between nodes <code>t2</code> and <code>t0</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057201"></a> <code>res (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057203"></a>Resistance between nodes <code>t1</code> and <code>t2</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057205"></a> <code>resd1 (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057207"></a>Resistance between nodes <code>t1</code> and <code>t0</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057209"></a> <code>resd2 (</code>&#x2126;<code>)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057211"></a>Resistance between nodes <code>t2</code> and <code>t0</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057213"></a> <code>pwr (W)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1057215"></a>Power at op point.</p>
+</td>
+</tr>
+</tbody></table>
+<h4><em>
+<a id="pgfId-1057224"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1057228"></a><a href="Chap2_re_Two_Terminal_Resistor_resistor_.html#18021">Two Terminal Resistor (resistor)</a></p>
+<p>
+<a id="pgfId-1057232"></a><a href="Chap2_re_R2_Model_r2_.html#29136">R2 Model (r2)</a></p>
+<p>
+<a id="pgfId-1057236"></a><a href="Chap2.html#51225">Passive Components</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap2_re_Component_Statements.html" id="prev" title="Component Statements">Component Statements</a></em></b><b><em><a href="Chap2_re_R2_Model_r2_.html" id="nex" title="R2 Model (r2)">R2 Model (r2)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
