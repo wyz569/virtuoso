@@ -1,0 +1,576 @@
+
+<html><head><title>Writing Style</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-08-23" />
+<meta name="CreateTime" content="1692797215" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the SKILL language to new users and helps them understand advanced topics, encourages sound SKILL programming methods, and introduces the SKILL++ language" />
+<meta name="DocTitle" content="Cadence SKILL Language User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Writing Style" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="sklanguser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-23" />
+<meta name="ModifiedTime" content="1692797215" />
+<meta name="NextFile" content="chap12.html" />
+<meta name="Group" content="SKILL Language" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="chap10.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="SKILL" />
+<meta name="ProductFamily" content="SKILL" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence SKILL Language User Guide -- Writing Style" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="sklanguserIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="sklanguserTOC.html">Contents</a></li><li><a class="prev" href="chap10.html" title="Delivering Products">Delivering Products</a></li><li style="float: right;"><a class="viewPrint" href="sklanguser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap12.html" title="SKILL Code Optimization">SKILL Code Optimization</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence SKILL Language User Guide<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>11
+<a id="pgfId-1005655"></a></h1>
+<h1>
+<a id="pgfId-1010111"></a><hr />
+<a id="38916"></a>Writing Style<hr />
+</h1>
+
+<p>
+<a id="pgfId-1010132"></a>Good style in any language can lead to programs that are understandable, reusable, extensible, efficient, and easy to maintain. These attributes are particularly important to have in programs developed using an extension language like the Cadence&#174; SKILL language because the programs tend to change a lot and the number of contributors can be many. </p>
+<p>
+<a id="pgfId-1008206"></a>Useful SKILL programs, or pieces of them, get copied and passed around via e-mail or bulletin boards. Hence, it is important to consider the following when writing SKILL programs: </p>
+<ul><li>
+<a id="pgfId-1008207"></a>Be specific, concise, and most importantly consistent. </li><li>
+<a id="pgfId-1008208"></a>Anticipate a novice reader&#8217;s questions and document the code accordingly. </li><li>
+<a id="pgfId-1008209"></a>Be conventional. Using fancy techniques that are usually possible in a Lisp-based language, yet usually not well understood, might not be a good idea (unless you are doing it to gain in performance or reduce memory use).</li><li>
+<a id="pgfId-1008210"></a>Avoid too many global states and direct access to them. Use abstractions.</li><li>
+<a id="pgfId-1008211"></a>Make functional interfaces non-modal. That is, try and not predicate your interfaces on a global state or global mode such that a second user of the interface does not experience unpredictable behavior. For example, it is bad style to have a procedure that puts an editor in &#8220;insert&#8221; mode and uses subsequent calls to insert objects into the design. It is better to have one call that takes a list of objects to be inserted: <br />
+<a id="pgfId-1009246"></a><table class="webflareTable webflareTableIndent" id="#id1009250">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1010081">
+<a id="pgfId-1010081"></a>GOOD</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1010083">
+<a id="pgfId-1010083"></a>BAD</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="5">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1010085"></a>EDinsert(<code><em>database</em></code> &#39;(<code><em>obj1</em></code> <code><em>obj2</em></code> <code><em>obj3</em></code>))</pre>
+</td>
+<td class="webflareTd" colspan="1" rowspan="5">
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1010087"></a>EDstartInsert(<code><em>database</em></code>)<br />EDinsert(<code><em>obj1</em></code>)<br />EDinsert(<code><em>obj2</em></code>)<br />EDinsert(<code><em>obj3</em></code>)<br />EDendInsert(<code><em>database</em></code>)</pre>
+</td>
+</tr>
+<tr />
+<tr />
+<tr />
+<tr />
+</tbody></table></li></ul>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1008214"></a>As in all programming languages, the layout of code within a file can greatly affect the readability and maintainability of the code. The code examples in this manual use a layout that is both intuitive and easy to understand, but layout is a matter of taste.</p>
+<p>
+<a id="pgfId-1008216"></a>The rest of this chapter describes specific situations where <a id="marker-1008215"></a>coding style issues are important. </p>
+<ul><li>
+<a id="pgfId-1010145"></a><a href="chap11.html#42575">Code Layout in SKILL Language</a>  </li><li>
+<a id="pgfId-1010149"></a><a href="chap11.html#19720">Usage of Globals Variables in SKILL</a>  </li><li>
+<a id="pgfId-1010153"></a><a href="chap11.html#31646">Coding Style Mistakes</a>  </li><li>
+<a id="pgfId-1010157"></a><a href="chap11.html#40027">Red Flags</a>  </li></ul>
+
+
+
+
+<h2>
+<a id="pgfId-1008218"></a><a id="42575"></a>Code L<a id="marker-1008217"></a>ayout in SKILL Language</h2>
+
+<p>
+<a id="pgfId-1008219"></a>The readability of the code is the most important aspect of the code layout. The following guidelines can help you to write more readable code.</p>
+
+<h3>
+<a id="pgfId-1008220"></a>Comments and Documentation<a id="marker-1011567"></a></h3>
+
+<p>
+<a id="pgfId-1008222"></a>You can use either of the following methods for commenting in SKILL:</p>
+<ul><li>
+<a id="pgfId-1011576"></a><code>;</code> at the beginning of a line</li><li>
+<a id="pgfId-1011580"></a><code>/*&#8230;*/</code> surrounding your comments<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1011575"></a>Because <code>/*&#8230;*/</code> comments cannot be nested, some programmers find them easier to see.</div></li></ul>
+
+
+<p>
+<a id="pgfId-1008223"></a>While it is typically easier to understand and maintain code that is well-commented, you must also keep your comments consistent with your code. Comments that are misleading because they have not been maintained along with the code can be worse than not having any comments at all. </p>
+<p>
+<a id="pgfId-1008224"></a>You should document your data structures by describing the motivation behind them and the effect of each structure on the algorithm. Well-designed and -documented data structures can tell a lot about the nature of the program. </p>
+<p>
+<a id="pgfId-1008225"></a>If you are reading someone else&#8217;s code and find it inadequately documented, write down your questions as comments. They may get answered or will encourage other readers to persevere.</p>
+<p>
+<a id="pgfId-1008226"></a>As you develop a program, you should maintain a &#8220;to-do&#8221; list. For example, you can put a &#8220;to-do&#8221; comment around a dubious looking piece of code to explain your misgivings so that another developer can track a bug in that code. </p>
+<p>
+<a id="pgfId-1008227"></a>Usually, if you find that you need to write convoluted comments about a convoluted algorithm, you should rewrite the algorithm. Strong code can be self-documenting. </p>
+
+<h4>
+<a id="pgfId-1008228"></a>Things to Comment and Document</h4>
+
+<p>
+<a id="pgfId-1008229"></a>Cadence suggests that you comment the following items:</p>
+
+<p>
+<a id="pgfId-1011639"></a></p>
+<table class="webflareTable" id="#id1011643">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1011645">
+<a id="pgfId-1011645"></a>Item to comment</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1011647">
+<a id="pgfId-1011647"></a>What to comment</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011649"></a>Code modules</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011651"></a>Each code module should have a header containing at least the author, creation date, and change history of the module, plus a general description of the contents.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011653"></a>Procedure definitions</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011655"></a>Precede procedure definitions with a block comment detailing the functionality of and interfaces to the procedure. Add a help string inside the procedure (see <a href="chap3.html#10047">&#8220;procedure&#8221;</a>). Help systems extract this information for display. As much as possible, add type templates for procedure arguments to help&#160;&#160;erroneous use; type information can be extracted by help systems.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011666"></a>Data structures</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011668"></a>Describe contents of data structures and impact on algorithms.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011670"></a>Complex conditionals</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011672"></a>Comment any test within a conditional function that is nontrivial to indicate the pass/fail conditions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011677"></a>Mapping functions</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011679"></a>Comment complex mapping functions to state what the return values are.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011681"></a>Terminating parentheses</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011683"></a>Where a function call extends over several lines, label the closing parenthesis with the function name.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1008236"></a>Things Not to Comment and Document</h4>
+
+<p>
+<a id="pgfId-1008237"></a>While including any number of comments in your code does not affect performance once it has been read into the SKILL interpreter, Cadence suggests that you do not comment the following in production code:</p>
+
+<p>
+<a id="pgfId-1011770"></a></p>
+<table class="webflareTable" id="#id1011774">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1011776">
+<a id="pgfId-1011776"></a>Item not to comment</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1011778">
+<a id="pgfId-1011778"></a>Explanation</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011780"></a>Long change details</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011782"></a>You should use your source code control system (such as RCS or SCCS) to maintain full details of any changes you make and include only a brief outline of your changes in the module header (rather than in the body of the code). Including details in the body of the code can make maintenance more difficult.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011784"></a>PCR details</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011786"></a>You should maintain product change request information in the PCR itself.</p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1008242"></a>Function Calls and Brackets</h3>
+
+<p>
+<a id="pgfId-1008243"></a>Function calls in SKILL can be written in two distinct ways, with the opening parenthesis either before the function name, as in Lisp, or after it, as in C. Once again, the method chosen is not as important as ensuring that it is chosen consistently. However, putting the parenthesis after the function name does make it easier for a non-Lisp programmer to read the code. It is also easier to distinguish between function names and arguments, and between function calls and other lists.</p>
+<p>
+<a id="pgfId-1008244"></a>When a function call extends over more than one line in a file, it is recommended that the closing parenthesis is aligned, on a separate line, with the beginning of the function name. This makes it is easier to see where a particular function call finishes and has the added advantage that missing parentheses are easier to see. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1008245"></a>Having extra newlines to allow alignment of function arguments or parentheses does not affect the performance of the code once it has been read into the SKILL interpreter.</div>
+
+<h4>
+<a id="pgfId-1008246"></a>Avoid Using a Super Right Bracket</h4>
+
+<p>
+<a id="pgfId-1008247"></a>Using the super right bracket (<code>]</code>) is strongly discouraged except when using the interactive interpreter because</p>
+<ul><li>
+<a id="pgfId-1008248"></a>Missing parentheses can become difficult to locate.</li><li>
+<a id="pgfId-1008249"></a>Inserting another function call around the code containing the super right bracket can be difficult.</li><li>
+<a id="pgfId-1008250"></a>Bracket-matching procedures in editors neither manage nor account for super right bracket.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1008251"></a>
+One method you can use to make sure that all your parentheses are matching when writing SKILL code is to insert the closing parenthesis immediately after the opening parenthesis of a function call, and then to go back and fill in the arguments.</div></li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1008252"></a>Brackets in SKILL Are Always Significant </h4>
+
+<ul><li>
+<a id="pgfId-1008254"></a>In <a id="marker-1008253"></a>C, it is possible to insert brackets where they are not needed and do not affect the functionality of the program. </li><li>
+<a id="pgfId-1008255"></a>In SKILL, the insertion of extra brackets can be, and usually is, incorrect. </li></ul>
+
+<p>
+<a id="pgfId-1008256"></a>The problem usually occurs with infix operators. In SKILL (as in <a id="marker-1008257"></a>Lisp) every function evaluates to a list whose head is the function name. Thus, code such as</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1011990"></a>a + b</pre>
+
+<p>
+<a id="pgfId-1011992"></a>is held internally as the list</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1012000"></a>(plus a b)</pre>
+
+<p>
+<a id="pgfId-1012002"></a>You must understand the relative precedence of the built-in SKILL functions. For example, consider the following code:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008258"></a>a = b &amp;&amp; c</pre>
+
+<p>
+<a id="pgfId-1008259"></a>The line of code above is held as the following list:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008260"></a>(setq a (and b c))</pre>
+
+<p>
+<a id="pgfId-1008261"></a>rather than</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008262"></a>(and (setq a b) c)</pre>
+
+<p>
+<a id="pgfId-1008263"></a>While this precedence is what you would expect from any language, it might not necessarily be what you want. Consider the following:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008264"></a>if(res = func1(arg) &amp;&amp; res != no_val then &#8230;)</pre>
+<p>
+<a id="pgfId-1012213"></a></p>
+<table class="webflareTable" id="#id1012203">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1012205">
+<a id="pgfId-1012205"></a>The programmer meant to do one of these:</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1012207">
+<a id="pgfId-1012207"></a>What happens:</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1012209"></a>Call <code>func1</code> and store the result in <code>res</code>.</li><li>
+<a id="pgfId-1012210"></a>Check that <code>res</code> is not equal to <code>no_val</code>.</li></ul>
+
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012212"></a>The interpreter evaluates the expression <code>func1(arg) &amp;&amp; (res != no_val)</code> and assigns the result to <code>res</code>.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1012214"></a>The programmer needs to write the code as follows to perform the desired function:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1012215"></a>if((res = func1(arg)) &amp;&amp; res != no_val then &#8230;)</pre>
+
+<p>
+<a id="pgfId-1012155"></a>Using too many parentheses can cause the code to fail. For example, the following statement has too many levels of parentheses:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008268"></a>a = ((func1(arg1)) &amp;&amp; (func2(arg2)))</pre>
+
+<p>
+<a id="pgfId-1008269"></a>Parentheses in function calls are only optional for the built-in unary and infix operators, such as <code>!</code> and <code>+</code>. The following functions are equivalent:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008270"></a>!a</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1012193"></a>!(a)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1012194"></a>(!a)</pre>
+<h3>
+<a id="pgfId-1008271"></a>Commas</h3>
+
+<p>
+<a id="pgfId-1008273"></a>Commas between f<a id="marker-1008272"></a>unction arguments, and list elements, are optional in SKILL. Programmers from a C programming background will probably want to insert commas, those from a Lisp b<a id="marker-1008274"></a>ackground probably will not. The general recommendation is that commas should not be used. </p>
+
+<h2>
+<a id="pgfId-1008275"></a><a id="19720"></a>Usage of Globals Variables in SKILL</h2>
+
+<p>
+<a id="pgfId-1008276"></a>The use of global variables in SKILL, as with any language, should be kept to a minimum. The problems are greater in SKILL however because of its dynamic scoping of variables.</p>
+<p>
+<a id="pgfId-1008280"></a>The problem with <a id="marker-1008278"></a>global <a id="marker-1008279"></a>variables is that different programmers can be using a variable with the same name. This type of &#8220;name clash&#8221; can cause problems that are even more difficult to isolate than the &#8220;Error Global&#8221; problem, because programs can fail because of the order in which they have been run. However, because this problem can be avoided by adopting a standard naming scheme, SKILL Lint will report this type of variable as a &#8220;Warning Global&#8221;. To illustrate the problem, consider the example code below:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008281"></a>/***********************************************************<br /> * myShowForm()<br />***********************************************************/</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1009557"></a>procedure( myShowForm()<br />      /* If we don&#8217;t already have the form, then create it. */<br />      unless(boundp(&#39;theForm) &amp;&amp; theForm<br />            myBuildForm()<br />      )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008283"></a>      /* Display the form. */<br />      hiDisplayForm(theForm)<br />) /* end myShowForm */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008284"></a>/**********************************************************<br /> * yourShowForm()<br />***********************************************************/</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008285"></a>procedure( yourShowForm()<br />      /* If we don&#8217;t already have the form, then create it. */<br />      unless(boundp(&#39;theForm) &amp;&amp; theForm<br />            yourBuildForm()<br />      )<br />      /* Display the form. */<br />      hiDisplayForm(theForm)<br />) /* end yourShowForm */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008286"></a>/***********************************************************<br /> * myBuildForm()<br />***********************************************************/</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008287"></a>procedure( myBuildForm()<br />      hiCreateForm(&#39;theForm,<br />             &#8220;My Form&#8221;<br />             &#8220;myFormCallback()&#8221;<br />             list( hiCreateStringField(?name &#39;string1,<br />                              ?prompt &#8220;my field&#8221;)<br />             ) /* end list */<br /> )       /* end hiCreateForm */<br />) /* end myBuildForm */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008288"></a>/***********************************************************<br /> * yourBuildForm()<br /> *<br /> * Build the form.<br />***********************************************************/</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008289"></a>procedure( yourBuildForm()<br />      hiCreateForm(&#39;theForm,<br />             &#8220;Your Form&#8221;<br />             &#8220;yourFormCallback()&#8221;<br />             list( hiCreateStringField(?name &#39;string1,<br />                              ?prompt &#8220;your field&#8221;)<br />             ) /* end list */<br />      ) /* end hiCreateForm */<br />) /* end myBuildForm */</pre>
+
+<p>
+<a id="pgfId-1008290"></a>If <code>myShowForm</code> is called before <code>yourShowForm</code>, the global variable <code>theForm</code> will be set to a different value than if yourShowForm is called before myShowForm.</p>
+
+<h2>
+<a id="pgfId-1008293"></a><a id="31646"></a>Coding Style Mistakes<a id="marker-1012245"></a></h2>
+
+<p>
+<a id="pgfId-1008295"></a>C programmers sometimes make the following mistakes when programming in SKILL. Even though these mistakes have mostly to do with coding style, some of them can have an impact on performance.</p>
+<ul><li>
+<a id="pgfId-1012229"></a><a href="chap11.html#17314">Inefficient Use of Conditionals</a></li><li>
+<a id="pgfId-1012237"></a><a href="chap11.html#52710">Misusing prog and Conditionals</a></li></ul>
+
+
+<h3>
+<a id="pgfId-1008296"></a><a id="17314"></a>Inefficient Use of Conditionals</h3>
+
+<p>
+<a id="pgfId-1008297"></a>A common mistake with conditional checks is to use multiple inversions and boolean checks when using De Morgan&#8217;s Law would result in a simpler and clearer test. For example, the code below shows a common form of check.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008298"></a>if( !template || !templateDir <br />      warn(&quot;Invalid templates\n&quot;)<br />) /* end if */</pre>
+
+<p>
+<a id="pgfId-1008299"></a>This check can be optimized using De Morgan&#8217;s Law to be:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008300"></a>if( !(template &amp;&amp; templateDir)<br />      warn(&quot;Invalid templates\n&quot;)<br />) /* end if */</pre>
+
+<p>
+<a id="pgfId-1008301"></a>Another common mistake is made by many programmers used to having only the standard <code>if</code> and <code>case</code> conditionals. SKILL provides a rich variety of conditional functions, and appropriate use of these functions can lead to much clearer and faster code. For example, an <code>unless</code> could be used in the above check to yield the clearer and more efficient:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008302"></a>unless( template &amp;&amp; templateDir <br />      warn(&quot;Invalid templates\n&quot;)<br />) /* end unless */</pre>
+
+<p>
+<a id="pgfId-1008303"></a>Another example is where multiple if-then-else checks are used, such as:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008304"></a>if(stringp(layer) then<br />      layerName = layer<br />else <br />      if(fixp(layer) then<br />            layerNum = layer<br />      else<br />            if(listp(layer) then<br />                  layerPurpose = cadr(layer)<br />            ) /* end if */<br />      ) /* end if */<br />) /* end if */</pre>
+
+<p>
+<a id="pgfId-1008305"></a>This can be more clearly and efficiently implemented using a <code>cond</code>:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008306"></a>cond(<br />      (stringp(layer)  layerName = layer)<br />      (fixp(layer)     layerNum = layer)<br />      (listp(layer)    layerPurpose = cadr(layer) )<br />) /* end cond */</pre>
+
+<p>
+<a id="pgfId-1008307"></a>When applying multiple tests, either in a nested <code>if</code> function or a <code>cond</code> function, it is important to consider the order in which the tests will be carried out. </p>
+<ul><li>
+<a id="pgfId-1008308"></a>If one test is more likely to be true than the others then it should go first.</li><li>
+<a id="pgfId-1008309"></a>If all tests are equally likely to be true, then the test that involves the most work should go last.</li></ul>
+
+
+<h3>
+<a id="pgfId-1008310"></a><a id="52710"></a>Misusing prog and Conditionals</h3>
+
+<p>
+<a id="pgfId-1008314"></a>Often, <a id="marker-1008311"></a><code>prog</code> statements are used to return from a procedure when an error condition occurs. In the example below,<code> template</code><a id="marker-1008312"></a><a id="marker-1008313"></a> and <code>templateDir</code> are both verified, and only if both are correct is the rest of the procedure executed:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008315"></a>procedure( EditCallback() <br />      prog( ( templateFile templateDir fullName ) <br />            templateFile  = ReportForm-&gt;Template-&gt;value <br />            templateDir   = ReportForm-&gt;TemplateDir-&gt;value </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008316"></a>            /* Check the template directory. */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008317"></a>            if( ((templateDir == &quot;&quot;) || (!templateDir)) then<br />                  return(warn(&quot;Invalid template directory.\n&quot;)) <br />            )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008318"></a>            /* Check the template file. */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008319"></a>            if( ((templateFile == &quot;&quot;) || (!templateFile)) then<br />                  return(warn(&quot;Invalid template file name.\n&quot;)) <br />            ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008320"></a>            /* If both are correct then act.*/ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008321"></a>            sprintf(fullName &quot;%s/%s&quot; templateDir templateFile)<br />            if(isFile(fullName) then <br />                  LoadCallback() <br />            else <br />                  SetUpEnviron() <br />            ) /* end if */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008322"></a>            return(hiDisplayForm(EditTemplateForm )) <br />      ) /* end prog */ <br />) /* end EditCallback */</pre>
+
+<p>
+<a id="pgfId-1008323"></a>Using the fact that a <code>cond</code> returns the value of the last statement executed allows us to more efficiently implement this example using a <code>let</code>:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1009817"></a>procedure( EditCallback() <br />      let(((templateFile ReportForm-&gt;Template-&gt;value) <br />             (templateDir  ReportForm-&gt;TemplateDir-&gt;value) <br />              fullName)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008325"></a>            cond(<br />                  /* Check the template directory. */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008326"></a>                  ( (templateDir == &quot;&quot;) || (!templateDir) <br />                        warn(&quot;Invalid template directory.\n&quot;)<br />                  ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008327"></a>                  /* Check the template file. */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008328"></a>                  ( (templateFile == &quot;&quot;) || (!templateFile) <br />                        warn(&quot;Invalid template file name.\n&quot;)<br />                  ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008329"></a>                  /* If both are correct then act. */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008330"></a>                  (t <br />                        sprintf(fullName &quot;%s/%s&quot; templateDir <br />                                          templateFile) <br />                        if(isFile(fullName) then <br />                              LoadCallback() <br />                        else <br />                              SetUpEnviron() </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008331"></a>                        ) /* if */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008332"></a>                        hiDisplayForm(EditTemplateForm ) <br />                      ) <br />          ) /* end cond */ <br />      ) /* end let */<br />) /* end of EditCallback */</pre>
+<h2>
+<a id="pgfId-1008333"></a><a id="40027"></a>Red Flags</h2>
+
+<p>
+<a id="pgfId-1008334"></a>The following are situations or functions that require special attention. Their use is often symptomatic of pro<a id="marker-1008335"></a>blems with the way interfaces or algorithms are designed. In some cases, their use is legitimate and these comments do not apply.</p>
+
+<h3>
+<a id="pgfId-1008336"></a><a id="53928"></a>Use of eval or evalstring </h3>
+
+<p>
+<a id="pgfId-1008337"></a>Strictly speaking these calls are inefficient and any code using them is either suffering through using a bad interface from another application or the code itself is badly designed. </p>
+
+<h3>
+<a id="pgfId-1008338"></a><a id="56362"></a>Excessive Use of reverse and append </h3>
+
+<p>
+<a id="pgfId-1008339"></a>Excessive use of <code>reverse</code> and <code>append</code> is an indication that algorithms using list structures are badly designed. They are acceptable when prototyping but production code should not suffer their consequences. Both these functions are capable of generating a lot of memory. There are alternatives to these functions and the recommendation is that code using these functions should be rewritten using <code>tconc</code>. </p>
+
+<h3>
+<a id="pgfId-1008340"></a><a id="63555"></a>Excessive Use of gensym and concat </h3>
+
+<p>
+<a id="pgfId-1008341"></a>Symbols are large structures and applications that have to generate symbols at run time may not be designed to use the right data structure. Many times applications use symbols in place of small strings to save on memory because symbols are unique in the system. However, SKILL caches strings so this optimization might not always yield the desired effect.</p>
+
+<h3>
+<a id="pgfId-1008342"></a><a id="63264"></a>Overuse of the Functions Combining car and cdr </h3>
+
+<p>
+<a id="pgfId-1008343"></a>One function that combines <code>car</code> and <code>cdr</code> is <code>cdaddr</code>. Using such functions, which are not as intuitive as calls to <code>nthelem</code> and <code>nthcdr</code>, can lead to programmer and reader errors. </p>
+
+<h3>
+<a id="pgfId-1008344"></a><a id="99249"></a>Use of eval Inside Macros </h3>
+
+<p>
+<a id="pgfId-1008345"></a>Calling <code>eval</code> inside a macro means you are determining the value of an entity at compile time as opposed to evaluating it at run time, which may result in undesirable behavior. In general, macros should message expressions and return expressions (see <a href="chap9.html#90007">&#8220;Macros&#8221;</a>). </p>
+
+<h3>
+<a id="pgfId-1010226"></a><a id="17166"></a>Misuse of prog and return in SKILL++ mode</h3>
+
+<p>
+<a id="pgfId-1010228"></a>Misuse of <code>prog</code> and <code>return</code> in SKILL++ might corrupt SKILL++ environment frames and can lead to a fatal programming error. The following example demonstrates misuse that you should avoid (using <code>prog</code> and <code>return</code> in a SKILL++ <code>.ils</code> file). Immediately following this example is an example of what you should do instead.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1010232"></a>procedure( myFunc(namelist keys &quot;ll&quot;)<br />  let( (selectedlist)<br />    foreach( name namelist<br />      prog(()<br />        foreach( key keys<br />          when( rexMatchp(key name)<br />            return(t)<br />          )<br />        )<br />        return(nil)<br />      )<br />      selectedlist = cons(name selectedlist)<br />    )<br />  )<br />)</pre>
+
+<p>
+<a id="pgfId-1010248"></a>Instead, do this:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1010250"></a>procedure( myFunc(namelist keys &quot;ll&quot;)<br />  let( ()<br />    setof( name namelist<br />      setof(key keys rexMatchp(key name))<br />    )<br />  )<br />)</pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap10.html" id="prev" title="Delivering Products">Delivering Products</a></em></b><b><em><a href="chap12.html" id="nex" title="SKILL Code Optimization">SKILL Code Optimization</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
