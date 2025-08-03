@@ -1,0 +1,149 @@
+
+<html><head><title>Examples Using Macros</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-08-04" />
+<meta name="CreateTime" content="1691137337" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes SKILL IDE debugger that is used to debug SKILL code" />
+<meta name="DocTitle" content="Cadence SKILL IDE User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Examples Using Macros" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="skillide" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-04" />
+<meta name="ModifiedTime" content="1691137337" />
+<meta name="NextFile" content="sklintEnvars.html" />
+<meta name="Group" content="SKILL Language" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="appendixB_Rule_Definition_Locations.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="SKILL" />
+<meta name="ProductFamily" content="SKILL" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence SKILL IDE User Guide -- Examples Using Macros" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="SKILL Infrastructure" />
+<meta name="prod_subfeature" content="SKILL IDE" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="skillideIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="skillideTOC.html">Contents</a></li><li><a class="prev" href="appendixB_Rule_Definition_Locations.html" title="Rule Definition Locations">Rule Definition Locations</a></li><li style="float: right;"><a class="viewPrint" href="skillide.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="sklintEnvars.html" title="SKILL Lint Environment Variables">SKILL Lint Environment Variabl ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence SKILL IDE User Guide<br />Product Version IC23.1, August 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:Examples_Using_Macros" title="Examples Using Macros"></a><h2>
+<a id="pgfId-1306556"></a><a id="Examples"></a><a id="14327"></a>Examples Using Macros</h2>
+
+<p>
+<a id="pgfId-1306557"></a>The examples in the following sections show how you can use macros in rules:</p>
+
+<h3>
+<a id="pgfId-1306575"></a><a id="27379"></a>Adding a New Required Argument to a Function</h3>
+
+<p>
+<a id="pgfId-1306576"></a>You can write a rule like the following to trap problems associated with a function (such as <code>ggTestData</code>) requiring one or more new arguments with a new release of code and notifying the user:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306577"></a>SK_RULE( ggTestData<br />   length(SK_ARGS()) == 2<br />   SK_WARNING( GGTESTDATA<br />   strcat( &quot;This function will require 3 arguments in the next release: %L\n&quot;<br />   &quot;The extra argument will specify the width of the widget.\n&quot;) SK_FORM())<br />)<br />SK_REGISTER( GGTESTDATA )</pre>
+<h3>
+<a id="pgfId-1306579"></a><a id="24638"></a>Replacing One Function with Another</h3>
+
+<p>
+<a id="pgfId-1306580"></a>You can write a rule like the following to replace a standard function called <code>setof</code> with another function called <code>realSetof</code>. The standard <code>setof</code> function is not a true <code>setof</code> because it does not remove repeated elements; instead, it is more of a <code>bagof</code> function. The replacement <code>realSetof</code> function removes repeated elements and allows many statements in the body of the function call (whereas <code>setof</code> allows only one). The rule needs to handle the fact that the first argument is a loop variable. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306581"></a>SK_RULE( realSetof  <br />   t  <br />   let( ((args SK_ARGS()))<br />      when(symbolp(car(args))<br />          SK_PUSH_VAR(car(args))  <br />      )  <br />      map(&#8216;SK_CHECK_FORM cdr(args))  <br />      when(symbolp(car(args))  <br />          SK_POP_VAR(car(args))  <br />      )  <br />   )      <br />) </pre>
+
+<p>
+<a id="pgfId-1306582"></a>The rule above uses <code>let</code> to declare a local variable <code>args</code> to save calling <code>SK_ARGS</code> many times. You can define a second rule as follows to check that the loop variable is given as a symbol:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306583"></a>SK_RULE( realSetof  <br />   !symbolp(car(SK_ARGS()))  <br />   SK_ERROR( REALSETOF1 &#8220;First argument must be a symbol: %L\n&#8221; SK_FORM())  <br />)<br />SK_REGISTER( REALSETOF1 )</pre>
+<h3>
+<a id="pgfId-1306585"></a><a id="22482"></a>Promoting Standard Format Messages</h3>
+
+<p>
+<a id="pgfId-1306586"></a>You can write a rule as follows to check that the format string for three new functions matches the given number of arguments. The three new functions (<code>ggInfo</code>, <code>ggWarn</code> and <code>ggError</code>) take the same arguments as <code>printf</code> and usually work the same, except that they change the format a little and also copy the messages to various log files. The <code>SK_ALIAS</code> macro lets you alias the three new functions to <code>printf</code> so that you can apply the same rule.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306587"></a>SK_ALIAS( (ggInfo ggWarn ggError) printf )</pre>
+<h3>
+<a id="pgfId-1306589"></a><a id="53151"></a>Preventing Heavily Nested Calls to Boolean Operators</h3>
+
+<p>
+<a id="pgfId-1306590"></a>You can write a rule that promotes nicer looking code by preventing too many nested calls to boolean operators (<code>null</code>, <code>or</code>, and <code>and</code>). </p>
+<p>
+<a id="pgfId-1306591"></a>Consider the following example, which is difficult to understand:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306592"></a>!a &amp;&amp; ((b || !c) &amp;&amp; (!d || !b)</pre>
+
+<p>
+<a id="pgfId-1306593"></a>To improve code readability, it would be better to split this expression into several statements and add associated comments.</p>
+<p>
+<a id="pgfId-1306594"></a>The following rule counts boolean operators and warns you when there are &#8220;too many&#8221;:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306595"></a>SK_RULE( (null and or)  <br />   ggCountBools(SK_FORM()) &gt; 5  <br />   SK_HINT( BOOLS &#8220;Lots of boolean calls found : %L\n&#8221; SK_FORM())  <br />)  <br />SK_REGISTER( BOOLS ) </pre>
+
+<p>
+<a id="pgfId-1306596"></a>You might write the <code>ggCountBools</code> function as follows: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306597"></a>procedure( ggCountBools(args)<br />   let( ((i 0))  <br />      foreach(arg args  <br />         when(listp(arg) &amp;&amp; memq(car(arg) &#8216;(null or and))  <br />            i = i + 1 + ggCountBools(cdr(arg))  <br />         )  <br />      )  <br />      i  <br />   )  <br />) </pre>
+
+<p>
+<a id="pgfId-1306598"></a>In case of deeply nested booleans, you can improve the rule by looking at the function call higher in the call stack and, if that call is a boolean function itself, not checking the current call (because it is unnecessary):</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1306599"></a>SK_RULE( (null and or)        <br />   !memq(car(SK_FORM(1)) &#8216;(null and or)) &amp;&amp; ggCountBools(SK_FORM()) &gt; 5  <br />      SK_HINT( BOOLS &#8220;Lots of boolean calls found : %L\n&#8221; SK_FORM())  <br />)</pre>
+<h4><em>
+<a id="pgfId-1308998"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1309002"></a><a href="appendixB.html#31836">SKILL Lint Rules</a></p>
+<p>
+<a id="pgfId-1309006"></a><a href="appendixB.html#36641">Rule Structure - SK_RULE Macro</a></p>
+<p>
+<a id="pgfId-1309010"></a><a href="appendixB_Rule_Access_Macros.html#13644">Rule Access Macros</a></p>
+<p>
+<a id="pgfId-1309014"></a><a href="appendixB_Rule_Reporting_Macros.html#12391">Rule Reporting Macros</a></p>
+<p>
+<a id="pgfId-1309018"></a><a href="appendixB_Advanced_Rule_Macros.html#18288">Advanced Rule Macros</a></p>
+<p>
+<a id="pgfId-1309050"></a><a href="appendixB_Rule_Definition_Locations.html#23199">Rule Definition Locations</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="appendixB_Rule_Definition_Locations.html" id="prev" title="Rule Definition Locations">Rule Definition Locations</a></em></b><b><em><a href="sklintEnvars.html" id="nex" title="SKILL Lint Environment Variables">SKILL Lint Environment Variabl ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
