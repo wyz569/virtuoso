@@ -1,0 +1,2644 @@
+
+<html><head><title>Extracting RC Parasitics</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-09-14" />
+<meta name="CreateTime" content="1694753569" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Dracula product offers a complete set of integrated applications for verifying IC layout design.  This book contains task-related information about the Dracula standalone verification product." />
+<meta name="DocTitle" content="Dracula User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Extracting RC Parasitics" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="draculauser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-14" />
+<meta name="ModifiedTime" content="1694753569" />
+<meta name="NextFile" content="chap6.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap4.html" />
+<meta name="c_product" content="Dracula" />
+<meta name="Product" content="Dracula" />
+<meta name="ProductFamily" content="Dracula" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Dracula User Guide -- Extracting RC Parasitics" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="draculauserIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="draculauserTOC.html">Contents</a></li><li><a class="prev" href="chap4.html" title="Selecting a Run Mode">Selecting a Run Mode</a></li><li style="float: right;"><a class="viewPrint" href="draculauser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap6.html" title="Setting up Hierarchical Dracula">Setting up Hierarchical Dracul ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Dracula User Guide<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>5
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+<a id="39770"></a>Extracting RC Parasitics<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014261"></a>This chapter deals with the following topics:</p>
+<ul><li>
+<a id="pgfId-1014265"></a><a href="chap5.html#15118">About RC Extraction</a></li><li>
+<a id="pgfId-1014269"></a><a href="chap5.html#99056">Ensuring Accuracy in RC Extraction</a></li><li>
+<a id="pgfId-1014273"></a><a href="chap5.html#39866">Extracting Parasitic Capacitance</a></li><li>
+<a id="pgfId-1014277"></a><a href="chap5.html#73980">Extracting Parasitic Resistance</a></li><li>
+<a id="pgfId-1014281"></a><a href="chap5.html#41073">Extracting 2.5D MB Parasitics</a></li><li>
+<a id="pgfId-1014285"></a><a href="chap5.html#40994">Using One Function to Extract RC Parasitics</a></li><li>
+<a id="pgfId-1014289"></a><a href="chap5.html#19353">Extracting a Single Net</a></li><li>
+<a id="pgfId-1018131"></a><a href="chap5.html#60059">The Dracula To RCX (dracToRcx) Interface</a></li></ul>
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1014292"></a><a id="15118"></a>About RC Extraction</h2>
+
+<p>
+<a id="pgfId-1014294"></a>P<a id="marker-1014293"></a>arasitic resistance and capacitance (RC) between layers of an integrated circuit affect its signal speed. To calculate RC values, you define parasitics in your Dracula rules file, extract them, and use a delay calculator to calculate delays from the RC values.</p>
+<p>
+<a id="pgfId-1014295"></a>In this chapter, you&#8217;ll learn</p>
+<ul><li>
+<a id="pgfId-1014296"></a>General information about achieving accuracy in RC extraction</li><li>
+<a id="pgfId-1014297"></a>Basic types of RC parasitics and how to extract them</li></ul>
+
+<p>
+<a id="pgfId-1014298"></a>Only parasitic capacitors and resistors are described here. For more information about extracting capacitor and resistor devices, see <a href="chap2.html#27561">Chapter 2, &#8220;Writing Rules for Dracula,&#8221;</a> in this manual.</p>
+<p>
+<a id="pgfId-1014302"></a>The complete rules files are not included for examples in this chapter. Only the functions needed to demonstrate certain types of RC extraction are listed. When you see a &#8220;<code>&lt;functions deleted&gt;</code>&#8221; note in the listing, it means that lines have been omitted.</p>
+
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1018146"></a>
+DracToRCX is an interface in Dracula that allows users to access the Assura RCX tool to perform parasitic extraction. For more information about how to use the DracToRCX interface, see <a href="chap5.html#60059">&#8220;The Dracula To RCX (dracToRcx) Interface&#8221;</a>.</div>
+<h2>
+<a id="pgfId-1014304"></a><a id="99056"></a>Ensuring Accuracy in RC Extraction</h2>
+
+<p>
+<a id="pgfId-1014305"></a>When you supply information about your manufacturing process, Dracula uses it to extract and calculate capacitance and resistance. The accuracy of the constants you supply is an important factor in the accuracy of the values that Dracula extracts. The values you supply are as follows:</p>
+<ul><li>
+<a id="pgfId-1014306"></a>Constant values for capacitance and resistance per unit</li><li>
+<a id="pgfId-1014307"></a>Adjustments for masking and fabrication effects</li><li>
+<a id="pgfId-1014309"></a>Equations f<a id="marker-1014308"></a>or calculating resistance and capacitance values</li></ul>
+
+
+<p>
+<a id="pgfId-1014310"></a>These values are described in the sections that follow.</p>
+
+<h3>
+<a id="pgfId-1014312"></a><a id="12936"></a>Providing Constants</h3>
+
+<p>
+<a id="pgfId-1014314"></a>To calculate capacitance and resistance, D<a id="marker-1014313"></a>racula needs the constants you supply with the <code>PARASITIC CAP</code> and <code>PARASITIC RES</code> statements. </p>
+
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1014315"></a>
+Make sure that the process engineers give you the most current values to use in your rules file.</div>
+
+<p>
+<a id="pgfId-1014318"></a>For suggestions about using constants in debugging, see <a href="chap5.html#85565">&#8220;Constants for Debugging Capacitance&#8221;</a>.</p>
+
+<h3>
+<a id="pgfId-1014321"></a><a id="10579"></a>Adjusting Your Design Database for Fabrication Effects</h3>
+
+<p>
+<a id="pgfId-1014323"></a>T<a id="marker-1014322"></a>he masking and fabrication processes alter the shapes of layout geometries. The increase or decrease in size, in turn, alters resistance and capacitance of the chip. To adjust for masking and fabrication effects, follow these steps:</p>
+<ol><li>
+<a id="pgfId-1014324"></a>Determine the amount of distortion that masking and fabrication have on each layer. <br />
+<a id="pgfId-1014325"></a>Ask your process engineers for this information.</li><li>
+<a id="pgfId-1014326"></a>Determine whether the percentage of inaccuracy caused by this distortion is greater or less than the accuracy you want to achieve. <br />
+<a id="pgfId-1014327"></a>For example, if the process distorts a layer by + .01%, can you ignore the effects, or do you need to account for the distortion in the rules file?</li><li>
+<a id="pgfId-1014328"></a>If you need to adjust for distortion, determine how to implement your adjustments in the rules file. <br />
+<a id="pgfId-1014329"></a>For example, if a layer &#8220;grows&#8221; during processing, use <code>SIZE</code> to increase its dimensions for verification. Your Field Applications Engineer (FAE) can help you with complex adjustments.</li></ol>
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1014332"></a><a id="96143"></a>Us<a id="flexLPE"></a>ing Equations with Flexible LPE</h3>
+
+<p>
+<a id="pgfId-1014333"></a>You might need to specify unique or detailed equations for RC extraction to reflect your manufacturing process. The Flexible LPE capability in Dracula lets you create custom equations. It consists of these functions:</p>
+<ul><li>
+<a id="pgfId-1014336"></a><code>PARSET</code><a id="marker-1014334"></a><a id="marker-1014335"></a> &#8212; lists the set of parameters that you want to extract, such as area and perimeter</li><li>
+<a id="pgfId-1014339"></a><code>LEXTRACT</code><a id="marker-1014337"></a><a id="marker-1014338"></a> &#8212; gives the parameter set and the layers to use in the extraction</li><li>
+<a id="pgfId-1014342"></a><code>EQUATION</code><a id="marker-1014340"></a><a id="marker-1014341"></a> &#8212; gives the equation to use to calculate the value you want</li></ul>
+
+
+<p>
+<a id="pgfId-1014343"></a>The following example shows a calculation for extracting capacitance. It defines a parameter set called <code>CPA</code> that lists four parameters to be extracted: perimeter (<code>PERI</code><a id="marker-1014344"></a>), perimeter of the first layer overlapping the second layer (<code>OVPR</code><a id="marker-1014345"></a>), area (<code>AREA</code><a id="marker-1014346"></a>), and capacitance (<code>C</code>). </p>
+<p>
+<a id="pgfId-1014347"></a><code>C</code> is a reserved parameter keyword for which you supply a calculation in an <code>EQUATION</code> statement following <code>LEXTRACT</code><a id="marker-1014348"></a>. You can use <code>PERI</code>, <code>AREA</code>, and <code>OVPR</code>, which are geometric primitives defined in Dracula, in your equation.</p>
+<p>
+<a id="pgfId-1014350"></a>H<a id="marker-1014349"></a>ere is an example that demonstrates Flexible LPE:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014351"></a>;<br />; &lt;functions omitted&gt;<br />;<br />PARSET CPA PERI <a id="marker-1014352"></a>OVPR AREA C<br />;<br />; &lt;functions omitted&gt;<br />;<br />LEXTRACT CPA CAP32 NME3 BY CAP[A] CAPA32 &amp;<br />EQUATION C = 1 * AREA + 1 * (PERI - OVPR) + 1 * OVPR<br />; &lt;functions omitted&gt;</pre>
+
+<p>
+<a id="pgfId-1014353"></a>As shown in the <code>EQUATION</code> statement, you can specify a calculation that reflects your technology and process using predefined parameters and constants.</p>
+<p>
+<a id="pgfId-1014354"></a>See the <em>Dracula Reference </em>manual for more information about:</p>
+<ul><li>
+<a id="pgfId-1014355"></a>Parameters and Flexible LPE &#8212; The &#8220;Flexible LPE&#8221; section in the &#8220;Extracting Electrical Parameters (LPE)&#8221; chapter</li><li>
+<a id="pgfId-1014356"></a><code>PARSET</code> &#8212; The &#8220;PARSET&#8221; section in the &#8220;Description Block Commands&#8221; chapter</li><li>
+<a id="pgfId-1014357"></a><code>LEXTRACT</code> &#8212; The &#8220;LEXTRACT&#8221; section in the &#8220;Operation Block Commands&#8221; chapter</li><li>
+<a id="pgfId-1014358"></a><code>EQUATION</code> &#8212; The &#8220;EQUATION&#8221; section in the &#8220;Operation Block Commands&#8221; chapter</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014359"></a>Sample rules files using Flexible LPE can be found in the following sections of this chapter:</p>
+<ul><li>
+<a id="pgfId-1014363"></a><a href="chap5.html#26484">&#8220;Extracting Directional Sidewall Capacitance&#8221;</a></li><li>
+<a id="pgfId-1014367"></a><a href="chap5.html#43686">&#8220;Correcting for Colinear Sidewall Capacitance&#8221;</a></li><li>
+<a id="pgfId-1014371"></a><a href="chap5.html#46207">&#8220;Extracting Contact Resistors&#8221;</a></li><li>
+<a id="pgfId-1014375"></a><a href="chap5.html#12060">&#8220;Correcting Sidewall Capacitance&#8221;</a></li><li>
+<a id="pgfId-1014379"></a><a href="chap5.html#19425">&#8220;Extracting Sidewall Capacitance with Fringing Effects&#8221;</a></li></ul>
+
+
+
+
+
+<h2>
+<a id="pgfId-1014382"></a><a id="39866"></a>Ext<a id="para_cap"></a>racting Parasitic Capacitance</h2>
+
+<p>
+<a id="pgfId-1014384"></a>The basi<a id="marker-1014383"></a>c types of parasitic capacitance that you might want to extract are</p>
+<ul><li>
+<a id="pgfId-1014386"></a>O<a id="marker-1014385"></a>verlap capacitance &#8212; a capacitor formed by the overlap of two conductive areas</li><li>
+<a id="pgfId-1014387"></a>Sidewall capacitance &#8212; the capacitance between the edge of a conductive layer and the area of a conductive layer above or below it</li><li>
+<a id="pgfId-1014389"></a>F<a id="marker-1014388"></a>ringe capacitance &#8212; the capacitance between edges on the same or different conductive layers</li></ul>
+
+
+<p>
+<a id="pgfId-1014390"></a>You might also need to include rules in your file that</p>
+<ul><li>
+<a id="pgfId-1014391"></a>Correct capacitance calculations to remove the duplication caused by colinear edge sidewall capacitance</li><li>
+<a id="pgfId-1014392"></a>Extract over-the-cell routing wire overlap capacitance with cell geometries in HLPE</li><li>
+<a id="pgfId-1014393"></a>You extract capacitance by defining the device recognition layers and specifying the equations for calculating parasitic values in your rules file. </li></ul>
+
+
+<p>
+<a id="pgfId-1014394"></a>This section might not cover all the types of capacitance that you want to extract. However, you can use the examples in this section as general guidelines to develop similar methods for extracting parasitic capacitance from your layout.</p>
+
+<h3>
+<a id="pgfId-1014396"></a><a id="34385"></a>Preparing To Extract Capacitance</h3>
+
+<p>
+<a id="pgfId-1014397"></a>To prepare for coding capacitance extraction in your Dracula rules file, do the following:</p>
+<ul><li>
+<a id="pgfId-1014398"></a>Decide whether to output capacitance as a lump sum or cross-coupled value.</li><li>
+<a id="pgfId-1014399"></a>Make sure you have power and ground connected to your circuit in a way that Dracula can understand.</li><li>
+<a id="pgfId-1014400"></a>Be familiar with the Dracula functions for capacitance extraction.</li></ul>
+
+
+<p>
+<a id="pgfId-1014401"></a>These preparations are described in the sections that follow.</p>
+
+<h4>
+<a id="pgfId-1014402"></a>Selecting the Capacitance Output Format</h4>
+
+<p>
+<a id="pgfId-1014405"></a>Y<a id="marker-1014403"></a>ou can use the <code>LPESELECT</code> function to output capacitances in two different ways:<a id="marker-1014404"></a></p>
+<ul><li>
+<a id="pgfId-1014406"></a>Lump sum &#8212; Capacitance between two signal nodes is duplicated for the two nodes. Then, all capacitances to a given signal node are lumped together and reported as being a capacitance to ground. When lump sum capacitance is requested, Dracula outputs n capacitors (per capacitor type requested), where n is the number of nodes. <br />
+<a id="pgfId-1014407"></a>If your purpose is to check the capacitance loading effects on signal speed, this method is accurate enough. Here is an example of the SPICE output for node Q1B, where metal-to-metal capacitance is extracted and reported as lump sum capacitance:<pre class="webflare-pre-block webflare-courier-new" id="#id1014408">
+<a id="pgfId-1014408"></a>C2    Q1B  VSS  1.68510E-02PF</pre></li><li>
+<a id="pgfId-1014409"></a>Cross-coupled &#8212; When you request cross-coupled capacitance, Dracula reports the capacitance between a node and all other nodes. When cross-coupled capacitance is output, a maximum of n*(n-1) capacitors (per capacitor type requested) are listed, where n is the number of nodes.<br />
+<a id="pgfId-1014410"></a>Because it outputs the capacitors with the nodes that form them, this method is more accurate than the lump sum method. However, the amount of output increases significantly. Here is an example of the SPICE output for the same node, Q1B, reported as cross-coupled capacitances:<pre class="webflare-pre-block webflare-courier-new" id="#id1014411">
+<a id="pgfId-1014411"></a>C3    Q1B  VSS  2.00000E-04PF
+C4    Q1B  X3-45  1.25101E-03PF
+C5    Q1B  X3-11  2.50000E-04PF
+C6    Q1B  Q1  6.00000E-04PF
+C7    Q1B  X3-8  4.20000E-03PF
+C8    Q1B  X3-5  1.04000E-03PF
+C9    Q1B  X3-39  3.38778E-03PF
+C10    Q1B  X3-44  4.05000E-03PF
+C11    Q1B  VDD  1.87222E-03PF</pre>
+<a id="pgfId-1014412"></a>You might try using cross-coupled output while you are debugging your rules file to see if it is easier to check where each capacitor is being formed. You can do the final report in lump sum format.</li></ul>
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1014413"></a>Connecting Power and Ground</h4>
+
+<p>
+<a id="pgfId-1014415"></a>T<a id="marker-1014414"></a>o extract capacitance, you must be sure that your circuit connects to power and ground. If your circuit doesn&#8217;t have power and ground, you can add them without affecting the circuit as shown in the following rules file. The following method attaches power and ground to dummy layers without affecting the circuit connectivity.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014416"></a>;<br />; &lt;functions omitted&gt;<br />;<br />*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />;<br />METAL1 = 1<br />;<br />; &lt;functions omitted&gt;<br />;<br />SUBSTRATE = BULK 5<br />;<br />; &lt;functions omitted&gt;<br />;<br />; BL2 and BL1 are the generated VDD and GND layers<br />CONNECT-LAYER = BL2 BL1 METAL1<br />*END<br />;<br />*OPERATION<br />; The edtext file labels VDD and GND <br />; and attaches them to BL2 and BL1.<br />EDTEXT = exp.text<br />;<br />; &lt;functions omitted&gt;<br />;<br />NOT METAL1 BULK CN1  ; CN1 is an empty layer<br />;<br />; &lt;functions omitted&gt;<br />;<br />; The next function creates layers for <br />; attaching power and ground.<br />;<br />OR BULK CN1 BL1          ; for GND<br />OR BULK CN1 BL2          ; for VDD<br />;<br />; BL1 and BL2 must be in the CONNECT statement<br />; so the VDD and GND signals can be connected<br />; to them.<br />; BL1 and BL2 don&#8217;t connect to anything.<br />;<br />; &lt;functions omitted&gt;<br />;<br />C<a id="marker-1014417"></a>ONNECT BL1 BL2 BY CN1<br />;<br />; &lt;functions omitted&gt;<br />;<br />*END</pre>
+
+<p>
+<a id="pgfId-1014418"></a>The <code>EDTEXT</code> file, <code>exp.text</code> in this example, labels and attaches the VDD and GND nodes with lines like this:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014419"></a>GND X = 0 Y = 0 ATTACH = BL1<br />VDD X = 0 Y = 0 ATTACH = BL2</pre>
+
+<p>
+<a id="pgfId-1014421"></a>where c<a id="marker-1014420"></a>oordinates (0,0) are inside the layout.</p>
+
+<h4>
+<a id="pgfId-1014422"></a>Using the Extraction Functions</h4>
+
+<p>
+<a id="pgfId-1014424"></a>T<a id="marker-1014423"></a>his table shows you</p>
+<ul><li>
+<a id="pgfId-1014425"></a>The steps that you follow to extract parasitic capacitors from your layout</li><li>
+<a id="pgfId-1014426"></a>Which functions to use for each step</li><li>
+<a id="pgfId-1014427"></a>Where to put the functions in your Dracula rules file<br /><div class="ft-figtabl-title">
+<a id="pgfId-1014528"></a><a id="cap_functions"></a>Capacitance Extraction Flow</div><table class="webflareTable" id="#id1016668">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016670">
+<a id="pgfId-1016670"></a>Step</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016672">
+<a id="pgfId-1016672"></a>Function</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016674">
+<a id="pgfId-1016674"></a>Description</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016676">
+<a id="pgfId-1016676"></a>Rules file block</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016678"></a>Define the capacitance unit</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016681"></a><code>UNIT</code><a id="marker-1016680"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016683"></a>Associates natural units with extracted parameters.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016685"></a><code>*DESCRIPTION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016687"></a>Specify the model name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016691"></a><code>MODEL</code><a id="marker-1016689"></a><a id="marker-1016690"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016693"></a>Associates model names of devices with circuit simulation model names.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016695"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016697"></a>Create the device recognition layer</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016700"></a>l<a id="marker-1016699"></a>ogical operations</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016702"></a>Creates a layer that defines the area and perimeter of capacitors. </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016704"></a><code>*OPERATION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016706"></a>Specify parasitic devices and capacitance values</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016710"></a><code>PARASITIC</code><a id="marker-1016708"></a><a id="marker-1016709"></a> <code>CAP</code>, <code>FRINGE</code><a id="marker-1016711"></a><a id="marker-1016712"></a> <code>CAP</code>, and <code>ATTRIBUTE</code><a id="marker-1016713"></a> <code>CAP</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016715"></a>Specifies the body and terminal layers of the parasitic capacitor. Supplies values needed to calculate capacitance.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016717"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016719"></a>Generate <a id="marker-1016720"></a>output</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016723"></a><code>LEXTRACT</code><a id="marker-1016722"></a> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016725"></a>Extracts parameters from capacitor layers (optional).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016727"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016729"></a>Generate <a id="marker-1016730"></a>output<br />(cont&#8217;d)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016733"></a><code>EQUATION</code><a id="marker-1016732"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016735"></a>Used with <code>LEXTRACT</code> to specify the equation to use to compute the extracted capacitance. Uses the device parameters listed with the <code>PARSET</code> function. The <code>LEXTRACT</code>/<code>EQUATION</code> combination is called Flexible LPE (optional).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016737"></a><code>*OPERATION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016739"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016742"></a><code>LPESELECT</code><a id="marker-1016741"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016744"></a>Writes parasitic capacitance to an output SPICE file.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016746"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016748"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016751"></a><code>SPFSELECT</code><a id="marker-1016750"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016753"></a>Writes parasitic capacitance to an output Detailed Standard Parasitic Format (DSPF) file (for HPRE jobs only).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016755"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016757"></a>Generate <a id="marker-1016758"></a>output<br />(cont&#8217;d)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016762"></a><code>RSPFSELECT</code><a id="marker-1016760"></a><a id="marker-1016761"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016764"></a>Writes parasitic capacitance to an output Reduced Standard Parasitic Format (RSPF) file (for HPRE jobs only; supported in Dracula version 4.2).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016766"></a><code>*OPERATION</code></p>
+</td>
+</tr>
+</tbody></table></li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1014532"></a><a id="85565"></a>C<a id="constants"></a>onstant<a id="marker-1014531"></a>s for Debugging Capacitance</h3>
+
+<p>
+<a id="pgfId-1014533"></a>The following are some techniques you might use to debug your capacitance extraction:</p>
+<ul><li>
+<a id="pgfId-1014535"></a>You can use a constant of 1 in the <code>ATTRIBUTE CAP</code><a id="marker-1014534"></a> statement when you first code and debug a Dracula rules file. Then, when you&#8217;re sure that you&#8217;re extracting the correct capacitances, you can replace 1 with accurate constants you get from the process engineers.</li><li>
+<a id="pgfId-1014536"></a>Another useful technique to make your capacitance values easier to check is to extr<a id="marker-1014537"></a>act each f<a id="marker-1014538"></a>ringe capacitor so that the capacitance equals the w<a id="marker-1014539"></a>idth:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1014540">
+<a id="pgfId-1014540"></a>ATTRIBUTE CAP[MF] 0.8 0.8</pre></li><li>
+<a id="pgfId-1014541"></a>Another method is to use &#8220;100   .01&#8221; as constants for the <code>ATTRIBUTE CAP</code> statement. By separating the two components by zeros, it is easy to check your results. Output capacitances come out in nn00.mm format, where nn is the area component and <a id="marker-1014542"></a>mm is the perimeter.<a id="marker-1014543"></a></li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1014547"></a><a id="52085"></a>Extracting Over<a id="marker-1014545"></a>lap and Side<a id="marker-1014546"></a>wall Capacitance</h3>
+
+<p>
+<a id="pgfId-1014549"></a>To e<a id="marker-1014548"></a>xtract overlap and sidewall capacitance, you create device recognition areas using <code>AND</code> to combine the two layers that form the capacitor. If there is an intervening third layer, you can use <code>NOT</code> to remove it. The following example removes any poly areas from the metal-to-N+ parasitic capacitance.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014550"></a>NOT MET POLY METNP ; metal with poly removed<br />AND METNP NSD MNSD ; metal to N+ capacitance<br />;<br />PARASITIC CAP[B] MNSD MET NSD ; metal to N+ capacitance</pre>
+
+<p>
+<a id="pgfId-1014551"></a>To create the parasitic capacitor and specify capacitance per area unit, use the <code>PARASITIC CAP</code> and <code>ATTRIBUTE CAP</code> functions.</p>
+<p>
+<a id="pgfId-1014554"></a>The <code>ATTRIBUTE CAP</code><a id="marker-1014552"></a> function specifies a capacitance value for both area (overlap) and perimeter (sidewall) calculations.<a id="marker-1014553"></a></p>
+<p>
+<a id="pgfId-1014556"></a>The f<a id="metalpoly"></a>ollowing figure shows a capacitor recognition area created by ANDing the metal and poly layers. The resulting layer, <em>metpol</em>, is the metal-to-poly capacitor layer. The corresponding rules file follows the figure.</p>
+
+<p>
+<a id="pgfId-1014575"></a></p>
+<div class="webflare-div-image">
+<img src="images/MetalPolyMetpol.gif" /></div>
+<h4>
+<a id="pgfId-1014577"></a>Rules Fil<a id="marker-1014576"></a>e</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014579"></a>*D<a id="marker-1014578"></a>ESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />SCHEMATIC = LVSLOGIC<br />UNIT = CAPACITANCE,PF AREA,P<br />;<br />; &lt;functions omitted&gt;<br />;<br />*END<br />*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />;<br />POLY = 3<br />METAL = 6<br />;<br />; &lt;functions omitted&gt;<br />*END</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014580"></a>*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />AND METAL POLY METPOL  metal-to-poly capacitance<br />;<br />; &lt;functions omitted&gt;<br />LV<a id="marker-1014581"></a>SC<a id="marker-1014582"></a>HK&#160;&#160;optional ; m<a id="marker-1014583"></a>akes schematic node<br />                   names available in the o<a id="marker-1014584"></a>utput<br />;<br />; &lt;functions omitted&gt;<br />P<a id="marker-1014585"></a>ARASITIC CAP[MP] METPOL METAL POLY<br />ATT<a id="marker-1014586"></a>RIBUTE CAP[MP] 1 1<br />;<br />; &lt;functions omitted&gt;<br />L<a id="marker-1014587"></a>PESELECT[S] CAP GT 0.0 OUTPUT SPIC<br />*END</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014588"></a>The sidewall capacitance that you extract might be inaccurate if it includes the edges formed by cutting the layer into resistors. See <a href="chap5.html#12060">&#8220;Correcting Sidewall Capacitance&#8221;</a>.</div>
+
+<h4>
+<a id="pgfId-1014593"></a>U<a id="marker-1014592"></a>sing the UNIT Function</h4>
+
+<p>
+<a id="pgfId-1014594"></a>The previous example used the <code>UNIT</code> function. When you use this function in your rules file, <code>LPESELECT</code> prints the unit next to the values in the SPICE file. The following example shows a portion of a SPICE file that was created without the <code>UNIT</code> function.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014595"></a>***********************************************<br />******   DIODE       PARAMETERS FROM : 7DIOXMER<br />*<br />D4    GND  Y  N  149.50  59.00<br />*</pre>
+
+<p>
+<a id="pgfId-1014596"></a>The following SPICE file was created using this <code>UNIT</code> function:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014597"></a>UNIT = AREA,P PERIMETER,U</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014598"></a></pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014599"></a>*****************************************************<br />******   DIODE       PARAMETERS FROM : 7DIOXMER<br />*<br />D4    GND  Y  N  149.50P  59.00U<br />*</pre>
+<h3>
+<a id="pgfId-1014603"></a><a id="26484"></a>Ext<a id="directional"></a>ractin<a id="marker-1014602"></a>g Directional Sidewall Capacitance</h3>
+
+<p>
+<a id="pgfId-1014604"></a>You use the same functions to extract sidewall capacitance as you used to extract overlap capacitance. Where overlap capacitance is a<a id="marker-1014605"></a>rea-to-area capacitance, however, sidewall capacitance is edge-to-area capacitance. It can be directional, as shown in the following side-view layer illustration.</p>
+
+<p>
+<a id="pgfId-1014643"></a></p>
+<div class="webflare-div-image">
+<img src="images/SidewellDown.gif" /></div>
+
+<p>
+<a id="pgfId-1014644"></a>To specify perimeter, overlapping perimeter, area, and capacitance extraction, you need to define a p<a id="marker-1014645"></a>arameter set with the <code>PARSET</code> statement. You can then use a combination of <code>LEXTRACT</code> and <code>EQUATION</code> functions to precisely extract capacitance for the directional edges.</p>
+<p>
+<a id="pgfId-1014647"></a>The following example shows a directional s<a id="marker-1014646"></a>idewall calculation for the capacitance between <em>METAL3</em>, which is the upper layer, and the <em>METAL2</em> layer. This sidewall capacitance is extracted as shown:</p>
+
+<p>
+<a id="pgfId-1016774"></a></p>
+<div class="webflare-div-image">
+<img src="images/ParsetCpaPeriOvprAreaC.gif" /></div>
+
+<p>
+<a id="pgfId-1014676"></a>The <code>NOT BULK METAL3</code> operation produces a &#8220;negative&#8221; of the <em>METAL3</em> layer, <em>NME3</em>. The overlap perimeter calculated by the <code>OVPR</code><a id="marker-1014677"></a> function uses the edges that touch or overlap the <em>NME3</em> layer, in this case, the <em>METAL3</em> edges on the <em>CAP32</em> layer. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014678"></a>The purpose of the <code>1</code> in the <code>EQUATION</code> statement is to show that you can use constant values in equations.</div>
+<p>
+<a id="pgfId-1014679"></a>This equation</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014680"></a>EQUATION C = 1 * AREA + 1 * (PERI - OVPR) + 1 * OVPR</pre>
+
+<p>
+<a id="pgfId-1014682"></a>sp<a id="marker-1014681"></a>ecifies this directional sidewall capacitance:</p>
+<ul><li>
+<a id="pgfId-1014684"></a>S<a id="marker-1014683"></a>idewall-up capacitance<br />
+<a id="pgfId-1014685"></a>The equation subtracts the <code>OVPR</code> (<em>METAL3</em>) edges from the total perimeter (<code>PERI</code>) of the <em>CAP32</em> geometry, which gives the sidewall capacitance of the <em>METAL2</em> edges to the <em>METAL3</em> area.</li><li>
+<a id="pgfId-1014687"></a>S<a id="marker-1014686"></a>idewall-down capacitance<br />
+<a id="pgfId-1014688"></a>The equation includes the overlap perimeter, which gives the sidewall capacitance of <em>METAL3</em> edges to the <em>METAL2</em> area.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014689"></a>This technique can be extended and gets more complex as more interconnect layers are included in the extraction.</p>
+<p>
+<a id="pgfId-1014690"></a>Here&#8217;s an excerpt from a directional sidewall rules file dealing with three interconnect layers.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014691"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />; parameter set CPA specifies perimeter, overlap<br />; perimeter, and capacitance parameters<br />;<br />P<a id="marker-1014692"></a>ARSET CPA PERI <a id="marker-1014693"></a>OVPR AREA C<br />;<br />; &lt;functions omitted&gt;<br />;<br />*END<br /></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014694"></a>*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />;<br />METAL3 = 1<br />METAL2 = 2<br />METAL1 = 3<br />SUBSTRATE = BULK 5<br />;<br />CONNECT-LAYER = BL2 BL1 BULK METAL1 METAL2 METAL3<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />NOT BULK METAL1 NME1<br />NOT BULK METAL3 NME3<br />;<br />; create capacitor recognition layers<br />A<a id="marker-1014695"></a>ND METAL3 METAL2 CAP32; metal3-to-metal2 caps<br />;<br />AND METAL2 METAL1 CAP21; metal2-to-metal1 caps<br />;<br />; &lt;functions omitted&gt;<br />;<br />; specify parasitic capacitances<br />P<a id="marker-1014696"></a>ARASITIC CAP[A] CAP32 METAL3 METAL2<br />ATT<a id="marker-1014697"></a>RIBUTE CAP[A] 1 1<br />;<br />PARASITIC CAP[B] CAP21 METAL2 METAL1<br />ATTRIBUTE CAP[B] 1 1<br />;<br />; &lt;functions omitted&gt;<br />;<br />; METAL2/METAL3 parasitic<a id="marker-1014698"></a>s<br />L<a id="marker-1014699"></a>EXTRACT CPA CAP32 NME3 BY CAP[A] CAPA32 &amp;<br />EQUATION C = 1 * AREA + 1 * (PERI - OVPR) + 1 * OVPR<br />;<br />; METAL1/METAL2 parasitics<br />LEXTRACT CPA CAP21 NME1 BY CAP[B] CAPA21 &amp;<br />EQUATION C = 1 * AREA + 1 * (PERI - OVPR) + 1 * OVPR<br />;<br />; build the netlist<br />LPESELECT[C] CAP[A] &amp;<br />LPESELECT[C] CAP[B] OUTPUT CDL<br />*END</pre>
+<h3>
+<a id="pgfId-1014703"></a><a id="43686"></a>Co<a id="co_correct"></a>rre<a id="marker-1014702"></a>cting for Colinear Sidewall Capacitance</h3>
+
+<p>
+<a id="pgfId-1014706"></a>S<a id="marker-1014704"></a>omet<a id="marker-1014705"></a>imes, edges of two layers that make up a capacitor recognition layer are colinear. For example</p>
+
+<p>
+<a id="pgfId-1016775"></a></p>
+<div class="webflare-div-image">
+<img width="664" height="137" src="images/chap5-7.gif" /></div>
+
+<p>
+<a id="pgfId-1014713"></a>In this case, both sidewall-up and sidewall-down capacitances are calculated, which inaccurately represents the real capacitance value. </p>
+<p>
+<a id="pgfId-1014714"></a>The two rules files that follow remove the double calculation for colinear edges:</p>
+<ul><li>
+<a id="pgfId-1014715"></a>The first file splits parasitic capacitance into three subtypes for debugging purposes.</li><li>
+<a id="pgfId-1014716"></a>The second file uses more efficient conjunctive commands.</li></ul>
+
+
+<h4>
+<a id="pgfId-1014718"></a>Sample Rules File for De<a id="marker-1014717"></a>bugging Colinear Capacitance</h4>
+
+<p>
+<a id="pgfId-1017201"></a>T<a id="marker-1017200"></a>he following example illustrates how to extract and calculate the sidewall capacitances for the separate edges of the <em>METAL3</em>-to-<em>METAL2</em> capacitor layer. <a id="marker-1017202"></a></p>
+
+<p>
+<a id="pgfId-1017249"></a></p>
+<div class="webflare-div-image">
+<img src="images/METAL2capactiorLayer.gif" /></div>
+
+<p>
+<a id="pgfId-1014767"></a>The <code>NOT BULK METAL3</code> and <code>METAL2</code> operations produce &#8220;negatives&#8221; of the <em>METAL3</em> and <em>METAL2</em> layers. Other logical operations create areas for the <code>OVPR</code><a id="marker-1014768"></a> function, which uses edges that touch or overlap. </p>
+<p>
+<a id="pgfId-1014769"></a>The following example splits a parasitic capacitance into three subtypes for debugging purposes. A more efficient method for extracting this kind of capacitance when you don&#8217;t need to debug is shown in the next section.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014770"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />; p<a id="marker-1014771"></a>arameter set CPA specifies perimeter, overlap <br />; perimeter, and capacitance parameters<br />PARSET CPA OVPR C<br />;<br />*END<br />*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />;<br />METAL3 = 1<br />METAL2 = 2<br />METAL1 = 3<br />SUBSTRATE = BULK 5<br />;<br />CONNECT-LAYER = BL2 BL1 BULK METAL1 METAL2 METAL3<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />; create &quot;negative&quot; layers<br />NOT BULK METAL3 NME3<br />NOT BULK METAL2 NME2<br />;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014772"></a>; combine the &quot;negative&quot; layers<br />AND NME3 NME2 NME32<br />;<br />; create layer with non-colinear edges<br />NOT NME3 NME32 NME3N2<br />NOT NME2 NME32 NME2N3<br />;<br />; &lt;functions omitted&gt;<br />;<br />; create capacitor recognition layer<br />AND METAL3 METAL2 CA32; metal3-to-metal2 caps<br />;<br />; c<a id="marker-1014773"></a>reate capacitor recognition layers for each edge:<br />; each PARASITIC statement must have a unique<br />; capacitor recognition layer<br />;<br />AND BULK CA32 CA323<br />AND BULK CA32 CA3232<br />AND BULK CA32 CA322<br />;<br />; &lt;functions omitted&gt;<br />;<br />; specify parasitic capacitances<br />P<a id="marker-1014774"></a>ARASITIC CAP[A] CA323 METAL3 METAL2<br />ATT<a id="marker-1014775"></a>RIBUTE CAP[A] 1 1<br />;<br />PARASITIC CAP[B] CA3232 METAL3 METAL2<br />ATTRIBUTE CAP[B] 1 1<br />;<br />PARASITIC CAP[C] CA322 METAL3 METAL2<br />ATTRIBUTE CAP[C] 1 1<br />;<br />; &lt;functions omitted&gt;<br />;<br />; e<a id="marker-1014776"></a>xtract the metal3 edges<br />L<a id="marker-1014777"></a>EXTRACT CPA CA323 NME3N2 BY CAP[A] C323N2 &amp;<br />EQU<a id="marker-1014778"></a>ATION C = 1 * OVPR<br />;<br />; extract the colinear edge<br />LEXTRACT CPA CA3232 NME32 BY CAP[B] C3232 &amp;<br />EQUATION C = 1 * OVP<a id="marker-1014779"></a>R<br />;<br />; extract the metal2 edge<br />LEXTRACT CPA CA322 NME2N3 BY CAP[C] C322N3 &amp;<br />EQUATION C = 1 * OVPR<br />;<br />; &lt;functions omitted&gt;<br />;<br />; build the netlist<br />L<a id="marker-1014780"></a>PESELECT[C] CAP[A] &amp;<br />LPESELECT[C] CAP[B] &amp;<br />LPESELECT[C] CAP[C] OUTPUT CDL<br />*END</pre>
+<h4>
+<a id="pgfId-1014782"></a>Sample R<a id="marker-1014781"></a>ules File for Extracting Colinear Edge Capacitance</h4>
+
+<p>
+<a id="pgfId-1014785"></a>Y<a id="marker-1014783"></a>ou can also e<a id="marker-1014784"></a>xtract colinear sidewall capacitance using conjunctive <code>LEXTRACT</code>/<code>EQUATION</code> functions. This sample rules file groups the three types of capacitance extracted in the previous section into a single subt<a id="marker-1014786"></a>ype<a id="marker-1014787"></a>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014788"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />; parameter set CPA specifies perimeter, overlap <br />; perimeter, and capacitance parameters<br />P<a id="marker-1014789"></a>ARSET CPA OVPR P3 PO C<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014790"></a></pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014791"></a>; create &quot;negative&quot; layers<br />NOT BULK METAL3 NME3<br />NOT BULK METAL2 NME2<br />;<br />; combine the &quot;negative&quot; layers<br />AND NME3 NME2 NME32<br />;<br />; create layer with non-colinear edges<br />NOT NME3 NME32 NME3N2<br />NOT NME2 NME32 NME2N3<br />;<br />; &lt;functions omitted&gt;<br />;<br />; create capacitor recognition layers<br />AND METAL3 METAL2 CA32; metal3-to-metal2 caps<br />;<br />; specify parasitic capacitances<br />PARASITIC CAP[A] CA32 METAL3 METAL2<br />ATTRIBUTE CAP[A] 1 1<br />;<br />; conjunctive rules<br />L<a id="marker-1014792"></a>EXTRACT CPA CA32 NME3N2 BY CAP[A] C32 &amp;&#160;&#160;&#160;&#160; ; metal3 edges<br />EQUATION P3 = 1 * <a id="marker-1014793"></a>OVPR &amp;; save to P3
+LEXTRACT CPA CA32 NME32 BY CAP[A] &amp;&#160;&#160;&#160;&#160;; colinear edges
+EQUATION PO = 1 * OVPR &amp;; save to PO
+;
+; &lt;functions omitted&gt;
+;
+LEXTRACT CPA CA32 NME2N3 BY CAP[A] &amp;&#160;&#160;&#160;&#160;; metal2 edge<br />EQUATION C = 1 * OVPR + P3 + P<br />;<br />; &lt;functions omitted&gt;<br />;<br />; build the netlist<br />LP<a id="marker-1014794"></a>ESELECT[C] CAP[A] OUTPUT CDL<br />*END</pre>
+<h3>
+<a id="pgfId-1014797"></a><a id="31074"></a>Extracting Sin<a id="marker-1014796"></a>gle-Layer Fringe Capacitance</h3>
+
+<p>
+<a id="pgfId-1014799"></a>Y<a id="marker-1014798"></a>ou can extract the fringe capacitance between edges on a single layer as shown in the sample rules file that follows. Dracula checks edges within the distance you specify, and ignores the others.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014800"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />UN<a id="marker-1014801"></a>IT = CAPACITANCE,PF<br />;<br />*END<br />*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />METAL = 6<br />;<br />; &lt;functions omitted&gt;<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />P<a id="marker-1014802"></a>ARASITIC CAP[MF] METAL METAL METAL ; fringe capacitors on<br />AT<a id="marker-1014803"></a>TRIBUTE CAP[MF] 10 0.00005; the METAL layer<br />;<br />; &lt;functions omitted&gt;<br />LPES<a id="marker-1014804"></a>ELECT[S] CAP GT 0.0 OUTPUT SPICE<br />*END</pre>
+
+<p>
+<a id="pgfId-1014805"></a>The values that you supply with the <code>ATTRIBUTE CAP</code> statement vary depending upon the type of capacitance you are extracting. The values for single-layer fringe capacitance are</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014807"></a>A<a id="marker-1014806"></a>TTRIBUTE CAP separation capacitance</pre>
+<p><strong>
+<a id="pgfId-1014808"></a>separation</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019667"></a> The maximum separation between edges. In the previous rules file, capacitance is calculated for metal edges within 10 units or less of each other.</p>
+
+<p><strong>
+<a id="pgfId-1019672"></a>capacitance</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019675"></a> The capacitance multiplier. The capacitance value is 0.00005 picofarads per perimeter unit in the previous rules file. The capacitance unit is set to <code>PF</code> with the <code>UNIT</code> function in the Description block.</p>
+
+<h3>
+<a id="pgfId-1014813"></a><a id="14446"></a>Extracti<a id="marker-1014812"></a>ng Two-Layer Fringe Capacitance</h3>
+
+<p>
+<a id="pgfId-1014815"></a>T<a id="marker-1014814"></a>his section shows how to extract the fringe capacitance between edges on two different layers. This rules file uses the <code>FRINGE CAP</code> function, which extracts capacitance between the edges of different nodes. Capacitance is not extracted for edges of the same electrical node.<a id="marker-1014816"></a></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014817"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />U<a id="marker-1014818"></a>NIT = CAPACITANCE,PF<br />*END<br />*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />;<br />METAL3 = 1<br />METAL2 = 2<br />METAL1 = 3<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />F<a id="marker-1014819"></a>RINGE CAP[A] METAL1 METAL2<br />AT<a id="marker-1014820"></a>TRIBUTE CAP[A] 0.9 0.9<br />;<br />FRINGE CAP[B] METAL1 METAL3<br />ATTRIBUTE CAP[B] 0.8 0.8<br />;<br />FRINGE CAP[C] METAL2 METAL3<br />ATTRIBUTE CAP[C] 0.9 0.9<br />;<br />; &lt;functions omitted&gt;<br />;<br />LPE<a id="marker-1014821"></a>SELECT[A] CAP[A] &amp;<br />LPESELECT[A] CAP[B] &amp;<br />LPESELECT[A] CAP[C] OUTPUT CDL<br />*END</pre>
+
+<p>
+<a id="pgfId-1014824"></a>The A option for the <code>LPESELECT</code><a id="marker-1014822"></a> function includes power and ground nodes in the extraction. Because the <code>C</code><a id="marker-1014823"></a> option, which o<a id="marker-1014825"></a>utputs c<a id="marker-1014826"></a>ross-coupled rather than lump-sum capacitances, conflicts with the <code>A</code> option, you can&#8217;t use it. Instead, use the <code>T</code> option, which includes the power and ground signals in the coupling report.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014827"></a>The <code>T</code> option is not supported for PRE.</div>
+
+<h3>
+<a id="pgfId-1014831"></a><a id="37730"></a>Ext<a id="otc"></a>racting O<a id="marker-1014830"></a>ver-the-Cell Routing Wire Overlap Capacitance with Cell Geometries in HLPE</h3>
+
+<p>
+<a id="pgfId-1014834"></a>D<a id="marker-1014832"></a>racula H<a id="marker-1014833"></a>LPE/HPRE does not extract composite-to-cell overlapped parasitic capacitors in composite mode by default. To extract these overlap capacitances, use the <code>EXPLODE</code> function. </p>
+<p>
+<a id="pgfId-1014837"></a>This function fl<a id="marker-1014835"></a>attens the cell geometries to the composite plane. It a<a id="marker-1014836"></a>ssigns composite node numbers to nodes connected to the composite plane, as shown for node1 and node2 in the figure. External nodes are cell nodes that connect to the composite plane by instance pins.</p>
+<p>
+<a id="pgfId-1014839"></a>Dracula connects signals that are completely internal to the H<a id="marker-1014838"></a>cell to a signal that you specify in the <code>EXPLODE</code> function. Internal signals are connected to VSS in this example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014841"></a>E<a id="marker-1014840"></a>XPLODE POLY GPOLY VSS</pre>
+<p>
+<a id="pgfId-1014894"></a></p>
+<div class="webflare-div-image">
+<img src="images/ExplodePolyGpolyVss.gif" /></div>
+
+<p>
+<a id="pgfId-1014896"></a>The sample rules file that follows shows two ways of using the <code>EXPLODE</code><a id="marker-1014895"></a> function:</p>
+<ul><li>
+<a id="pgfId-1014898"></a>W<a id="marker-1014897"></a>ithout the <code>A</code> option<br />
+<a id="pgfId-1014899"></a>The output layer contains only the flattened cell data.</li><li>
+<a id="pgfId-1014900"></a>With the <code>A</code> option<br />
+<a id="pgfId-1014901"></a>The output layer contains the merged composite and flattened cell geometries.<pre class="webflare-pre-block webflare-courier-new" id="#id1014902">
+<a id="pgfId-1014902"></a>*DESCRIPTION
+CHECK-MODE = COMPOSITE
+;
+; &lt;functions omitted&gt;
+;
+CONNECT-LAYER = POLY MT1 MT2
+;
+; &lt;functions omitted&gt;
+;
+C<a id="marker-1014903"></a>ONNECT MT2 MT1  BY VIA
+CONNECT MT1 POLY BY CONT
+;
+; &lt;functions omitted&gt;
+;
+; EXPLODE{[A]}  input-layer output-layer labelname
+; Without the A option specified in the EXPLODE function, 
+; the output layer contains only the flattened cell data.
+; When the A option is used, the output
+; layer contains the merged data of composite and
+; flattened cell geometries.
+;
+; Using the [A] option
+E<a id="marker-1014904"></a>XPLODE[A] POLY GPOLY VSS
+EXPLODE[A] MT1  GMET1 VSS
+AND  MT2   GMT1  M2AM1    composite MT2 to all MT1</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1016843">
+<a id="pgfId-1016843"></a>AND  GMT1 GPOLY AM1APL   ; all MT1 to all POLY, 
+                                 ; including
+                                 ; cell-to-cell overlap
+                                 ; capacitance
+;
+; Without the [A] option
+EXPLODE MT1 XMET1 VSS
+AND  MT2 MT1   M2M1              ; comp MT2 to comp MT1
+AND  MT2 XMET1 M2CM1             ; comp MT2 to cell MT1
+EXPLODE POLY XPOLY VSS
+AND MT1 POLY  M1PL               ; comp MT1 to comp POLY
+AND  MT1 XPOLY M1CPL             ; comp MT1 to cell POLY
+AND XMET1 XPOLY CM1CPL           ; cell MT1 to cell POLY
+;
+; &lt;functions omitted&gt;
+;
+PARASITIC CAP[A] M2AM1 MT2 GMT1
+ATTRIBUTE CAP[A] 1 1
+PARASITIC CAP[B] AM1APL GMT1 GPOLY</pre></li></ul>
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014906"></a>When you use the <code>EXPLODE</code> function in the 4.1hot version, add <code>EXCEPTION-ON = [EXPLODE]</code><a id="marker-1014907"></a> as the first line in the Description block.</div>
+
+<h2>
+<a id="pgfId-1014910"></a><a id="73980"></a>Ex<a id="para_res"></a>tracting Parasitic Resistance</h2>
+
+<p>
+<a id="pgfId-1014912"></a>Th<a id="marker-1014911"></a>e basic types of parasitic resistors that you might want to extract are</p>
+<ul><li>
+<a id="pgfId-1014913"></a>Simple metal and poly resistors</li><li>
+<a id="pgfId-1014914"></a>Two-layer metal parasitics</li><li>
+<a id="pgfId-1014915"></a>Contact resistors</li><li>
+<a id="pgfId-1014916"></a>Diffusion resistors</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014918"></a>Y<a id="marker-1014917"></a>ou do not need to extract corner and junction resistors explicitly, because the <code>CUT-TERM</code><a id="marker-1014919"></a> function automatically extracts them. For more information about corner and junction resistors, see <h-hot><a actuate="user" class="URL" href="../dracularef/chap9.html#junction_res" show="replace" xml:link="simple">&#8220;Calculating Junction Resistance&#8221; in the &#8220;Extracting Parasitic Resistance (PRE)&#8221; chapter</a></h-hot> of the <em>Dracula Reference.</em></p>
+<p>
+<a id="pgfId-1014921"></a>You might also need to include rules in your file that</p>
+<ul><li>
+<a id="pgfId-1014922"></a>Correct sidewall capacitance to remove resistor edges</li><li>
+<a id="pgfId-1014923"></a>Extract fringe capacitance in PRE</li><li>
+<a id="pgfId-1014924"></a>Control how contacts are cut</li></ul>
+
+
+<p>
+<a id="pgfId-1014925"></a>To extract resistance, do the following in your rules file:</p>
+<ol><li>
+<a id="pgfId-1014926"></a>Create the resistor body and terminal layers.</li><li>
+<a id="pgfId-1014927"></a>Specify equations for calculating parasitic values. </li></ol>
+
+<p>
+<a id="pgfId-1014928"></a>This section might not cover all the types of resistance that you want to extract. However, you can use the examples in this section as general guidelines to develop similar methods for extracting parasitic resistance from your layout.</p>
+
+<h3>
+<a id="pgfId-1014930"></a><a id="94446"></a>Preparing to Extract Resistance</h3>
+
+<p>
+<a id="pgfId-1014931"></a>To prepare for coding resistance extraction in your Dracula rules file, do the following:</p>
+<ul><li>
+<a id="pgfId-1014932"></a>Extract and verify capacitance</li><li>
+<a id="pgfId-1014933"></a>Specify a pad layer</li><li>
+<a id="pgfId-1014934"></a>Be familiar with the Dracula functions for resistance extraction</li></ul>
+
+
+<p>
+<a id="pgfId-1014935"></a>These preparations are described in the sections that follow.</p>
+
+<h4>
+<a id="pgfId-1014936"></a>Extracting Capacitance</h4>
+
+<p>
+<a id="pgfId-1014940"></a>Because resistors change a single node into multiple nodes, a<a id="marker-1014937"></a><a id="marker-1014938"></a>lways extra<a id="marker-1014939"></a>ct capacitors before you extract resistors. This process lets you verify that you have extracted capacitance correctly before you add resistor extraction to the rules file.</p>
+<p>
+<a id="pgfId-1014941"></a>After you add resistance, validate that the capacitance is being extracted correctly by comparing the capacitance reported by the capacitance-only run with the results from the RC extract run.</p>
+
+<h4>
+<a id="pgfId-1014944"></a><a id="21130"></a>Spe<a id="spec_pad_layer"></a>cifying a Pad Layer</h4>
+
+<p>
+<a id="pgfId-1014946"></a>W<a id="marker-1014945"></a>hen resistor extraction divides nodes into subnodes, Dracula uses the pad layer to determine which subnode represents a cell I/O. If you don&#8217;t specify a pad layer, Dracula might choose a node that might not be used as an I/O when the cell is connected into a circuit.</p>
+<p>
+<a id="pgfId-1014947"></a>Depending on the level at which you are running Dracula, you can specify the pad layer as follows:</p>
+<ul><li>
+<a id="pgfId-1014948"></a>Top-level cell &#8212; the pad layer you digitized in the layout</li><li>
+<a id="pgfId-1014949"></a>Lower cells &#8212; the pins you specified to a place-and-route tool when you created the layout</li></ul>
+
+<p>
+<a id="pgfId-1014950"></a>Internal nodes do not need a pad layer.</p>
+<p>
+<a id="pgfId-1014951"></a>If you define a &#8220;pad layer&#8221; in a lower level cell, it is ignored when you run Dracula on the upper level cell. Dracula also ignores pins on nodes that are inside a block created by a place-and-route tool.</p>
+<p>
+<a id="pgfId-1014953"></a>If you cannot get the pad layer directly from the layout, here&#8217;s how to g<a id="marker-1014952"></a>enerate a pad layer:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014954"></a>*INPUT-LAYER<br />;<br />; &lt;functions omitted&gt;<br />;<br />METAL = 6<br />P<a id="marker-1014955"></a>AD-LAYER = PAD<br />SUBSTRATE = BULK 8<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />; Cre<a id="marker-1014956"></a>ate pad layer<br />SIZE BULK BY -2 NOPAD<br />NOT METAL NOPAD PAD<br />;<br />; &lt;functions omitted&gt;<br />;<br />*END</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014957"></a>The <code>PAD-LAYER</code> function terminates resistances at geometries on the specified layer.</div>
+<p>
+<a id="pgfId-1014958"></a>The subnodes that represent the I/O for a sample layout are created with the <code>NOT</code> function as shown in the following figure.</p>
+
+<p>
+<a id="pgfId-1016846"></a></p>
+<div class="webflare-div-image">
+<img src="images/SubstrateBulk.gif" /></div>
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1014980"></a>
+This method does not work for a composite run.</div>
+
+<p>
+<a id="pgfId-1014982"></a>For c<a id="marker-1014981"></a>omposite mode, you must first flatten the bulk layer to create a pad layer similar to the one in flat mode:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014984"></a>F<a id="marker-1014983"></a>LATTEN BULK ABULK<br />FLATTEN METAL AMETAL<br />SIZE ABULK BY -2 NOPAD<br />NOT AMETAL NOPAD APAD<br />H<a id="marker-1014985"></a>IERARCHEN APAD PAD</pre>
+<h4>
+<a id="pgfId-1014987"></a>Using the Extra<a id="marker-1014986"></a>ction Functions</h4>
+
+<p>
+<a id="pgfId-1014988"></a>The table in this section lists</p>
+<ul><li>
+<a id="pgfId-1014989"></a>The steps for extracting resistors from your layout</li><li>
+<a id="pgfId-1017901"></a>Which functions to use for each step</li><li>
+<a id="pgfId-1018060"></a>Where t<a id="marker-1017902"></a>o put the functions in your Dracula rules file<br />
+<a id="pgfId-1018066"></a><table class="webflareTable" id="#id1017903">
+<caption style="text-align:left;"><p>
+</p><div class="ft-figtabl-title">
+<a id="pgfId-1017909"></a>R<a id="res_functions"></a>esistance Extraction Flow </div></caption>
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017917">
+<a id="pgfId-1017917"></a>Step</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017919">
+<a id="pgfId-1017919"></a>Function</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017921">
+<a id="pgfId-1017921"></a>Description</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017923">
+<a id="pgfId-1017923"></a>Rules File Block</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017925"></a>Define the resistance unit</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017928"></a><code>UNIT</code><a id="marker-1017927"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017930"></a>Associates natural units with extracted parameters.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017932"></a><code>*DESCRIPTION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017934"></a>Define the subnode delimiter</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017938"></a><code>SUBNODE-DELIM</code><a id="marker-1017936"></a><a id="marker-1017937"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017940"></a>Specifies the delimiter in subnode names (optional).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017942"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="2">
+<p>
+<a id="pgfId-1017944"></a>Create the resistor</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017949"></a><code><a actuate="user" class="URL" href="../dracularef/chap13.html#cut-term" show="replace" xml:link="simple">CUT-TERM</a></code><a id="marker-1017946"></a><a id="marker-1017948"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017951"></a>Generates resistor body and resistor terminal layers from a conductor layer and a contact layer.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="2">
+<p>
+<a id="pgfId-1017953"></a><code>*OPERATION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017961"></a><code>STAMP</code><a id="marker-1017957"></a><a id="marker-1017958"></a>, <code>AND</code><a id="marker-1017959"></a>, or <code>NOT</code><a id="marker-1017960"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017964"></a>Passes n<a id="marker-1017963"></a>ode information to resistor terminals so that the network can be reconnected properly.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="3">
+<p>
+<a id="pgfId-1017968"></a>Reconnect the network</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017972"></a><code>RCONNECT-LAYER</code><a id="marker-1017970"></a><a id="marker-1017971"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017974"></a>Specifies the mask order in which to reconnect the layout circuit after the conductor nodes have been cut into parasitic resistors.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017976"></a><code>*INPUT-LAYER</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017982"></a><code>RCONNECT</code><a id="marker-1017980"></a><a id="marker-1017981"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017984"></a>Reconnects layers after conductor nodes are cut into parasitic resistors.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="2">
+<p>
+<a id="pgfId-1017986"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017992"></a><code>PAD-LAYER</code><a id="marker-1017990"></a><a id="marker-1017991"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017994"></a>Terminates resistances at the specified pad layer; not needed if you are at the top level of the design.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017998"></a>Specify parasitic devices and resistance values</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018002"></a><code>PARASITIC</code><a id="marker-1018000"></a><a id="marker-1018001"></a> <code>RES</code> and <code>ATTRIBUTE</code><a id="marker-1018003"></a><a id="marker-1018004"></a> <code>RES</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018006"></a>Specifies the parasitic resistor body and terminal layers, and supplies the sheet resistance in ohms per square unit.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018008"></a><code>*OPERATION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018010"></a>Generate o<a id="marker-1018011"></a>utput</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018015"></a><code><a actuate="user" class="URL" href="../dracularef/chap13.html#lextract" show="replace" xml:link="simple">LEXTRACT</a></code><a id="marker-1018013"></a> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018017"></a>Extracts parameters from the resistor layers (optional).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018019"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018021"></a>Generate o<a id="marker-1018022"></a>utput<br />(cont&#8217;d)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018026"></a><code><a actuate="user" class="URL" href="../dracularef/chap13.html#equation" show="replace" xml:link="simple">EQUATION</a></code><a id="marker-1018024"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018028"></a>Used with <code>LEXTRACT</code> to specify the equation used to compute extracted resistance. Uses the device parameters specified in the <code>PARSET</code> function. The <code>LEXTRACT</code>/<code>EQUATION</code> combination is called Flex LPE (optional).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018030"></a><code>*OPERATION</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018032"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018036"></a><code>LPESELECT</code><a id="marker-1018034"></a><a id="marker-1018035"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018038"></a>Writes the parasitic resistance to an output SPICE file.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018040"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018042"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018045"></a><code>SPFSELECT</code><a id="marker-1018044"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018047"></a>Writes the parasitic resistance to an output <a id="marker-1018048"></a>DSPF file (for HPRE jobs only).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018050"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018052"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018055"></a><code>RSPFSELECT</code><a id="marker-1018054"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018057"></a>Writes the parasitic resistance to an output RSPF file (for HPRE jobs only).</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018059"></a></p>
+</td>
+</tr>
+</tbody></table></li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1018063"></a><a id="50797"></a>C<a id="marker-1018062"></a>reating Resistor Recognition Layers</h3>
+
+<p>
+<a id="pgfId-1015153"></a>You can create the recognition layer for a parasitic resistor using one of these functions:</p>
+<ul><li>
+<a id="pgfId-1015154"></a>The <code>CUT-TERM</code> function</li><li>
+<a id="pgfId-1015156"></a>The <code>CUT</code><a id="marker-1015155"></a> function</li><li>
+<a id="pgfId-1015157"></a>Logical and spacing functions</li></ul>
+
+
+<p>
+<a id="pgfId-1015159"></a>Using <code>CUT-TERM</code><a id="marker-1015158"></a> is the easiest method because you only need one function to create parasitic resistor layers. The <em>Dracula Reference </em>has a complete description of the <code>CUT-TERM</code> function in the Operation Block Commands chapter. A number of sample rules files in this chapter use the <code>CUT-TERM</code> function.</p>
+<p>
+<a id="pgfId-1015161"></a>The <code>CUT</code><a id="marker-1015160"></a> function gives you more control over resistor creation than the <code>CUT-TERM</code> function, but requires you to write about 10 additional lines of Dracula code.</p>
+<p>
+<a id="pgfId-1015163"></a>L<a id="marker-1015162"></a>ogical and spacing functions can&#8217;t duplicate all the processing that <code>CUT-TERM</code> and <code>CUT</code> do. You use logical and spacing functions to cut the resistor recognition layer out of irregular shapes, such as source/drains. For details, see the example in <a href="chap5.html#78094">&#8220;Extracting Diffusion Resistors&#8221;</a>.</p>
+
+<h3>
+<a id="pgfId-1015169"></a><a id="76641"></a>Extracting Si<a id="marker-1015168"></a>mple Metal and Poly Resistors</h3>
+
+<p>
+<a id="pgfId-1015171"></a>T<a id="marker-1015170"></a>his section describes how to extract metal and poly resistors from a silicon-gate <a id="marker-1015172"></a>CMOS layout. The <code>CUT-TERM</code> function is used to create resistor body and terminal layers.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015173"></a>;<br />; &lt;functions omitted&gt;<br />;<br />*INPUT-LAYER<br />PWELL = pwell<br />ACTIVE = active<br />POLY = poly<br />PDIFF = pdiff<br />CONT = contact<br />MET = metal<br />VAPOX = vapox<br />;<br />; &lt;functions omitted&gt;<br />;<br />CONNECT-LAYER = NWELL PWELL PSD NSD POLY MET<br />;<br />; &lt;functions omitted&gt;<br />;<br />; reconnect the network<br />R<a id="marker-1015174"></a>CONNECT-LAYER = NWELL PWELL PSD NSD PLYTRM METTRM<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />AND ACTIVE PDIFF PPLUS<br />NOT ACTIVE PPLUS NPLUS<br />AND POLY PPLUS PGATE<br />AND POLY NPLUS NGATE<br />NOT NPLUS NGATE NSD<br />NOT PPLUS PGATE PSD<br />AND PSD PWELL PCONT<br />AND NSD NWELL NCONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />; &lt;insert layer interconnections with CONNECT here&gt;<br />;<br />; &lt;include ELEMENT and L<a id="marker-1015175"></a>VSCHK/L<a id="marker-1015176"></a>PECHK functions here&gt;<br />;<br />; create the resistors<br />C<a id="marker-1015177"></a>UT-TERM MET CONT METRES METTRM;create metal resistors<br />S<a id="marker-1015178"></a>TAMP METTRM BY MET;transfer node info<br />;<br />OR NGATE PGATE GATE;combine all gate areas<br />CUT-TERM POLY CONT PLYRES PLYTRM GATE ; create poly res.<br />STAMP PLYTRM BY POLY;transfer node info<br />;<br />; &lt;functions omitted&gt;<br />;<br />; re-connect the network<br />R<a id="marker-1015179"></a>CONNECT METTRM PLYTRM BY CONT<br />RCONNECT METTRM PSD BY CONT<br />RCONNECT METTRM NSD BY CONT<br />RCONNECT PSD PWELL BY PCONT<br />RCONNECT NSD NWELL BY NCONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />; define parasitic resistor devices &amp; values<br />P<a id="marker-1015180"></a>ARASITIC RES[ME] METRES METTRM ; metal resistor<br />ATT<a id="marker-1015181"></a>RIBUTE RES[ME] 0.06;sheet resistance, ohms/sq<br />;<br />PARASITIC RES[PL] PLYRES PLYTRM ; poly resistor<br />ATTRIBUTE RES[PL] 25.0;sheet resistance, ohms/sq<br />;<br />; &lt;functions omitted&gt;<br />;<br />; generate output for SPICE file<br />L<a id="marker-1015182"></a>PESELECT[S] RES GE 10 OUTPUT SPICE<br />;<br />; &lt;functions omitted&gt;<br />;<br />; generate output for D<a id="marker-1015183"></a>SPF file<br />S<a id="marker-1015184"></a>PFSELECT[S] RES GE10 OUTPUT SPF<br />*END</pre>
+<h3>
+<a id="pgfId-1015187"></a><a id="62405"></a>Extractin<a id="marker-1015186"></a>g Two-Layer Metal Parasitics</h3>
+
+<p>
+<a id="pgfId-1015190"></a>W<a id="marker-1015188"></a>hen y<a id="marker-1015189"></a>ou extract resistance and capacitance from a design with two metal layers, you must <code>OR</code> the contact and via layers into a single layer. This layer is used as the contact layer for the <code>CUT-TERM</code> function on the first metal layer. The following rules file, which extracts both capacitance and resistance, uses this technique for a double-metal <a id="marker-1015191"></a>CMOS process:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015192"></a>;<br />; &lt;functions omitted&gt;<br />;<br />*INPUT-LAYER<br />NDIFF=1<br />NWELL=2<br />POLY=4<br />CONT=5<br />MET1=6 <br />PDIFF=7<br />VAPOX=8<br />VIA=9<br />MET2=10 <br />SUBSTRATE = BULK 64<br />CONNECT-LAY= PWELL NWELL PSD NSD POLY MET1 MET2<br />R<a id="marker-1015193"></a>CONNECT-LAY= PWELL NWELL PSD NSD POLY MTRM M2TRM<br />PAD-LAYER = VAPOX  ; pad at passivation layer<br />*END<br />;<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />NOT BULK NWELL PWELL<br />NOT PDIFF POLY PACTIVE<br />NOT NDIFF POLY NACTIVE<br />AND POLY NDIFF NGATE<br />AND POLY PDIFF PGATE<br />OR NGATE PGATE GATE<br />AND NACTIVE NWELL NWCONT<br />NOT NDIFF NGATE NSD<br />NOT PDIFF PGATE PSD<br />;<br />; &lt;functions omitted&gt;<br />;<br />L<a id="marker-1015194"></a>VSCHK<br />;<br />;**************************************************<br />; Here begins the second pass - which performs    *<br />; the parasitic resistor extraction               *<br />;**************************************************<br />;<br />;Cutting resistors on MET1 layer<br />;OR all of the contact layers together before cut-term<br />;<br />OR VIA CONT MCON<br />C<a id="marker-1015195"></a>UT-TERM  MET1  MCON  MRES  MTRM<br />S<a id="marker-1015196"></a>TAMP MTRM BY MET1<br />;<br />;Cutting resistors on MET2 layer<br />;<br />CUT-TERM  MET2  VIA  M2RES  M2TRM<br />STAMP M2TRM BY MET2<br />;<br />R<a id="marker-1015197"></a>CONNECT M2TRM MTRM BY VIA<br />RCONNECT NSD NWELL BY NWCONT<br />RCONNECT PSD PWELL BY PWCONT<br />RCONNECT MTRM POLY BY CONT<br />RCONNECT MTRM NSD BY CONT <br />RCONNECT MTRM PSD BY CONT <br />;<br />AND NSD PWELL NDIO<br />NOT PSD PWELL PDIO<br />LINK BULK TO VSS<br />;<br />; *** MET1 ***<br />NOT MTRM POLY MNTRP ; m1 resistor terminal not over poly<br />NOT MRES POLY MNREP       ; m1 resistor not over poly<br />AND MTRM POLY MTPLY       ; m1 resistor terminal to poly <br />AND MRES POLY MRPLY       ; m1 resistor to poly <br />AND MNTRP DIFF MNTD       ; m1 resistor terminal to diff cap<br />AND MNREP DIFF MNRD       ; m1 resistor to diff cap<br />NOT MNTRP MNTD MNTND      ; m1 resistor terminal not over<br />                          ; poly,diff<br />NOT MNREP MNRD MNRND ; m1 resistor not over poly,diff<br />AND MNTND BULK MTF   ; m1 resistor terminal to field cap<br />AND MNRND BULK MRF   ; m1 resistor to field cap<br />;<br />; *** MET2 ***<br />NOT M2TRM MET1 M2NTM ; m2 resistor terminal not over m1 <br />NOT M2RES MET1 M2NRM ; m2 resistor not over m1 <br />AND M2TRM MTRM  M2TT ; m2 resistor terminal to m1 RT cap<br />AND M2RES MTRM  M2RT ; m2 resistor to m1 RT cap<br />AND M2TRM MRES  M2TR ; m2 resistor terminal to m1 <br />                     ; resistor cap <br />AND M2RES MRES  M2RR ; m2 resistor to m1 resistor cap<br />AND M2NTM POLY  M2TPLY ; m2 resistor terminal to poly cap<br />AND M2NRM POLY  M2RPLY ; m2 resistor to poly cap<br />NOT M2NTM POLY M2TMP   ; m2 resistor terminal not over<br />                       ; metal,poly<br />NOT M2NRM POLY M2RMP   ; m2 resistor not over metal,poly<br />AND M2TMP DIFF M2TD    ; m2 resistor terminal to diff cap<br />AND M2RMP DIFF M2RD    ; m2 resistor to diff cap<br />NOT M2TMP M2TD M2NTD   ; m2 resistor terminal not over<br />                       ; metal, poly, diff<br />NOT M2RMP M2RD M2NRD   ; m2 resistor not over<br />                       ; metal, poly, diff<br />AND M2NTD BULK M2TF    ; m2 resistor terminal to field cap<br />AND M2NRD BULK M2RF    ; m2 resistor to field cap<br />;<br />; *** POLY ***<br />NOT  POLY  GATE  PLY1<br />AND  PLY1  BULK  PTF ; poly (exclude GATE) to field cap.<br />;<br />; &lt;functions omitted&gt;<br />;<br />P<a id="marker-1015198"></a>ARASITIC RES[R1] MRES MTRM<br />A<a id="marker-1015199"></a>TTRIBUTE RES[R1] 94<br />;<br />PARASITIC RES[R2] M2RES M2TRM<br />ATTRIBUTE RES[R2] 60 <br />;<br />; *** Fringe capacitance ***<br />FRINGE[R] CAP[FA] M2RES M2TRM  ; m2 fringe capacitance<br />ATTRIBUTE CAP[FA] 10    .0093<br />;<br />F<a id="marker-1015200"></a>RINGE[R] CAP[FB] MTRM  MRES ;MRES fringe capacitance<br />ATTRIBUTE CAP[FB] 10    .0079<br />;<br />; *** O<a id="marker-1015201"></a>verlap capacitance ***<br />P<a id="marker-1015202"></a>ARASITIC CAP[P1] MTPLY MTRM POLY ;M1 terminal to POLY cap<br />A<a id="marker-1015203"></a>TTRIBUTE CAP[P1] .00596  0.0123<br />;<br />PARASITIC CAP[P2] MRPLY MRES POLY ;M1 resistor to POLY cap<br />ATTRIBUTE CAP[P2] .00596   0.0123<br />;<br />PARASITIC CAP[D1] MNTD MTRM DIFF ;M1 terminal to DIFF cap<br />ATTRIBUTE CAP[D1] .00596  0.0126<br />;<br />PARASITIC CAP[D2] MNRD MRES DIFF ;M1 resistor to DIFF cap<br />ATTRIBUTE CAP[D2] .00596  0.0126<br />;<br />PARASITIC CAP[F1] MTF MTRM BULK ;M1 terminal to FIELD cap<br />ATTRIBUTE CAP[F1] .0033  0.0098<br />;<br />PARASITIC CAP[F2] MRF MRES BULK ;M1 resistor to FIELD cap<br />ATTRIBUTE CAP[F2] .0033  0.0098<br />;<br />PARASITIC CAP[M1] M2TT M2TRM MTRM   ;M2 terminal to <br />ATTRIBUTE CAP[M1] .0084  0.0101     ;M1 terminal cap<br />;<br /></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015204"></a>PARASITIC CAP[M2] M2RT M2RES MTRM    ;M2 resistor to <br />ATTRIBUTE CAP[M2] .0084  0.0101      ;M1 terminal cap<br />;<br />PARASITIC CAP[M3] M2TR M2TRM MRES    ;M2 terminal to <br />ATTRIBUTE CAP[M3] .0084  0.0101      ;M1 resistor cap<br />;<br />PARASITIC CAP[M4] M2RR M2RES MRES    ;M2 resistor to <br />ATTRIBUTE CAP[M4] .0084  0.0101      ;M1 resistor cap<br />;<br />PARASITIC CAP[P3] M2TPLY M2TRM POLY   ;M2 terminal to<br />ATTRIBUTE CAP[P3] .0037  0.0067       ;POLY cap<br />; <br />PARASITIC CAP[P4] M2RPLY M2RES POLY   ;M2 resistor to <br />ATTRIBUTE CAP[P4] .0037  0.0067       ;POLY cap<br />;<br />PARASITIC CAP[D3] M2TD M2TRM DIFF ;M2 terminal to DIFF cap<br />ATTRIBUTE CAP[D3] .0033  0.0062 <br />; <br />PARASITIC CAP[D4] M2RD M2RES DIFF ;M2 resistor to DIFF cap<br />ATTRIBUTE CAP[D4] .0033  0.0062 <br />; <br />PARASITIC CAP[F3] M2TF M2TRM BULK ;M2 terminal to <br />ATTRIBUTE CAP[F3] .0053  0.0026   ;field cap<br />;<br />PARASITIC CAP[F4] M2RF M2RES BULK ;M2 resistor to <br />ATTRIBUTE CAP[F4] .0053  0.0026   ;field cap<br />;<br />PARASITIC CAP[P5] PTF POLY BULK   ;POLY to field cap<br />ATTRIBUTE CAP[P5] .0065  0.0076<br />;<br />; &lt;functions omitted&gt;<br />;<br />L<a id="marker-1015205"></a>PESELECT[S] CAP GT 0.0 &amp;<br />LPESELECT[S] RES GT 0.0 OUTPUT SPICE<br />;<br />*END</pre>
+<h3>
+<a id="pgfId-1015209"></a><a id="46207"></a>Ex<a id="contact_res"></a>tracting C<a id="marker-1015208"></a>ontact Resistors</h3>
+
+<p>
+<a id="pgfId-1015211"></a>T<a id="marker-1015210"></a>he partial rules file in this section extracts simple parasitic metal and poly resistors, as well as metal/poly contact resistors. </p>
+<p>
+<a id="pgfId-1015213"></a>The current flow of the parasitic resistors on the interconnect w<a id="marker-1015212"></a>ire is horizontal, while the current flow of the contact resistors is vertical. To form contact resistors, you create two <code>RCONNECT-LAYER</code><a id="marker-1015214"></a> layers. These layers are the terminal layers of the contact resistors on the upper and lower layers to which the contact connects. </p>
+<p>
+<a id="pgfId-1015215"></a>To form contact resistors, break the connection between the two <code>RCONNECT-LAYER</code> layers and define the contact between them as the contact resistor body layer. The two <code>RCONNECT-LAYER</code> layers become the terminal layers on the upper and lower sides of the contact resistors.</p>
+<p>
+<a id="pgfId-1015216"></a>The following figure demonstrates this concept, where <em>C1TRM</em> and <em>C2TRM</em> are the <code>RCONNECT-LAYER</code> layers:</p>
+
+<p>
+<a id="pgfId-1016860"></a></p>
+<div class="webflare-div-image">
+<img src="images/RCONNECT-LAYERlayers.gif" /></div>
+
+<p>
+<a id="pgfId-1015248"></a>This rules file combines contacts to metal and poly resistors on one contact resistor recognition layer.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015249"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />P<a id="marker-1015250"></a>ARSET = CTR1 AREA R<br />*END<br />*INPUT-LAYER<br />PWELL     = 1<br />ACTIVE    = 2<br />POLY      = 3<br />PIMP      = 4<br />CONT      = 5<br />METAL     = 6<br />SUBSTRATE = BULK 99<br />;<br />CONNECT-LAYER  = NSUB PWELL PSD NSD POLY METAL<br />R<a id="marker-1015251"></a>CONNECT-LAYER = NSUB PWELL PSD NSD PTRM MTRM<br />PAD-LAYER= VAPOX<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />NOT BULK PWELL NSUB<br />AND ACTIVE PIMP PPLUS<br />NOT ACTIVE PPLUS NPLUS<br />AND POLY PPLUS PGATE<br />AND POLY NPLUS NGATE<br />NOT NPLUS NGATE NSD<br />NOT PPLUS PGATE PSD<br />AND PSD PWELL PTAP<br />AND NSD NSUB NTAP<br />;<br />; connect the circuit<br />;<br />C<a id="marker-1015252"></a>ONNECT METAL POLY BY CONT<br />CONNECT METAL PSD BY CONT<br />CONNECT METAL NSD BY CONT<br />CONNECT PSD PWELL BY PTAP<br />CONNECT NSD NSUB BY NTAP<br />;<br />; &lt;functions omitted&gt;<br />;<br />; cut resistors on poly layer<br />;<br />OR NGATE PGATE GATE; all gates on interconnect layer<br />C<a id="marker-1015253"></a>UT-TERM POLY CONT PRES PTRM GATE<br /><a id="marker-1015254"></a>STAMP PTRM BY POLY <br />;<br />; cut resistors on metal layer<br />;<br />CUT-TERM METAL CONT MRES MTRM<br />STAMP MTRM BY METAL <br />;<br />; form contact resistor layer<br />;<br />AND MTRM CONT C1TRM   ; create contact resistor <br />                      ; terminal layer 1<br />AND PTRM CONT C2TRM   ; create contact resistor<br />                      ; terminal layer 2<br />AND PTRM CONT P2CONT  ; create dummy contact layer<br />AND C1TRM C2TRM MPRES ; create contact resistor <br />                      ; recognition layer<br />;<br />; reconnect the circuit<br />;<br />R<a id="marker-1015255"></a>CONNECT MTRM C1TRM BY CONT; MTRM --&gt; C1TRM<br />RCONNECT MTRM PSD BY CONT<br />RCONNECT MTRM NSD BY CONT<br />RCONNECT C2TRM PTRM BY P2CONT ; C2TRM --&gt; PTRM<br />RCONNECT PSD PWELL BY PTAP<br />RCONNECT NSD NSUB BY NTAP<br />;<br />; &lt;functions omitted&gt;<br />;<br />; define parasitic capacitances<br />;<br />P<a id="marker-1015256"></a>ARASITIC RES[P] PRES PTRM; poly interconnect resistor<br />A<a id="marker-1015257"></a>TTRIBUTE RES[P] 0.01; Kohms per square<br />;<br />PARASITIC RES[M] MRES MTRM; metal interconnect res.<br />ATTRIBUTE RES[M] 0.01; Kohms per square<br />;<br />PARASITIC RES[C] MPRES C1TRM C2TRM; metal/poly <br />ATTRIBUTE RES[C] 0.01             ; contact resistors<br />;<br />; Using Flexible LPE to calculate the contact resistor<br />L<a id="marker-1015258"></a>EXTRACT CTR1 MPRES BY RES[C] CTRES &amp;<br />E<a id="marker-1015259"></a>QUATION R = 0.1 / AREA; contact resistance equation<br />;<br />; output results<br />;<br />L<a id="marker-1015260"></a>PESELECT RES GT 0.0 OUTPUT SPICE<br />;<br />*END</pre>
+<h3>
+<a id="pgfId-1015264"></a><a id="78094"></a>Ext<a id="diff_res"></a>racting Diff<a id="marker-1015263"></a>usion Resistors</h3>
+
+<p>
+<a id="pgfId-1015265"></a>The geometric shape of diffusion layers is different from that of interconnect layers. The following example uses DRC and logical operations to form the terminal layer of the diffusion resistors.</p>
+
+<p>
+<a id="pgfId-1016888"></a></p>
+<div class="webflare-div-image">
+<img src="images/PolyRes1Res2.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015307"></a>Form <em>RES2</em> using contact, not metal.</div>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015308"></a>*DESCRIPTION<br />P<a id="marker-1015309"></a>ARSET PR1 AREA W1 W2 L W R<br />PARSET PR2 OVPR L W R<br />;<br />; &lt;functions omitted&gt;<br />;<br />CONNECT-LAYER = PSD NSD POLY METAL<br />R<a id="marker-1015310"></a>CONNECT-LAYER= PSDT NSDT POLY METAL<br />;<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />AND POLY NDIF NGAT<br />NOT NDIF NGAT NSD<br />;<br />; &lt;functions omitted&gt;<br />;<br />CO<a id="marker-1015311"></a>NNECT METAL NSDBY CONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />ELEMENT MOS[N]NGAT POLY NSD<br />;<br />; &lt;functions omitted&gt;<br />;<br />AND METAL CONT MCON<br />AND MCON  NSD  SCON<br />SIZE    NGATE BY 0.001 SNGAT<br />AND     NSD   SNGAT T1<br />NOT     NSD   T1    SUB1<br />SELECT  SUB1  TOUCH [2:2] T1 RES1<br />NOT     SUB1  RES1  SUB2<br />SIZE    SCON  BY 0.8 BCON<br />EXT[RC] BCON  NGATE LT 10 R2<br />AND     SUB2  R2    RES2<br />AND     NSD   BCON  T2<br />OR      T1    T2    NSDT<br /><a id="marker-1015312"></a>STAMP   NSDT  BY    NSD<br />;<br />; &lt;functions omitted&gt;<br />;<br />R<a id="marker-1015313"></a>CONNECT METAL NSDT BY CONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />ELEMENT MOS[N] NGAT POLY NSDT<br />;<br />; &lt;functions omitted&gt;<br />;<br />P<a id="marker-1015314"></a>ARASITIC RES[R1] RES1 NSDT<br />A<a id="marker-1015315"></a>TTRIBUTE RES[R1]1<br />PARASITIC RES[R2] RES2 NSDT<br />ATTRIBUTE RES[R2]1<br />;<br />L<a id="marker-1015316"></a>EXTRACT PR2 RES2 T1 BY RES[R2] NRES2 &amp;<br />E<a id="marker-1015317"></a>QUATION W = O<a id="marker-1015318"></a>VPR<br />LEXTRACT PRES RES2 T2 BY RES[R2] &amp;<br />EQUATION L = (PERI - W -OVPR)/2<br />EQUATION R = 1 * L/W<br />;<br />LEXTRACT PR1 RES1 NSDT BY RES[R1] NRES1 &amp;<br />EQUATION W = (W1+W2)/2 &amp;<br />EQUATION L = AREA/W &amp;<br />EQUATION R = 1 * L/W /.5</pre>
+<h3>
+<a id="pgfId-1015322"></a><a id="12060"></a>Co<a id="correct_sidewall"></a>rrecting Sid<a id="marker-1015321"></a>ewall Capacitance</h3>
+
+<p>
+<a id="pgfId-1015323"></a>When you specify the perimeter attribute to extract and calculate the sidewall capacitance of overlapped capacitors in PRE, the resulting capacitance value is inaccurate when compared to the same value extracted in LPE. The inaccuracy occurs because the calculation includes the edges formed when the layer was cut into resistors.</p>
+
+<p>
+<a id="pgfId-1016970"></a></p>
+<div class="webflare-div-image">
+<img src="images/MtrmMres.gif" /></div>
+
+<p>
+<a id="pgfId-1015362"></a>The following is an excerpt from a Dracula rules file that corrects that problem.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015363"></a>*DESCRIPTION<br />;<br />; &lt;functions omitted&gt;<br />;<br />P<a id="marker-1015364"></a>ARSET CPA PERI OVPR<br />;OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015365"></a></pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015366"></a>; cut resistors on metal layer<br />;<br />C<a id="marker-1015367"></a>UT-TERM METAL CONT MRES MTRM<br />S<a id="marker-1015368"></a>TAMP MTRM BY METAL&#160;&#160;&#160;&#160; <br />R<a id="marker-1015369"></a>CONNECT MTRM POLY BY CONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />; define parasitic capacitance<br />AND MTRM BULK MTCAP<br />AND MRES BULK MRCAP<br />;<br />P<a id="marker-1015370"></a>ARASITIC CAP[A] MTCAP MTRM BULK<br />A<a id="marker-1015371"></a>TTRIBUTE CAP[A] 0 1<br />PARASITIC CAP[B] MRCAP MRES BULK<br />ATTRIBUTE CAP[B] 0 1<br />;<br />LEXTRACT CPA MTCAP MRCAP BY CAP[A] CAP1&amp;<br />EQUATION C = 1 * (PERI-O<a id="marker-1015372"></a>VPR)<br />;<br />LEXTRACT CPA MRCAP MTCAP BY CAP[B] CAP2&amp;<br />EQUATION C = 1 * (PERI - OVPR)<br />;<br />; &lt;functions omitted&gt;</pre>
+<h3>
+<a id="pgfId-1015375"></a><a id="43476"></a>Extracting Fringe Capacitance in P<a id="marker-1015374"></a>RE</h3>
+
+<p>
+<a id="pgfId-1015377"></a>When you extract the fringe capacitance of interconnect w<a id="marker-1015376"></a>ires in PRE, you generally use two <code>PARASITIC CAP</code><a id="marker-1015378"></a> functions and one <code>FRINGE CAP</code><a id="marker-1015379"></a> function:</p>
+<ul><li>
+<a id="pgfId-1015382"></a><a id="marker-1015380"></a>P<a id="marker-1015381"></a>arasitic resistor terminal to parasitic resistor terminal (<em>MTRM</em> to <em>MTRM</em>)</li><li>
+<a id="pgfId-1015383"></a>Parasitic resistor body to parasitic resistor body (<em>MRES</em> to <em>MRES</em>)</li><li>
+<a id="pgfId-1015384"></a>Parasitic resistor terminal to parasitic resistor body (<em>MTRM</em> to <em>MRES</em>)</li></ul>
+
+
+<p>
+<a id="pgfId-1015385"></a>The following example shows how you can use a single <code>FRINGE[R] CAP</code> function to extract the fringe capacitance of the resistor body and terminal layers resulting from <code>CUT-TERM</code>. When you use the <code>[R]</code> option of the <code>FRINGE</code><a id="marker-1015386"></a> function in PRE, you can get the same capacitance value that you get using LPE.</p>
+
+<p>
+<a id="pgfId-1016972"></a></p>
+<div class="webflare-div-image">
+<img src="images/MetMetLpe.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015442"></a>;<br />; &lt;functions omitted&gt;<br />;<br />CONNECT-LAYER = POLY METAL<br />R<a id="marker-1015443"></a>CONNECT-LAYER = POLY MTRM<br />;<br />; &lt;functions omitted&gt;<br />;<br />C<a id="marker-1015444"></a>ONNECT METAL POLY BY CONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />C<a id="marker-1015445"></a>UT-TERM METAL CONT MRES MTRM<br />;<br />; &lt;functions omitted&gt;<br />;<br />RCONNECT MTRM POLY BY CONT<br />;<br />; &lt;functions omitted&gt;<br />;<br />FRINGE[R] CAP[M] MRES MTRM<br />A<a id="marker-1015446"></a>TTRIBUTE CAP[M] 5.0 0.0001<br />;<br />; &lt;functions omitted&gt;</pre>
+<h3>
+<a id="pgfId-1015449"></a><a id="22964"></a>Controlling H<a id="marker-1015448"></a>ow Contacts Are Cut</h3>
+
+<p>
+<a id="pgfId-1015452"></a>T<a id="marker-1015450"></a>he <code>CUT-TERM</code><a id="marker-1015451"></a> function enlarges contacts when cutting resistors, so not all resistors are the same size. To control how contacts are cut, use the <code>CUT</code> function rather than <code>CUT-TERM</code>.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015453"></a>If you need to control the maximum number of squares to break resistors into, use the <code>MAXNS</code> option of the <code>CUT-TERM</code><a id="marker-1015454"></a> function. If you use <code>CUT</code>, there is no way to control how the resistors are divided.</div>
+<p>
+<a id="pgfId-1015456"></a>The syntax of the <code>CUT</code><a id="marker-1015455"></a> function is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015457"></a>CUT [STRIP] cutLayer stripLayer outputLayer</pre>
+<p><strong>
+<a id="pgfId-1015458"></a>cutLayer</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019682"></a> The layer to cut.</p>
+
+<p><strong>
+<a id="pgfId-1019687"></a>stripLayer</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019690"></a> Used with the <code>STRIP</code> option. This is the parasitic resistor terminal layer that guides the strip cuts in a direction perpendicular to the flow of current.</p>
+
+<p><strong>
+<a id="pgfId-1019695"></a>outputLayer</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019698"></a> C<a id="marker-1015460"></a>ontains the results of the <code>CUT</code> function.</p>
+<p>
+<a id="pgfId-1015483"></a>Here is an example of the <code>CUT</code> command:</p>
+
+<p>
+<a id="pgfId-1017036"></a></p>
+<div class="webflare-div-image">
+<img src="images/CutStripPolyPstripsPolyrt.gif" /></div>
+
+<p>
+<a id="pgfId-1015484"></a>The rules file excerpt that follows uses <code>CUT</code> instead of <code>CUT-TERM</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015485"></a>;<br />; &lt;functions omitted&gt;<br />;<br />*INPUT-LAYER<br />CONT    = 1<br />VIA     = 2<br />DIFF    = 4<br />METAL1  = 5<br />METAL2  = 6<br />RES     = 7<br />;<br />; &lt;functions omitted&gt;<br />;<br />SUBSTRATE = BULK 8<br />TEMPORARY-LAYER = SUB1 SUB2 SUB3 SUB4<br />*END<br />*OPERATION<br />;<br />; &lt;functions omitted&gt;<br />;<br />; build &quot;negative&quot; layer for filtering out edges<br />; formed by resistor cuts<br />;<br />NOT BULK METAL2 NOM2<br />;<br />; &lt;functions omitted&gt;<br />;<br />; combine contact and resistor device layer to define <br />; where not to build resistors<br />;<br />OR VIA RES ALLCON<br />;<br />; create resistor recognition layers for RES[A}<br />;<br />NOT    METAL2 ALLCON SUB1<br />W<a id="marker-1015486"></a>IDTH[CR] SUB1 LT 2 SUB2<br />NOT    SUB1   SUB2   SUB3<br />OR     ALLCON SUB3   SUB4<br />CUT    STRIP  SUB2   SUB4 SUB1<br />OR     SUB4   SUB1   SUB3<br />NOT    SUB2   SUB1   SUB4<br />SELECT SUB4   TOUCH[2:2] SUB3 M2RES<br />NOT    SUB4   M2RES  SUB1<br />OR     SUB1   SUB3   OUTRM<br />;<br />; &lt;functions omitted&gt;<br />;<br />; transfer nodal information to resistor terminals<br />;<br />A<a id="marker-1015487"></a>ND METAL2 OUTRM M2TRM<br />;<br />; reconnect with nodes divided by resistors<br />R<a id="marker-1015488"></a>CONNECT M2TRM DIFF BY VIA<br />;<br />; &lt;functions omitted&gt;<br />;<br />; extract parasitic devices<br />;<br />PARAS<a id="marker-1015489"></a>ITIC RES[A] M2RES M2TRM<br />ATT<a id="marker-1015490"></a>RIBUTE RES[A] 1<br />;<br />L<a id="marker-1015491"></a>PESELECT[Y] RES[A] &amp;<br />.......................OUTPUT CDL<br />*END</pre>
+<h2>
+<a id="pgfId-1015493"></a><a id="41073"></a>Extracting 2.5D MB Parasitics</h2>
+
+<p>
+<a id="pgfId-1015494"></a>Capacitors close together affect each others&#8217; capacitance, a fact that is reflected by the term &#8220;2.5 dimensional multibody&#8221; (2.5D MB) capacitance. S<a id="marker-1015495"></a>tandard capacitance extraction does not account for this interaction between capacitors sharing the same plate. When you extract only simple capacitance, the effects of other capacitors sharing the same plate are ignored.</p>
+<p>
+<a id="pgfId-1015497"></a>As the spacing between geometries shrinks, the reaction between s<a id="marker-1015496"></a>idewall and f<a id="marker-1015498"></a>ringe capacitors becomes an important consideration. There are six possible combinations of two different capacitors affecting the same point on one plate. You need to consider not only one point on a plate but the a<a id="marker-1015499"></a>rea of the plate, so the interrelationship grows exponentially.</p>
+
+<h3>
+<a id="pgfId-1015501"></a><a id="75019"></a>Dracula 2.5D MB Capabilities</h3>
+
+<p>
+<a id="pgfId-1015502"></a>You can use the <code>ATTRIBUTE CAP</code> function in your rules file to have Dracula extract simple RC and 2.5D MB parasitics. For a description of <code>ATTRIBUTE</code> <code>CAP</code>, see the <code>ATTRIBUTE-CAP</code> function in the &#8220;Operation Block Commands&#8221; chapter of the <em>Dracula Reference </em>manual. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015504"></a>Where you need more a<a id="marker-1015503"></a>ccuracy, you can also use a tool that does linear equation analysis. If you want to use such a hybrid approach, contact your local Field Applications Engineer for assistance.</div>
+<p>
+<a id="pgfId-1015505"></a>The following sections describe how Dracula 2.5D MB capabilities can extract</p>
+<ul><li>
+<a id="pgfId-1015506"></a>Single-layer fringe capacitance using piecewise analysis</li><li>
+<a id="pgfId-1015507"></a>Sidewall capacitance, considering fringing effects</li></ul>
+
+
+<h3>
+<a id="pgfId-1015511"></a><a id="85455"></a>Using Pie<a id="marker-1015509"></a>cewise An<a id="marker-1015510"></a>alysis</h3>
+
+<p>
+<a id="pgfId-1015513"></a>Y<a id="marker-1015512"></a>ou can use multiple <code>ATTRIBUTE CAP</code> statements to specify piecewise linear coefficients for fringe capacitance based upon the distance between geometries on the same layer. For example<a id="marker-1015514"></a></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015516"></a>PAR<a id="marker-1015515"></a>ASITIC CAP[A] METAL3 METAL3 METAL3<br />ATTRI<a id="marker-1015517"></a>BUTE CAP[A] 0.8 0<br />ATTRIBUTE CAP[A] 0.9 0.9<br />;<br />; &lt;functions omitted&gt;<br />;<br />LPES<a id="marker-1015518"></a>ELECT[C] CAP[A] OUTPUT CDL</pre>
+
+<p>
+<a id="pgfId-1015519"></a>In this example, if the distance between two metal edges is 0 to 0.8, no fringe capacitance is extracted. If the distance is 0.9, the capacitance multiplier is 0.9 per perimeter unit.</p>
+
+<h3>
+<a id="pgfId-1015524"></a>Ex<a id="fringe_effects"></a>tracting <a id="19425"></a>Si<a id="marker-1015522"></a>dewall Capacitance w<a id="marker-1015523"></a>ith Fringing Effects</h3>
+
+<p>
+<a id="pgfId-1015527"></a>P<a id="marker-1015525"></a>iecewise analysis with the <code>ATTRIBUTE CAP</code><a id="marker-1015526"></a> statement includes</p>
+<ul><li>
+<a id="pgfId-1015530"></a>Standard o<a id="marker-1015528"></a>verl<a id="marker-1015529"></a>ap and perimeter extraction</li><li>
+<a id="pgfId-1015532"></a>F<a id="marker-1015531"></a>ringe capacitance based on the separation between the device layer and projecting edges of geometries on the first terminal layer</li></ul>
+
+<p>
+<a id="pgfId-1015553"></a>The following figure shows an example.</p>
+
+<p>
+<a id="pgfId-1017044"></a></p>
+<div class="webflare-div-image">
+<img src="images/MpCase1Poly1.gif" /></div>
+
+<p>
+<a id="pgfId-1015554"></a>You write an <code>ATTRIBUTE CAP</code> statement for case 1, where the separation of <em>POLY1</em> and <em>MP</em> is 0 to 3.0 units. Write another <code>ATTRIBUTE CAP</code> statement to cover case 2, where the separation is 3.0 to 5.0 units. The a<a id="marker-1015555"></a>rea and perimeter values stay the same for all cases.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015557"></a>P<a id="marker-1015556"></a>ARSET = TCAP TPR CLL AREA PERI OVPR C<br />;<br />; &lt;functions omitted&gt;<br />AND POLY1 METAL1 MP<br />;<br />; sidewall capacitance with fringing effects<br />PA<a id="marker-1015558"></a>RASITIC CAP[A] MP POLY1 METAL1<br />ATTRIB<a id="marker-1015559"></a>UTE CAP[A] 0.5 1.2  3.0  0.05 ; CLL&#39;=0.05<br />ATTRIBUTE CAP[A] 0.5 1.2  5.0  0.01 ; CLL&quot;=0.01<br />;<br />; &lt;functions omitted&gt;<br />LE<a id="marker-1015560"></a>XTRACT TCAP MP POLY1 BY CAP[A] PFILE &amp;<br />EQUATI<a id="marker-1015561"></a>ON C = 0.5 * AREA + 1.2 * (O<a id="marker-1015562"></a>VPR - TPR) + CLL<br />;<br />; &lt;functions omitted&gt;<br />L<a id="marker-1015563"></a>PESELECT[C] CAP[A] OUTPUT CDL</pre>
+
+<p>
+<a id="pgfId-1015565"></a>The <code>CLL</code><a id="marker-1015564"></a> value is the total fringe capacitance between the two geometries at the given separation, per perimeter unit.</p>
+<p>
+<a id="pgfId-1015569"></a><code>TPR</code><a id="marker-1015566"></a> is the total length of the perimeter that has fringe effect. For this example, the value of <code>TPR</code><a id="marker-1015567"></a><a id="marker-1015568"></a><a id="marker-1015570"></a> is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015571"></a>TPR = (tpr&#39; + tpr&quot;)</pre>
+
+<p>
+<a id="pgfId-1015573"></a>a<a id="marker-1015572"></a>nd the value of <code>CLL</code> is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015574"></a>CLL = (0.05 * tpr&#39; + 0.01 * tpr&quot;)</pre>
+
+<p>
+<a id="pgfId-1015575"></a>The capacitance calculated for each capacitor is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015576"></a>EQUATION C = 0.5 * AREA + 1.2 * (OVPR - TPR) + CLL</pre>
+
+<p>
+<a id="pgfId-1015577"></a>This equation subtracts <code>TPR</code>, the perimeter used in the fringe effect calculation, from the overlap perimeter, and adds the fringe effect capacitance into the total capacitance value.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015578"></a>This is the default equation that Dracula uses to calculate 2.5D MB parasitic capacitance. You can omit the <code>PARSET</code><a id="marker-1015579"></a>, <code>LEXTRACT</code><a id="marker-1015580"></a>, and <code>EQUATION</code><a id="marker-1015581"></a> functions when they are the same as the default equation.</div>
+
+<h2>
+<a id="pgfId-1015584"></a><a id="40994"></a>Using One Function to Ex<a id="marker-1015583"></a>tract RC Parasitics</h2>
+
+<p>
+<a id="pgfId-1015589"></a><a id="extractParasitic"></a>Drac<a id="marker-1015585"></a>ula vers<a id="marker-1015586"></a>ion 4.5 <a id="marker-1015587"></a>lets you extra<a id="marker-1015588"></a>ct RC parasitics using a single function, <h-hot><a actuate="user" class="URL" href="../dracularef/chap13.html#extractParasitic" show="replace" xml:link="simple">extractParasitic</a></h-hot>. Once you specify a list of layers, you can extract overlap, one- and two-layer fringe, piecewise fringe, sidewall, colinear edge, and two-dimensional/three-body (2D3B) capacitance, as well as sheet and contact resistance.<a id="marker-1015591"></a></p>
+<p>
+<a id="pgfId-1015594"></a>PD<a id="marker-1015592"></a>RACULA expands t<a id="marker-1015593"></a>he <code>extractParasitic</code> function into the necessary <h-hot><a href="chap5.html#cap_functions">capacitance extraction functions</a></h-hot> and <h-hot><a href="chap5.html#res_functions">resistance extraction functions</a></h-hot> and creates a new rules file call<a id="marker-1015597"></a>ed <em>filename</em><code>gen.rul</code>. You can read and edit this file. The operations in this file are executed when you run your extraction job with the <code>jxrun.com</code> file.</p>
+
+<h3>
+<a id="pgfId-1015598"></a>Defining Parasitics Layers</h3>
+
+<p>
+<a id="pgfId-1015600"></a>B<a id="marker-1015599"></a>efore you specify which RC elements to extract with <code>extractParasitic</code>, you must include a list of layers to use as capacitor terminals. This example shows the layer list for the following figure.</p>
+
+<a id="pgfId-1015601"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+extractParasitic(
+(layers( (nwell psub)(poly psd nsd) met1 met2 met3 ) ... )</pre>
+<p>
+<a id="pgfId-1017430"></a></p>
+<div class="webflare-div-image">
+<img src="images/met1met2met3.gif" /></div>
+
+<p>
+<a id="pgfId-1015620"></a>The <em>nwell</em> and <em>psub</em> layers are nonoverlapping layers at the lowest level, so they are listed first, grouped in parentheses. The <em>poly</em>, <em>nsd</em>, and <em>psd</em> layers are grouped at the second level. The <em>met1</em> layer is at the third level, and <em>met2</em> at the fourth level. The <em>met3</em> layer is the highest level, and is listed last.</p>
+
+<h3>
+<a id="pgfId-1015621"></a>Extracting Overlap and Sidewall Capacitance</h3>
+
+<p>
+<a id="pgfId-1015624"></a>A<a id="marker-1015622"></a>fter y<a id="marker-1015623"></a>ou specify the layer list, you can extract capacitance using the cap keyword in the <code>extractParasitic</code> function. Use the following syntax to extract simple overlap area and perimeter capacitance.</p>
+
+<a id="pgfId-1015625"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+cap( layer1 layer2 area perimeter [lateral(layerN piecewiseList)]) </pre>
+
+<p>
+<a id="pgfId-1015628"></a>T<a id="marker-1015626"></a>he following is an example of extracting simple <h-hot><a href="chap5.html#metalpoly">metal and poly capacitance</a></h-hot>. This example specifies coefficients for overlap area and perimeter capacitance.<a id="marker-1015629"></a></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015630"></a>;              area  perimeter<br />cap (BULK POLY   0.35  0.12)  poly to substrate overlap<br />cap (BULK MET1&#160;&#160; 0.4&#160;&#160; 0.15)&#160;&#160; metal1 to substrate overlap</pre>
+<h3>
+<a id="pgfId-1015632"></a>Extra<a id="marker-1015631"></a>cting Directional Sidewall and Colinear Edge Capacitance</h3>
+
+<p>
+<a id="pgfId-1015636"></a>F<a id="marker-1015633"></a>or a m<a id="marker-1015634"></a>ore a<a id="marker-1015635"></a>ccurate model, you can replace the <em>perimeter</em> value in the previous syntax with coefficients for colinear edge, sidewall up, and sidewall down capacitance.</p>
+
+<a id="pgfId-1015637"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+cap( layer1 layer2 area colinear sidewallUp sidewallDown
+[lateral(layerN piecewiseList)])</pre>
+
+<p>
+<a id="pgfId-1015639"></a>The following e<a id="marker-1015638"></a>xample, a continuation of the previous example, shows how to extract metal-to-poly <h-hot><a href="chap5.html#directional">directional sidewall capacitance</a></h-hot>.</p>
+
+<a id="pgfId-1015641"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+; directional:   area  colinear sideUp sideDown
+cap (POLY MET2 0.3   0.02     0.1    0.15 )</pre>
+<h3>
+<a id="pgfId-1015642"></a>Extracting 2D3B Capacitance</h3>
+
+<p>
+<a id="pgfId-1015645"></a>Y<a id="marker-1015643"></a>ou c<a id="marker-1015644"></a>an use the <code>lateral</code> option with the <code>cap</code> keyword to extract two-dimensional/three-body capacitance. The following example extracts <em>POLY</em>-to-<em>MET2</em> capacitance. When <em>POLY</em> is separated from the capacitance device layer (the areas where <em>POLY</em><a id="marker-1015646"></a> and <em>MET2</em> overlap) by 1.0 unit or less, the fringe effect of <em>POLY</em><a id="marker-1015647"></a> on the overlapping layer is represented by a capacitance value of 0.03 per unit of length. If the s<a id="marker-1015648"></a>eparation is between 1.0 and 1.5 units, the value is 0.02.</p>
+
+<a id="pgfId-1015649"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+cap (POLY MET2 0.2  0.3 
+lateral(POLY (1.0  0.03)(1.5  0.02)))</pre>
+<h3>
+<a id="pgfId-1015650"></a>Extracting One- and Two-Layer Fringe Capacitance</h3>
+
+<p>
+<a id="pgfId-1015654"></a>T<a id="marker-1015651"></a>he <code>extractParasitic</code><a id="marker-1015652"></a> functi<a id="marker-1015653"></a>on has a <code>fringe</code> keyword that lets you extract one- and two-layer fringe capacitance using piecewise analysis, as described in <a href="chap5.html#41073">&#8220;Extracting 2.5D MB Parasitics&#8221;</a>.</p>
+
+<a id="pgfId-1015658"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+fringe( layer1 layer2 piecewiseList )</pre>
+
+<p>
+<a id="pgfId-1015659"></a>The following example shows how to use the <code>fringe</code> keyword to extract fringe capacitance.</p>
+<ul><li>
+<a id="pgfId-1015661"></a>For s<a id="marker-1015660"></a>ingle-layer <em>MET1</em> fringe capacitance, when shapes are separated by 1.0 unit or less, the fringe effect is 0.02 per unit of length. If the separation is between 1.0 and 1.5 units, the value is 0.015.</li><li>
+<a id="pgfId-1015662"></a>For <em>MET1</em>-to-<em>MET2</em> fringe capacitance, when shapes are separated by 1.0 unit or less, the fringe effect is 0.03 per unit of length. If the s<a id="marker-1015663"></a>eparation is between 1.0 and 1.5 units, the value is 0.01.</li></ul>
+
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015664"></a>fringe(MET1 MET1 (1.0  0.02)(1.5  0.015)) ; one-layer fringe<br />fringe(MET1 MET2 (1.0&#160;&#160;0.03)(1.5&#160;&#160;0.01))) ; two-layer fringe</pre>
+<h3>
+<a id="pgfId-1015665"></a><a id="10592"></a>Modifying the Coefficient Generator Interface with Dracula to Improve LPE Accuracy</h3>
+
+<p>
+<a id="pgfId-1015666"></a>Dracula and Coefficient Generator use the <code>2D3B</code> model to calculate the capacitance between two neighboring layers. The current default equation is <code>C = Ca*AREA + (PERI-TPR)*Cp + CLL</code>. If one of the layers happens to be a cut-term layer, PERI can include some false edges and overestimate the capacitance. This version of Dracula improves the LPE accuracy by implementing a flexible LPE equation to handle the false edges in the case of neighboring cut-term layers. The enhancement modifies the Coefficient Generator interface with Dracula.</p>
+<p>
+<a id="pgfId-1015667"></a>Although the new version of PDRACULA (4.X.0399) still works with the old Coefficient Generator interface, you will get better performance if you use the new version of the Coefficient Generator (1.20-S007). The new version of the Coefficient Generator generates two Dracula rule files instead of one for each Coefficient Generator run. The old interface takes the name that you specify. The new interface will have the extension <code>.new. </code>For example, if the Dracula rule file was previously called <code>dracula.rul,</code> then two Dracula rule files are generated:</p>
+<ul><li>
+<a id="pgfId-1015668"></a><code>dracula.rul,</code> which contains the Dracula rule in the old format (two capacitances(...) per adjacent layer pair)</li><li>
+<a id="pgfId-1015669"></a><code>dracula.rul.new</code>, which contains the Dracula rules in the new format (one capacitance(...) per adjacent layer pair)</li></ul>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015670"></a>Do not use an old version of PDRACULA with a new version of Coefficient Generator as this will result in inaccurate extractions and must be avoided. To check which version of Coefficient Generator you are using, use the<code> coeffgen -version</code> command. For PDRACULA, use the banner during run time for the version information. If you don&#8217;t use Coefficient Generator to generate the correct <code>extractParasitic</code>, the above confusion won&#8217;t exist as you have provided the coefficients yourself.</div>
+
+<h4>
+<a id="pgfId-1015671"></a>New Coefficient Generator and Dracula Interface with the extractParasitic command</h4>
+
+<p>
+<a id="pgfId-1015672"></a>The examples below use the following terms:</p>
+<ul><li>
+<a id="pgfId-1015673"></a><em>layerList</em> indicates the layers to be used for capacitor terminal layers.</li><li>
+<a id="pgfId-1015674"></a><em>areaCoeff</em> indicates the coefficient used for overlap area capacitance.</li><li>
+<a id="pgfId-1015675"></a><em>periCoeff</em> indicates the coefficient to be used for perimeter capacitance.</li><li>
+<a id="pgfId-1015676"></a><em>fringeCoeff </em>indicates the coefficient defined in the piece-wise list for capacitance.</li><li>
+<a id="pgfId-1015677"></a>OVPR indicates an overlapped perimeter to the second layer.</li><li>
+<a id="pgfId-1015678"></a>TPR indicates the perimeter of geometries that caused the fringe effect.</li><li>
+<a id="pgfId-1015679"></a>CLL is the sum of the fringe effect related to TPR.<br /><div class="ft-figtabl-title">
+<a id="pgfId-1015732"></a>Side View</div>
+<a id="pgfId-1017074"></a><div class="webflare-div-image">
+<img src="images/SideView.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1015733"></a>In the above figure</p>
+<ul><li>
+<a id="pgfId-1015734"></a>c1 stands for the overlap area capacitance</li><li>
+<a id="pgfId-1015735"></a>c2 indicates the perimeter capacitance</li><li>
+<a id="pgfId-1015736"></a>c3 indicates the fringe capacitance<br /><div class="ft-figtabl-title">
+<a id="pgfId-1015804"></a>Top View</div>
+<a id="pgfId-1017135"></a><div class="webflare-div-image">
+<img src="images/OVPRwithFE_1.gif" /></div></li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1015805"></a>PDRACULA uses a new format for capacitance commands between adjacent layers. A single capacitance command with two lateral terms is used for adjacent layers to replace two separate capacitance commands, each with a single lateral term. Here is an example.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015808"></a>extractParasitic(<br />    (     layers( <em>layerList</em> )<br />        cap( MET MT2 <em>areaCoeff periCoeff<br /></em>            lateral(MET <em>piecewiseList</em>) <br />            lateral(MT2 <em>piecewiseList</em>) )<br />        .......................<br />    )<br />    (    resistor(MET <em>sheetResValue</em> .......)<br />        ........................<br />    )<br />)</pre>
+
+<p>
+<a id="pgfId-1015809"></a>The&#160;&#160;area, perimeter, and fringe coefficients for adjacent layers appear very different from the old Coefficient Generator because in the old Coefficient Generator, the area and perimeter coefficients were divided by two and the fringe coefficients were subtracted by one half perimeter coefficients to avoid double counting. Now, PDRACULA does the necessary adjustments in the expanded rules. </p>
+
+<h4>
+<a id="pgfId-1015810"></a>Expanded Rules from the New PDRACULA with the New Coefficient Generator</h4>
+
+<p>
+<a id="pgfId-1015811"></a>When at least one of the adjacent layers is a cut-term layer, <code>C=AREA*areaCoeff+(OVPR-TPR)*periCoeff+CLL</code> is used to replace the default,&#160;&#160;<code>C=AREA*areaCoeff+(PERI-TPR)*periCoeff+CLL</code>. Note that for each pair of adjacent layers, two capacitance extractions are needed to take the lateral effect of both layers into consideration. To avoid double counting, the second capacitance has <code>areaCoeff </code>set to zero. Here is an example.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015812"></a>PARASITIC[R] CAP[A1] A_RES MT2<br />ATTRIBUTE CAP[A1] <em>areaCoeff 1/2(periCoeff) fringeCoeff ....<br /></em>PARASITIC[R] CAP[A2] MT2 A_RES <br />ATTRIBUTE CAP[A2] 0 1/2(<em>periCoeff) fringeCoeff ...<br /></em>...............<br />NOT BULK MET NMET<br />NOT MET MT2 FE_1 <br />LEXTRACT CAPZ&#160;&#160;CD_10 NMET BY CAP[A1] <em>pfname &amp;<br /></em>EQUATION C=AREA*areaCoeff+(OVPR-TPR)<em>*periCoeff+CLL<br /></em>LEXTRACT CAPZ CD_10 FE_1 BY CAP[A2] <em>pfname &amp;</em> <br />EQUATION C=(OVPR-TPR)<em>*periCoeff+CLL<br /></em>...</pre>
+<h4>
+<a id="pgfId-1015813"></a>Expanded Rules from the New PDRACULA with the Old Coefficient Generator</h4>
+
+<p>
+<a id="pgfId-1015814"></a>For PDRACULA to be compatible with oldere versions of the Coefficient Generator, two LEXTRACTs are used for each capacitance in order to extract OVPR with both upper and lower layers.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015815"></a>extractParasitic(<br />(&#160;&#160; layers( <em>layerList</em> )<br />    cap( MET MT2 <em>1/2(areaCoeff) 1/2(periCoeff</em>)<br />        lateral(MET <em>piecewiseList</em>) )<br />    cap( MET MT2 coefficientList<br />        lateral(MT2 <em>piecewiseList</em>) )<br />    ........................<br />    )<br />    (resistor(MET <em>sheetResValue</em> .......)<br />    ........................<br />    PARASITIC[R] CAP[A1] A_RES MT2<br />    ATTRIBUTE CAP[A1] 1/2(<em>areaCoeff</em>) 1/2(<em>periCoeff)fringeCoeff</em>...<br />    PARASITIC[R] CAP[A3] MT2 A_RES<br />    ATTRIBUTE CAP[A3] 1/2(areaCoeff) 1/2(periCoeff) fringeCoeff ....<br />    NOT BULK MET NMET<br />    NOT MET MT2 FE_1 <br />    LEXTRACT CAPZ  CD_10 NMET BY CAP[A1] pfname &amp;<br />    EQUATION CTMP=AREA*1/2(<em>areaCoeff</em>)+(OVPR-TPR)*1/2(<em>periCoeff</em>)<br />                                                    +CLL &amp;<br />    LEXTRACT CAPZ CD_10 FE_1 BY CAP[A2] &amp; <br />    EQUATION C=CTMP+(OVPR)*1/2(<em>periCoeff</em>)</pre>
+<h4>
+<a id="pgfId-1015816"></a>Older Versions of PDRACULA with Newer Versions of the Coefficient Generator</h4>
+
+<p>
+<a id="pgfId-1015817"></a>You must avoid using the older versions of PDRACULA with newer versions of the Coefficient Generator as this combination gives inaccurate results.</p>
+
+<h3>
+<a id="pgfId-1015819"></a>Extracting S<a id="marker-1015818"></a>heet Resistance</h3>
+
+<p>
+<a id="pgfId-1015821"></a>Y<a id="marker-1015820"></a>ou can extract resistance using the <code>resistor</code> keyword in the <code>extractParasitic</code> function, as follows:</p>
+
+<a id="pgfId-1015822"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+(resistor( resLayer sheetResValue [cont(contactLayerList)]
+[device(deviceLayerList)]
+[maxlength(length)]
+[maxwidth(width)]
+[smash(smashValue maxValue)]</pre>
+
+<p>
+<a id="pgfId-1015823"></a>The <em>resLayer</em>, <em>contactLayerList</em>, <em>deviceLayerList</em>, <em>length</em>, and <em>width</em> are the same as defined for <code><a actuate="user" class="URL" href="../dracularef/chap13.html#cut-term" show="replace" xml:link="simple">CUT-TERM</a></code><a id="marker-1015824"></a>. The <em>sheetResValue</em>, <em>smashValue</em>, and <em>maxValue</em> are the same as defined for <code><a actuate="user" class="URL" href="../dracularef/chap13.html#attribute_res" show="replace" xml:link="simple">ATTRIBUTE RES</a></code>. </p>
+<p>
+<a id="pgfId-1015827"></a>The following is an example of extracting simple poly resistance. In this example, s<a id="marker-1015828"></a>heet resistance is extracted from the <em>POLY</em> conduction layer where it runs between <em>CONTACT</em>, <em>NGATE</em>, and <em>PGATE</em> terminals. The resistance value used is 0.7 per square unit. If a <em>POLY</em> resistor is over 30 square units in length, it is cut evenly into multiple resistors.<a id="marker-1015829"></a></p>
+
+<a id="pgfId-1015830"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+(resistor(POLY 0.7 cont(CONTACT) device(NGATE PGATE) maxlength(30))</pre>
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1015831"></a>
+Because &#8220;cont&#8221; is a keyword in this syntax, do not use this word as a layer name or PARSET name.</div>
+<h3>
+<a id="pgfId-1015832"></a><a id="24441"></a>Extracting Multiple Resistance on the Same Metal Layer</h3>
+
+<p>
+<a id="pgfId-1015833"></a>In previous releases, you were not able to choose more than one single sheet resistance value for each cut-term layer. The 4.8 version provides a way for Dracula to take multiple sheet resistance values for the same layer based on the layer width. For detailed information about width and sheet resistance criteria, see the &#8220;<h-hot><a actuate="user" class="URL" href="../dracularef/chap13.html#multisheetres" show="replace" xml:link="simple">MULTI-SHEETRES</a></h-hot>&#8221; section in the Operation Block Commands Chapter of the <em>Dracula Reference.</em></p>
+
+<h4>
+<a id="pgfId-1015834"></a>multiSheetRes in extractParasitic</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015835"></a>resistor(resLayer sheetResValue [cont(contactLayerList)]<br />[device(deviceLayerList)]<br /><code>[</code><em>multiSheetRes((width1 sheetResValue1)<br /></em>[(<code><em>width2</em></code> <code><em>sheetResValue2</em></code>) [(....)]])<br />[maxlength(length)]<br />[maxwidth(width)]<br />[smash(smashResValue maxResValue)]<br />[corner45(compenFactor)]<br />[align]<br />)<br />[resistor....]</pre>
+<h4>
+<a id="pgfId-1015836"></a>multiSheetRes in expanded rules</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015837"></a> PARASITIC RES[A] M1RES M1TRM<br /> ATTRIBUTE RES[A] 0.0008<br /><code> MULTI-SHEETRES</code><em> </em>RES[A] <code><em>width1 sheetResValue1<br /></em></code><code> MULTI-SHEETRES</code> RES[A] <code><em>width2 sheetResValue2</em></code></pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015840"></a>There are certain limitations:</div>
+<ul><li>
+<a id="pgfId-1015841"></a>You use the <code>MULTI-SHEETRES</code> command only for parasitic resistance extraction, and this command must follow its corresponding <code>PARASITIC</code> and <code>ATTRIBUTE</code> commands.</li><li>
+<a id="pgfId-1016440"></a>Flexible LPE is not supported for this version.</li></ul>
+
+
+<h3>
+<a id="pgfId-1015931"></a>Extr<a id="marker-1015930"></a>acting Contact Resistance</h3>
+
+<p>
+<a id="pgfId-1015933"></a>T<a id="marker-1015932"></a>he <code>contact</code> keyword lets you extract contact resistance. The contact resistance value equals the contact resistance coefficient you supply divided by the contact area (Rc = coeff / area ).</p>
+
+<a id="pgfId-1015934"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+contact( contactLayer layer1 layer2 contactCoefficient)</pre>
+
+<p>
+<a id="pgfId-1015936"></a>T<a id="marker-1015935"></a>he following example extracts the contact resistance of the <em>VIA</em> shapes between the <em>MET1</em> and <em>MET2</em> layers.</p>
+
+<a id="pgfId-1015937"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+contact(VIA MET1 MET2 0.1)</pre>
+<h3>
+<a id="pgfId-1016540"></a><a id="16791"></a>Capacitance or Resistor Model in the Extracted Netlist</h3>
+
+<p>
+<a id="pgfId-1016541"></a>The usability of the <code>extractParasitic()</code> command has been enhanced.</p>
+<p>
+<a id="pgfId-1016542"></a>You can can now specify the model type for each capacitance or resistance command in <code>extractParasitic()</code>. PDRACULA automatically generates the model commands with the correct subtypes. </p>
+<p>
+<a id="pgfId-1016543"></a>The SPICE files will include model types for resistors and capacitors.</p>
+
+<h4>
+<a id="pgfId-1016544"></a>Command Syntax</h4>
+
+<ul><li>
+<a id="pgfId-1016545"></a>For <code>extractParasitic</code>:</li></ul>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016546"></a>    extractParasitic(<br />    (   .....................<br />        cap( <code><em>layer1 layer2 coefficientList</em></code> [model(<code><em>modelType</em></code>)] <br />            [lateral(<code><em>layer1 piecewiseList</em></code>)]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016547"></a>        ...................</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016548"></a>        fringe(layer1 layer2 piecewiseList [model(modelType)])<br />            .....................<br />        )<br />        ( resistor (<code><em>layer1 sheetResValue</em></code>  ... [model(<code><em>modelType</em></code>)]<br />        ( contact (<code><em>contactLayer</em></code> <code><em>layer1</em></code> <code><em>layer2</em></code> <code><em>contactCoefficient<br /></em></code>        [model(<code><em>modelType</em></code>)])<br />        )<br />    )</pre>
+
+<ul><li>
+<a id="pgfId-1016549"></a>For the expanded rules of <code>extractParasitic</code>:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1016550">
+<a id="pgfId-1016550"></a>*DESCRIPTION
+    MODEL = RES[<code><em>subType1</em></code>] <code><em>modelType1</em></code>  RES[<code><em>subType2</em></code>] <code><em>modelType2
+</em></code>                                                        ...
+    MODEL = CAP[<code><em>subType3</em></code>] <code><em>modelType3</em></code>  RES[<code><em>subType4</em></code>] <code><em>modelType4
+</em></code>                                                        ... 
+*END
+*OPERATION
+........................</pre></li></ul>
+
+
+<h4>
+<a id="pgfId-1016551"></a>Arguments</h4>
+<p><strong>
+<a id="pgfId-1016552"></a><span class="webflare-courier-new" style="white-space:pre"><em>modelType</em></span> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019705"></a>The user-specified model type for each capacitor or resistor or contact extraction command. The model option can be placed anywhere after the coefficient list, but before the lateral command for plate capacitors and after the piecewise list or resistance coefficient for resistors or contacts. </p>
+
+<h3>
+<a id="pgfId-1015938"></a>Function Syntax</h3>
+
+<p>
+<a id="pgfId-1015940"></a>F<a id="marker-1015939"></a>ollowing is the complete syntax of the <code>extractParasitic</code> function.</p>
+
+<a id="pgfId-1015941"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+extractParasitic(
+[(extractCapSection)] |
+[(extractResSection)]
+)</pre>
+<a id="pgfId-1015942"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+                 where
+             extractCapSection ::=
+             layers( layerList )
+             cap( layer1 layer2 coefficientList 
+                  [model(modeType)])
+                  [lateral(<em>layerN piecewiseList
+</em>  |          fringe( layer1 layer2 piecewiseList)
+                  [model(<em>modeType</em>)])</pre>
+<a id="pgfId-1015943"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+                 extractResSection ::=
+             resistor(resLayer sheetResValue
+                  [cont(contactLayerList)]
+                  [device(deviceLayerList)]
+                  [multiSheetRes piecewiseList]
+                  [model(<em>modeType</em>)]
+                  [maxlength(length)]
+                  [maxwidth(width)]
+                  [smash(smashResValue maxResValue)]
+  |          contact(contactLayer layer1 layer2
+             contactCoefficient [model(modeType)])) </pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015944"></a>So from the above syntax, <code>extractParasitic </code>can contain only <em>extractCapSection</em> or <em>extractResSection</em>. If both exist <em>extractResSection</em> must follow <em>extractCapSection</em>.</div>
+
+<h3>
+<a id="pgfId-1015945"></a>Before You Start</h3>
+
+<p>
+<a id="pgfId-1015947"></a>H<a id="marker-1015946"></a>ere are some things to keep in mind when you are coding RC extraction with the <code>extractParasitic</code> function:</p>
+<ul><li>
+<a id="pgfId-1015948"></a>You must list the layers used with the <code>cap</code>, <code>lateral</code>, and <code>fringe</code> keywords in the <code>layers</code> list. The layers in the <code>layers</code> list must be defined in <code>CONNECT-LAYER</code><a id="marker-1015949"></a> or derived from the layers listed in <code>CONNECT-LAYER </code>functions.</li><li>
+<a id="pgfId-1015950"></a>You can use only the conduction layers listed in <code>CONNECT-LAYER</code> functions as sheet resistance layers. This means that you cannot use derived layers (layers created by logical or sizing functions) as conduction layers in <code>extractParasitic</code> for parasitic resistance.</li><li>
+<a id="pgfId-1015952"></a>You must define contact connections with the <code>CONNECT</code><a id="marker-1015951"></a> function if you use the <code>contact</code> keyword to extract contact resistance.</li><li>
+<a id="pgfId-1015953"></a>You cannot extract sheet resistance alone. You must also extract capacitance. When extracting contact resistance, you must also extract sheet resistance.</li><li>
+<a id="pgfId-1015955"></a>If you are e<a id="marker-1015954"></a>xtracting parasitics, put the <code>extractParasitic</code> function in the rules file before the <code>LVSCHK</code> or <code>LPECHK</code> function. If you are doing backannotation, put the <code>extractParasitic</code> function in the rules file after the <code>LVSCHK</code> or <code>LPECHK</code> function.</li><li>
+<a id="pgfId-1015957"></a>You do not need to include <code>PARSET</code><a id="marker-1015956"></a> definitions for 2D3B capacitance, directional edge capacitance, and contact resistance. The only parasitic extraction functions you need to include are <code>extractParasitic</code> and <code>LPESELECT</code>.</li><li>
+<a id="pgfId-1015958"></a>The following functions must appear in the Dracula rules file in the order given here. Functions in [ ] are optional.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1015959">
+<a id="pgfId-1015959"></a>CONNECT-LAYER                                      
+[SUBSTRATE]  
+CONNECT|[SCONNECT]
+[STAMP] 
+[LINK]
+[ELEMENT]
+extractParasitic()</pre></li></ul>
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1015960"></a>Creating Additional Subtypes</h3>
+
+<p>
+<a id="pgfId-1015961"></a>If the <code>extractParasitic</code> function does not provide the parasitic capacitance modeling you require, you can define your own subtypes as described in <a href="chap5.html#96143">&#8220;Using Equations with Flexible LPE&#8221;</a>.</p>
+<p>
+<a id="pgfId-1016574"></a>If you define your own subtypes, you must specify extraction functions in your rules file in the following order:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015967"></a>P<a id="marker-1015966"></a>ARSET<br />PARASITIC CAP | RES<br />extractParasitic() <br />LEXTRACT<br />EQUATION</pre>
+
+<p>
+<a id="pgfId-1015968"></a>The names you give your subtypes must not be the same as the following subtypes that are automatically generated by <code>extractParasitic</code>.</p>
+<ul><li>
+<a id="pgfId-1015969"></a>Overlap capacitance<br />
+<a id="pgfId-1015970"></a>An uppercase letter and a number: <em>A0</em>, <em>A1</em>, ... <em>A9</em>, <em>B0</em>, ... <em>Z9</em>.</li><li>
+<a id="pgfId-1015971"></a>Fringe capacitance<br />
+<a id="pgfId-1015972"></a>Two uppercase letters: <em>AA</em>, <em>AB</em>, ... <em>AZ</em>, <em>BA</em>, ... <em>ZZ</em>.</li><li>
+<a id="pgfId-1015973"></a>Resistance<br />
+<a id="pgfId-1015974"></a>A single letter followed by an underscore and the layer: <em>A_TRM</em> for the terminal layer, <em>A_RES</em> for the resistor body layer, <em>B_TRM</em>, <em>B_RES</em>, ... <em>Z_TRM</em>, <em>Z_RES</em>.</li></ul>
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1015975"></a>Examples</h3>
+
+<p>
+<a id="pgfId-1015977"></a>Th<a id="marker-1015976"></a>ere are two CMOS examples in this section:</p>
+<ul><li>
+<a id="pgfId-1015978"></a>Process with two metal layers</li><li>
+<a id="pgfId-1015979"></a>Process with four metal layers</li></ul>
+
+
+<h4>
+<a id="pgfId-1015980"></a>Two Metal Layer Extraction</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015982"></a>; &lt;fu<a id="marker-1015981"></a>nctions omitted&gt;<br />;<br />extractParasitic(<br />( layers( BULK (NWELL PWELL)(PSD NSD POLY) MET MT2)<br />f<a id="marker-1015983"></a>ringe(MET1 MET1 (1.0 0.02)(1.5 0.015)) ; 1-layer fringe<br />fringe(MET1 MET2 (1.0 0.03)(1.5 0.01)) ; 2-layer fringe <br />c<a id="marker-1015984"></a>ap (BU<a id="marker-1015985"></a>LK POLY 0.35 0.12); poly, substrate overlapped cap <br />cap (BULK MET1 0.4 0.15) ; met1, substrate overlapped cap <br />cap (POLY MET1 0.2 0.3 ; 2D3B model for overlapped cap <br />    lateral(POLY (1.0 0.03)(1.5 0.02)))<br />cap (POLY MET2 0.3 0.02 0.1 0.15))     ; sidewall cap<br />( resistor(MET1 0.1 cont(CONTACT VIA)) <br />r<a id="marker-1015986"></a>esis<a id="marker-1015987"></a>tor(MET2  0.3 cont(VIA) maxlength(30))<br />resistor(POLY 0.7 cont(CONTACT) device(NGATE PGATE))<br />contact(VIA MET1 MET2 0.1))<br />)<br />; &lt;functions omitted&gt;<br />L<a id="marker-1015988"></a>PESE<a id="marker-1015989"></a>LECT[S] CAP &amp;<br />LPESELECT[S] RES OUTPUT SPICE</pre>
+<h4>
+<a id="pgfId-1015991"></a>Four Metal Laye<a id="marker-1015990"></a>r Extraction</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015993"></a>; &lt;funct<a id="marker-1015992"></a>ions omitted&gt;
+;
+extractParasitic(
+(layers(SUB MET1 MET2 MET3 MET4)
+cap(MET1 SUB 25.4E-6 42.0E-6 
+&#160;&#160;&#160;&#160;lateral(MET1 (0.79 0.0)(1.2 8.9E-6)(1.6 5.91E-6)(2.0 4.41E-6)))
+cap(MET2 SUB 13.8E-6 37.7E-6
+&#160;&#160;&#160;&#160;lateral(ME2 (0.89 0.0)(1.3 5.1E-6)(1.7 3.54E-6)(2.25 2.71E-6)))
+cap(MET3 SUB 9.3E-6 34.4E-6
+&#160;&#160;&#160;&#160;lateral(MET3 (0.89 0.0)(1.3 3.1E-6)(1.7 2.15E-6)(2.25 1.65E-6)))
+cap(MET4 SUB 6.9E-6 35.6E-6 
+&#160;&#160;&#160;&#160;lateral(MET4 (2.49     0.0)(3.0 12.6E-6)(3.5 10.4E-6)(4.0  9.14E-6)(4.5  7.88E-6)
+&#160;&#160;&#160;&#160;(5.0 6.93E-6)(5.5 6.30E-6)(6.25 5.67E-6)))
+cap(MET2 MET1 48.0E-6 51.9E-6
+&#160;&#160;&#160;&#160;lateral(MET2 (0.5 33.7E-6)(0.9  24.8E-6)(1.3 19.6E-6)(1.7 15.9E-6)
+&#160;&#160;&#160;&#160;(2.25 13.7E-6)))
+cap(MET3 MET1 18.1E-6 40.6E-6 
+&#160;&#160;&#160;&#160;lateral(MET3 (0.5 12E-6)(0.9  8.85E-6)(1.3 7.0E-6)(1.7 5.68E-6)(2.25 4.89E-6)))
+cap(MET4 MET1 11.0E-6 40.1E-6
+&#160;&#160;&#160;&#160;lateral(MET4 (0.5 59.3E-6)(0.9 43.7E-6)(1.7 34.5E-6)(2.5 24.1E-6)(4.1 18.9E-6)
+&#160;&#160;&#160;&#160;(5.3 13.0E-6)(6.5 10.4E-6)))
+cap(MET3 MET2 49.7E-6 53.2E-6
+&#160;&#160;&#160;&#160;lateral(MET3 (0.5 35.9E-6)(0.9  26.4E-6)(1.3 20.9E-6)(1.7 17.0E-6)
+&#160;&#160;&#160;&#160;(2.25 14.6E-6)))
+cap(MET4 MET2 18.2E-6 46.0E-6
+&#160;&#160;&#160;&#160;lateral(MET4 (0.5 87.2E-6)(0.9 64.2E-6)(1.7 50.8E-6)(2.5 35.5E-6)
+&#160;&#160;&#160;&#160;(4.1 27.8E-6)(5.3 19.2E-6)(6.5 15.3E-6)))
+cap(MET4 MET3 49.7E-6 63.1E-6
+&#160;&#160;&#160;&#160;lateral(MET4 (0.5 160.4E-6)(0.9 118.6E-6)(1.7 93.4E-6)(2.5 65.2E-6)(4.1 51.1E-6)
+&#160;&#160;&#160;&#160;(5.3  35.2E-6)(6.5 28.2E-6)))<br />fringe(MET1 MET1 (0.79 61.1E-6)(2.00 0.00))<br />fringe(MET2 MET2 (0.89 64.8E-6)(2.25 0.00))<br />fringe(MET3 MET3 (0.89 63.9E-6)(2.25 0.00))<br />fringe(MET4 MET4 (2.49 27.9E-6)(6.25 0.00))<br />)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015994"></a>(resi<a id="marker-1015995"></a>stor(MET1 87.0E-6 cont(VI1) maxlength(2500))<br />resistor(MET2 66.0E-6 cont(VI1 VI2) maxlength(2500))<br />resistor(MET3 66.0E-6 cont(VIA2 VIA3) maxlength(2000)) <br />resistor(MET4 39.0E-6 cont(VIA3) maxlength(1000))<br />contact(VIA1 MET1 ME<a id="marker-1015996"></a>T2 2.5E-3)<br />contact(VIA2 MET2 MET3 2.5E-3)<br />contact(VIA3 MET3 MET4 2.5E-3)<br />)<br />)<br />;<br />LPESELECT[S]  CAP GT 0.0 &amp;<br />LPESELECT[S]&#160;&#160;RES GT 0.0 OUTPUT SPICE</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015997"></a></pre>
+<h2>
+<a id="pgfId-1015999"></a><a id="19353"></a>Extracting a Single Net</h2>
+
+<p>
+<a id="pgfId-1016002"></a>If you need to extract R<a id="marker-1016000"></a>C elements for a single net only, you can use the <code>SMART-LPE</code><a id="marker-1016001"></a> function in Dracula version 4.5. This function selects a net for which Dracula extracts RC parasitics, including the fringe capacitance within a space around the net. PDRACULA looks through all the fringe-related definitions in your rules file and calculates a fringe space for each connection layer accordingly.<a id="marker-1016003"></a><a id="marker-1016004"></a><a id="marker-1016005"></a></p>
+
+<p>
+<a id="pgfId-1017191"></a></p>
+<div class="webflare-div-image">
+<img src="images/FringeSpace.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1016029"></a>If you are using single-net extraction because the volume of RC data for a whole circuit is too large, you might consider using the Cadence<sup>&#174;</sup> RC network reducer option (formerly called ConcICe), the interconnect reducer, to reduce RC output. For more information about this product, see <em><a actuate="user" class="URL" href="../concice/conciceTOC.html#firstpage" show="replace" xml:link="simple">ConcICe Help</a></em>.</div>
+
+<h3>
+<a id="pgfId-1016031"></a>Before You Start</h3>
+
+<p>
+<a id="pgfId-1016032"></a>Here are some things to keep in mind when you are writing a rules file to extract a single net with the <code>SMART-LPE</code> function:</p>
+<ul><li>
+<a id="pgfId-1016033"></a>You must place all parasitic extraction functions (layer operations) in the rules file after the <code>ELEMENT</code><a id="marker-1016034"></a> definitions.</li><li>
+<a id="pgfId-1016035"></a>You must place all operations that generate layers used as device layers before the <code>CUT-TERM</code><a id="marker-1016036"></a> or <code>extractParasitic</code><a id="marker-1016037"></a> function for a PRE layout-only job.</li></ul>
+
+
+<h3>
+<a id="pgfId-1016038"></a>Coding Single-Net Extraction</h3>
+
+<p>
+<a id="pgfId-1016039"></a>To extract a single net, you must include the following functions in your rules file in addition to connection and extraction functions:</p>
+
+<a id="pgfId-1016041"></a><a id="marker-1016040"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+*DESCRIPTION
+LPE-QUERY = CORE | EXPAND
+SMART-LPE = SINGLENET
+SELECT-MODE = SCH | LAYOUT filename
+;
+; &lt;functions omitted&gt;
+;
+*END
+</pre>
+<a id="pgfId-1016042"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+*OPERATION
+NODE-SELECT = nodename | NODE-FILE = filename
+;
+; &lt;functions omitted&gt;
+;
+*END</pre>
+<h2>
+<a id="pgfId-1018174"></a><a id="60059"></a>The Dracula To RCX (dracToRcx) Interface<a id="marker-1018757"></a></h2>
+
+<p>
+<a id="pgfId-1018175"></a>The Dracula to Assura RCX flow (dracToRcx) provides an alternate solution to the original Dracula PRE flow. dracToRcx allows you to use Dracula LVS as your verification tool for LVS and to then use Assura RCX as your extraction tool, well known for its accurate and sophisticated extraction of interconnect parasitic devices.</p>
+<p>
+<a id="pgfId-1018176"></a>The following diagram illustrates the dracToRcx flow.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1018272"></a>dracToRcx Flow</div>
+<div class="webflare-div-image">
+<img width="668" height="638" src="images/chap5-21.gif" /></div>
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1018273"></a>
+The <code>PRECISION</code> command is not supported in the dracToRcx flow, and so the environment variable <code>LVS_PRECISION_3</code> should be used in place of the <code>PRECISION</code> command. Please refer to the <em>Dracula Reference</em> manual for more information.</div>
+<h3>
+<a id="pgfId-1019003"></a>Module Descriptions<a id="marker-1018762"></a></h3>
+
+<p>
+<a id="pgfId-1018274"></a>Five new modules have been developed for the dracToRcx flow. The new modules are GENXCN, capgen, D2RXRF, ddbToRcx, and dracToRcx, and each is described below.</p>
+
+<h4>
+<a id="pgfId-1018275"></a><a id="marker-1018770"></a>GENXCN</h4>
+
+<p>
+<a id="pgfId-1018276"></a>The GENXCN module prepares an <code>.xcn</code> file for capgen. The <code>.xcn</code> file contains information such as text, layers, connectivity element names, and model names and is derived from the rule file. Below is an example of a typical <code>.xcn</code> file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018277"></a>...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018278"></a>connect tpdiff psub by 0pplug</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018279"></a>connect tndiff nxwell by 0nplug</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018280"></a>model=mos[p],p</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018281"></a>model=mos[n],n</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018282"></a>model=mos[pd],pd</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018283"></a>model=mos[nd],nd</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018284"></a>model=mos[y],y</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018285"></a>stamp coll by tpdiff</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018286"></a>stamp emit by tpdiff</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018287"></a>stamp pdio by pdiff</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018288"></a>stamp ndio by ndiff</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018289"></a>element mos[n] mosxn8g cpoly ndiff psub</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018290"></a>element mos[p] mosxp8g cpoly pdiff nxwell</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018291"></a>element mos[y] mosxy8g cpoly yndiff psub</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018292"></a>element mos[nd] mosxndg cpoly bndiff psub</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018293"></a>element mos[pd] mosxpdg cpoly bpdiff nxwell</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018294"></a>...</pre>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1018416"></a>Use the SUBTYPE-CSENS = YES command to maintain the case sensitivity of the device model names.</div>
+
+<h4>
+<a id="pgfId-1018423"></a><a id="marker-1018771"></a>capgen</h4>
+
+<p>
+<a id="pgfId-1018424"></a>capgen is used to perform capacitance pre-characterization from a process file and also to generate capacitance models for RCX. The contact layer names in the <code>xcn</code> file are slightly different from those in the rule file. Depending on the situation, a number might appear in the prefix of a contact layer. This difference, illustrated in the following example, must be taken into consideration while preparing a <code>p2lvsfile</code> for capgen.</p>
+
+<p>
+<a id="pgfId-1018434"></a></p>
+<table class="webflareTable" id="#id1018425">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1018427">
+<a id="pgfId-1018427"></a>rule file</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1018429">
+<a id="pgfId-1018429"></a>xcn file</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018431"></a>connect mt2 mt1 by via</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018433"></a>connect mt2 mt1 by 0via</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1018435"></a>NOTE: For extraction of capacitors, if scientific notation is used to specify capacitance in the Dracula rule file, the &quot;-cap_unit 1&quot;option should be used while running capgen to prevent RCX from rescaling. For example, in the following rule file </p>
+<p class="webflare-indent1">
+<a id="pgfId-1018816"></a>ELEMENT          CAP[C2]     DPCAP     FGATE     POLY
+PARAMETER     CAP[C2]     0.71E-15 </p>
+<p>
+<a id="pgfId-1018799"></a>capacitance per unit area is specified as 0.71E-15, and &quot;-cap_unit 1&quot;option should be turned on for capgen. For more information, please refer to the RCX chapters of the <em>Assura Command Reference.</em></p>
+
+<h4>
+<a id="pgfId-1018419"></a><a id="marker-1018772"></a>D2RXRF</h4>
+
+<p>
+<a id="pgfId-1018298"></a>This module generates <code>gnx</code> and <code>gdx</code> files. Both files are in plain text format; <code>gnx</code> contains the mapping of net names between layout and schematic while <code>gdx</code> contains the mapping of device names.</p>
+<p>
+<a id="pgfId-1018299"></a>After a Dracula LVS run is completed, the files <code>6NXRF.DAT</code> and <code>6EXRF.DAT</code> are created. Each file contains the cross-reference information between layout and schematic, <code>6NXRF.DAT</code> for nets and <code>6EXRF.DAT</code> for devices. Both files are in Dracula DB format.</p>
+<p>
+<a id="pgfId-1018300"></a>Using D2RXRF, the files are translated into plain text files. The net/device name mapping can then be used in the output spice file. If the net names from the layout side need to be kept, you must use the command <code>SCH-NETNAME=NO</code> in the rule file to keep schematic net names from being used in the output spice file.</p>
+<p>
+<a id="pgfId-1018301"></a>In the <code>gnx</code> and <code>gdx</code> files, the first line is a count of the items mapped. The second line defines the primary cell name for both schematic and layout; schematic name is on the left and layout name is on the right. The names are separated by a colon, and each record in the <code>gnx</code> file begins with an equal sign ( = ) while each record in a <code>gdx</code> file begins with a &#8217;&#8221;D&#8220;. The following are typical <code>gnx</code> and <code>gdx</code> files:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018302"></a>gnx</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018303"></a># 5</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018304"></a>topcell: TOPCELL</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018305"></a>= VSS VSS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018306"></a>= VDD_0_ VDD_0_</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018307"></a>= O_9_ O_9_</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018308"></a>= O_8_ O_8_</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018309"></a>= O_7_ O_7_</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018310"></a>gdx</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018311"></a># 3</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018312"></a>topcell: TOPCELL</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018313"></a>D M1 drDEV_1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018314"></a>D M2 drDEV_2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018315"></a>D M3 drDEV_3</pre>
+<h4>
+<a id="pgfId-1018316"></a><a id="marker-1018773"></a>ddbToRcx</h4>
+
+<p>
+<a id="pgfId-1018317"></a>The main function of ddbToRcx is to transform the Dracula DB to Assura RCX.</p>
+
+<h4>
+<a id="pgfId-1018443"></a><a id="marker-1018774"></a>dracToRcx</h4>
+
+<p>
+<a id="pgfId-1018444"></a>This utility controls the Dracula to AssuraRCX flow, creates the script, and invokes the necessary processes for a dracToRcx run. The input for the dracToRcx utility is an RCX command file, illustrated as follows:</p>
+<p>
+<a id="pgfId-1018638"></a></p>
+<table class="webflareTable" id="#id1018445">
+<tbody><tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1018447"></a>*RCX_DESCRIPTION</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018451"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018453"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018455"></a>working-directory</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018457"></a>= ./</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018459"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018461"></a>technology</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018463"></a>= 24-xxx25lo_122502_3D_av2</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018465"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018467"></a>tech-lib</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018469"></a>= ./tech.lib</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018471"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018473"></a>lvs-source</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018475"></a>= dracula</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018477"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018479"></a>dracula-run-name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018481"></a>= A_lvs</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018483"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018485"></a>dracula-run-dir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018487"></a>= ./</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018489"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018491"></a>cell-name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018493"></a>= A_lvs</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018495"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018497"></a>run-name</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018499"></a>= runrcx</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018501"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018503"></a>type</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018505"></a>= full</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018507"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018509"></a>extract</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018511"></a>= cap</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018513"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018515"></a>cap-extract-mode</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018517"></a>= coupled</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018519"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018521"></a>cap-ground</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018523"></a>= GND</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018525"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018527"></a>cap-coupling-factor</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018529"></a>= 1.0</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018531"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018533"></a>net-name-space</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018535"></a>= schematic</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018537"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018539"></a>output-format</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018541"></a>= spice</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018543"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018545"></a>output</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018547"></a>= runrcx.sp</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018549"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018551"></a>max-fracture-length</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018553"></a>= infinite</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018555"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018557"></a>fracture-length-units</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018559"></a>= microns</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018561"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018563"></a>tempdir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018565"></a>= ./tmp</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018567"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018569"></a>cap-models</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018571"></a>= comment</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018573"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018575"></a>parasitic-cap-models</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018577"></a>= comment</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018579"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018581"></a>res-models</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018583"></a>= comment</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018585"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018587"></a>parasitic-res-models</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018589"></a>= comment</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018591"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018593"></a>output-net-name-space</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018595"></a>= schematic</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018597"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018599"></a>sub-node-char</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018601"></a>= #</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018603"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018605"></a>hierarchy-delimiter</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018607"></a>= /</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018609"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018611"></a>toggle-xgl</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018613"></a>= t</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018615"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018617"></a>parasitic-res-width</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018619"></a>= nil</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018621"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018623"></a>extract-mos-diffusion-res</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018625"></a>= t</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018627"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018629"></a>xy-coordinates</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018631"></a>= C,c</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1018633"></a>*END</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018637"></a></p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1018639"></a>RCX commands must be in a block beginning with &#8220;*<code>RCX_DESCRIPTION</code>&#8221; and ending with &#8220;*<code>END</code>&#8221;. <code>run-name </code>is used to define the name of the subdirectory under the working directory for a particular run.</p>
+<p>
+<a id="pgfId-1018640"></a>In the example shown above, the subdirectory <code>runrcx</code> is created under the working directory., after which dracToRcx will generate the script &quot;<code>rcx.sh</code>&quot; in that directory. dracToRcx will then create processes to run D2RXRF and RCXspice to create <code>gnx</code> and <code>gdx</code> files, and to prepare other RCX-related files. Then, <code>rcx.sh</code> will be executed to create an output spice file specified as the <code>output</code>. In the above case, the output spice filename is <code>runrcx.sp</code>.</p>
+
+<h3>
+<a id="pgfId-1018641"></a>RCX Commands<a id="marker-1018775"></a></h3>
+
+<p>
+<a id="pgfId-1018642"></a>As mentioned above, commands in RCX command files should be put in the block embraced by *RCX_DESCRIPTION and *END. Also, the commands are case sensitive. The following table gives the description and arguments of each command:</p>
+
+<p>
+<a id="pgfId-1018696"></a>:</p>
+<table class="webflareTable" id="#id1018643">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1018645">
+<a id="pgfId-1018645"></a>command </span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1018647">
+<a id="pgfId-1018647"></a>description</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018649"></a>black-box-cells (file_name)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018651"></a>Specifies a set of cells which will be treated as black boxes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018653"></a>cap-coupling-factor (factor)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018655"></a>Decoupled capacitors will be multiplied by the specified factor.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018657"></a>cap-extract-mode (coupled | decoupled | decoupled_to_substrate)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018659"></a>Parasitic capacitors will either be coupled, decoupled to nearest substrate node, or decoupled to the -cap_ground net (default) when the output netlist is produced.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018661"></a>cap-ground (net)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018663"></a>Decoupled parasitic capacitors will be lumped to the specified net.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018665"></a>cap-models (yes | no | comment)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018667"></a>Models for canonical capacitors will either be written to the output file (default), not written, or written as comments.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018669"></a>cell-name (cell_name)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018671"></a>Top cell name for the LVS run</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018673"></a>dracula-run-dir (directory)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018675"></a>Specifies the directory where Dracula LVS is run.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018677"></a>dracula-run-name (run_name)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018679"></a>Specifies the run name of Dracula LVS.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018681"></a>exclude-floating-nets (t | nil)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018683"></a>This option will perform floating net removal via the -rmfloat option to the xreduce module.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018685"></a>extract (cap | res | both | RLC)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018687"></a>Parasitic capacitors (default), resistors, both capacitors and resistors, or RLC&#8217;s will be extracted.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018990"></a>extract-mos-diffusion-ap (t | nil)</p>
+<p>
+<a id="pgfId-1018689"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018691"></a>Causes diffusion area and perimeter parameters AS, AD, PS, PD to be extracted for MOSFETs and LDDs.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018999"></a>import-globals (t | nil)</p>
+<p>
+<a id="pgfId-1018693"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018695"></a>Specifies that global power and ground nets declared in the LVS input data (such as &quot;<code>power:P</code>&quot; and &quot;<code>gnd:G</code>&quot;) are imported into Assura RCX</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1018697"></a>To enable a command of Boolean type, set the command to <code>t</code> in the command file. To disable the command, set it to <code>nil</code>. The command type can be found by using the command &#8220;RCXspice -args&#8221;.</p>
+<p>
+<a id="pgfId-1018698"></a>For more information, please refer to the RCX chapters of the <em>Assura Physical Verification Command Reference</em>.</p>
+
+<h3>
+<a id="pgfId-1018354"></a>Running the DracToRCX Interface<a id="marker-1018776"></a></h3>
+<h4>
+<a id="pgfId-1018355"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1018722"></a>The following are required to run DracToRCX.</p>
+<ul><li>
+<a id="pgfId-1018710"></a>Dracula version 4.8.1.0903 or above</li><li>
+<a id="pgfId-1018711"></a>Assura<ul><li>
+<a id="pgfId-1018712"></a>AV3.0 (AV3.0.6 or above)</li><li>
+<a id="pgfId-1018713"></a>AV3.1 (AV3.1.1 or above)</li></ul></li><li>
+<a id="pgfId-1018359"></a>The following programs in the Dracula/Assura hierarchy (placed automatically):<ul><li>
+<a id="pgfId-1018360"></a>D2RXRF</li><li>
+<a id="pgfId-1018361"></a>GENXCN</li><li>
+<a id="pgfId-1018362"></a>ddbToRcx</li><li>
+<a id="pgfId-1018363"></a>dracToRcx</li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1018364"></a>Running DracToRCX</h4>
+
+<p>
+<a id="pgfId-1018365"></a>Following are the steps required to run DracToRCX.</p>
+<ol><li>
+<a id="pgfId-1018366"></a>Enter <code>RCX-MODE=YES/LAYOUTONLY</code> in the description block of the Dracula rule deck to enable DracToRCX flow.</li><li>
+<a id="pgfId-1018367"></a>Enter <code>KEEP-SHORT</code><span class="webflare-courier-new" style="white-space:pre"><em>XXX</em></span><code>=YES</code> commands in the description block to keep shorted devices, where <span class="webflare-courier-new" style="white-space:pre"><em>XXX</em></span> represents MOS, RES, CAP, BJT, or DIO.</li><li>
+<a id="pgfId-1018368"></a>Use M-Factor commands in the rules file to process M factor correctly. The following are Dracula M-Factor commands:
+
+<code>MOS-M-FACTOR = WIDTH-LENGTH/NO
+BJT-M-FACTOR = WIDTH-LENGTH/EMITTER-AREA/NO
+RES-M-FACTOR = WIDTH-LENGTH/VALUE/NO
+DIO-M-FACTOR = AREA/PERI/NO
+CAP-M-FACTOR = AREA/VALUE/NO
+</code>For more information on M-Factor commands, see <a actuate="user" class="URL" href="../dracularef/chap11.html#M-Factor Commands" show="replace" xml:link="simple">&#8220;M-Factor Commands&#8221; in the &#8220;Description Block Commands&#8221;</a> chapter of the <em>Dracula Reference Manual.</em></li><li>
+<a id="pgfId-1018370"></a>Use PDRACULA to compile the Dracula rule deck and to create the run script, <code>jxrun.com</code></li><li>
+<a id="pgfId-1018371"></a>Run the script <code>jxrun.com</code>. This will create an <code>.xcn</code> file.</li><li>
+<a id="pgfId-1018728"></a>Prepare an RCX command file (for example, &#8220;<code>rcx.rsf</code>&#8221;) with the switch <code>lvs-source</code> set to &#8220;dracula&#8221; and <code>output-format</code> set to &#8220;spice&#8221;, and define the <code>dracula-run-dir</code> and <code>dracula-run-name</code>. You must also define the same name for both the <code>cell-name</code> in the RCX command file and for the <code>PRIMARY</code> command in the Dracula rules file. For example:<br /><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1018895">
+<a id="pgfId-1018895"></a>cell-name = VB_1703B_SCH (RCX command file)
+PRIMARY = VB_1703B_SCH (Dracula rules file)</pre></span><br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1018927"></a>The cell name is case sensitive, so the names must match exactly. See the <em>Dracula Reference</em> manual for more information on the <code>PRIMARY</code> command.</div></li><li>
+<a id="pgfId-1018955"></a>Run capgen by using the <code>.xcn</code> file created in step 5 as the lvs file. This will convert the lvs extraction rules to rcx extraction rules. For a given process, capgen only needs to be run once. One doesn&#8217;t have to rerun capgen for each dracToRcx run. For more information about running capgen, see &#8220;Capgen Overview&#8221; in the &#8220;CAPGEN and Assura RCX&#8221; chapter of the <em>Assura Physical Verification Developer Guide</em>, version 3.0.</li><li>
+<a id="pgfId-1018374"></a>Run dracToRcx as follows:
+% dracToRcx rcx.rsf</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1018375"></a>You are now ready to use the data generated by Dracula LVS to run extraction using Assura RCX. For more information on running Assura RCX, see the &#8220;RCX Run Guide&#8221; chapter of the <em>Assura Physical Verification User Guide.</em></p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1018376"></a>To perform RC extraction more accurately, it is strongly suggested that the diffusion layer be separately defined between the source/drain area and the substrate in the rules file. Also, the contact among metal1-poly, metal1-source/drain and metal1-substrate should be separately defined.</div>
+
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1018736"></a>
+To allow DracToRCX to support layout-only jobs, specify <code>RCX-MODE=LAYOUTONLY</code> instead of <code>RCX-MODE=YES</code> in the rules file. Also, use the <code>LPESELECT</code> command in the rule file to invoke LVSNET stage in jxrun.com so that 6NETLRCX.DAT will be created. </div>
+<div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1018737"></a>
+To prevent schematic net names from being used in the output SPICE file, use <code>SCH-NETNAME=NO</code> in the DESCRIPTION BLOCK in the rule file. The default value of <code>SCH-NETNAME</code> is set to YES.</div>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap4.html" id="prev" title="Selecting a Run Mode">Selecting a Run Mode</a></em></b><b><em><a href="chap6.html" id="nex" title="Setting up Hierarchical Dracula">Setting up Hierarchical Dracul ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
