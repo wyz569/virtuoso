@@ -1,0 +1,2193 @@
+
+<html><head><title>Virtuoso Voltage Dependent Rules Flows</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="urajput" />
+<meta name="CreateDate" content="2023-10-30" />
+<meta name="CreateTime" content="1698688050" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Virtuoso voltage-driven rules (VDR) flow used to capture voltage data from simulation runs and propagate it to the layout view where it can be used to ensure correct physical implementation" />
+<meta name="DocTitle" content="Virtuoso Voltage Dependent Rules Flow Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Virtuoso Voltage Dependent Rules Flows" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vvdrflow" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-30" />
+<meta name="ModifiedTime" content="1698688050" />
+<meta name="NextFile" content="appB.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Custom IC Design" />
+<meta name="PrevFile" content="vvdrflowTOC.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite,Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Voltage Dependent Rules Flow Guide -- Virtuoso Voltage Dependent Rules Flows" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vvdrflowIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vvdrflowTOC.html">Contents</a></li><li><a class="prev" href="vvdrflowTOC.html" title="Contents">Contents</a></li><li style="float: right;"><a class="viewPrint" href="vvdrflow.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appB.html" title="Environment Variables">Environment Variables</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Voltage Dependent Rules Flow Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>1
+<a id="pgfId-1034311"></a></h1>
+<h1>
+<a id="pgfId-1091998"></a><hr />
+Virtuoso Voltage Dependent Rules Flows<hr />
+</h1>
+
+<p>
+<a id="pgfId-1156393"></a>This topic describes three Virtuoso&#174; voltage dependent rules (VDR) flows available in Virtuoso Layout Suite XL and higher tiers.</p>
+<p>
+<a id="pgfId-1156395"></a>The complete simulation driven VDR flow lets you capture minimum and maximum voltage values from a simulation run in Virtuoso ADE and propagate the values to a layout view. They are stored in the OpenAccess database for the design and can be referenced by design rule driven (DRD) editing, the interactive wire editor, and the Virtuoso space-based router (VSR) to ensure that minimum voltage spacing constraints are honored during the physical implementation of your design. You can also use them to generate labels or markers in the layout view, which in turn can be used by tools like the Cadence&#174; Pegasus physical verification system or Cadence PVS to verify the correctness of the implementation.</p>
+<p>
+<a id="pgfId-1156396"></a></p>
+<p>
+<a id="pgfId-1156389"></a>Alongside the simulation driven VDR flow, this document also covers schematic driven and layout-centric VDR flows, which let you add voltage values as properties directly on nets in a schematic or layout view. The property values are saved to the OpenAccess database for the design and can be used by DRD, the wire editor, and VSR.</p>
+<p>
+<a id="pgfId-1156417"></a>This topic describes only the VDR flow and the various enhancements made to the Virtuoso Analog Design Environment and Virtuoso Layout Suite tools to support them. Links are provided to more detailed information on specific products available elsewhere in the Virtuoso documentation set.</p>
+<p>
+<a id="pgfId-1091999"></a>Many foundry processes base the minimum spacing requirements between shapes on metal layers on the maximum voltage difference between those shapes. These minimum spacing requirements are defined in the technology file as <code>minVoltageSpacing</code> constraints, which can be used by design rule checkers and by interactive and automatic routers to ensure that the circuit designer&#8217;s intent is maintained in the physical implementation of the design.</p>
+<p>
+<a id="pgfId-1068970"></a>This document describes three voltage dependent rules (VDR) flows that help automate the process and reduce the number of costly design iterations.</p>
+<ul><li>
+<a id="pgfId-1068563"></a>The <a href="vdrflow.html#47059">Simulation Driven VDR Flow</a> lets the designer capture minimum and maximum voltage values on nets derived from simulation runs in Virtuoso ADE and propagate the data to the OpenAccess layout view. Because this information is stored in the OpenAccess database, it can be used by Virtuoso tools, such as design rule driven (DRD) editing or the interactive wire editor, to verify in real time that the design is DRC correct. The Virtuoso space-based router (VSR) also considers the voltage values and avoids violating the minimum spacing rules when routing the design.<br />
+<a id="pgfId-1109895"></a>You can also use this flow to automatically create voltage labels or markers in the layout view based on the values captured during a simulation. This eliminates the need to manually annotate the layout design with voltage information, lets you visualize the voltages that apply in different areas of your design, and facilitates the use of DRC signoff tools, such as the Cadence&#174; Pegasus physical verification system or Cadence PVS, to check that design rules are being honored and that the design is correct-by-construction.<br />
+<a id="pgfId-1069045"></a>If the schematic design is changed, you can rerun the simulation to update the voltage values in the simulation datasets and update the referenced voltage data in the layout view to take account of the changes.</li><li>
+<a id="pgfId-1059384"></a>The <a href="vdrflow.html#25120">Schematic Driven VDR Flow</a> lets the circuit designer specify the required minimum and maximum voltage values as properties directly on the nets in the schematic, eliminating the need for guesswork on the part of the layout designer. The properties are saved in the OpenAccess schematic view and are transferred to the layout view using the usual Layout XL generation and update commands. Once in Layout XL, the values can be used by DRD, the interactive wire editor, and VSR as described above.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1069835"></a>You cannot use the schematic driven VDR flow to automatically create labels or markers from voltage values specified as schematic properties. They must first be transferred to the layout view.</div></li><li>
+<a id="pgfId-1089966"></a>The <a href="vdrflow.html#71877">Layout-centric VDR Flow</a> lets the layout designer set minimum and maximum voltage values as properties directly on the nets in the layout view. This data is then saved in the OpenAccess layout view and can be used by DRD, the interactive wire editor, and VSR, as described above. You can generate voltage labels or markers for all the nets at the current level of layout hierarchy or for a set of nets selected in the Navigator assistant.</li></ul>
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1156455"></a>Licensing Requirements</h2>
+
+<p>
+<a id="pgfId-1156456"></a>The VDR flows require the following licenses:</p>
+<ul><li>
+<a id="pgfId-1156457"></a><strong>Invoking Virtuoso</strong><ul><li>
+<a id="pgfId-1156458"></a><code>111</code>: Cadence Design Framework II</li><li>
+<a id="pgfId-1156459"></a><code>95011</code>: Virtuoso Advanced Node Framework</li></ul></li><li>
+<a id="pgfId-1156460"></a><strong>Capturing Voltages and Saving Datasets in Virtuoso ADE</strong><ul><li>
+<a id="pgfId-1156461"></a><code>95250</code>: Virtuoso ADE Explorer</li><li>
+<a id="pgfId-1156462"></a><code>95260</code>: Virtuoso ADE Assembler</li></ul><br />
+<a id="pgfId-1156463"></a>Plus <strong>one</strong> of the following:<ul><li>
+<a id="pgfId-1156464"></a><code>95510</code>: Virtuoso Implementation Aware Design Option</li><li>
+<a id="pgfId-1156465"></a><code>95600</code>: Virtuoso Layout Suite EAD</li><li>
+<a id="pgfId-1156466"></a><code>95800</code>: Virtuoso Layout Suite EXL</li></ul><br />
+<a id="pgfId-1156467"></a>You also need appropriate licenses for the simulation engines you use to generate simulation data (For example, Spectre).</li><li>
+<a id="pgfId-1156468"></a><strong>Populating Voltages in Layout XL</strong><ul><li>
+<a id="pgfId-1156469"></a><code>95310</code>: Virtuoso Layout Suite XL or <code>95321</code>: Virtuoso Layout Suite - GXL</li><li>
+<a id="pgfId-1156470"></a><code>95511</code>: Virtuoso Advanced Node Option for Layout</li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1156471"></a>For detailed information on the license requirements for Virtuoso and other Cadence tools, see the <em><a actuate="user" class="URL" href="../dfIIconfig/dfIIconfig.html#firstpage" show="replace" xml:link="simple">Virtuoso Software Licensing and Configuration Guide</a></em>.</p>
+<p>
+<a id="pgfId-1156441"></a></p>
+
+<h2>
+<a id="pgfId-1121185"></a><a id="52139"></a>Types of <a id="vdrLabelTypes"></a>VDR Labels</h2>
+
+<p>
+<a id="pgfId-1122521"></a>The minimum and maximum voltage values specified for each net are displayed in the canvas as labels attached to the in question. There are two types of VDR labels.</p>
+<ul><li>
+<a id="pgfId-1121209"></a><strong>Generic VDR labels</strong> are generated by Virtuoso and are identified by a <code>CDNS_VDR_LABEL</code> property.<br />
+<a id="pgfId-1131154"></a>They are based on voltage data captured in simulation datasets, specified manually for nets in schematic or layout designs, or specified in a voltage information CSV file. Virtuoso reads the values from the specified source and creates labels for Vmin and Vmax values. The layer on which the label is drawn is derived from the parent net shape at create time, while the purpose is specified in the Voltage Dependent Rules form or the voltage purpose file.<br />
+<a id="pgfId-1131173"></a>During ECO, Virtuoso first deletes all existing labels and then creates a new set of labels from the updated source data.</li><li>
+<a id="pgfId-1122846"></a><strong>Constrained VDR labels</strong><em> </em>can be generated by Virtuoso, or they can be created, copied, or manually edited by the user directly in the layout view.<br />
+<a id="pgfId-1131179"></a>They are created on the layer-purpose pairs defined in a <code>voltageLabelMapping</code> constraint in a technology file constraint group specified by the <a href="appB.html#84582">vdrConstraintGroupName</a> environment variable. If <code>vdrConstraintGroupName</code> is defined and the specified constraint group contains a <code>voltageLabelMapping</code> constraint for at least one layer, then the constrained label flow is automatically enabled.<br />
+<a id="pgfId-1131213"></a>During ECO, Virtuoso does not delete constrained labels, but rather updates any existing labels with new values and creates any labels that are missing.<br />
+<a id="pgfId-1133441"></a>The consistency of constrained labels can be checked using the <a href="appA.html#75910">VDR Debugger</a>. See <a href="vdrflow.html#86717">Sanity Checking Voltage Values in Constrained Labels</a> for information.</li></ul>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1121406"></a>The two types of labels cannot be mixed in a the same design. If constrained labels are defined for layers <code>Metal1</code> through <code>Metal5</code> and a generic label needs to generated by VDR for <code>Metal6</code>, then Virtuoso issues an error.</p>
+
+<h2>
+<a id="pgfId-1069905"></a>Prerequisites for the VDR Flows</h2>
+
+<p>
+<a id="pgfId-1069906"></a>To allow DRD editing, the interactive wire editor, and Virtuoso space-based router to recognize violations of voltage dependent spacing rules, you must first specify the required minimum voltage spacing rules in the process technology file used by your design. For information, see <a href="vdrflow.html#87490">Specifying a Minimum Voltage Spacing Constraint</a>.</p>
+<p>
+<a id="pgfId-1086057"></a>To create labels and markers in the layout view which can be used by Pegasus or PVS to verify the design, you must additionally specify the layer purposes on which voltage labels or markers are to be created. For more information, see <a href="vdrflow.html#86037">Specifying Layers and Purposes for Generic Voltage Labels</a> and <a href="vdrflow.html#64210">Specifying Layers and Purposes for Voltage Markers</a>.</p>
+<p>
+<a id="pgfId-1111729"></a>If your process features nets the voltage of which must transition in phase with each other, you can also define <em>Voltage Synced Nets</em> constraints for the nets in question. You can then use the constraints to draw <em>vsync</em> shapes in the layout view and check them using the VDR Sanity Checker. For more information, see <a href="vdrflow.html#86531">Specifying Layers and Purposes for Synced Nets</a>.</p>
+
+<h3>
+<a id="pgfId-1086062"></a><a id="87490"></a>Specifying a Minimum Voltage Spacing Constraint</h3>
+
+<p>
+<a id="pgfId-1086063"></a>The minimum spacing allowed between two wires with different voltages on the same metal layer is defined using a <code>minVoltageSpacing</code> constraint. The example below defines minimum voltage spacings for wire shapes on <code>Metal1</code> and <code>Metal2</code>:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1086166"></a>spacingTables(<br /> ;( constraint               layer1               [layer2]<br /> ;   (( index1Definitions    [index2Definitions]) [defaultValue] )<br /> ;&#160;&#160; ( table) )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1060047"></a>;( --------------------------------------------)<br />  ( minVoltageSpacing         &quot;Metal1&quot;<br />     (( &quot;voltage&quot;     nil     nil ))<br />     (<br />       0.0   0.38<br />       1.8   0.39<br />       3.3   0.4<br />       )<br />  )<br />  ( minVoltageSpacing         &quot;Metal2&quot;<br />     (( &quot;voltage&quot;     nil     nil ))<br />     (<br />       0.0   0.48<br />       1.5   0.49<br />       3.3   0.5<br />       )<br />  ) ;spacingTables<br /></pre>
+<p>
+<a id="pgfId-1060442"></a>In this example, wires on <code>Metal1</code></p>
+<ul><li>
+<a id="pgfId-1060431"></a>With voltages between 0.0V and 1.8V must be spaced at least 0.38 microns apart</li><li>
+<a id="pgfId-1060460"></a>With voltages between 1.8V and 3.3V must be spaced at least 0.39 microns apart</li><li>
+<a id="pgfId-1060468"></a>With voltages higher than 3.3V must be spaced at least 0.4 microns apart</li></ul>
+
+
+<p>
+<a id="pgfId-1086131"></a>For detailed information, see <h-hot><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minVoltageSpacing_One_layer.html" show="replace" xml:link="simple">minVoltageSpacing</a></h-hot> in the <em>Virtuoso Technology Data ASCII Files Reference</em>.</p>
+
+<h3>
+<a id="pgfId-1085105"></a><a id="86037"></a>Specifying <a id="limitLayers"></a>Layers and Purposes for Generic Voltage Labels</h3>
+
+<p>
+<a id="pgfId-1108605"></a>By default, voltage labels are always generated on the same layer as the shape over which they are placed, but they use a different layer purpose. All specified layers and purposes must be defined in the technology file and the LPP must be set as valid in the <h-hot><a actuate="user" class="URL" href="../ascitechfile/chap3.html#techDisplays" show="replace" xml:link="simple">techDisplays</a></h-hot> section. If there is no valid LPP for a net on a particular layer, the label is generated on the valid layer with the lowest mask number.</p>
+<p>
+<a id="pgfId-1108607"></a>You control the LPPs on which labels are drawn using the following options.</p>
+<ul><li>
+<a id="pgfId-1108611"></a>You can limit the <em>layers</em> on which labels are drawn by using the <a href="appC.html#26116">vdrSetValidLayers</a> SKILL API to specify a list of valid layers for VDR label generation. The software generates labels only for nets on one of the listed layers.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1108615"></a>Use <a href="appC.html#74917">vdrGetValidLayers</a> to see the current list of valid layers.</div></li><li>
+<a id="pgfId-1108616"></a>You control the <em>purposes</em> on which a label is drawn by using the <em>High Voltage Purpose</em> and <em>Low Voltage Purpose</em> options on the <a href="appA.html#87341">Voltage Dependent Rules</a> form. The defaults are <code>&quot;vlo&quot;</code> for minimum and <code>&quot;vhi&quot;</code> for maximum voltage labels and are set using the following environment variables:<ul><li>
+<a id="pgfId-1108623"></a><a href="appB.html#16580">vdrHighVoltagePurpose</a></li><li>
+<a id="pgfId-1108627"></a><a href="appB.html#67799">vdrLowVoltagePurpose</a></li></ul></li><li>
+<a id="pgfId-1108628"></a>If your process requires greater control over the specific purpose on which a label is drawn, you can define a <em>Special Voltage LPP File</em>, which lets you override the default layer and purpose settings.<br />
+<a id="pgfId-1108629"></a>The file is a simple text file stored at an accessible location in your file system with the format indicated below. You can specify it using the <a href="appB.html#67542">vdrLayerPurposeFile</a> environment variable.<pre class="webflare-pre-block webflare-courier-new" id="#id1111541">
+<a id="pgfId-1111541"></a>#This is vdrLayerPurpose.map
+
+# layerName   low_volt_purpose/lpp   high_volt_purpose/lpp
+OD              (ODV_low sp_low)      (ODV_high sp_high)
+PO              (POV_low sp_low)      (POV_high sp_high)
+M1              sp_low                sp_high
+M2              sp_low                sp_high
+M3              sp_low                sp_high</pre>
+<a id="pgfId-1108634"></a>Each entry can specify a layer name and the purposes or LPPs on which to draw high and low voltage labels for that layer. You can override the layer by specifying a layer-purpose pair in the purpose or LPP column as shown in the first two rows of the example above. If the same layer is listed twice, the first entry is taken and a warning issued to indicate that subsequent mappings were ignored. If the LPP is not defined in the technology file, no label is created and an appropriate warning is issued. Wildcard (*), tab (<code>\t</code>), and newline (<code>\n</code>) characters are also supported.</li></ul>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1081552"></a>See <a href="vdrflow.html#79173">Generating Voltage Labels from Simulation Data for All Nets</a> for more information on how to use the options.</p>
+
+<h3>
+<a id="pgfId-1105594"></a><a id="64210"></a>Specifying <a id="voltagePurposeFile"></a>Layers and Purposes for Voltage Markers</h3>
+
+<p>
+<a id="pgfId-1105658"></a>In the marker-based VDR flows, the voltage purpose file lists the layer-purpose pairs on which markers for different voltage values are to be created.</p>
+<p>
+<a id="pgfId-1105678"></a>The file is a simple text file stored in an accessible location in your file system with the format indicated below. Tab (<code>\t</code>) and newline (<code>\n</code>) characters are also supported.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1136811"></a>#This is volt_LPP.map<br />
+#LayerPur&#160;&#160;    Metal   Voltage<br />#-----------------------------<br />HVD test0      Metal1  -5<br />Metal1 vlo     Metal1  0.0<br />Metal1 dummy2  Metal1  0.1<br />Metal1 dummy3  Metal1  0.2<br />Metal1 dummy4  Metal1  0.3<br />Metal1 dummy5  Metal1  0.4<br />Metal1 dummy6  Metal1  0.5<br />Metal1 dummy7  Metal1  0.6<br />Metal1 dummy8  Metal1  0.7<br />Metal1 dummy9  Metal1  0.8<br />Metal1 dummyb  Metal1  1.0<br />Metal1 dummya  Metal1  0.9<br />Metal1 drawing Metal1  1.5<br />Metal1 vhi&#160;&#160;   Metal1  2.5</pre>
+
+<p>
+<a id="pgfId-1107821"></a>Each entry specifies the layer and purpose on which to create a marker based on the metal layer and voltage specified for the net in question. For example:</p>
+<table class="webflareTable" id="#id1137013">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1137058">
+<a id="pgfId-1137058"></a>If a net voltage is...</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1137060">
+<a id="pgfId-1137060"></a>The marker is drawn on...</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137062"></a>&gt; &#8211;5.0 &amp;&amp; &lt;= 0.0 </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137064"></a><code>Metal1 vlo</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137066"></a>&gt; 0.0 &amp;&amp; &lt;= 0.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137068"></a><code>Metal1 dummy2</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137148"></a>&gt; 0.1 &amp;&amp; &lt;= 0.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137150"></a><code>Metal1 dummy3</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137144"></a>&gt; 0.9 &amp;&amp; &lt;= 1.5</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137146"></a><code>Metal1 drawing</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137140"></a>&gt; 1.5 &amp;&amp; &lt;= 2.5</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1137142"></a><code>Metal1 vhi</code></p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1105881"></a>See <a href="vdrflow.html#64979">Generating Voltage Markers from Simulation Data for All Nets</a> and <a href="vdrflow.html#27952">Generating Voltage Markers for Manually Entered Voltages</a> for information about how the file is specified and used.</p>
+
+<h3>
+<a id="pgfId-1111805"></a><a id="86531"></a>Specifying <a id="voltageSyncConstraints"></a>Layers and Purposes for Synced Nets</h3>
+
+<p>
+<a id="pgfId-1112857"></a>Some advanced node processes feature the concept of <em>synchronized </em>(or <em>synced</em>)<em> nets</em>, for which voltage values must always transition in phase. The voltage difference that triggers a DRC violation for the synced nets is lower than in mature node processes.</p>
+<p>
+<a id="pgfId-1116272"></a>The ICADVM20.1 release supports the enhanced voltage check by allowing you to tag pairs of nets as <em>synced</em> using a <em><a actuate="user" class="URL" href="../constraints/appA.html#VoltageSyncedNet" show="replace" xml:link="simple">Voltage Synced Nets</a></em> constraint in the schematic, and to specify in the process technology file the layer-purpose pairs on which to draw shapes for the nets in the layout view. For example:</p>
+<ul><li>
+<a id="pgfId-1115916"></a>To specify that the synced net delta voltage calculation should be performed for nets on a single layer (for example, <code>M1</code>), use the <a actuate="user" class="URL" href="../ascitechconstr/constr_routing_re_voltageLayerMarkerMapping.html" show="replace" xml:link="simple">voltageLayerMarkerMapping</a> constraint to specify that shapes are drawn for synced nets on layer <code>M1</code> and purpose <code>vsync</code>:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1116096">
+<a id="pgfId-1116096"></a><code>(voltageLayerMarkerMapping </code>&quot;<code>M1</code>&quot;<code> </code>&#39;<code>layer </code>&quot;<code>M1</code>&quot;<code> </code>&#39;<code>purpose </code>&quot;<code>vsync</code>&quot;<code> )</code></pre>
+<a id="pgfId-1136536"></a>Shapes are drawn on the specified layer and purpose provided at least one of the following constraints is defined in the technology file for the layer in question:<ul><li>
+<a id="pgfId-1136538"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minCornerSpacing_One_layer.html" show="replace" xml:link="simple">minCornerSpacing</a></li><li>
+<a id="pgfId-1136540"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minCornerVoltageSpacing.html" show="replace" xml:link="simple">minCornerVoltageSpacing</a></li><li>
+<a id="pgfId-1136542"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minSideSpacing_One_layer.html" show="replace" xml:link="simple">minSideSpacing</a></li><li>
+<a id="pgfId-1136544"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minSpacing_One_layer.html" show="replace" xml:link="simple">minSpacing</a></li><li>
+<a id="pgfId-1136546"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minVoltageSpacing_One_layer.html" show="replace" xml:link="simple">minVoltageSpacing</a></li></ul></li><li>
+<a id="pgfId-1116482"></a>If the synced nets in the constraint are on two different layers, you need to specify on which layer the marker should be drawn. For example, for synced nets on layers <code>MD</code> and <code>PO</code>, you can use the <a actuate="user" class="URL" href="../ascitechconstr/constr_routing_re_voltageLayerPairMarkerMapping.html" show="replace" xml:link="simple">voltageLayerPairMarkerMapping</a> constraint to specify that markers are drawn on layer <code>MD</code> and purpose <code>vsync</code> as follows:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1116774">
+<a id="pgfId-1116774"></a>(voltageLayerPairMarkerMapping &quot;MD&quot; &quot;PO&quot; &#39;layer &quot;MD&quot; &#39;purpose &quot;vsync&quot; )</pre>
+<a id="pgfId-1136626"></a>Shapes are drawn on the specified layer and purpose provided at least one of the following constraints is defined in the technology file for the layer in question:<ul><li>
+<a id="pgfId-1136639"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_twoLayers_re_minCornerSpacing_Two_layers.html" show="replace" xml:link="simple">minCornerSpacing (Two layers)</a></li><li>
+<a id="pgfId-1136640"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_oneLayer_re_minCornerVoltageSpacing.html" show="replace" xml:link="simple">minCornerVoltageSpacing</a> (Two layers)</li><li>
+<a id="pgfId-1136642"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_twoLayers_re_minSideSpacing_Two_layers.html" show="replace" xml:link="simple">minSideSpacing (Two layers)</a></li><li>
+<a id="pgfId-1136644"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_twoLayers_re_minSpacing_Two_layers.html" show="replace" xml:link="simple">minSpacing (Two layers)</a></li><li>
+<a id="pgfId-1136646"></a><a actuate="user" class="URL" href="../ascitechconstr/constr_spacing_twoLayers_re_minVoltageSpacing_Two_layers.html" show="replace" xml:link="simple">minVoltageSpacing (Two layers)</a></li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1115890"></a>See the <em>Virtuoso Technology Data Constraints Reference</em> for more information on these constraints.</p>
+<p>
+<a id="pgfId-1115921"></a>You can then use the VDR synced nets flow to generate the required marker shapes in the layout view. When DRD detects shapes on the specified LPPs it automatically applies the synced delta voltage calculation for the nets in question. See <a href="vdrflow.html#63196">Defining and Checking Voltage Synced Nets</a> for more information.</p>
+
+<h2>
+<a id="pgfId-1080976"></a><a id="47059"></a>Simulation <a id="simulationDrivenVDR"></a>Driven VDR Flow</h2>
+
+<p>
+<a id="pgfId-1080977"></a>The simulation driven VDR flow automates the creation of voltage labels or markers in the layout by leveraging the voltage values derived from simulations run in Virtuoso ADE. The flow comprises the following steps:</p>
+<ol><li>
+<a id="pgfId-1069980"></a><a href="vdrflow.html#74135">Setting Up Testbenches and Corners in Virtuoso ADE</a></li><li>
+<a id="pgfId-1069998"></a><a href="vdrflow.html#99762">Enabling Voltage Capture in Virtuoso ADE</a></li><li>
+<a id="pgfId-1070008"></a><a href="vdrflow.html#35746">Running Simulations and Capturing Voltage Data</a></li><li>
+<a id="pgfId-1070228"></a><a href="vdrflow.html#71115">Populating Voltages and Generating Labels or Markers</a></li></ol>
+
+
+
+<p>
+<a id="pgfId-1070229"></a>For more information about how you can view voltage information in canvas info balloons, use DRD editing to report when minimum spacing rules are violated during interactive editing, and how you can write your own SKILL procedures to exclude transient spikes during simulation runs, see the following topics:</p>
+<ul><li>
+<a id="pgfId-1139155"></a><a href="vdrflow.html#43676">Showing Voltage Information in Info Balloons</a></li><li>
+<a id="pgfId-1139149"></a><a href="vdrflow.html#50524">Checking for Voltage Dependent Spacing Violations using DRD</a></li><li>
+<a id="pgfId-1139157"></a><a href="vdrflow.html#13967">Customizing the Voltage Calculation</a></li></ul>
+
+
+
+<h3>
+<a id="pgfId-1070231"></a><a id="74135"></a>Setting Up Testbenches and Corners in Virtuoso ADE</h3>
+
+<p>
+<a id="pgfId-1070222"></a>Open your design in Virtuoso ADE and set up tests and corners for simulation. These define a combination of variables or process models to describe a scenario in which you want to measure the performance of your design. See the following topics in the <em><a actuate="user" class="URL" href="../Explorer/ExplorerTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso ADE Explorer User Guide</a></em> and <em><a actuate="user" class="URL" href="../assembler/assemblerTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso ADE Assembler User Guide</a></em> for more information:</p>
+<ul><li>
+<a id="pgfId-1061220"></a><a actuate="user" class="URL" href="../assembler/asmTests.html#firstpage" show="replace" xml:link="simple">Specifying Tests and Analyses</a></li><li>
+<a id="pgfId-1061202"></a><a actuate="user" class="URL" href="../adexl/adexlDesignVars.html#firstpage" show="replace" xml:link="simple">Working with Design Variables and Instance Parameters</a></li><li>
+<a id="pgfId-1061204"></a><a actuate="user" class="URL" href="../Explorer/chap6.html#addCorner" show="replace" xml:link="simple">Adding Corners</a></li></ul>
+
+
+<p>
+<a id="pgfId-1138778"></a>When you have completed the tasks, your design is ready to run simulations in Virtuoso.</p>
+
+<h3>
+<a id="pgfId-1061179"></a><a id="99762"></a>Enabling Voltage Capture in Virtuoso ADE</h3>
+
+<p>
+<a id="pgfId-1060771"></a>When your testbenches and corners are in place, you need to enable voltage capture for the design under test. To do this:</p>
+<ol><li>
+<a id="pgfId-1060791"></a>In the Virtuoso ADE window, choose <em>EAD &#8212; Setup</em> from the menu bar.<br />
+<a id="pgfId-1060815"></a>The <strong>
+EAD Setup</strong>
+ form appears.<br />
+<a id="pgfId-1075033"></a><div class="webflare-div-image">
+<img width="635" height="710" src="images/vdrflow-2.gif" /></div></li><li>
+<a id="pgfId-1075034"></a>Ensure that <em>Enable Electrical Data Capture for EAD Flow </em>is selected at the top of the form.</li><li>
+<a id="pgfId-1060778"></a>Choose the required <em>Design Under Test</em> in the Design Selection group box.</li><li>
+<a id="pgfId-1060897"></a>Check the <em>Min and Max Voltage (Vmin/Vmax)</em> option in the Voltage Dependent Rules group box to capture minimum and maximum voltage values during the simulation run.<br />
+<a id="pgfId-1061082"></a>If needed, use the <em>Scale</em> option to specify a multiplier by which the voltage data is scaled before it is transferred to the layout view. The default is 1.00, which means that voltage data is not scaled.</li><li>
+<a id="pgfId-1060917"></a>Click <em>OK</em> to accept the settings and enable voltage capture.</li></ol>
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1060979"></a>For more information on the other options available in the EAD Setup form, see <h-hot><a actuate="user" class="URL" href="../vead/appA.html#eadSetupForm" show="replace" xml:link="simple">The EAD Setup Form</a></h-hot> and <h-hot><a actuate="user" class="URL" href="../vead/chap2.html#eadSetupADE" show="replace" xml:link="simple">Preparing the EAD Setup for Simulation</a></h-hot> in the <em>Virtuoso Electrically Aware Design Flow Guide</em>.</p>
+
+<h3>
+<a id="pgfId-1083130"></a><a id="35746"></a>Running Simulations and Capturing Voltage Data</h3>
+
+<p>
+<a id="pgfId-1061304"></a>After specifying the test and corner details, enabling voltage capture by EAD, and specifying any custom calculation you need, click <em>Run Simulation</em> on the Run toolbar in Virtuoso ADE to run the simulation and display the results on the Results tab. You can now view the voltage data in the results and create datasets that can be transferred and used in Layout XL. The following sections describe how to view the voltage data from the simulation results and how to create datasets that can be transferred to the layout view.</p>
+<ul><li>
+<a id="pgfId-1061312"></a><a href="vdrflow.html#37312">Viewing Voltage Data</a></li><li>
+<a id="pgfId-1061316"></a><a href="vdrflow.html#95076">Creating Datasets for the Voltage Data</a></li></ul>
+
+
+<h4>
+<a id="pgfId-1061322"></a><a id="37312"></a>Viewing Voltage Data</h4>
+
+<p>
+<a id="pgfId-1061323"></a>The voltage data for the selected nets is saved in the testbench results. To view the data:</p>
+<ol><li>
+<a id="pgfId-1062304"></a>Ensure that the correct results history is loaded.<br />
+<a id="pgfId-1066843"></a><div class="webflare-div-image">
+<img width="635" height="448" src="images/vdrflow-3.gif" /></div></li><li>
+<a id="pgfId-1067303"></a>Select the <em>EAD</em> view on the <em>Results</em> tab of the Design Environment XL window.<br />
+<a id="pgfId-1067304"></a>The EAD view appears.<br />
+<a id="pgfId-1091908"></a>By default, the data for the first test, first design point, and the first corner in the Virtuoso ADE results database is shown in the Results Table:<br />
+<a id="pgfId-1067320"></a><div class="webflare-div-image">
+<img width="635" height="353" src="images/vdrflow-4.gif" /></div>
+<a id="pgfId-1062479"></a>The test name, design point number, and the corner name are displayed in the title of the result tree node:<br />
+<a id="pgfId-1062465"></a><div class="webflare-div-image">
+<img width="635" height="291" src="images/vdrflow-5.gif" /></div>
+<a id="pgfId-1062466"></a>You can filter the results by changing the values in the various drop-down lists shown above the Results Table.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1062499"></a>For more information, see <h-hot><a actuate="user" class="URL" href="../vead/chap2.html#viewCurrentData" show="replace" xml:link="simple">Viewing the Current Data</a></h-hot> in the <em>Virtuoso Electrically Aware Design Flow Guide</em>.</p>
+
+<h4>
+<a id="pgfId-1061392"></a><a id="95076"></a>Creating Datasets for the Voltage Data</h4>
+
+<p>
+<a id="pgfId-1061393"></a>To reference the voltage data in the layout view, you must first save the information into voltage datasets that can be transferred to and referenced by Layout XL.</p>
+<p>
+<a id="pgfId-1061398"></a>To save the voltage data in a dataset:</p>
+<ol><li>
+<a id="pgfId-1062525"></a>Specify a name for the dataset in the <em>DUT Dataset</em> field and click <em>Create</em>.<br />
+<a id="pgfId-1061403"></a><div class="webflare-div-image">
+<img width="635" height="318" src="images/vdrflow-6.gif" /></div>
+<a id="pgfId-1083054"></a>Virtuoso ADE creates a new dataset with the specified name and saves it in the constraint view for the design.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1083055"></a>If both current and voltage capture are enabled in the EAD Setup form, Virtuoso ADE creates two different datasets, one each for current measurements and voltage measurements. It appends &#8220;<code>_I</code>&#8221; to the dataset that contains current data and &#8220;<code>_V</code>&#8221; to the dataset that contains voltage data.</div>
+<a id="pgfId-1083038"></a>For more information on creating datasets, see <a actuate="user" class="URL" href="../vead/chap2.html#createDatasetsCurrentData" show="replace" xml:link="simple">Creating Datasets for the Current Data</a> in the <em>Virtuoso Electrically Aware Design Flow Guide</em>.</li><li>
+<a id="pgfId-1067725"></a>You can view the datasets for a design in the Dataset Table in the EAD results view, as shown below.<br />
+<a id="pgfId-1067792"></a><div class="webflare-div-image">
+<img width="635" height="391" src="images/vdrflow-7.gif" /></div></li><li>
+<a id="pgfId-1061454"></a>Expand the dataset to view details of the test name, corner name, voltages, temperature values, and more.<br />
+<a id="pgfId-1061709"></a>For more information, including alternative methods of viewing the contents of datasets, see <a actuate="user" class="URL" href="../vead/chap2.html#viewingDatasets" show="replace" xml:link="simple">Viewing Datasets</a> in the <em>Virtuoso Electrically Aware Design Flow Guide</em>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1083090"></a><a id="71115"></a>Populating Voltages and Generating Labels or Markers</h3>
+
+<p>
+<a id="pgfId-1067921"></a>To reference the datasets created during the simulation runs and generate corresponding voltage labels or markers for all the nets in the layout design, use the <em>Tools &#8211; Voltage Dependent Rules &#8211; Create Labels/Markers From Simulation Voltages </em>command.</p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1070577"></a></p>
+<div class="webflare-div-image">
+<img width="635" height="727" src="images/vdrflow-8.gif" /></div>
+
+<ul><li>
+<a id="pgfId-1067922"></a>Use the options in the <em>Simulation Datasets</em> and <em>Mode</em> group boxes to propagate the minimum and maximum voltages to the OpenAccess database for the layout design. This makes the voltage data available to layout editor tools such as design rule driven (DRD) editing, the interactive wire editor, and the Virtuoso space-based router, which help ensure that the minimum voltage spacing constraints defined in the technology file are honored. See <a href="vdrflow.html#35977">Storing Voltages in the OpenAccess Database</a> for more information.</li><li>
+<a id="pgfId-1062262"></a>Use the options in the <em>Voltage Labels</em> group box to generate voltage labels for all nets in the layout design. the labels can then be used by DRC sign-off tools such as Pegasus or PVS to check that the minimum voltage spacing rules are met. See <a href="vdrflow.html#79173">Generating Voltage Labels from Simulation Data for All Nets</a> for more information.<br />
+<a id="pgfId-1102896"></a>Alternatively, if required by your process, you can use the options in the <em>Voltage Markers</em> group box to generate voltage markers for all nets in the layout design. See <a href="vdrflow.html#64979">Generating Voltage Markers from Simulation Data for All Nets</a> for more information.</li><li>
+<a id="pgfId-1100686"></a>Use the common options at the bottom of the form to specify for which nets labels or markers are to be generated and how far down the hierarchy to search for those nets.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1058802"></a><a id="35977"></a>Storing<a id="storeVoltages"></a> Voltages in the OpenAccess Database</h4>
+
+<p>
+<a id="pgfId-1062570"></a>To propagate the minimum and maximum voltage values from the datasets to the OpenAccess database for the layout design:</p>
+<ol><li>
+<a id="pgfId-1062769"></a>Open the layout design in Layout XL.</li><li>
+<a id="pgfId-1062770"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Create Labels/Markers From Simulation Voltages</em> from the layout window menu bar.<br />
+<a id="pgfId-1062774"></a>The <a href="appA.html#87341">Voltage Dependent Rules</a> form appears.<br />
+<a id="pgfId-1089479"></a><div class="webflare-div-image">
+<img width="635" height="374" src="images/vdrflow-9.gif" /></div></li><li>
+<a id="pgfId-1089480"></a>(Optional) Click <em>Update</em> to transfer all the latest voltage dataset information from Virtuoso ADE. This is important if simulation data has changed since it was last referenced by Layout XL.</li><li>
+<a id="pgfId-1063195"></a>Choose the datasets containing the data you want to use from the list.</li><li>
+<a id="pgfId-1063196"></a>Choose the <em>Mode</em> you require:<ul><li>
+<a id="pgfId-1062886"></a><em>Replace</em> the minimum and maximum voltage values for the nets in the selected datasets. This is the default.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1069493"></a>Voltages are replaced only for the nets that are present in the selected datasets. All other nets are left unchanged.</div></li><li>
+<a id="pgfId-1062910"></a><em>Update</em> the minimum and maximum voltages for the nets in the selected datasets, but only if the minimum voltage value specified for the net is lower than the value currently in the design and the maximum value specified for the net is higher than the voltage currently in the design.</li></ul><br />
+<a id="pgfId-1073247"></a>Use <em>Override Manually Entered Voltages</em> to override any voltage values that were entered manually on nets using the Property Editor assistant in VLS or VSE (and then propagated to the layout by using <em>Generate All From Source</em>).<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1077394"></a>By default, the option is switched off and user-specified voltages are not overridden. The only exception is if you set both minimum and maximum voltages to 0 manually in the Property Editor assistant and then generate labels directly from the Navigator using these values. Those labels <em>will</em> be overwritten if you subsequently run the simulation-driven flow (provided the dataset you use contains values for the nets in question and even if <em>Override Manually Entered Voltages</em> is switched off).</div></li><li>
+<a id="pgfId-1063025"></a>Click <em>OK</em> to populate the minimum and maximum voltages on nets in the OpenAccess database.<br />
+<a id="pgfId-1063088"></a>You can view the voltages in the Property Editor assistant in Layout XL.<br />
+<a id="pgfId-1066595"></a><div class="webflare-div-image">
+<img width="635" height="249" src="images/vdrflow-10.gif" /></div>
+<a id="pgfId-1070991"></a>Observe that no labels or markers have been generated on the net in the layout canvas yet.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1063118"></a><a id="79173"></a>Generating <a id="genLabelsAllNets"></a>Voltage Labels from Simulation Data for All Nets</h4>
+
+<p>
+<a id="pgfId-1063119"></a>To generate voltage labels from simulation data for all the nets in your design:</p>
+<ol><li>
+<a id="pgfId-1063956"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Create Labels/Markers From Simulation Voltages </em>to display the <a href="appA.html#87341">Voltage Dependent Rules</a> form appears.</li><li>
+<a id="pgfId-1063986"></a>Select the datasets and mode as described in <a href="vdrflow.html#35977">Storing Voltages in the OpenAccess Database</a>.<br />
+<a id="pgfId-1063974"></a><div class="webflare-div-image">
+<img width="635" height="767" src="images/vdrflow-11.gif" /></div></li><li>
+<a id="pgfId-1068194"></a>Check the <em>Generate Voltage Labels</em> box to enable the controls in the <em>Voltage Labels</em> group box.</li><li>
+<a id="pgfId-1063943"></a>Set the layer purposes on which the voltage labels are to be drawn.<br />
+<a id="pgfId-1108705"></a>Specify a <em>Special Voltage LPP File</em> if you require greater control over the purposes on which labels are drawn.</li><li>
+<a id="pgfId-1064043"></a>Specify the nets for which labels are to be generated. Choose between:<ul><li>
+<a id="pgfId-1064133"></a><em>External and Internal Nets</em> to generate labels for all nets (the default).</li><li>
+<a id="pgfId-1064134"></a><em>External Nets Only</em> to generate labels only for nets that are connected to the terminals of the cellview to which they belong.</li><li>
+<a id="pgfId-1089059"></a><em>Internal Nets Only</em> to generate labels only for nets that are internal to the cellview in which they belong.</li></ul></li><li>
+<a id="pgfId-1089060"></a>Specify how many hierarchy levels to search for nets on which to generate labels. <br />
+<a id="pgfId-1089061"></a>The default is 0, which means that labels are generated only for top-level nets only; 1 means top-level nets and nets located one level below in the hierarchy; and so on.</li><li>
+<a id="pgfId-1088206"></a>Specify the size of the labels to be generated.<br />
+<a id="pgfId-1106094"></a>Type 0.0 to automatically size labels to match the height of the shape to which they are attached.</li><li>
+<a id="pgfId-1064153"></a>Click <em>OK</em> to generate the specified labels.<br />
+<a id="pgfId-1064167"></a>The voltage labels for the specified nets are added in the layout canvas, with the maximum value above and the minimum value underneath it; for example:<br />
+<a id="pgfId-1064470"></a><div class="webflare-div-image">
+<img width="635" height="341" src="images/vdrflow-12.gif" /></div>
+<a id="pgfId-1064482"></a>Label generation depends on the <em>Mode</em> setting.<ul><li>
+<a id="pgfId-1068211"></a>In <em>Replace</em> mode, all voltage labels are replaced for the nets in the datasets.</li><li>
+<a id="pgfId-1068227"></a>In <em>Update</em> mode:<ul><li>
+<a id="pgfId-1064116"></a>Minimum voltages are updated only if the existing label shows a higher voltage.</li><li>
+<a id="pgfId-1064117"></a>Maximum voltages are updated only if the existing label shows a lower voltage.</li></ul></li></ul><br />
+<a id="pgfId-1143687"></a>By default, labels are generated for a net only if geometry exists on that net. Set the <a href="appB.html#59276">vdrZeroShapeNets</a> environment variable to also generate labels for nets on which no shapes exist. The software does not consider geometry inside parameterized cells.<br />
+<a id="pgfId-1143715"></a>Labels are also generated for individual bits of bus nets.<br />
+<a id="pgfId-1099248"></a>Mosaics are not supported.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1097475"></a><a id="42603"></a>Generating <a id="csvFile"></a>Voltage Labels from a Voltage Information File</h4>
+
+<p>
+<a id="pgfId-1097547"></a>As an alternative to using a simulation dataset, you can specify a text file with comma-separated values as an input for label generation. If the same net is listed multiple times in the file, the generated labels reflect the highest maximum and lowest minimum values specified for that net.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1097787"></a>This feature is available only through the <a href="appC.html#30234">vdrCreateVoltageLabel</a> and <a href="appC.html#70337">vdrCreateVoltageLabelEx</a> SKILL functions. There is no GUI equivalent.</div>
+<p>
+<a id="pgfId-1097969"></a>The following command runs label generation in <em>Replace</em> mode for only the top-level nets in the current cellview. Voltage values are taken from a CSV file called <code>voltages.csv</code>, and labels are drawn on purpose <code>drawing</code>. The code then automatically executes a user-defined callback named <code>_myPostVdrCB</code> to perform some post-processing tasks.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1097935"></a>vdrCreateVoltageLabel(geGetEditCellView() nil &quot;drawing&quot; &quot;drawing&quot; 0.0 t nil nil t nil 0 nil &quot;_myPostVdrCB&quot; &quot;./voltages.csv&quot;)</pre>
+<p>
+<a id="pgfId-1098033"></a>The format of the voltage information file is illustrated below.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1098147"></a>#Net, minV, maxV<br />#All comments start with &#39;#&#39;<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1098315"></a>#Top-level Nets<br />AVDD,           1.0,    1.5<br />net15,          -10,    10<br />net57,          1.4,    1.8<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1098155"></a>#Wildcard * is supported,<br />V*,             0.4,    0.5<br />|I1/*,          -1.0,   1.0<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1098159"></a>#Hierarchical Nets<br />#Full hierarchical path must be specified with &#39;/&#39; as delimiter.<br />A0/A1/net31,    0.7,    0.5<br />|I2/VDD,        -2.0,   2.0<br />|I0/OUT,        -3.0,   3.0<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1098165"></a>#Bus Nets<br />|I0/VSS&lt;1:5&gt;,   -4.0,   4.0<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1098168"></a>#Bit Nets<br />|I0/VSS1&lt;10&gt;,&#160;&#160; -4.0,&#160;&#160; 4.0</pre>
+<p>
+<a id="pgfId-1158200"></a>If the CSV file contains a DUT instance name before net names, the DUT instance name must be defined in the CSV header so that VDR strips off the DUT instance name before the net names to read voltage information.</p>
+<p>
+<a id="pgfId-1158201"></a>For example:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157892"></a># DUT_INST:/I0</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157893"></a>#RESULT_TYPES(SCALE_FACTOR): Vmin(1),Vmax(1)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157894"></a>#Name,Vmin,Vmax</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157895"></a>/I0/net15,-50.05m,1.58</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157896"></a>/I0/net14,-65.88m,2.562</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157897"></a>/I0/VSS,0,0</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157898"></a>/I0/VDD3,3.5,3.5</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157899"></a>/I0/VDD2,2.5,2.5</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157900"></a>/I0/VDD1,1.5,1.5</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157901"></a>/I0/OUT,-20.09m,3.543</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157902"></a>/I0/IN,141.5n,1.5</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157903"></a>/I0/|I2/net17,-39.46m,3.61</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157904"></a>/I0/|I2/net13,160.2m,3.627</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157905"></a>/I0/|I2/VSS,0,0</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1157882"></a>/I0/|I2/VDD,3.5,3.5</pre>
+
+<h4>
+<a id="pgfId-1101281"></a><a id="64979"></a>Generating <a id="markerVDR"></a>Voltage Markers from Simulation Data for All Nets</h4>
+
+<p>
+<a id="pgfId-1101504"></a>To generate voltage markers from simulation data for all the nets in your design:</p>
+<ol><li>
+<a id="pgfId-1101505"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Create Labels/Markers From Simulation Voltages </em>from the layout window menu bar (or type <code>vdrGenerateLabelsGUI()</code> in the CIW).<br />
+<a id="pgfId-1101509"></a>The <a href="appA.html#87341">Voltage Dependent Rules</a> form appears.</li><li>
+<a id="pgfId-1101512"></a>Select the datasets and mode as described in <a href="vdrflow.html#35977">Storing Voltages in the OpenAccess Database</a>.<br />
+<a id="pgfId-1101533"></a><div class="webflare-div-image">
+<img width="635" height="318" src="images/vdrflow-13.gif" /></div></li><li>
+<a id="pgfId-1101534"></a>Check the <em>Generate Voltage Markers</em> box to enable the controls in the <em>Voltage Markers</em> group box.</li><li>
+<a id="pgfId-1101535"></a>Specify the location of the <em>Voltage Purpose File</em>, which lists the layer-purpose pairs on which markers for different voltage values are to be created. See <a href="vdrflow.html#64210">Specifying Layers and Purposes for Voltage Markers</a> for more information.</li><li>
+<a id="pgfId-1102241"></a>Choose whether markers are to be created for maximum, minimum, or all voltage values.</li><li>
+<a id="pgfId-1102396"></a>Choose the rounding rule to follow for voltage values.<ul><li>
+<a id="pgfId-1102400"></a><em>roundOff</em> rounds the voltage value to the nearest 0.01 (the default)</li><li>
+<a id="pgfId-1102401"></a><em>ceiling</em> rounds up the voltage value to the nearest 0.01</li><li>
+<a id="pgfId-1102402"></a><em>floor</em> rounds down the voltage value to the nearest 0.01</li></ul></li><li>
+<a id="pgfId-1101536"></a>Specify the nets for which markers are to be generated. Choose between:<ul><li>
+<a id="pgfId-1101537"></a><em>External and Internal Nets</em> to generate labels for all nets (the default)</li><li>
+<a id="pgfId-1101538"></a><em>External Nets Only</em> to generate labels only for nets that are connected to the terminals of the cellview to which they belong</li><li>
+<a id="pgfId-1101539"></a><em>Internal Nets Only</em> to generate labels only for nets that are completely internal to the cellview in which they belong</li></ul></li><li>
+<a id="pgfId-1101540"></a>Specify how many hierarchy levels to search for nets on which to generate markers.</li><li>
+<a id="pgfId-1101543"></a>Click <em>OK</em> to generate the specified markers.<br />
+<a id="pgfId-1101544"></a>The voltage markers for the specified nets are added in the layout canvas. See <a href="vdrflow.html#43676">Showing Voltage Information in Info Balloons</a> to learn how to view information about each marker.<br />
+<a id="pgfId-1102634"></a><div class="webflare-div-image">
+<img width="635" height="477" src="images/vdrflow-14.gif" /></div>
+<a id="pgfId-1102595"></a>Marker generation depends on the <em>Mode</em> setting.<ul><li>
+<a id="pgfId-1101553"></a>In <em>Replace</em> mode, all voltage markers are replaced for the nets in the datasets.</li><li>
+<a id="pgfId-1101556"></a>In <em>Update</em> mode, minimum voltages are updated only if the existing marker shows a higher voltage; maximum voltages are updated only if the existing marker shows a lower voltage.</li></ul></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1082297"></a><a id="43676"></a>Showing <a id="vdrDynInfoBalloons"></a>Voltage Information in Info Balloons</h3>
+
+<p>
+<a id="pgfId-1082288"></a>You can use the layout editor&#39;s <em>Show Info Balloon</em> feature to see voltage information when you move the mouse pointer over nets in the layout canvas. To do this:</p>
+<ol><li>
+<a id="pgfId-1078439"></a>From the layout window menu bar, choose <em>Options &#8211; Dynamic Display</em> and enable <em>Show Info Balloon</em> at the top of the form.</li><li>
+<a id="pgfId-1078443"></a>Make sure the <em>MinMaxVoltages</em> option is selected (this is the default) in the <em>Contents</em> pane and click <em>OK</em>.<br />
+<a id="pgfId-1078536"></a><div class="webflare-div-image">
+<img width="635" height="429" src="images/vdrflow-15.gif" /></div></li><li>
+<a id="pgfId-1078445"></a>Move the mouse pointer over a net in your design to see an info balloon containing the voltage information for the highlighted net.<br />
+<a id="pgfId-1078581"></a><div class="webflare-div-image">
+<img width="635" height="346" src="images/vdrflow-16.gif" /></div></li><li>
+<a id="pgfId-1078451"></a>Move the pointer over a different net.<br />
+<a id="pgfId-1082314"></a>The original info balloon disappears and a new one opens containing information on the new net.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1082321"></a><a id="50524"></a>Checking for Voltage Dependent Spacing Violations using DRD</h3>
+
+<p>
+<a id="pgfId-1064524"></a>You can use Layout Editor features such as DRD editing to check for and report any minimum voltage spacing violations as you edit your design. To do this:</p>
+<ol><li>
+<a id="pgfId-1064911"></a>Choose <em>Options &#8211; DRD Edit</em> from the layout window menu bar.<br />
+<a id="pgfId-1064954"></a>The DRD Options form appears.</li><li>
+<a id="pgfId-1064922"></a>Set <em>Notify</em> to display interactive notifications of violations as they occur.<br />
+<a id="pgfId-1064993"></a><div class="webflare-div-image">
+<img width="635" height="371" src="images/vdrflow-17.gif" /></div>
+<a id="pgfId-1065809"></a>If you violate the minimum voltage spacing rules during interactive editing, the system provides immediate visual feedback on the layout canvas.</li><li>
+<a id="pgfId-1064969"></a>Set <em>Post-Edit</em> to see violation markers on the canvas and Annotation Browser assistant after you have finished editing.<br />
+<a id="pgfId-1065043"></a><div class="webflare-div-image">
+<img width="635" height="553" src="images/vdrflow-18.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1064938"></a>For detailed information on design rule driven layout editing, see the <em><a actuate="user" class="URL" href="../drdedit/drdeditTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Rule Driven Editing User Guide</a></em>.</p>
+
+<h3>
+<a id="pgfId-1084232"></a><a id="13967"></a>Customizing<a id="customizingVoltageCalc"></a> the Voltage Calculation</h3>
+
+<p>
+<a id="pgfId-1084233"></a>Voltage values captured during a transient simulation can sometimes contain short pulses (spikes) that distort the final result. You can exclude these spikes from the final voltage calculation by writing your own custom SKILL procedures to perform the required filtering operations on the voltage waveforms before the minimum and maximum voltage values are extracted. To do this:</p>
+<ol><li>
+<a id="pgfId-1084234"></a>Write two custom SKILL procedures, one for the calculation of Vmax and one for the calculation of Vmin, which define the filtering you need.<br />
+<a id="pgfId-1084235"></a>The basic structure of the procedures is as indicated below:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1084236">
+<a id="pgfId-1084236"></a>procedure( My_Vmax(w) 
+    <code><em>&lt;perform filtering operations&gt;
+        &lt;return Vmax&gt;
+</em></code>); end procedure
+</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1084237">
+<a id="pgfId-1084237"></a>procedure( My_Vmin(w)
+    <code><em>&lt;perform filtering operations&gt;
+        &lt;return Vmin&gt;
+</em></code>); end procedure</pre></span></li><li>
+<a id="pgfId-1084238"></a>Assign the custom SKILL procedures to the environment variables indicated below by typing the following in the CIW:<br /><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1084239">
+<a id="pgfId-1084239"></a>envSetVal(&quot;elec.gui&quot; &quot;customVmaxCalc&quot; &#39;string &quot;My_VMax&quot;)</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1084240">
+<a id="pgfId-1084240"></a>envSetVal(&quot;elec.gui&quot; &quot;customVminCalc&quot; &#39;string &quot;My_VMin&quot;)</pre></span>
+<a id="pgfId-1084243"></a>For details of these variables, see <a href="../vead/appB.html#customVmaxCalc">customVmaxCalc</a> and <a href="../vead/appB.html#customVminCalc">customVminCalc</a> in the <em>Virtuoso Electrically Aware Design Flow Guide</em>.</li><li>
+<a id="pgfId-1084244"></a>Switch on the custom voltage calculation feature by typing the following in the CIW:<br /><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1084245">
+<a id="pgfId-1084245"></a>envSetVal(&quot;elec.gui&quot; &quot;enableCustomVminVmaxCalc&quot; &#39;boolean t)</pre></span>
+<a id="pgfId-1084247"></a>For details of this variable, see <a href="../vead/appB.html#enableCustomVminVmaxCalc">enableCustomVminVmaxCalc</a> in the <em>Virtuoso Electrically Aware Design Flow Guide</em>.</li><li>
+<a id="pgfId-1084248"></a>Run a transient simulation with voltage capture enabled in the EAD Setup form.<br />
+<a id="pgfId-1084182"></a>Virtuoso replaces the standard voltage calculation with the procedures defined in the custom SKILL procedures.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1058631"></a><a id="25120"></a>Schematic <a id="schematicDrivenVDR"></a>Driven VDR Flow</h2>
+
+<p>
+<a id="pgfId-1066394"></a>You can also populate the OpenAccess database for your layout design with voltage data by manually entering the minimum and maximum voltages as properties on the nets in the schematic.</p>
+<p>
+<a id="pgfId-1071207"></a>When you generate or update your layout view from the schematic, the voltage values are propagated to the layout design and made available to DRD editing, the interactive wire editor, and the Virtuoso space-based router, which you can use to ensure that the minimum voltage spacing constraints defined in the technology file are honored.</p>
+
+<h3>
+<a id="pgfId-1066396"></a><a id="15316"></a>Propagating Voltage Values from Schematic to Layout</h3>
+
+<p>
+<a id="pgfId-1079905"></a>To define voltage values in the schematic and propagate them to the layout view:</p>
+<ol><li>
+<a id="pgfId-1068408"></a>Launch Layout XL and open the schematic view in the Virtuoso Schematic Editor.<br />
+<a id="pgfId-1068418"></a><div class="webflare-div-image">
+<img width="635" height="355" src="images/vdrflow-19.gif" /></div></li><li>
+<a id="pgfId-1071227"></a>Select the net you require in the Navigator assistant.</li><li>
+<a id="pgfId-1090846"></a>Type the <em>Min Voltage</em> and <em>Max Voltage</em> values into the Property Editor assistant.</li><li>
+<a id="pgfId-1090847"></a>Choose <em>File &#8211; Save</em> to save the schematic the do one of the following,<ul><li>
+<a id="pgfId-1080579"></a>To create a new layout, choose <em>Connectivity &#8211; Generate &#8211; All From Source</em> from the layout window menu bar.</li><li>
+<a id="pgfId-1080580"></a>To update an existing layout, see <a href="vdrflow.html#96383">Updating Voltage Values in the Layout to Match the Schematic</a>.</li></ul><br />
+<a id="pgfId-1080587"></a>The layout view is created or updated and the new minimum and maximum voltage values are transferred from the schematic nets to the layout nets.<br />
+<a id="pgfId-1066303"></a><div class="webflare-div-image">
+<img width="635" height="308" src="images/vdrflow-20.gif" /></div>
+<a id="pgfId-1066304"></a>Layout editor tools such as DRD, the interactive wire editor, and VSR consider the voltages when checking that minimum voltage spacing constraints defined in the technology file are not being violated. See <a href="vdrflow.html#87490">Specifying a Minimum Voltage Spacing Constraint</a> for more information.<br />
+<a id="pgfId-1074339"></a>For information on how to generate labels or markers for these values, see <ul><li>
+<a id="pgfId-1103689"></a><a href="vdrflow.html#72736">Generating Voltage Labels for Manually Entered Voltages</a></li><li>
+<a id="pgfId-1103694"></a><a href="vdrflow.html#27952">Generating Voltage Markers for Manually Entered Voltages</a></li></ul></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1079765"></a><a id="34264"></a>Checking Voltage Values between Schematic and Layout</h3>
+
+<p>
+<a id="pgfId-1079933"></a>You can use the Layout XL <em>Check Against Source</em> command to ensure that the voltage values specified in the schematic match those in the corresponding layout:</p>
+<ol><li>
+<a id="pgfId-1080085"></a>In the layout window menu bar, select <em>Connectivity &#8211; Check &#8211; Against Source</em>.</li><li>
+<a id="pgfId-1080103"></a>Make sure the <em>Connectivity</em> option is selected in the Check Against Source form and then click <em>OK</em>.<br />
+<a id="pgfId-1080112"></a><div class="webflare-div-image">
+<img width="635" height="177" src="images/vdrflow-21.gif" /></div>
+<a id="pgfId-1080002"></a>Layout XL checks the schematic against the layout and reports any mismatches found:<br />
+<a id="pgfId-1080197"></a><div class="webflare-div-image">
+<img width="635" height="166" src="images/vdrflow-22.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1080361"></a><a id="96383"></a>Updating Voltage Values in the Layout to Match the Schematic</h3>
+
+<p>
+<a id="pgfId-1080391"></a>To update the values in the layout to match those in the schematic:</p>
+<ol><li>
+<a id="pgfId-1080409"></a>Choose <em>Connectivity &#8211; Update &#8211; Components And Nets</em> from the layout window menu bar.</li><li>
+<a id="pgfId-1080422"></a>Ensure the <em>Update Net MinV/MaxV</em> option is selected, and click <em>OK</em>.<br />
+<a id="pgfId-1080367"></a><div class="webflare-div-image">
+<img width="635" height="185" src="images/vdrflow-23.gif" /></div>
+<a id="pgfId-1080368"></a>The layout view is updated with the minimum and maximum voltage values from the schematic nets and any existing voltage labels for that net in the layout canvas are updated automatically.</li></ol>
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1085630"></a>The <em>Update Net MinV/MaxV </em>option is switched on by default. To switch it off by default, set the <a href="../vxlhelp/xlEnvars_re_updateNetMinMaxVoltage.html">updateNetMinMaxVoltage</a> environment variable to <code>nil</code> in your <code>.cdsenv</code> file.</div>
+
+<h3>
+<a id="pgfId-1085753"></a>Backannotating<a id="backannotateVoltageValues"></a> Voltage Values from Layout to Schematic</h3>
+
+<p>
+<a id="pgfId-1085754"></a>When working on the physical implementation of your design in Layout XL, it might be necessary to update the voltage values for certain nets to meet specific design requirements. To update the voltage values in the schematic to match those in the layout:</p>
+<ul><li>
+<a id="pgfId-1085755"></a>Choose <em>Connectivity &#8211; Back Annotate &#8211; Net MinV/MaxV</em> from the layout window menu bar.<br />
+<a id="pgfId-1085756"></a>Layout XL backannotates the minimum and maximum voltage values for all the top-level nets in the layout to the corresponding nets in the schematic.</li></ul>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1085757"></a>When backannotating voltage values for buses, provided you have set the same minV/maxV value pair for all the bits of a given bus in the layout, backannotation will be performed to the corresponding schematic bus.</div>
+<p>
+<a id="pgfId-1085700"></a>If you have set different minV/maxV value pairs on the different bits of a layout bus and the corresponding schematic bus is not expanded, then Layout XL takes the highest maximum voltage value and the lowest minimum voltage value across all the bits of the layout bus and backannotates that minV/maxV value pair to the corresponding unexpanded bus in the schematic.</p>
+
+<h3>
+<a id="pgfId-1110080"></a><a id="86717"></a>Sanity Checking <a id="sanityCheckValues"></a>Voltage Values in Constrained Labels</h3>
+
+<p>
+<a id="pgfId-1110081"></a>You can use the VDR Sanity Checker to check constrained VDR voltage labels in the layout view against the values stored in the schematic or layout net properties and report any discrepancies between them. Missing labels, labels with value differences greater than a specified tolerance, and multiple labels with different values on a single net are reported either in a user-specified log file or printed in the CIW and listed in the Annotation Browser.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1133755"></a>In ICADVM20.1 Layout EXL, you can additionally check that vsync shapes in the layout canvas all have a corresponding <em>Voltage Synced Nets</em> constraint in the layout view. See <a href="vdrflow.html#27582">Checking Synced Nets in the Layout View (ICADVM20.1 EXL Only)</a> for more information.</div>
+<p>
+<a id="pgfId-1133842"></a>The constrained VDR label sanity check flow is illustrated below.</p>
+
+<p>
+<a id="pgfId-1133836"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="536" src="images/vdrflow-24.gif" /></div>
+<h4>
+<a id="pgfId-1132165"></a>Establishing the Net Association</h4>
+
+<p>
+<a id="pgfId-1126082"></a>The label-net association for constrained labels is established by searching the design for a net shape that overlaps the label shape in question.</p>
+<ul><li>
+<a id="pgfId-1131816"></a>If a net shape is found at the top level, Virtuoso reads the net name from that shape.</li><li>
+<a id="pgfId-1131822"></a>If no net shape is found at the top level, Virtuoso traverses the hierarchy to establish if there is an underlying terminal or pin shape inside the instance and, if so, makes the association to the top-level net connected to that terminal or pin shape.</li><li>
+<a id="pgfId-1131825"></a>If a non-terminal/non-pin net shape is found one level down the hierarchy, or any net shape is found at two or more levels down the hierarchy, the label is ignored on the assumption that it is intended for some hierarchical net.</li><li>
+<a id="pgfId-1131828"></a>If no overlapping net shape is found in the design, including cases where the label is created on a via layer and does not overlap any net, the label is tagged as floating.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1132110"></a>Types of Violations</h4>
+<table class="webflareTable" id="#id1132798">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1132800">
+<a id="pgfId-1132800"></a>Type</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1132802">
+<a id="pgfId-1132802"></a>Description</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1132804">
+<a id="pgfId-1132804"></a>Notes</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132806"></a><em>No Vmax label</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132808"></a>There is a maximum voltage defined for a net in the design but no corresponding label drawn on the canvas.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="2">
+<p>
+<a id="pgfId-1132810"></a>Although the sanity checker expects only one label each for Vmax and Vmin for each net, multiple Vmax or Vmin labels on a net are treated as a single label provided the values are the same. Markers are drawn on one of the net shapes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132812"></a><em>No Vmin label</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132814"></a>There is a minimum voltage defined for a net in the design but no corresponding label drawn on the canvas.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132818"></a><em>Vmax label mismatch</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132820"></a>The maximum voltage value in the label is different from the value specified in the design.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="2">
+<p>
+<a id="pgfId-1132828"></a>For both mismatch violations, the values are first rounded to two decimal places and the specified tolerance applied. Markers are drawn on the label in question.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132824"></a><em>Vmin label mismatch</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132826"></a>The minimum voltage value in the label is different from the value specified in the design.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132830"></a><em>Floating label</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132832"></a>If a label does not overlap any net or instance or the instance terminal is missing and no net association is possible, the label is a <em>floating label</em>.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132834"></a>Markers for these violations are drawn on the label in question.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1121771"></a><a id="10565"></a>Performing a Label Sanity Check</h4>
+
+<p>
+<a id="pgfId-1110086"></a>To perform a sanity check of constrained VDR labels:</p>
+<ol><li>
+<a id="pgfId-1133996"></a>Specify the <a href="appB.html#84582">vdrConstraintGroupName</a> environment variable before you launch Virtuoso. <br />
+<a id="pgfId-1134188"></a>The specified constraint group must contain a valid <code>voltageLabelMapping</code> constraint to specify the layer-purpose pair on which labels are drawn.</li><li>
+<a id="pgfId-1110087"></a>Choose <em>Tools &#8211; Voltage Dependent Rule &#8211; Sanity Checker</em> from the layout window menu bar.<br />
+<a id="pgfId-1110088"></a>The <a href="appA.html#38734">VDR Sanity Checker</a> form appears.<br />
+<a id="pgfId-1110092"></a><div class="webflare-div-image">
+<img width="635" height="234" src="images/vdrflow-25.gif" /></div></li><li>
+<a id="pgfId-1151222"></a>From the <em>Check</em> drop-down list, select <em>Labels</em>.</li><li>
+<a id="pgfId-1151276"></a>Select the <em>Complete Hierarchy</em> check box to perform checks on the complete hierarchy. If you do not select this check box, checks are performed only on the current hierarchy.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1155270"></a>Sanity checker checks a cell only once even if it is instantiated more than once in the same or different hierarchy to help save run time.</div></li><li>
+<a id="pgfId-1110094"></a>From the <em>Check Against</em> drop-down list, specify whether to check against the voltage values stored in the schematic, layout, CSV file, or dataset.<ul><li>
+<a id="pgfId-1145729"></a>If you want to check the voltage values against the values in a CSV file, specify the path to the CSV file in the <em>CSV File Name</em> field or use the <em>Browse</em> command to select the CSV file.</li><li>
+<a id="pgfId-1145906"></a>If you want to check the voltage values against the values in a dataset, select the dataset from the <em>Datasets</em> list.</li></ul></li><li>
+<a id="pgfId-1110095"></a>Specify a tolerance within which any differences are ignored.<br />
+<a id="pgfId-1110096"></a>You can also specify whether the tolerance value is absolute or relative to the voltage.</li><li>
+<a id="pgfId-1110097"></a>Specify whether the results are to be captured in a text file and click <em>OK</em> to perform the sanity check.<br />
+<a id="pgfId-1110098"></a>When you capture the results in a log file, only a summary message is printed in the CIW. If you do not specify a log file, discrepancies are reported in a table printed in the CIW. In both cases, the format is similar to that shown below. Values are rounded to two decimal places before comparison.<pre class="webflare-pre-block webflare-courier-new" id="#id1110475">
+<a id="pgfId-1110475"></a>=======================================================================
+NetName       Net Voltage Values      Label Voltage Values
+              (Vmin)  (Vmax)          (Vmin)  (Vmax)
+=======================================================================
+net15         (-0.05) (1.57)          (0.05) (1.75)
+net14          (1.25)  (2.56)          (1.15) (2.35)
+=======================================================================
+</pre>
+<a id="pgfId-1110612"></a>Corresponding markers are drawn on the canvas and entries are displayed on the <em>Misc</em> tab in the Annotation Browser assistant. When you select a violation in the assistant, Virtuoso zooms to the marker in question on the canvas.<br />
+<a id="pgfId-1145400"></a><div class="webflare-div-image">
+<img width="635" height="331" src="images/vdrflow-26.gif" /></div>
+<a id="pgfId-1145403"></a>In ICADVM20.1 EXL, entries for these markers are displayed on the <em>VDR</em> tab instead of <em>Misc</em> tab in the Annotation Browser.<br />
+<a id="pgfId-1145410"></a><div class="webflare-div-image">
+<img width="635" height="331" src="images/vdrflow-27.gif" /></div><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1134344"></a>
+You can also run the sanity check procedurally using the <a href="appC.html#55754">vdrRunSanityChecker</a> SKILL API.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1126806"></a>When analyzing sanity checker output, keep the following in mind:</p>
+<ul><li>
+<a id="pgfId-1126374"></a><em>Zero Voltage Nets</em> specified by the user during label generation are ignored by the sanity checker provided there are either no labels at all on the specified net or both Vmin and Vmax values are set to 0. If one or both values is nonzero, or the number of labels is other than 0 or 2, the sanity checker reports an error.</li><li>
+<a id="pgfId-1127935"></a>Where there is no geometry for a net on the canvas, and labels have been generated on all the Pcell and instance terminals connected to the net, there could be multiple discrepancies related to incorrect numbers of labels or label mismatches. The sanity checker reports such discrepancies in terms of both instance name and net name to allow them to be easily identified.</li><li>
+<a id="pgfId-1151684"></a>Sanity Checker reports VDR objects (voltage labels, voltage markers, VSync shapes, and Userdv shapes) found inside the shared cells. This helps in reminding users to delete these VDR objects from shared cells.</li><li>
+<a id="pgfId-1151942"></a>Sanity Checker does not perform any checks on existing VDR labels inside the shared cells.</li></ul>
+
+
+
+
+<h4><em>
+<a id="pgfId-1154219"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1154238"></a><a href="appB.html#97190">vdrSharedCellList</a></p>
+<p>
+<a id="pgfId-1154248"></a><a href="vdrflow.html#76170">Rules for Creating Voltage Labels in Shared Cells</a></p>
+
+<h3>
+<a id="pgfId-1114235"></a><a id="63196"></a>Defining and <a id="vdrSyncedNets"></a>Checking Voltage Synced Nets</h3>
+
+<p>
+<a id="pgfId-1114785"></a>Some processes feature the concept of <em>synced nets</em>, the voltages of which must always transition in phase with each other. The voltage difference that triggers a DRC violation for synced nets is much lower than in conventional processes. To support the enhanced voltage check, you can:</p>
+<ol><li>
+<a id="pgfId-1115096"></a>Define <em>Voltage Synced Nets</em> constraints in the schematic for the nets whose voltages must transition in phase.</li><li>
+<a id="pgfId-1115162"></a>Generate vsync shapes connecting these synced nets in the layout view.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1143472"></a>Vsync shape generation is instance-based. Markers are created at the top level for synced nets inside the instance hierarchy.</div></li><li>
+<a id="pgfId-1115261"></a>Use the VDR Sanity Checker to check that the vsync shapes match the constraints in the layout.</li></ol>
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1135229"></a>This functionality is available only in Layout EXL when the <a href="appB.html#84582">vdrConstraintGroupName</a> environment variable is set. </div>
+
+<h4>
+<a id="pgfId-1114068"></a><a id="58745"></a>Creating a Voltage Synced Nets Constraint By Using the Constraint Manager (ICADVM20.1 EXL Only)</h4>
+
+<p>
+<a id="pgfId-1115379"></a>To create a <em>Voltage Synced Nets</em> constraint using the Constraint Manager:</p>
+<ol><li>
+<a id="pgfId-1114788"></a>Select the pair of nets to be tagged as synced in the schematic Navigator assistant.</li><li>
+<a id="pgfId-1115542"></a>In the Constraint Manager assistant, choose <em>Voltage Synced Nets</em> from the toolbar:<br />
+<a id="pgfId-1115520"></a><div class="webflare-div-image">
+<img width="635" height="346" src="images/vdrflow-29.gif" /></div>
+<a id="pgfId-1115517"></a>The <em>Voltage Synced Nets</em> constraint is created on the selected nets.<br />
+<a id="pgfId-1117575"></a><div class="webflare-div-image">
+<img width="635" height="195" src="images/vdrflow-30.gif" /></div>
+<a id="pgfId-1115515"></a>See <a actuate="user" class="URL" href="../constraints/appA.html#VoltageSyncedNet" show="replace" xml:link="simple">Voltage Synced Nets</a> in the <em>Virtuoso Unified Custom Constraints</em> for more information about the constraint.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1141692"></a>Creating Voltage Synced Nets Constraints from a File (ICADVM20.1 EXL Only)</h4>
+
+<p>
+<a id="pgfId-1141819"></a>You can also create <em>Voltage Synced Nets</em> constraints from a comma-separated file capturing the nets to be constrained and the minimum and maximum voltages for those nets. Each line in the file creates a Voltage Synced Nets constraint with members as defined by the comma-separated nets captured in that line. To do this:</p>
+<ol><li>
+<a id="pgfId-1141122"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; VSync Visualizer</em> from the layout window menu bar.<br />
+<a id="pgfId-1142393"></a>The <a href="appA.html#79490">VSync Constraints Visualizer</a> form appears.<br />
+<a id="pgfId-1141130"></a><div class="webflare-div-image">
+<img width="635" height="300" src="images/vdrflow-31.gif" /></div></li><li>
+<a id="pgfId-1141131"></a>Browse to the location of the file you require and click <em>Create</em> to create constraints from the information in that file.</li><li>
+<a id="pgfId-1141356"></a>(Optional) Click <em>Refresh</em> to update the list of voltage synced nets currently in the design.</li><li>
+<a id="pgfId-1141439"></a>(Optional) Click <em>Delete</em> to remove the selected voltage synced nets from the design.<br /><div class="webflare-information-macro webflare-macro-tip">
+<a id="pgfId-1142550"></a>
+You can perform the same operation procedurally using the <a href="appC.html#55237">vdrCreateVSyncConstraintsFromFile</a> SKILL API.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1114115"></a>Generating Vsync Shapes in the Layout View (ICADVM20.1 EXL Only)</h4>
+
+<p>
+<a id="pgfId-1117437"></a>To generate vsync shapes in the layout view:</p>
+<ul><li>
+<a id="pgfId-1117547"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Create VSync Shapes </em>from the layout window menu bar.<br />
+<a id="pgfId-1117500"></a><div class="webflare-div-image">
+<img width="635" height="223" src="images/vdrflow-32.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1135529"></a>If the <a href="appB.html#84582">vdrConstraintGroupName</a> environment variable is not set, the menu item is grayed out.</div>
+<a id="pgfId-1117870"></a>Virtuoso removes all existing vsync shapes created by the tool and generates one vsync shape for each pair of nets tagged in a <em>Voltage Synced Nets</em> constraint in the layout view.<ul><li>
+<a id="pgfId-1118040"></a>For pairs of nets on the <em>same layer</em>, the vsync shapes are created on the layer and purpose defined in the <a actuate="user" class="URL" href="../ascitechconstr/constr_routing_re_voltageLayerMarkerMapping.html" show="replace" xml:link="simple">voltageLayerMarkerMapping</a> technology file constraint.</li><li>
+<a id="pgfId-1136672"></a>For pairs of nets on <em>different layers</em>, the vsync shapes are created on the layers and purposes defined in the <a actuate="user" class="URL" href="../ascitechconstr/constr_routing_re_voltageLayerPairMarkerMapping.html" show="replace" xml:link="simple">voltageLayerPairMarkerMapping</a> technology file constraint.</li><li>
+<a id="pgfId-1140633"></a>If there are multiple possible layers on which the shapes could be created, the vsync shapes are created on the lowest layer to preserve routing resources on higher metal layers.</li></ul><br />
+<a id="pgfId-1118348"></a>See <a href="vdrflow.html#86531">Specifying Layers and Purposes for Synced Nets</a> for more information.</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1114170"></a><a id="27582"></a>Checking Synced Nets in the Layout View (ICADVM20.1 EXL Only)</h4>
+
+<p>
+<a id="pgfId-1118424"></a>You can use the VDR Sanity Checker to check that each vsync shape on the canvas corresponds to a <em>Voltage Synced Nets</em> constraint in the layout.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1134857"></a>The sanity checker checks vsync shapes against constraints in the layout view, not in the schematic, so you must first ensure that <em>Voltage Synced Nets</em> constraints defined in the schematic are current in the layout view. </div>
+<p>
+<a id="pgfId-1134854"></a>To do this:</p>
+<ol><li>
+<a id="pgfId-1115726"></a>In the layout window, choose <em>Connectivity &#8211; Update &#8211; Layout Constraints</em> to transfer the constraints from the schematic view to the layout view.</li><li>
+<a id="pgfId-1119738"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Sanity Checker</em> from the layout window menu bar.<br />
+<a id="pgfId-1119835"></a>The <a href="appA.html#38734">VDR Sanity Checker</a> form appears.<br />
+<a id="pgfId-1119493"></a><div class="webflare-div-image">
+<img width="635" height="165" src="images/vdrflow-33.gif" /></div></li><li>
+<a id="pgfId-1119892"></a>Select <em>VSync Shapes</em> from the <em>Check</em> drop-down list.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1135611"></a>If the <code>vdrConstraintGroupName</code> environment variable is not set, the menu item is grayed out.</div></li><li>
+<a id="pgfId-1151546"></a>Select the <em>Complete Hierarchy</em> check box to perform checks on the complete hierarchy. If you do not select this check box, checks are performed only on the current hierarchy.</li><li>
+<a id="pgfId-1150864"></a>Select the <em>Generate report in text file</em> check box to captured results in a text file.<br />
+<a id="pgfId-1119984"></a>When you capture the results in a log file, only a summary message is printed in the CIW. If you do not specify a log file, discrepancies are reported in a table printed in the CIW. </li><li>
+<a id="pgfId-1130760"></a>Click <em>OK</em> to check the vsync shapes in the design.<br />
+<a id="pgfId-1120128"></a>Two types of errors are reported:<ul><li>
+<a id="pgfId-1118425"></a>Vsync shapes with no corresponding <em>Voltage Synced Nets</em> constraint in the layout.<br />
+<a id="pgfId-1118427"></a>Markers for this violation type are created on the vsync shape in the layout view. The text report prints the bounding box of the vsync shape.</li><li>
+<a id="pgfId-1118428"></a>A <em>Voltage Synced Nets</em> constraint exists in the layout, but there is no corresponding vsync shape.<br />
+<a id="pgfId-1120172"></a>Markers for this violation type are created on the corresponding cell to reduce visual clutter on the canvas. The description in the Annotation Browser provides the names of the nets in the constraint. The text report captures the constraint name and its member nets.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1152067"></a>Sanity Checker reports VDR objects (voltage labels, voltage markers, VSync shapes, and Userdv shapes) found inside the shared cells. This helps in reminding users to delete these VDR objects from shared cells.</div></li></ul></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1158243"></a>Creating Delta Voltage Constraints between Nets</h3>
+
+<p>
+<a id="pgfId-1158296"></a>You can create a Delta Voltage constraints between nets by using either the Constraint Manager assistant or the CSV file that contains information about nets and delta voltage values.</p>
+<p>
+<a id="pgfId-1158535"></a>The entries for the nets and delta voltage values between them in the CSV file are as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1158569"></a># Comma-separated nets and delta voltage values</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1158565"></a>net14, net3, 0.4</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1158719"></a>net14, net6, 0.6</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1158738"></a>net3, net6, 0.8</pre>
+
+<p>
+<a id="pgfId-1158759"></a>To create a delta voltage constraints between nets using the Constraint Manager assistant:</p>
+<ol><li>
+<a id="pgfId-1158868"></a>Select the pair of nets between which you want to create a delta voltage constraints in the Layout EXL or MXL. For example, <code>net14</code> and <code>net3</code>.<br />
+<a id="pgfId-1158960"></a><div class="webflare-div-image">
+<img width="635" height="338" src="images/vdrflow-34.gif" /></div></li><li>
+<a id="pgfId-1158988"></a>From the toolbar of the Constraint Manager, click the arrow next to the <em>Alignment</em> icon to display additional options.</li><li>
+<a id="pgfId-1158992"></a>Select <em>Electrical</em> &#8211; <em>Delta</em> <em>Voltage</em>.<br />
+<a id="pgfId-1159223"></a>The Delta Voltage dialog box appears.</li><li>
+<a id="pgfId-1159226"></a>In the <em>Delta</em> <em>Voltage</em> field, specify the delta voltage value. For example, <code>0.4</code>.</li><li>
+<a id="pgfId-1159229"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1159386"></a>The delta voltage is created between the selected nets, <code>net14</code> and <code>net3</code> with a delta voltage value of <code>0.4</code> (<code>400m</code>), as shown in the following figure.<br />
+<a id="pgfId-1159540"></a><div class="webflare-div-image">
+<img width="635" height="400" src="images/vdrflow-35.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1159605"></a>To create delta voltage constraints between the nets with the delta voltage value specified using the CSV file:</p>
+<ol><li>
+<a id="pgfId-1159232"></a>Open the design in Layout EXL and MXL. In this example, the library cellview is <code>vdr_demo/inveret_chain/layout</code>.</li><li>
+<a id="pgfId-1159998"></a>Create a CSV file that contains the information about nets and delta voltage values between them.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1160111">
+<a id="pgfId-1160111"></a># Comma-separated nets and delta voltage values</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160112">
+<a id="pgfId-1160112"></a>net14, net3, 0.4</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160113">
+<a id="pgfId-1160113"></a>net14, net6, 0.6</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160114">
+<a id="pgfId-1160114"></a>net3, net6, 0.8</pre></li><li>
+<a id="pgfId-1160104"></a>Save this CSV file in a directory. In this example, the CSV files is saved with the name <code>userdvData.csv</code> in the current working directory.</li><li>
+<a id="pgfId-1159723"></a>In the Virtuoso Studio CIW, run the following command to create delta voltage constraints using the function <code>vdrCreateUserdvConstraintsFromFile</code> from the the information contained in the CSV file. <br /><pre class="webflare-pre-block webflare-courier-new" id="#id1159792">
+<a id="pgfId-1159792"></a>scv = dbOpenCellViewByType(</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159793">
+<a id="pgfId-1159793"></a>       &quot;vdr_demo&quot;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159794">
+<a id="pgfId-1159794"></a>       &quot;inverter_chain&quot;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159795">
+<a id="pgfId-1159795"></a>       &quot;layout&quot;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159796">
+<a id="pgfId-1159796"></a>       &quot;&quot; &quot;r&quot;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159797">
+<a id="pgfId-1159797"></a>       )</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159798">
+<a id="pgfId-1159798"></a>srcCache = ciCacheGet(scv)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159799">
+<a id="pgfId-1159799"></a>;gives constraint cache of cellview</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159800">
+<a id="pgfId-1159800"></a>listOfCons = nil</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159801">
+<a id="pgfId-1159801"></a>foreach(elm srcCache~&gt;constraints </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159802">
+<a id="pgfId-1159802"></a>          when(elm~&gt;type == &#39;deltaVoltage listOfCons = cons(elm listOfCons)))</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159804">
+<a id="pgfId-1159804"></a>vdrCreateUserdvConstraintsFromFile(&quot;vdr_demo&quot; &quot;inverter_chain&quot; &quot;layout&quot; &quot;./userdvData.csv&quot;)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1159779">
+<a id="pgfId-1159779"></a>;Creates User Delta Voltage constraints for the specified nets in the file userdvData.csv file in the library cellview: vdr_demo inverter_chain layout</pre>
+<a id="pgfId-1159782"></a>The following output is printed in the Virtuoso Studio CIW and delta voltage constraints created between the nets are displayed in the Constraint Manager assistant.<pre class="webflare-pre-block webflare-courier-new" id="#id1160569">
+<a id="pgfId-1160569"></a>=&gt; db:0x2b6dd01a</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160570">
+<a id="pgfId-1160570"></a>=&gt; ci:0x3850fa80</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160571">
+<a id="pgfId-1160571"></a>=&gt; nil</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160572">
+<a id="pgfId-1160572"></a>=&gt; nil</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160574">
+<a id="pgfId-1160574"></a>=&gt; t</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160575">
+<a id="pgfId-1160575"></a>=&gt; </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160576">
+<a id="pgfId-1160576"></a>INFO (CMGR-5020): Created constraint of type &#39;deltaVoltage&#39; in cache &#39;vdr_demo inverter_chain layout&#39; with name &#39;Constr_1&#39;.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160577">
+<a id="pgfId-1160577"></a>INFO (CMGR-5020): Created constraint of type &#39;deltaVoltage&#39; in cache &#39;vdr_demo inverter_chain layout&#39; with name &#39;Constr_2&#39;.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160578">
+<a id="pgfId-1160578"></a>INFO (CMGR-5020): Created constraint of type &#39;deltaVoltage&#39; in cache &#39;vdr_demo inverter_chain layout&#39; with name &#39;Constr_3&#39;.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1160565">
+<a id="pgfId-1160565"></a>=&gt; t</pre><br />
+<a id="pgfId-1160690"></a><div class="webflare-div-image">
+<img width="635" height="497" src="images/vdrflow-36.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1160593"></a>Creating Userdv Shapes in the Layout View</h3>
+
+<p>
+<a id="pgfId-1160723"></a>To create Userdv shapes between the nets constrained by the delta voltage constraints in the Layout view:</p>
+<ol><li>
+<a id="pgfId-1160824"></a>Create the delta voltage constraints between the nets by using the Constraint Manager assistant or by using a CSV file that contains the information about the nets and their delta voltage values.<br />
+<a id="pgfId-1161125"></a><div class="webflare-div-image">
+<img width="635" height="499" src="images/vdrflow-37.gif" /></div></li><li>
+<a id="pgfId-1161284"></a>Select the delta voltage constraints in the Constraint Manager assistant.</li><li>
+<a id="pgfId-1161122"></a>From the menu bar of Layout EXL or MXL, select <em>Tools</em> &#8211; <em>Voltage Dependent Rules</em> &#8211; <em>Create Userdv Shapes</em>.<br />
+<a id="pgfId-1161361"></a>The Userdv shapes between the nets constrained by the delta voltage constraints are created.<br />
+<a id="pgfId-1161586"></a><div class="webflare-div-image">
+<img width="635" height="370" src="images/vdrflow-38.gif" /></div>
+<a id="pgfId-1161474"></a>The following information is also printed in the Virtuoso Studio CIW.<pre class="webflare-pre-block webflare-courier-new" id="#id1161664">
+<a id="pgfId-1161664"></a>INFO (VDR-2011): VDR annotation deleted 0 Userdv Shapes.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161665">
+<a id="pgfId-1161665"></a>INFO (VDR-2000): Successfully created Userdv Shape between &#39;net14&#39; and &#39;net3&#39; on (&#39;Metal1&#39; &#39;vsync&#39;) for voltage 0.4 and bBox ((15.2305 3.239) (15.863 3.326)).</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161666">
+<a id="pgfId-1161666"></a></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161667">
+<a id="pgfId-1161667"></a>INFO (VDR-2000): Successfully created Userdv Shape between &#39;net14&#39; and &#39;net6&#39; on (&#39;Metal1&#39; &#39;vsync&#39;) for voltage 0.6 and bBox ((15.864 3.3255) (15.976 3.3845)).</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161668">
+<a id="pgfId-1161668"></a></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161669">
+<a id="pgfId-1161669"></a>INFO (VDR-2000): Successfully created Userdv Shape between &#39;net3&#39; and &#39;net6&#39; on (&#39;Metal1&#39; &#39;vsync&#39;) for voltage 0.8 and bBox ((15.884 3.1805) (15.976 3.2395)).</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161670">
+<a id="pgfId-1161670"></a></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161671">
+<a id="pgfId-1161671"></a>INFO (VDR-2012): VDR annotation created 3 Userdv Shapes.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161660">
+<a id="pgfId-1161660"></a>=&gt; t</pre>
+<a id="pgfId-1161278"></a>Alternatively, you can also create the Userdv shapes by running the function <code>vdrGenerateUserdvShapes</code> in the Virtuoso Studio CIW.<pre class="webflare-pre-block webflare-courier-new" id="#id1161696">
+<a id="pgfId-1161696"></a>vdrGenerateUserdvShapes(</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161697">
+<a id="pgfId-1161697"></a>      scv</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161698">
+<a id="pgfId-1161698"></a>      ?verbose t</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161699">
+<a id="pgfId-1161699"></a>      ?logFile &quot;./userdvLogFile.log&quot;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161700">
+<a id="pgfId-1161700"></a>      )</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161701">
+<a id="pgfId-1161701"></a>;Created Userdv shapes between the nets constrained by the delta voltage constraints. The debug messages are printed in the log file userdvLogFile, which is saved in the current working directory.</pre>
+<a id="pgfId-1161807"></a>The Userdv shapes are created between the nets.<br />
+<a id="pgfId-1161921"></a><br /><div class="webflare-div-image">
+<img width="635" height="390" src="images/vdrflow-39.gif" /></div>
+<a id="pgfId-1161801"></a>The following messages, indicating the successful creation of Userdv shapes, are also printed in the Virtuoso Studio CIW.<pre class="webflare-pre-block webflare-courier-new" id="#id1161702">
+<a id="pgfId-1161702"></a>INFO (VDR-2011): VDR annotation deleted 0 Userdv Shapes.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161703">
+<a id="pgfId-1161703"></a>INFO (VDR-2000): Successfully created Userdv Shape between &#39;net14&#39; and &#39;net3&#39; on (&#39;Metal1&#39; &#39;vsync&#39;) for voltage 0.4 and bBox ((15.2305 3.239) (15.863 3.326)).</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161704">
+<a id="pgfId-1161704"></a></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161705">
+<a id="pgfId-1161705"></a>INFO (VDR-2000): Successfully created Userdv Shape between &#39;net14&#39; and &#39;net6&#39; on (&#39;Metal1&#39; &#39;vsync&#39;) for voltage 0.6 and bBox ((15.864 3.3255) (15.976 3.3845)).</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161706">
+<a id="pgfId-1161706"></a></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161707">
+<a id="pgfId-1161707"></a>INFO (VDR-2000): Successfully created Userdv Shape between &#39;net3&#39; and &#39;net6&#39; on (&#39;Metal1&#39; &#39;vsync&#39;) for voltage 0.8 and bBox ((15.884 3.1805) (15.976 3.2395)).</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161708">
+<a id="pgfId-1161708"></a></pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161709">
+<a id="pgfId-1161709"></a>INFO (VDR-2012): VDR annotation created 3 Userdv Shapes.</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1161689">
+<a id="pgfId-1161689"></a>=&gt; t</pre></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1151573"></a>Checking Userdv Shapes in the Layout View (ICADVM20.1 EXL Only)</h4>
+
+<ol><li>
+<a id="pgfId-1151605"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Sanity Checker</em> from the layout window menu bar.<br />
+<a id="pgfId-1151609"></a>The <a href="appA.html#38734">VDR Sanity Checker</a> form appears.<br />
+<a id="pgfId-1151613"></a><div class="webflare-div-image">
+<img width="635" height="165" src="images/vdrflow-40.gif" /></div></li><li>
+<a id="pgfId-1151614"></a>Select <em>Userdv Shapes</em> from the <em>Check</em> drop-down list.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1151615"></a>If the <code>vdrConstraintGroupName</code> environment variable is not set, the menu item is grayed out.</div></li><li>
+<a id="pgfId-1151616"></a>Select the <em>Complete Hierarchy</em> check box to perform checks on the complete hierarchy. If you do not select this check box, checks are performed only on the current hierarchy.</li><li>
+<a id="pgfId-1151617"></a>Select the <em>Generate report in text file</em> check box to captured results in a text file.<br />
+<a id="pgfId-1151618"></a>When you capture the results in a log file, only a summary message is printed in the CIW. If you do not specify a log file, discrepancies are reported in a table printed in the CIW. </li><li>
+<a id="pgfId-1151619"></a>Click <em>OK</em> to check the Userdv shapes in the design.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1152227"></a>Sanity Checker reports VDR objects (voltage labels, voltage markers, VSync shapes, and Userdv shapes) found inside the shared cells. This helps in reminding users to delete these VDR objects from shared cells.</div>
+<a id="pgfId-1157846"></a>Userdv shapes can also be created for out-of-context hierarchical nets.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1152220"></a>Violations Reported by Sanity Checker for VSync and Userdv Shapes</h4>
+
+<p>
+<a id="pgfId-1154424"></a>The following violations are reported by Sanity Checker for VSync and Userdv shapes:</p>
+<ul><li>
+<a id="pgfId-1154518"></a>Shapes are present but Sanity Checker reports them invalid:<ul><li>
+<a id="pgfId-1154598"></a>Floating VSync and Userdv shapes</li><li>
+<a id="pgfId-1154599"></a>VSync and Userdv shapes touching one net</li><li>
+<a id="pgfId-1154600"></a>VSync and Userdv shapes touching shape without net</li><li>
+<a id="pgfId-1154601"></a>VSync and Userdv shapes touching shape different net</li><li>
+<a id="pgfId-1154602"></a>Userdv shapes touching more than two shapes</li><li>
+<a id="pgfId-1154584"></a>Userdv label mismatch</li></ul></li><li>
+<a id="pgfId-1154578"></a>Shapes are missing:<ul><li>
+<a id="pgfId-1154719"></a>No parallel run length found:<br />
+<a id="pgfId-1154904"></a>Two net shapes (member nets of VSync and Userdv constraint) do not have any parallel run length where the VSync or Userdv shapes can be created.<br /><ffi2-fig-frame-in-2 id="#id1154922">
+<a id="pgfId-1154922"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="544" height="139" src="images/vdrflow-41.gif" /></div></li><li>
+<a id="pgfId-1154720"></a>No empty area found:<br />
+<a id="pgfId-1154832"></a>When region between two net shapes (member nets of VSync and Userdv constraint) is completely obstructed by the other shapes.<br /><ffi2-fig-frame-in-2 id="#id1154850">
+<a id="pgfId-1154850"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="544" height="237" src="images/vdrflow-42.gif" /></div></li><li>
+<a id="pgfId-1154721"></a>No shape found for corresponding nets:<br />
+<a id="pgfId-1154875"></a>No net shape is found in the design corresponding to member nets in the constraint.</li><li>
+<a id="pgfId-1154722"></a>VSync net shapes far away:<br />
+<a id="pgfId-1154744"></a>When there are no other shapes within the threshold spacing from the net shape (member nets of VSync and Userdv constraint).<br />
+<a id="pgfId-1154777"></a>Threshold spacing value is calculated as the maximum value of following constraints:<ul><li>
+<a id="pgfId-1154778"></a><code>minVoltageSpacing</code></li><li>
+<a id="pgfId-1154779"></a><code>minSideSpacing</code></li><li>
+<a id="pgfId-1154780"></a><code>minCornerSpacing</code></li><li>
+<a id="pgfId-1154781"></a><code>minCornerVoltageSpacing</code></li><li>
+<a id="pgfId-1154782"></a><code>minSpacing</code></li><li>
+<a id="pgfId-1154783"></a><code>minVoltageClearance</code></li><li>
+<a id="pgfId-1154784"></a><code>minSideClearance</code></li><li>
+<a id="pgfId-1154785"></a><code>minCornerClearance</code></li><li>
+<a id="pgfId-1154745"></a><code>minClearance</code><br /><ffi2-fig-frame-in-2 id="#id1154890">
+<a id="pgfId-1154890"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="544" height="206" src="images/vdrflow-43.gif" /></div></li></ul></li><li>
+<a id="pgfId-1154712"></a>Missing shapes:<br />
+<a id="pgfId-1154952"></a>When Sanity Checker does not find a reason of why the VSync and Userdv shape are missing, the violation is reported as missing shapes.</li></ul></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1073680"></a><a id="71877"></a>Layout-centric<a id="vdrLayoutCentric"></a> VDR Flow</h2>
+
+<p>
+<a id="pgfId-1073681"></a>You can also enter voltage values directly in the layout editor Property Editor assistant. The voltage values are made available to layout features such as DRD editing, the interactive wire editor, and the Virtuoso space-based router. You can then generate voltage labels or markers for all the nets at the current level of layout hierarchy, or for a set of nets selected in the Navigator assistant.</p>
+
+<h3>
+<a id="pgfId-1073692"></a>Entering Voltage Values in the Property Editor Assistant</h3>
+
+<p>
+<a id="pgfId-1073699"></a>To enter minimum and maximum voltage values for a net directly in the Property Editor assistant:</p>
+<ol><li>
+<a id="pgfId-1066358"></a>Open the layout design in Layout XL and open the Navigator and Property Editor assistants.</li><li>
+<a id="pgfId-1066359"></a>Select the net you require in the Navigator assistant.</li><li>
+<a id="pgfId-1066476"></a>Type the <em>Min Voltage</em> and <em>Max Voltage</em> values into the Property Editor assistant.<br />
+<a id="pgfId-1066344"></a><div class="webflare-div-image">
+<img width="635" height="308" src="images/vdrflow-44.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1084337"></a>If there are already voltage labels or markers for that net visible on the canvas, the values are automatically updated. If there are no labels or markers for that net, see <a href="vdrflow.html#72736">Generating Voltage Labels for Manually Entered Voltages</a> or <a href="vdrflow.html#27952">Generating Voltage Markers for Manually Entered Voltages</a> for information on how to create them.</div></li><li>
+<a id="pgfId-1064822"></a>Choose <em>File &#8211; Save</em> to save the layout view.<br />
+<a id="pgfId-1076815"></a>Layout editor tools such as DRD, the interactive wire editor, and VSR consider the voltages when checking that minimum voltage spacing constraints defined in the technology file are not being violated.<br />
+<a id="pgfId-1076819"></a>See <a href="vdrflow.html#87490">Specifying a Minimum Voltage Spacing Constraint</a> for more information.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1103795"></a><a id="72736"></a>Generating Voltage Labels for Manually Entered Voltages</h3>
+
+<ul><li>
+<a id="pgfId-1103848"></a><a href="vdrflow.html#81213">Generating Labels on All Nets</a></li><li>
+<a id="pgfId-1103866"></a><a href="vdrflow.html#83562">Generating Labels on Selected Nets</a></li></ul>
+
+
+<h4>
+<a id="pgfId-1089536"></a><a id="81213"></a>Generating <a id="createLabelOnNets"></a>Labels on All Nets</h4>
+
+<p>
+<a id="pgfId-1089613"></a>To generate labels for manually entered voltage values on all the nets at the current level of layout hierarchy:</p>
+<ol><li>
+<a id="pgfId-1089553"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Create Labels/Markers From Net Voltages</em> from the layout window menu bar.<br />
+<a id="pgfId-1089562"></a>The condensed <a actuate="user" class="URL" href="../vvdrflow/appA.html#vdrOptionsFormRMB" show="replace" xml:link="simple">Voltage Dependent Rules</a> form appears containing only the options required for label and marker generation.<br />
+<a id="pgfId-1089567"></a><div class="webflare-div-image">
+<img width="635" height="399" src="images/vdrflow-45.gif" /></div></li><li>
+<a id="pgfId-1089568"></a>Set the layer purpose and size options as required.<br />
+<a id="pgfId-1108794"></a>Specify a <em>Special Voltage LPP File</em> if you require greater control over the purposes on which labels are drawn.</li><li>
+<a id="pgfId-1091349"></a>List the <em>Zero Voltage Nets</em> for which labels should be generated.<br />
+<a id="pgfId-1091795"></a>By default, the field lists the nets in the design that have (0,0) voltage values and signal type <code>ground</code>.</li><li>
+<a id="pgfId-1094871"></a>Click <em>OK</em> to generate voltage labels for all the nets at the current level of layout hierarchy.<br />
+<a id="pgfId-1094872"></a>The labels are generated on the geometry of the net in question. Where there is no geometry for that net on the canvas, the labels are generated on all the Pcell and instance terminals connected to the net (where such connectivity information exists).<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1094873"></a>
+If you subsequently generate labels from simulation data, you must switch off the <em>Override Manually Entered Voltages</em> option to prevent these labels from being overwritten.
+
+Note, however, that if you manually set both minimum and maximum voltages to 0 in the Property Editor assistant and then generate labels using these values, those labels will always be overwritten if you subsequently run the simulation-driven flow (provided the dataset you use contains values for the nets in question).
+
+See <a href="vdrflow.html#71115">Populating Voltages and Generating Labels or Markers</a> for more information on the <em>Override Manually Entered Voltages</em> option.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1089768"></a><a id="83562"></a>Generating Labels<a id="createLabelOnSelectedNets"></a> on Selected Nets</h4>
+
+<p>
+<a id="pgfId-1089752"></a>To generate labels for manually entered voltage values on selected nets in the design:</p>
+<ol><li>
+<a id="pgfId-1089538"></a>In the Navigator assistant, select the nets for which you want to generate voltage labels.</li><li>
+<a id="pgfId-1106623"></a>Right-click, and choose <em>Create Voltage Labels/Markers</em>.<br />
+<a id="pgfId-1073834"></a><div class="webflare-div-image">
+<img width="635" height="510" src="images/vdrflow-47.gif" /></div></li><li>
+<a id="pgfId-1073841"></a>The truncated version of the <a actuate="user" class="URL" href="../vvdrflow/appA.html#vdrOptionsFormRMB" show="replace" xml:link="simple">Voltage Dependent Rules</a> form appears.</li><li>
+<a id="pgfId-1073915"></a>Set the layer purpose and size options as required.<br />
+<a id="pgfId-1108832"></a>Specify a <em>Special Voltage LPP File</em> if you require greater control over the purposes on which labels are drawn.</li><li>
+<a id="pgfId-1091649"></a>List any <em>Zero Voltage Nets</em> for which labels should be generated.<br />
+<a id="pgfId-1091730"></a>By default, the field lists the nets in the selected set that have (0,0) voltage values and signal type <code>ground</code>.</li><li>
+<a id="pgfId-1091640"></a>Click <em>OK</em> to create voltage labels for the selected nets in the layout canvas in line with the values shown in the Property Editor assistant.<br />
+<a id="pgfId-1094934"></a>The labels are generated on the geometry of the net in question. Where there is no geometry for that net on the canvas, the labels are generated on all the Pcell and instance terminals connected to the net (where such connectivity information exists).<br /><div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1076988"></a>
+If you subsequently generate labels from simulation data, you must switch off the <em>Override Manually Entered Voltages</em> option to prevent these labels from being overwritten.
+
+Note, however, that if you manually set both minimum and maximum voltages to 0 in the Property Editor assistant and then generate labels using these values, those labels will always be overwritten if you subsequently run the simulation-driven flow (provided the dataset you use contains values for the nets in question).
+
+See <a href="vdrflow.html#71115">Populating Voltages and Generating Labels or Markers</a> for more information on the <em>Override Manually Entered Voltages</em> option.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1085888"></a>You can also perform the same task programmatically by using the <a href="appC.html#88728">vdrCreateVoltageLabelOnNets</a> SKILL function.</p>
+
+<h3>
+<a id="pgfId-1087080"></a>Viewing <a id="zoomToVoltageLabels"></a>Voltage Labels in the Layout View</h3>
+
+<p>
+<a id="pgfId-1087108"></a>To view the voltage labels on a top-level net:</p>
+<ol><li>
+<a id="pgfId-1087161"></a>In the Navigator assistant, right-click to select the net and choose <em>Zoom To Voltage Labels/Markers</em>.<br />
+<a id="pgfId-1087166"></a><div class="webflare-div-image">
+<img width="635" height="445" src="images/vdrflow-48.gif" /></div>
+<a id="pgfId-1087128"></a>Layout XL zooms to the voltage labels on the selected net.<br />
+<a id="pgfId-1095970"></a><div class="webflare-div-image">
+<img width="635" height="380" src="images/vdrflow-49.gif" /></div><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1096219"></a><em>Zoom to Voltage Labels/Markers</em> works only for labels and markers on top-level nets. You cannot zoom to labels that have been generated on Pcell or instance terminals further down the hierarchy.</div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1087067"></a><a id="40687"></a>Checking Voltage Labels in the Layout View</h3>
+
+<p>
+<a id="pgfId-1085897"></a>You can use the <a href="appC.html#79142">vdrCheckVoltageLabels</a> SKILL function to verify that all top-level nets in the specified layout cellview are correctly labeled on the canvas.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1082543"></a>There is no GUI equivalent for this function.</div>
+
+<h3>
+<a id="pgfId-1103393"></a><a id="27952"></a>Generating Voltage <a id="createMarkersManuallyEnteredVoltages"></a>Markers for Manually Entered Voltages</h3>
+
+<p>
+<a id="pgfId-1104424"></a>Some processes, especially at advanced nodes, require voltage markers to be present on predefined layers in the design. You can use the VDR layout-centric flow to create markers for all the nets at the current level of layout hierarchy, or for a set of nets selected in the Navigator assistant.</p>
+<ul><li>
+<a id="pgfId-1103990"></a><a href="vdrflow.html#58502">Generating Markers on All Nets</a></li><li>
+<a id="pgfId-1103984"></a><a href="vdrflow.html#62837">Generating Markers on Selected Nets</a></li></ul>
+
+
+<h4>
+<a id="pgfId-1103895"></a><a id="58502"></a>Generating <a id="createMarkerOnNets"></a>Markers on All Nets</h4>
+
+<p>
+<a id="pgfId-1103896"></a>To generate markers for manually entered voltage values on all the nets at the current level of layout hierarchy:</p>
+<ol><li>
+<a id="pgfId-1103897"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Create Labels/Markers From Net Voltages</em> from the layout window menu bar.<br />
+<a id="pgfId-1103899"></a>The truncated version of the <a actuate="user" class="URL" href="../vvdrflow/appA.html#vdrOptionsFormRMB" show="replace" xml:link="simple">Voltage Dependent Rules</a> form appears.<br />
+<a id="pgfId-1103904"></a><div class="webflare-div-image">
+<img width="635" height="438" src="images/vdrflow-50.gif" /></div></li><li>
+<a id="pgfId-1104398"></a>Check the <em>Generate Voltage Markers</em> box to enable the controls in the <em>Voltage Markers from Net Voltages </em>group box.<br />
+<a id="pgfId-1104707"></a>The <em>Voltage Labels</em> options are automatically disabled.</li><li>
+<a id="pgfId-1104399"></a>Specify the <em>Voltage Purpose File</em>, which lists the layer-purpose pairs on which markers for different voltage values are to be created.<br />
+<a id="pgfId-1106758"></a>See <a href="vdrflow.html#64210">Specifying Layers and Purposes for Voltage Markers</a> for more information.</li><li>
+<a id="pgfId-1104400"></a>Choose whether markers are to be created for maximum, minimum, or all voltage values.</li><li>
+<a id="pgfId-1104401"></a>Choose the rounding rule to follow for voltage values.<ul><li>
+<a id="pgfId-1104402"></a><em>roundOff</em> rounds the voltage value to the nearest 0.01 (the default)</li><li>
+<a id="pgfId-1104403"></a><em>ceiling</em> rounds up the voltage value to the nearest 0.01</li><li>
+<a id="pgfId-1104404"></a><em>floor</em> rounds down the voltage value to the nearest 0.01</li></ul></li><li>
+<a id="pgfId-1137335"></a>Change the <em>Size</em> setting if required.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1138295"></a>If you set the size to 0.0, no marker is generated.</div></li><li>
+<a id="pgfId-1103906"></a>List the <em>Zero Voltage Nets</em> for which markers should be generated.<br />
+<a id="pgfId-1103907"></a>By default, the field lists the nets in the design that have (0,0) voltage values and signal type <code>ground</code>.</li><li>
+<a id="pgfId-1103908"></a>Click <em>OK</em> to generate voltage markers for all the nets at the current level of layout hierarchy.<br />
+<a id="pgfId-1103909"></a>The markers are generated on the geometry of the net in question.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1103916"></a><a id="62837"></a>Generating Markers<a id="createMarkerOnSelectedNets"></a> on Selected Nets</h4>
+
+<p>
+<a id="pgfId-1103917"></a>To generate markers for manually entered voltage values on selected nets in the design:</p>
+<ol><li>
+<a id="pgfId-1103918"></a>In the Navigator assistant, select the nets for which you want to generate voltage labels.</li><li>
+<a id="pgfId-1106785"></a>Right-click, and choose <em>Create Voltage Labels/Markers</em>.<br />
+<a id="pgfId-1103924"></a>The truncated version of the <a actuate="user" class="URL" href="../vvdrflow/appA.html#vdrOptionsFormRMB" show="replace" xml:link="simple">Voltage Dependent Rules</a> form appears.</li><li>
+<a id="pgfId-1106838"></a>Check the <em>Generate Voltage Markers</em> box to enable the controls in the <em>Voltage Markers from Net Voltages </em>group box.</li><li>
+<a id="pgfId-1104883"></a>Specify the <em>Voltage Purpose File</em>, which lists the layer-purpose pairs on which markers for different voltage values are to be created. See <a href="vdrflow.html#64210">Specifying Layers and Purposes for Voltage Markers</a> for more information.</li><li>
+<a id="pgfId-1104884"></a>Choose whether markers are to be created for maximum, minimum, or all voltage values.</li><li>
+<a id="pgfId-1104885"></a>Choose the rounding rule to follow for voltage values.<ul><li>
+<a id="pgfId-1104886"></a><em>roundOff</em> rounds the voltage value to the nearest 0.01 (the default)</li><li>
+<a id="pgfId-1104887"></a><em>ceiling</em> rounds up the voltage value to the nearest 0.01</li><li>
+<a id="pgfId-1104888"></a><em>floor</em> rounds down the voltage value to the nearest 0.01</li></ul></li><li>
+<a id="pgfId-1138365"></a>Change the <em>Size</em> setting if required.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1138366"></a>If you set the size to 0.0, no marker is generated.</div></li><li>
+<a id="pgfId-1104889"></a>List the <em>Zero Voltage Nets</em> for which markers should be generated.<br />
+<a id="pgfId-1104890"></a>By default, the field lists the nets in the design that have (0,0) voltage values and signal type <code>ground</code>.</li><li>
+<a id="pgfId-1104891"></a>Click <em>OK</em> to generate voltage markers for the selected nets at the current level of layout hierarchy.<br />
+<a id="pgfId-1104892"></a>The markers are generated on the geometry of the net in question.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1103941"></a>You can also perform the same task programmatically by using the <a href="appC.html#50581">vdrCreateVoltageMarkersOnNets</a> SKILL function.</p>
+
+<h2>
+<a id="pgfId-1096880"></a><a id="23784"></a>Post-Processing<a id="postProcessLabels"></a> Voltage Labels and Markers</h2>
+
+<p>
+<a id="pgfId-1096943"></a>You can use the <a href="appB.html#97894">vdrPostLabelCreationCallback</a> environment variable to specify a custom SKILL callback that can be set to perform any required post-processing tasks on VDR-generated labels. The specified callback must accept a cellview ID as an argument and is run automatically after label generation is complete.</p>
+<p>
+<a id="pgfId-1097125"></a>For example, the callback shown below collects all the labels generated by the VDR flow in the specified cellview and creates a property to link them to a dataset called <code>dataset1</code>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1096999"></a>procedure(_myPostVdrCB(cv)<br />    let((shape)<br />    foreach(shape cv~&gt;shapes<br />        if(shape~&gt;objType == &quot;label&quot; then<br />          if(prop = dbFindProp(shape &quot;CDNS_VDR_LABEL&quot;) then<br />            dbCreateProp(shape &quot;DataSetName&quot; &#39;string &quot;dataset1&quot;)<br />          )<br />        )<br />    )<br />    )<br />)</pre>
+<p class="webflare-indent1">
+<a id="pgfId-1105811"></a>To modify the callback to post-process marker objects instead of labels, change the <code>objType</code> to &quot;<code>rect</code>&quot;.</p>
+<p>
+<a id="pgfId-1096993"></a>You can also specify the callback function name as an optional argument when using the <a href="appC.html#30234">vdrCreateVoltageLabel</a> and <a href="appC.html#43770">vdrCreateVoltageMarkers</a> SKILL functions.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1097262"></a>There is no GUI equivalent for this feature.</div>
+
+<h2>
+<a id="pgfId-1081280"></a><a id="22712"></a>Deleting <a id="deleteLabels"></a>Voltage Labels and Markers</h2>
+
+<p>
+<a id="pgfId-1077709"></a>To delete all the labels and markers generated by the voltage dependent rules flows, do one of the following:</p>
+<ul><li>
+<a id="pgfId-1077713"></a>Choose <em>Tools &#8211; Voltage Dependent Rules &#8211; Delete Labels/Markers</em> from the layout window menu bar</li><li>
+<a id="pgfId-1087301"></a>Call the <a href="appC.html#19676">vdrDeleteGUI</a> SKILL function</li></ul>
+
+
+<h2>
+<a id="pgfId-1145923"></a><a id="88697"></a>Searching Voltage Labels for Debugging</h2>
+
+<p>
+<a id="pgfId-1145978"></a>To search and display voltage labels for debugging:</p>
+<ol><li>
+<a id="pgfId-1146032"></a>Open the layout design in Layout XL.</li><li>
+<a id="pgfId-1146088"></a>Choose <em>Tools</em> &#8211; <em>Voltage Dependent Rules</em> &#8211; <em>VDR Debugge</em>r from the layout window menu bar.<br />
+<a id="pgfId-1146147"></a>The VDR Debugger form opens.<br />
+<a id="pgfId-1146130"></a><div class="webflare-div-image">
+<img width="635" height="379" src="images/vdrflow-51.gif" /></div></li><li>
+<a id="pgfId-1146133"></a>Select <em>Labels</em> from the <em>Search For</em> drop-down list and specify one of the following:<ul><li>
+<a id="pgfId-1146387"></a><em>Min &amp; Max</em>: To search for both <em>Vmin</em> and <em>Vmax</em> labels.</li><li>
+<a id="pgfId-1146449"></a><em>Min</em>: To search for only <em>Vmin</em> labels.</li><li>
+<a id="pgfId-1146493"></a><em>Max</em>: To search for only <em>Vmax</em> labels.</li></ul></li><li>
+<a id="pgfId-1155062"></a>Select the <em>Hierarchical</em> check box to search for labels across complete hierarchy.</li><li>
+<a id="pgfId-1146274"></a>Select the <em>Report Labels On Connected Nets</em> check box to list labels on the connected nets.</li><li>
+<a id="pgfId-1146651"></a>From the <em>Select Nets From</em> options, specify whether you want to select nets from the layout or from a CSV file.</li><li>
+<a id="pgfId-1146774"></a>If you selected layout in step 5, specify the name of the net in the <em>Net Name</em> field manually or select the net from layout. If you leave this field blank, voltage labels are searched for all available nets in the layout or the CSV file.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1150140"></a>The <em>Net Name</em> field supports adding regular expressions. For example, if you type <code>VDD*</code> in the <em>Net Name</em> field, voltage labels are searched for all nets whose name starts with <code>VDD</code>, such as <code>VDD1</code>, <code>VDD2</code>, <code>VDD3</code>, and so on.</div></li><li>
+<a id="pgfId-1147283"></a>If you selected <em>CSV</em> in step 5, specify the path to the CSV file in the <em>File Name</em> field or click <em>Browse</em> to select the CSV file. Click <em>Load</em> to load the CSV file.<br />
+<a id="pgfId-1147516"></a>Clicking <em>Load</em> automatically updates the Net Name field with the first net available in the CSV file.</li><li>
+<a id="pgfId-1146871"></a>In the <em>Voltage Range</em> fields, specify the minimum and maximum values of voltages.</li><li>
+<a id="pgfId-1147091"></a>In the <em>Decimal Places</em> field, specify the number of decimal places for net voltage labels.<br />
+<a id="pgfId-1147213"></a>You can specify any integer value between <code>0</code>&#8211;<code>5</code>.</li><li>
+<a id="pgfId-1147216"></a>Click <em>Find</em> to search for the voltage labels.<br />
+<a id="pgfId-1147680"></a>An information message is printed in the CIW to indicate total number of VDR labels found for all nets or for the specified net.<br />
+<a id="pgfId-1147820"></a>The <em>Search Results</em> section in the VDR Debugger form is also updated with the total count of VDR labels found.<br />
+<a id="pgfId-1148038"></a><div class="webflare-div-image">
+<img width="635" height="122" src="images/vdrflow-52.gif" /></div></li><li>
+<a id="pgfId-1147905"></a>In the <em>Search Results</em> section, click the following commands:<ol><li>
+<a id="pgfId-1148465"></a><em>Zoom To Figure</em>: To enable zooming on the selected voltage label.</li><li>
+<a id="pgfId-1148073"></a><em>Next</em>: To move to the next voltage label.</li><li>
+<a id="pgfId-1148113"></a><em>Previous</em>: To move to the previous voltage label.</li><li>
+<a id="pgfId-1148274"></a><em>First</em>: To directly move to the first voltage label.</li><li>
+<a id="pgfId-1148349"></a><em>Last</em>: To directly move to the last voltage label.</li><li>
+<a id="pgfId-1150650"></a><em>Add Selec</em>t: To add the voltage label to the currently selected set.</li><li>
+<a id="pgfId-1150646"></a><em>Deselect</em>: To remove the voltage label from the currently selected set.</li></ol></li><li>
+<a id="pgfId-1150717"></a>Click <em>Close</em> to close the form.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1150836"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1150840"></a><a href="appA.html#75910">VDR Debugger</a></p>
+
+<h2>
+<a id="pgfId-1148593"></a><a id="61579"></a>Searching VSync Shapes for Debugging</h2>
+
+<p>
+<a id="pgfId-1148594"></a>To search and display VSync shapes for debugging:</p>
+<ol><li>
+<a id="pgfId-1148595"></a>Open the layout design in Layout XL.</li><li>
+<a id="pgfId-1148596"></a>Choose <em>Tools</em> &#8211; <em>Voltage Dependent Rules</em> &#8211; <em>VDR Debugge</em>r from the layout window menu bar.<br />
+<a id="pgfId-1148597"></a>The VDR Debugger form opens.<br />
+<a id="pgfId-1148601"></a><div class="webflare-div-image">
+<img width="635" height="360" src="images/vdrflow-53.gif" /></div></li><li>
+<a id="pgfId-1148602"></a>Select <em>VSync Shapes </em>from the <em>Search For</em> drop-down list.</li><li>
+<a id="pgfId-1155196"></a>Select the <em>Hierarchical</em> check box to search for VSync shapes across complete hierarchy.</li><li>
+<a id="pgfId-1148607"></a>From the <em>Select Nets From</em> options, specify whether you want to select nets from the layout or from a CSV file.</li><li>
+<a id="pgfId-1148610"></a>If you selected <em>Layout</em> in step 4, specify the name of the nets in the <em>First</em> <em>Net Nam</em>e and <em>Second</em> <em>Net Name</em> fields manually or select them from layout.<ul><li>
+<a id="pgfId-1149006"></a>If you leave both the fields blank, VSync shapes are searched for all available nets in the layout.</li><li>
+<a id="pgfId-1149055"></a>If you specify both the nets, only VSync shapes that are associated with both the nets are searched.</li><li>
+<a id="pgfId-1148950"></a>If you specify only one net, VSync shapes associated with the specified net are searched.</li></ul></li><li>
+<a id="pgfId-1148608"></a>If you selected <em>CSV</em> in step 4, specify the path to the CSV file in the <em>File Name</em> field or click <em>Browse</em> to select the CSV file. Click <em>Load</em> to load the CSV file.<br />
+<a id="pgfId-1148609"></a>Clicking <em>Load</em> automatically updates the <em>First Net Name</em> and <em>Second Net Name</em> fields with the nets available in the CSV file.</li><li>
+<a id="pgfId-1148614"></a>Click <em>Find</em> to search for the vsync shapes.<br />
+<a id="pgfId-1148615"></a>An information message is printed in the CIW to indicate total number of VSync shapes found for all nets or for the specified nets.<br />
+<a id="pgfId-1148616"></a>The <em>Search Results</em> section in the VDR Debugger form is also updated with the total count of VSync shapes found.<br />
+<a id="pgfId-1148621"></a><div class="webflare-div-image">
+<img width="635" height="122" src="images/vdrflow-54.gif" /></div></li><li>
+<a id="pgfId-1148622"></a>In the <em>Search Results</em> section, click the following commands:<ol><li>
+<a id="pgfId-1148623"></a><em>Zoom To Figure</em>: To enable zooming on the selected VSync shape.</li><li>
+<a id="pgfId-1148624"></a><em>Next</em>: To move to the next VSync shape.</li><li>
+<a id="pgfId-1148625"></a><em>Previous</em>: To move to the previous VSync shape.</li><li>
+<a id="pgfId-1148626"></a><em>First</em>: To directly move to the first VSync shape.</li><li>
+<a id="pgfId-1148627"></a><em>Last</em>: To directly move to the last VSync shape.</li><li>
+<a id="pgfId-1148628"></a><em>Add Selec</em>t: To add the VSync shape to the currently selected set.</li><li>
+<a id="pgfId-1148629"></a><em>Deselect</em>: To remove the VSync shape from the currently selected set.</li></ol></li><li>
+<a id="pgfId-1148585"></a>In the <em>Trace</em> section, click <em>Trace Net</em> to display visualization of the connected nets.</li><li>
+<a id="pgfId-1149464"></a>Click <em>Untrace</em> <em>All Nets</em> to remove visualization.</li><li>
+<a id="pgfId-1150757"></a>Click <em>Close</em> to close the form.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1150817"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1150821"></a><a href="appA.html#75910">VDR Debugger</a></p>
+
+<h2>
+<a id="pgfId-1149667"></a><a id="42543"></a>Searching Userdv Shapes for Debugging</h2>
+
+<p>
+<a id="pgfId-1149668"></a>To search and display Userdv shapes for debugging:</p>
+<ol><li>
+<a id="pgfId-1149669"></a>Open the layout design in Layout XL.</li><li>
+<a id="pgfId-1149670"></a>Choose <em>Tools</em> &#8211; <em>Voltage Dependent Rules</em> &#8211; <em>VDR Debugge</em>r from the layout window menu bar.<br />
+<a id="pgfId-1149671"></a>The VDR Debugger form opens.<br />
+<a id="pgfId-1149675"></a><div class="webflare-div-image">
+<img width="635" height="348" src="images/vdrflow-55.gif" /></div></li><li>
+<a id="pgfId-1149676"></a>Select <em>Userdv Shapes </em>from the <em>Search For</em> drop-down list.</li><li>
+<a id="pgfId-1155235"></a>Select the <em>Hierarchical</em> check box to search for Userdv shapes across complete hierarchy.</li><li>
+<a id="pgfId-1149874"></a>Specify the name of the nets in the <em>First</em> <em>Net Nam</em>e and <em>Second</em> <em>Net Name</em> fields manually or select them from layout.<ul><li>
+<a id="pgfId-1149875"></a>If you leave both the fields blank, Userdv shapes are searched for all available nets in the layout.</li><li>
+<a id="pgfId-1149876"></a>If you specify both the nets, only Userdv shapes that are associated with both the nets are searched.</li><li>
+<a id="pgfId-1149877"></a>If you specify only one net, Userdv shapes that are associated with the specified net are searched.</li></ul></li><li>
+<a id="pgfId-1149685"></a>In the <em>Voltage Range</em> fields, specify the minimum and maximum values of voltages.</li><li>
+<a id="pgfId-1149686"></a>In the <em>Decimal Places</em> field, specify the number of decimal places for net voltage.<br />
+<a id="pgfId-1149687"></a>You can specify any integer value between <code>0</code>&#8211;<code>5</code>.</li><li>
+<a id="pgfId-1149688"></a>Click <em>Find</em> to search for Userdv shapes.<br />
+<a id="pgfId-1149689"></a>An information message is printed in the CIW to indicate total number of Userdv shapes found for all nets or for the specified net.<br />
+<a id="pgfId-1149690"></a>The <em>Search Results</em> section in the VDR Debugger form is also updated with the total count of Userdv shapes found.<br />
+<a id="pgfId-1149695"></a><div class="webflare-div-image">
+<img width="635" height="122" src="images/vdrflow-56.gif" /></div></li><li>
+<a id="pgfId-1149696"></a>In the <em>Search Results</em> section, click the following commands:<ol><li>
+<a id="pgfId-1149697"></a><em>Zoom To Figure</em>: To enable zooming on the selected Userdv shape.</li><li>
+<a id="pgfId-1149698"></a><em>Next</em>: To move to the next Userdv shape.</li><li>
+<a id="pgfId-1149699"></a><em>Previous</em>: To move to the previous Userdv shape.</li><li>
+<a id="pgfId-1149700"></a><em>First</em>: To directly move to the first Userdv shape.</li><li>
+<a id="pgfId-1149701"></a><em>Last</em>: To directly move to the last Userdv shape.</li><li>
+<a id="pgfId-1150594"></a><em>Add Selec</em>t: To add the Userdv shape to the currently selected set.</li><li>
+<a id="pgfId-1149703"></a><em>Deselect</em>: To remove the Userdv shape from the currently selected set.</li></ol></li><li>
+<a id="pgfId-1150773"></a>Click <em>Close</em> to close the form.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1148567"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1150806"></a><a href="appA.html#75910">VDR Debugger</a></p>
+
+<h2>
+<a id="pgfId-1152260"></a><a id="76170"></a>Rules for Creating Voltage Labels in Shared Cells</h2>
+
+<p>
+<a id="pgfId-1152841"></a>The rules for creating voltage labels inside the shared cells are as follows:</p>
+<ul><li>
+<a id="pgfId-1153096"></a>For a shared cell, voltage labels are created for all internal nets across 32 hierarchy levels.</li><li>
+<a id="pgfId-1153995"></a>If a cell is not specified as the shared cell, voltage labels for nets are created as per the specified <em>Hierarchy Stop Level</em>. For example, if the <em>Hierarchy Stop Level</em> is set to <code>0</code>, labels are created only for top-level nets.</li><li>
+<a id="pgfId-1152286"></a>Shared cells are considered only when they are instantiated on the current top level.</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1153102"></a>Example 1</h3>
+
+<p>
+<a id="pgfId-1152563"></a>If no shared cells are specified, voltage labels are created only top-level nets: <code>NetA</code>, <code>NetB</code>, <code>NetC</code>, <code>NetD</code>, <code>NetE</code>, <code>NetF</code>, and <code>NetG</code>.</p>
+
+<p>
+<a id="pgfId-1153147"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="474" src="images/vdrflow-57.gif" /></div>
+<h3>
+<a id="pgfId-1153151"></a>Example 2</h3>
+
+<p>
+<a id="pgfId-1153152"></a>If <code>Cell2</code> is specified as a shared cell and <em>Hierarchy Stop Level</em> is set to <code>0</code>, voltage labels are created only top-level nets: <code>NetA</code>, <code>NetB</code>, <code>NetC</code>, <code>NetD</code>, <code>NetE</code>, <code>NetF</code>, <code>NetG</code>, and <code>Cell2/Net_i2</code>.</p>
+<p>
+<a id="pgfId-1153287"></a>Note that voltage label is not created for the <code>Cell3/Cell2/Net_i2</code>. because <code>Cell3</code> is not specified as a shared cell.</p>
+
+<p>
+<a id="pgfId-1153156"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="474" src="images/vdrflow-58.gif" /></div>
+<h3>
+<a id="pgfId-1153424"></a>Example 3</h3>
+
+<p>
+<a id="pgfId-1153425"></a>If <code>Cell3</code> is specified as a shared cell and <em>Hierarchy Stop Level</em> is set to <code>0</code>, voltage labels are created only top-level nets: <code>NetA</code>, <code>NetB</code>, <code>NetC</code>, <code>NetD</code>, <code>NetE</code>, <code>NetF</code>, <code>NetG</code>, and <code>Cell3/Net_i3</code>, and <code>Cell3/Cell2/Net_i2</code>.</p>
+<p>
+<a id="pgfId-1153426"></a>Note that voltage label is not created for the <code>Cell2/Net_i2</code>. because <code>Cell2</code> is not specified as a shared cell.</p>
+
+<p>
+<a id="pgfId-1153430"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="474" src="images/vdrflow-59.gif" /></div>
+<h4><em>
+<a id="pgfId-1152290"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1154183"></a><a href="appA.html#87341">Voltage Dependent Rules</a></p>
+<p>
+<a id="pgfId-1154189"></a><a href="appB.html#16128">vdrHierarchyStopLevel</a></p>
+<p>
+<a id="pgfId-1154177"></a><a href="appB.html#97190">vdrSharedCellList</a></p>
+<p>
+<a id="pgfId-1156576"></a><a href="appB.html#66731">vdrSharedCellListForInternalNetsOnly</a></p>
+
+<h3>
+<a id="pgfId-1156971"></a>Deleting VDR Objects</h3>
+
+<p>
+<a id="pgfId-1156997"></a>To delete VDR objects:</p>
+<ol><li>
+<a id="pgfId-1157022"></a>From the menu bar of Virtuoso Studio Layout Suite EXL or MXL, choose <em>Tools</em> &#8211; <em>Voltage</em> <em>Dependent Rules</em> &#8211; <em>Delete VDR Objects</em>.<br />
+<a id="pgfId-1157172"></a>The Delete VDR Objects form opens.<br />
+<a id="pgfId-1157223"></a><div class="webflare-div-image">
+<img width="635" height="285" src="images/vdrflow-60.gif" /></div></li><li>
+<a id="pgfId-1157177"></a>Select the <em>Labels/Markers</em> check box if you want to delete voltage labels and voltage markers.</li><li>
+<a id="pgfId-1157503"></a>Select the <em>Complete Hierarchy</em> check box if you want to delete voltage label and voltage markers across the complete hierarchy.</li><li>
+<a id="pgfId-1157545"></a>In the <em>Hierarchy Stop Level</em> field, specify the number of hierarchy levels up to which voltage labels and markers are deleted. The default value is <code>0</code>, which indicates that voltage label and markers are deleted only for top-level nets. You can specify any integer value between <code>0</code>&#8211;<code>32</code> in this spin box. The maximum value <code>32</code> indicates that voltage labels and markers are deleted for all nets across <code>32</code> hierarchy levels.</li><li>
+<a id="pgfId-1157179"></a>Select the <em>VSync Shapes</em> check box if you want to delete VSync shapes.</li><li>
+<a id="pgfId-1157310"></a>Select the <em>Userdv Shapes</em> check box if you want to delete the Userdv shapes.</li><li>
+<a id="pgfId-1157175"></a>Click <em>Delete</em> to delete the selected VDR objects.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="vvdrflowTOC.html" id="prev" title="Contents">Contents</a></em></b><b><em><a href="appB.html" id="nex" title="Environment Variables">Environment Variables</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
