@@ -1,0 +1,114 @@
+
+<html><head><title>Applying Bit-Wise Discipline for SPICE Bus Connections</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677669041" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Virtuoso AMS Designer simulator and Xcelium Simulator with mixed-signal option that supports the Verilog-AMS,  VHDL-AMS, and SystemVerilog-AMS language standards." />
+<meta name="DocTitle" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Applying Bit-Wise Discipline for SPICE Bus Connections" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="task" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="SystemVerilog Mixed-Signal," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="ams_dms_simug" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677669041" />
+<meta name="NextFile" content="Features_Enabled_Using_the_-sv_ms_Option.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Connecting_SystemVerilog_Variable_Logic_Vector_to_SPICE_Bus.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide -- Applying Bit-Wise Discipline for SPICE Bus Connections" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="amssimug2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="ams_dms_simugTOC.html">Contents</a></li><li><a class="prev" href="Connecting_SystemVerilog_Variable_Logic_Vector_to_SPICE_Bus.html" title="Connecting_SystemVerilog_Variable_Logic_Vector_to_SPICE_Bus">Connecting_SystemVerilog_Varia ...</a></li><li style="float: right;"><a class="viewPrint" href="ams_dms_simug.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Features_Enabled_Using_the_-sv_ms_Option.html" title="Features_Enabled_Using_the_-sv_ms_Option">Features_Enabled_Using_the_-sv ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Applying Bit-Wise Discipline for SPICE Bus Connections</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>In a SPICE port to bus element connection, when you use the <code>cellport</code> scopetype for cell port definitions, to apply an interface element parameter specification to specific connect modules, specify the <code>-adv_ms</code> option. This ensures that the parameter specification is applied only to the targeted connect module and not to every connect module on the bus.</p>
+
+<p>The following example illustrates that discipline <code>1.8</code> is set to <code>top.in[0]</code>. And, the default discipline (<code>vsup=5</code>) is applied to the other ports <code>top.in[1]</code>&#160;and <code>top.in[2]</code>.</p>
+
+<p><code>//top.sv</code><br /><code>module top;</code><br /><code>reg clk = 0;</code><br /><code>wire ain;</code><br /><code>wire [0:2] in;</code><br /><code>always #5 clk=~clk;</code><br /><code>assign in[0] = clk;</code><br /><code>assign in[1] = clk;</code><br /><code>assign in[2] = clk;</code><br /><code>assign ain = clk;</code><br /><code>spice_dut I0(in,ain); //SPICE Instance</code><br /><code>endmodule</code></p>
+
+<p><code>//ana_gate.sp</code><br /><code>.subckt spice_dut in_0 in_1 in_2 ain</code><br /><code>xinv0 in_0 out_0 inv_1p8</code><br /><code>xinv1 in_1 out_1 inv_5</code><br /><code>xinv2 in_2 out_2 inv_5</code><br /><code>xinv3 ain aout inv_5</code><br /><code>.ends</code></p>
+
+<p><code>//amscf.scs</code><br /><code>amsd {</code><br /><code>portmap subckt=spice_dut autobus=yes file=&quot;./spice_dut.pb&quot;</code><br /><code>config cell=spice_dut use=spice</code><br /><code>// IE Cards</code><br /><code>}</code></p>
+
+<p><code>amsd {</code><br /><code>ie vsup=5.0</code><br /><code>ie vsup=1.8 cellupport=spice_dut.in_0;</code><br /><code>}</code></p>
+
+<p><span style="letter-spacing: 0.0px;">In the first case, discipline, <code>1.8</code> is set for top.in along with top.in[0]. In the second instance also, for <code>top.in</code>, <code>top.in[0]</code>, and <code>top.in[1]</code> the discipline set is <code>1.8</code>.</span>The following <code>ie</code> card specification illustrates that when there is no default discipline set and only one bit is set, or multiple bits are set the same discipline, then the bus discipline is merged into one. &#160;</p>
+
+<p><code>amsd {</code><br /><code>&#160; ie vsup=1.8 cellupport=spice_dut.in_0;</code><br /><code>}</code></p>
+
+<p>or</p>
+
+<p><code>amsd {</code><br /><code>&#160; ie vsup=1.8 cellupport=spice_dut.in_0;</code><br /><code>&#160; ie vsup=1.8 cellupport=spice_dut.in_1;</code><br /><code>}</code></p>
+
+<p>The following ie card specification illustrates that when there is no default discipline and multiple bits are set to the different discipline, then no discipline is set to the unset bits. In this case, discipline <code>1.8</code> is set for <code>top.in[0]</code> and <code>2.8</code> is set for <code>top.in[1]</code>.</p>
+
+<p><code>amsd {</code><br /><code>ie</code><br /><code>vsup=1.8 cellupport=spice_dut.in_0;</code><br /><code>ie</code><br /><code>vsup=2.8 cellupport=spice_dut.in_1;</code><br /><code>}</code></p>
+<h5 id="ApplyingBitWiseDisciplineforSPICEBusConnections-RelatedTopic">Related Topic</h5><ul><li><a href="Features_Enabled_Using_the_-adv_ms_Option.html">Features Enabled Using the -adv_ms Option</a></li></ul>
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Connecting_SystemVerilog_Variable_Logic_Vector_to_SPICE_Bus.html" id="prev" title="Connecting_SystemVerilog_Variable_Logic_Vector_to_SPICE_Bus">Connecting_SystemVerilog_Varia ...</a></em></b><b><em><a href="Features_Enabled_Using_the_-sv_ms_Option.html" id="nex" title="Features_Enabled_Using_the_-sv_ms_Option">Features_Enabled_Using_the_-sv ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

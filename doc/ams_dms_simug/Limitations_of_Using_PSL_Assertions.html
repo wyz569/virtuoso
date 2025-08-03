@@ -1,0 +1,109 @@
+
+<html><head><title>Limitations of Using PSL Assertions</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="shubh" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668920" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Virtuoso AMS Designer simulator and Xcelium Simulator with mixed-signal option that supports the Verilog-AMS,  VHDL-AMS, and SystemVerilog-AMS language standards." />
+<meta name="DocTitle" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Limitations of Using PSL Assertions" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Analog Mixed-Signal,Spectre AMS Designer,Spectre AMS Designer," />
+<meta name="prod_subfeature" content="wreal ,Verilog-AMS, wreal, Verilog-AMS," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="ams_dms_simug" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668920" />
+<meta name="NextFile" content="Reusing_Testbenches_and_IP.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="PSL_Assertions.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide -- Limitations of Using PSL Assertions" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="amssimug2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="ams_dms_simugTOC.html">Contents</a></li><li><a class="prev" href="PSL_Assertions.html" title="PSL_Assertions">PSL_Assertions</a></li><li style="float: right;"><a class="viewPrint" href="ams_dms_simug.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Reusing_Testbenches_and_IP.html" title="Reusing_Testbenches_and_IP">Reusing_Testbenches_and_IP</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Limitations of Using PSL Assertions</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p>The following limitations exist when using PSL assertions with the AMS Designer simulator:</p>
+<ul><li>Unclocked, partially clocked, or multiple-clocked<span>&#160;</span>PSL<span>&#160;</span>assertions involving analog expressions are not supported.<br /><br /><code>electrical sig1, sig2;<br /></code><code>reg a, clk, clk1, clk2;<br /><br /></code><code>// unclocked - Not Supported<br /></code><code>// psl assert always (V(sig1) &gt; V(sig2));<br /><br /></code><code>// partially clocked - Not Supported<br /></code><code>// psl assert always {V(sig1); V(sig2)} |=&gt; {a} @(cross(V(clk)));<span>&#160;</span></code><code>&#160;<br /></code><code><br />// multiple clocked - Not Supported<br /></code><code>// psl assert always {V(sig1); V(sig2)} @(cross(V(clk1))) |=&gt; {a} @(cross(V(clk2)));<br /></code>For such cases, use either an explicitly declared single clock or a default clock.</li><li>Analog expressions that are not allowed to appear outside the analog block as per the Verilog-AMS LRM cannot appear in a PSL assertion statement. In the example below, the<code><span>&#160;</span>assert<span>&#160;</span></code>statement is not allowed because the analog operator<code><span>&#160;</span>ddt<span>&#160;</span></code>cannot appear outside an analog block.<code><br />// psl assert always ({ddt(V(sig1))} |-&gt; {ddt(V(sig2))}) @(posedge clk);</code></li><li>When port probes are used with the<code><span>&#160;</span>&lt;&gt;<span>&#160;</span></code>syntax, they cannot appear in a PSL assertion. For example, the following<code><span>&#160;</span>assert<span>&#160;</span></code>statement is not valid.<br /><code>electrical in, out;<br /></code><code>// psl assert always (I(&lt;out&gt;) &gt; 0) &amp;&amp; (I(&lt;out&gt;) &lt; 2.3) @ (cross(I(&lt;in&gt;)));</code></li><li>The assertion clock cannot be level-sensitive on an analog expression. For example, the following<code><span>&#160;</span>assert<span>&#160;</span></code>statement is not valid because the assertion clock is sensitive to the value change of<code><span>&#160;</span>V(in).<br /></code><code>// psl property P1(bitvector i) = always (S1(i) |=&gt; {i &gt; 0.6}) @ (V(in));<span>&#160;</span></code><code>// psl assert P1<br /><br /></code>To overcome this limitation, you can use an analog event expression in the assertion clock, as shown in the following example.<code><span>&#160;</span>// psl property P1(bitvector i) = always (S1(i) |=&gt; {i &gt; 0.6}) @ (cross(V(in)));<br /></code><code>// psl assert P1</code></li><li>If a PSL assertion involves a level-sensitive clock, none of the assertion signals are allowed to contain analog expressions. The following assertion is not valid because the assertion signal involves the voltage of node<code><span>&#160;</span>sig2<span>&#160;</span></code>, while the clock is level-sensitive.<code><br />electrical sig1, sig2;<br /></code><code>reg a, b, clk;<br /></code><code>// psl assert always ({V(sig1);a} |=&gt; {V(sig2);b}) @(clk);</code></li><li>
+<p>Nets that could potentially be coerced to<code><span>&#160;</span>wreal<span>&#160;</span></code>during elaboration because they are connected to a<code><span>&#160;</span>wreal<span>&#160;</span></code>net or an analog object cannot be used in PSL assertions.</p>
+<div class="table-wrap"><table class="wrapped confluenceTable" style="text-align: left;"><colgroup><col /></colgroup><tbody style="text-align: left;"><tr style="text-align: left;"><td class="confluenceTd" style="text-align: left;"><p style="text-align: left;"><code class="java plain" style="text-align: left;">module top;</code><br /><code class="java plain" style="text-align: left;">wreal wr;</code><br /><code class="java plain" style="text-align: left;">test mytest(wr);</code><br /><code class="java plain" style="text-align: left;">endmodule</code><br />&#160;<br /><code class="java plain" style="text-align: left;">module test(w);</code><br /><code class="java plain" style="text-align: left;">input w;</code><br /><code class="java plain" style="text-align: left;">reg clk;</code><br /><code class="java comments" style="text-align: left;">// not ok - &#39;w&#39; will be coerced to wreal due to its connectivity to wr and cannot be be used in a psl assertion</code><br /><code class="java comments" style="text-align: left;">// psl assert always (w &gt; 2.2) @(posedge clk);</code><br /><code class="java plain" style="text-align: left;">endmodule</code></p>
+</td>
+</tr>
+</tbody></table></div>
+
+<p>For such cases, explicitly declare the<code><span>&#160;</span>wreal<span>&#160;</span></code>nets that you want to include in a PSL assertion.</p>
+</li><li>
+<p>Although&#160;PSL&#160;assertions appearing in verification units that are bound to modules can contain analog expressions and<code><span>&#160;</span>wreal<span>&#160;</span></code>objects, instance-bound verification units cannot contain analog expressions. For example:</p>
+<div class="table-wrap"><table class="wrapped confluenceTable" style="text-align: left;"><colgroup><col /></colgroup><tbody style="text-align: left;"><tr style="text-align: left;"><td class="confluenceTd" style="text-align: left;"><p style="text-align: left;"><code class="java plain" style="text-align: left;">module top;</code><br /><code class="java plain" style="text-align: left;">.....</code><br /><code class="java plain" style="text-align: left;">test mytest();</code><br /><code class="java plain" style="text-align: left;">endmodule</code><br />&#160;<br /><code class="java plain" style="text-align: left;">module test;</code><br /><code class="java plain" style="text-align: left;">.....</code><br /><code class="java plain" style="text-align: left;">endmodule</code><br />&#160;<br /><code class="java plain" style="text-align: left;">vunit myvunit(test) {<span>&#160;</span></code><code class="java comments" style="text-align: left;">// ok, verification unit involving analog expression is</code><br /><code class="java spaces" style="text-align: left;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</code><code class="java comments" style="text-align: left;">// module bound</code><br /><code class="java comments" style="text-align: left;">// psl property P1 = ({V(sig1)} -&gt; next (V(sig2)) @(cross(V(sig3)));</code><br /><code class="java comments" style="text-align: left;">//psl assert P1;</code><br /><code class="java plain" style="text-align: left;">} &#160;</code><br />&#160;<br /><code class="java plain" style="text-align: left;">vunit myvunit(top.mytest) {<span>&#160;</span></code><code class="java comments" style="text-align: left;">// not ok, verification unit involving analog</code><br /><code class="java spaces" style="text-align: left;">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</code><code class="java comments" style="text-align: left;">// expression is instance bound</code><br /><code class="java comments" style="text-align: left;">// psl property P1 = ({V(sig1)} -&gt; next (V(sig2)) @(cross(V(sig3)));</code><br /><code class="java comments" style="text-align: left;">//psl assert P1;</code><br /><code class="java plain" style="text-align: left;">}</code></p>
+</td>
+</tr>
+</tbody></table></div>
+</li><li>
+<p>PSL cannot be used within VHDL-AMS if the PSL assertion statement contains objects or expressions that are either owned or evaluated by the continuous time solver.</p>
+</li></ul><h4 id="LimitationsofUsingPSLAssertions-RelatedTopics">Related Topics</h4>
+<ul><li><a href="Glossary.html#Glossary-1034986">PSL</a>&#160;</li><li><a href="PSL_Assertions.html">PSL Assertions</a></li></ul>
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="PSL_Assertions.html" id="prev" title="PSL_Assertions">PSL_Assertions</a></em></b><b><em><a href="Reusing_Testbenches_and_IP.html" id="nex" title="Reusing_Testbenches_and_IP">Reusing_Testbenches_and_IP</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

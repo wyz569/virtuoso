@@ -1,0 +1,477 @@
+
+<html><head><title>save</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677669099" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Virtuoso AMS Designer simulator and Xcelium Simulator with mixed-signal option that supports the Verilog-AMS,  VHDL-AMS, and SystemVerilog-AMS language standards." />
+<meta name="DocTitle" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="save" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="command reference" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="Tcl Commands, Tcl Commands," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="ams_dms_simug" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677669099" />
+<meta name="NextFile" content="scope.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="run.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide -- save" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="amssimug2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="ams_dms_simugTOC.html">Contents</a></li><li><a class="prev" href="run.html" title="run">run</a></li><li style="float: right;"><a class="viewPrint" href="ams_dms_simug.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="scope.html" title="scope">scope</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>save</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p><span class="confluence-anchor-link" id="save-1034316"></span> <span class="confluence-anchor-link" id="save-Tcl_save"></span>The Tcl <code>save</code> command creates a snapshot of the current simulation state. You can then use the <a href="restart.html"> <code>restart</code> </a> command to load the saved snapshot and resume simulation.</p>
+
+<p>You may only issue the <code>save</code>&#160;command when the simulator is at certain points in its execution cycle.</p>
+<ul><li>The simulator cannot be in the middle of executing procedural statements. To run the simulation to the next point at which the <code>save</code>&#160;command will work, use the <code>run</code> <code>-clean</code>&#160;command.</li></ul><ul><li>For mixed-signal designs, the simulator must have accepted at least one transient time step.</li></ul><div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>If your files are very large, you might encounter a limit on the size of a file. If a library database exceeds this limit, you cannot add objects to the database. If you save many snapshot checkpoints to unique views in a single library, this file size limit could be exceeded. If you reach this limit, you can:</p>
+<ul><li>Use <code>save -overwrite</code> to overwrite an existing snapshot. For example,<br /><code>xcelium&gt; save -simulation -overwrite snap1</code></li></ul><ul><li>Save snapshots to a separate library. For example,<br /><code>mkdir xcelium.d/snaplib<br />xmsim -f xmsim.args<br />xcelium&gt; run 1000 ns<br />xcelium&gt; save -simulation snaplib.snap1<br />xcelium&gt; run 1000 ns<br />xcelium&gt; save -simulation snaplib.snap2</code></li></ul><ul><li>Remove snapshots using the<span style="">&#160;<code>xmrm</code>&#160;</span>utility. For example,<br /><code>&#160;xmrm -snapshot worklib.snap1</code></li></ul></div>
+</div>
+
+<p><code> </code></p>
+<h2 id="save-saveCommandSyntax">save Command&#160;Syntax</h2>
+
+<p><code> save <a href="#save-save_simulation">-simulation</a> &lt;<em>snapshot_name</em>&gt;<br />&#160; &#160; &#160;[<a href="#save-save_overwrite">-overwrite</a>]</code> <br /><code><span style="">&#160; &#160; &#160;<a href="#save-save_environment">-environment</a> [</span><em>filename</em><span style="">]<br /></span><span style="">&#160; &#160; &#160;<a href="#save-save_commands">-commands</a> [</span><em>filename</em><span style="">]</span> </code></p>
+<h2 id="save-saveCommandOptions">save Command Options</h2>
+
+<p>This section describes the options that you can use with the Tcl <code>save</code>&#160;command.</p>
+<div class="table-wrap"><table class="confluenceTable cadenceTable" id="cadsmallfont" style="width: 100% ;"><colgroup><col style="width: 180px;" /><col style="width: 74%px;" /></colgroup><tbody><tr><td class="confluenceTd" style="border:none;"><div class="content-wrapper">
+<p><span class="confluence-anchor-link" id="save-save_simulation"></span><code>-simulation<br /><em>snapshot_name</em></code></p>
+</div>
+</td>
+<td class="confluenceTd" style="border:none;"><div class="content-wrapper">
+<p>Creates a snapshot of the current simulation state. The snapshot also contains the analog control options in effect at the time of the save. This option is the default.&#160;</p>
+
+<p>You must specify a snapshot name with the&#160;<code><span style="">save</span></code>&#160;command. The snapshot name can be specified using the&#160;<code>[<span style=""><em>lib</em></span>.]cell[:<span style=""><em>view</em></span>]</code> notation, or, if you want the snapshot to be a new view of the currently loaded cell, you can specify just the view name preceded by a colon. For example, if you are simulating&#160;<code><span style="">worklib.top:rtl,</span></code></p>
+<ul><li><code><span style="">save ckpt1</span></code><span style="">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;Saves </span><code><span style="">worklib.ckpt1:rt</span></code></li><li><code><span style="">save top:ckpt1 &#160;&#160;&#160;&#160;</span></code><span style="">Saves</span><code><span style=""> worklib.top:ckpt1</span></code></li><li><code><span style="">save otherlib.top</span></code><span style="">&#160; &#160; Saves </span><code><span style="">otherlib.top:rtl</span></code></li><li><code><span style="">save :ckpt1</span></code><span style="">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;Saves </span><code><span style="">worklib.top:ckpt1</span></code></li></ul>
+<p>The snapshot name must be a simple name containing only letters, numbers, and underscores.</p>
+
+<p>By default, the saved snapshot is saved either in the library you specify or in the work library (if you do not specify a library).</p>
+</div>
+</td>
+</tr>
+<tr><td class="confluenceTd" style="border:none;"><div class="content-wrapper">
+<p><span class="confluence-anchor-link" id="save-save_overwrite"></span><code>-overwrite</code></p>
+</div>
+</td>
+<td class="confluenceTd" style="border:none;">Overwrites an existing snapshot.</td>
+</tr>
+<tr><td class="confluenceTd" style="border:none;"><div class="content-wrapper">
+<p><span class="confluence-anchor-link" id="save-save_environment"></span><code>-environment [<em>filename</em>]</code></p>
+</div>
+</td>
+<td class="confluenceTd" style="border:none;">
+<p>Creates a Tcl script that captures the current breakpoints, databases, probes, aliases, and predefined Tcl variable values. The&#160;<span style=""><code><em>filename</em></code>&#160;</span>argument is optional. If no filename is specified, the script is written to standard output.</p>
+
+<p>The state of the Tcl debug environment is not part of the simulation that is saved in a snapshot. To save the debug environment, you must issue a separate<code> save -environment </code>command. This command creates a Tcl script that captures the current breakpoints, databases, probes, aliases, and predefined Tcl variable values. You can then restore the environment by executing this script with the Tcl<code> source </code>command, or you can use the <code>-input</code>&#160;option when you start the simulator.</p>
+
+<p>For example:</p>
+
+<p><code> xcelium&gt; save :ckpt1</code> <br /><code>xcelium&gt; save -environment ckpt1.tcl</code> <br /><code>xcelium&gt; restart :ckpt1</code> <br /><code>xcelium&gt; source ckpt1.tcl</code></p>
+
+<p>or</p>
+
+<p><code> xcelium&gt; -tcl cell:ckpt1 -input ckpt1.tcl)</code></p>
+
+<p>These scripts are meant to be sourced into an empty environment (that is, an environment with no breakpoints, no probes, no databases). If you start the simulator, set some breakpoints and probes, and then source a script that contains commands to set breakpoints and probes, the simulator will probably generate errors telling you that some commands in the script could not be executed. These errors are due to name conflicts. For example, you may have set a breakpoint that received the default name &quot;1&quot;, and the command in the script is trying to create a breakpoint with the same name. You can, of course, give your breakpoints unique names to avoid this problem. You can also edit the scripts to make them work the way you would like them to work.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd" style="border:none;"><div class="content-wrapper">
+<p><code><span class="confluence-anchor-link" id="save-save_commands"></span>-commands </code>[<code>filename</code>]</p>
+</div>
+</td>
+<td class="confluenceTd" style="border:none;">
+<p><code>save -commands</code> is the same as<code> save -environment.</code></p>
+</td>
+</tr>
+</tbody></table></div>
+<h2 id="save-saveCommandExamples">save Command&#160;Examples</h2>
+
+<p><span style="">The section includes the examples of how the&#160;</span><code><span style="">save</span></code><span style="">&#160;command in the following scenarios:&#160;</span></p>
+<ul><li><a href="#save-1047172">How to Save a Snapshot of the Current Simulation State</a></li></ul><ul><li><a href="#save-1047092">How to Use the save -environment Command</a></li></ul><ul><li><a href="#save-1047142"> How to Use save, restart, and analog </a></li></ul><h4 id="save-1047172HowtoSaveaSnapshotoftheCurrentSimulationState"><span class="confluence-anchor-link" id="save-1047172"></span>How to Save a Snapshot of the Current Simulation State</h4>
+
+<p>The following command saves the simulation state in <code>lib</code> <code>.</code> <code>cell</code> <code>:ckpt1</code>, where <code>lib</code>&#160;is the name of the current work library, and <code>cell</code>&#160;is the cell name of the currently loaded snapshot.</p>
+
+<p><code> xcelium&gt; save -simulation :ckpt1 </code></p>
+
+<p>The following command saves the simulation state in <code>lib </code> <code> .top:ckpt1.</code></p>
+
+<p><code> xcelium&gt; save top:ckpt1 </code></p>
+
+<p>The following command saves the simulation state in <code>lib</code> <code>.ckpt1:</code> <code>view_name</code>, where <code> view_name</code>&#160;is the view name that is currently being simulated.</p>
+
+<p><code>
+    <span style=""> xcelium&gt; save ckpt1 </span>
+  </code></p>
+<h4 id="save-1047092HowtoUsethesave-environmentCommand"><span class="confluence-anchor-link" id="save-1047092"></span>How to Use the save -environment Command</h4>
+
+<p>The following example illustrates how to use the <code>save -environment</code>&#160;command.The right column annotates the behavior of each command.</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup> <col /> <col /> </colgroup><tbody><tr><th class="confluenceTh">
+<p>Commands&#160;</p>
+</th><th class="confluenceTh">
+<p>Notes&#160;</p>
+</th></tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium -tcl hardrive<br />xmsim: v2.1.(p1): (c) Copyright 1995 - 2003 Cadence Design Systems </code></p>
+
+<p><code>Loading snapshot worklib.hardrive:module .... Done </code></p>
+</td>
+<td class="confluenceTd">
+<p>Start the simulator.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; stop -create -line 32<br />Created stop 1<br />xcelium&gt; stop -create -object hardrive.clkCreated stop 2<br />xcelium&gt; probe -create -shm hardrive.data<br />Created default SHM database xcelium.shm<br />Created probe 1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Set a line breakpoint, an object breakpoint, and create a probe. The probe command creates a default<a href="Glossary.html#Glossary-1034342"> SHM </a>database.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run<br />0 FS + 0 (stop 2: hardrive.clk = 0)./hardrive.v:13    clk = 0; </code></p>
+</td>
+<td class="confluenceTd">
+<p><br /></p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run<br />50 NS + 0 (stop 2: hardrive.clk = 1)./hardrive.v:16 always #50 clk = ~clk; </code></p>
+</td>
+<td class="confluenceTd">
+<p><br /></p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; save -environment env1.env </code></p>
+</td>
+<td class="confluenceTd">
+<p>Save the debug settings in a file called <code>env1.env.</code></p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; more env1.env </code></p>
+
+<p><code>set assert_report_level {note}<br />set assert_stop_level {error}<br />set autoscope {yes}<br />set display_unit {auto}<br />set tcl_prompt1 {puts -nonewline &quot;xmsim&gt; &quot;}<br />set tcl_prompt2 {puts -nonewline &quot;&gt; &quot;}<br />set time_unit {module}set vlog_format {%h}<br />set assert_1164_warnings {yes}<br />stop -create -name 1 -line 32 hardrive<br />stop -create -name 2 -object hardrive.clk<br />database -open -shm -into xcelium.shm xcelium.shm<br />-defaultprobe -create -name 1 -database xcelium.shm<br />hardrive.datascope -set hardrive </code></p>
+</td>
+<td class="confluenceTd">
+<p>Look at the file contents.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; exit </code></p>
+</td>
+<td class="confluenceTd">
+<p>Exit from the simulator.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>foghorn% xmsim -tcl hardrivexcelium: v1.2.(b9): (c) Copyright 1995 - 2000 Cadence Design Systems </code></p>
+
+<p><code>Loading snapshot worklib.hardrive:module .................... Done </code></p>
+</td>
+<td class="confluenceTd">
+<p>Restart the simulator.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; stop -showNo stops set </code></p>
+</td>
+<td class="confluenceTd">
+<p>The new session has no breakpoints.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; source env1.env </code></p>
+</td>
+<td class="confluenceTd">
+<p>Source the <code>env1.env</code> file.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; stop -show1 Enabled Line: ./hardrive.v:32 (scope: hardrive)2 Enabled Object hardrive.clkxcelium&gt; probe -show1 Enabled hardrive.data (database: xcelium.shm) -shmxcelium&gt; database -showxcelium.shm Enabled (file: xcelium.shm) (SHM) (default) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Show the status of breakpoints, probes, and databases.</p>
+</td>
+</tr>
+</tbody></table></div>
+<h4 id="save-saverestartanalog1047142HowtoUsesave,restart,andanalog"><span class="confluence-anchor-link" id="save-saverestartanalog"></span> <span class="confluence-anchor-link" id="save-1047142"></span>How to Use save, restart, and analog</h4>
+
+<p>You can use the <a href="save.html">save</a>, <a href="restart.html"> <code>restart</code> </a>, and <code>
+    <a href="analog.html">analog</a>
+  </code> commands during transient analysis of a mixed-signal simulation in interactive mode (under&#160;<code>-tcl</code>&#160;or <code>-gui</code>). In non-interactive mode or if there is other analysis after the transient analysis specified analog control file, these commands are ignored when the simulation has reached the analog stop time of the transient analysis.</p>
+
+<p>The <code>analog -stop</code>&#160;option is ignored with a warning message when <code>.probe</code>&#160;is used in the analog control file.</p>
+
+<p>The following example illustrates how to use the save, restart and analog commands in interactive mode. The right column annotates the behavior of each command.</p>
+<div class="table-wrap"><table class="wrapped confluenceTable"><colgroup> <col /> <col /> </colgroup><tbody><tr><th class="confluenceTh">
+<p>Commands&#160;</p>
+</th><th class="confluenceTh">
+<p>Notes&#160;</p>
+</th></tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; database -open waves -into waves.shm -default<br />Created default SHM database waves </code></p>
+</td>
+<td class="confluenceTd">
+<p>Open a default SHM database called<code> waves.</code></p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; probe -create -all<br />Created probe 1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Probe all signals in the current scope.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; stop -create -time -absolute 200ns<br />Created stop 1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Create a breakpoint at absolute time 200ns.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run<br />200 NS + 0 (stop 1) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Run until 200ns.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -show<br />vabstol = 1.000000e-06 (alterable)<br />iabstol = 1.000000e-12 (alterable)<br />reltol = 1.000000e-03 (alterable)<br />stop = 14 us (alterable) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Examine the tolerance values and stop time.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; save :ckpt1<br />Saved snapshot amslib.top:ckpt1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Save the first snapshot</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -stop 20 us </code></p>
+</td>
+<td class="confluenceTd">
+<p>Lengthen the simulation.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -reltol 5e-03 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Change the <code>reltol</code> value.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -show<br />vabstol = 1.000000e-06 (alterable)<br />iabstol = 1.000000e-12 (alterable)<br />reltol = 5.000000e-03 (alterable)<br />stop = 20 us (alterable) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Examine the new values.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; stop -create -time -absolute 400ns<br />Created stop 2 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Create another breakpoint.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run<br />400 NS + 0 (stop 2) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Run until 400ns.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; save :ckpt2<br />Saved snapshot amslib.top:ckpt2 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Save the second snapshot.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; restart :ckpt1<br />Loaded snapshot amslib.top:ckpt1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Reload the first snapshot.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -show<br />vabstol = 1.000000e-06 (alterable)<br />iabstol = 1.000000e-12 (alterable)<br />reltol = 1.000000e-03 (alterable)<br />stop = 14 us (alterable) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Check that tolerance values and stop time are the same values you had originally...</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; time<br />200 NS </code></p>
+</td>
+<td class="confluenceTd">
+<p>...and that you are back at 200ns in the simulation.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; restart :ckpt2<br />Loaded snapshot amslib.top:ckpt2 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Now reload the second snapshot.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -show<br />vabstol = 1.000000e-06 (alterable)<br />iabstol = 1.000000e-12 (alterable)<br />reltol = 5.000000e-03 (alterable)<br />stop = 20 us (alterable) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Check for the changed<code> reltol </code>value and the lengthened simulation.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; time<br />400 NS </code></p>
+</td>
+<td class="confluenceTd">
+<p>Run to 400ns, again!</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run<br /> 200 NSRan until 600 NS + 0 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Run another 200ns.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; restart :ckpt1<br />Loaded snapshot amslib.top:ckpt1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>Switch back to the first snapshot.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; time<br />200 NS </code></p>
+</td>
+<td class="confluenceTd">
+<p>Check where you are.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run<br />The analog simulator has reached stop time, please use analog -stop &lt;new stop time&gt; to extend the analog stop time. </code></p>
+
+<p><code>Simulation complete via transient analysis stoptime at time 14 US Memory Usage - 19.4M program + 13.5M data = 32.9M total CPU Usage - 0.6s system + 3.6s user = 4.2s total (1.1% cpu) </code></p>
+</td>
+<td class="confluenceTd">
+<p>Run until analog stop time.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; analog -stop 100us </code></p>
+</td>
+<td class="confluenceTd">
+<p>At analog stop time, you can still lengthen the simulation.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; run </code></p>
+
+<p><code>The analog simulator has reached stop time, please use analog -stop &lt;new stop time&gt;&#39; to extend the analog stop time. </code></p>
+
+<p><code>Simulation complete via transient analysis stoptime at time 100 US </code></p>
+
+<p><code>Memory Usage - 19.4M program + 13.5M data = 32.9M total CPU Usage - 0.6s system + 23.6s user = 24.2s total (1.1% cpu</code></p>
+</td>
+<td class="confluenceTd">
+<p>Run until analog stop time.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; restart :ckpt1<br />Loaded snapshot amslib.top:ckpt1 </code></p>
+</td>
+<td class="confluenceTd">
+<p>At analog stop time, you can still restart a snapshot.</p>
+</td>
+</tr>
+<tr><td class="confluenceTd">
+<p><code>xcelium&gt; exit </code> <br /><code>Number of accepted tran steps = 3161. </code></p>
+
+<p><code>Initial condition solution time = 200 ms.</code> <br /><code>**** AMSD: Mixed-Signal Activity Statistics **** </code> <br /><code>     Number of A-to-D events:                  24</code> <br /><code>&#160;   &#160;Number of A-to-D events in IEs: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;0</code> <br /><code> &#160;&#160;&#160;&#160;Number of D-to-A events: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;16</code> <br /><code> &#160;&#160;&#160;&#160;Number of D-to-A events in IEs:           &#160;0</code> <br /><code> &#160;&#160;&#160;&#160;Number of VHDL-AMS Breaks:                &#160;0 </code></p>
+
+<p><code>Intrinsic tran analysis time = 3.5 s. </code></p>
+
+<p><code>Total time required for tran analysis tran1 was 23.7 s. </code></p>
+</td>
+<td class="confluenceTd">
+<p>Exit and complete the simulation.</p>
+</td>
+</tr>
+</tbody></table></div>
+<h5 id="save-RelatedTopics">Related Topics</h5><ul><li><a class="message-url" href="../RunningSimVision/controlsimulation.html">Controlling the Simulation in SimVision</a></li><li><a href="Mixed-Signal_Design_Simulation.html">Mixed-Signal Design Simulation</a></li></ul>
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="run.html" id="prev" title="run">run</a></em></b><b><em><a href="scope.html" id="nex" title="scope">scope</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

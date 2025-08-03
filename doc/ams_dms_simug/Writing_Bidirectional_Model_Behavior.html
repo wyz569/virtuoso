@@ -1,0 +1,213 @@
+
+<html><head><title>Writing Bidirectional Model Behavior</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677668936" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Virtuoso AMS Designer simulator and Xcelium Simulator with mixed-signal option that supports the Verilog-AMS,  VHDL-AMS, and SystemVerilog-AMS language standards." />
+<meta name="DocTitle" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Writing Bidirectional Model Behavior" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="task" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="Real Number Modeling, Real Number Modeling," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="ams_dms_simug" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677668936" />
+<meta name="NextFile" content="Using_wreal_in_Assertions.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="wreal_Nets_at_Mixed-Language_Boundaries.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide -- Writing Bidirectional Model Behavior" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="amssimug2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+<script type="text/javascript" src="styles/shCore1.js">/*<![CDATA[*//*]]>*/</script><script type="text/javascript" src="styles/shCore.js">/*<![CDATA[*//*]]>*/</script><script type="text/javascript" src="styles/shBrushCpp.js">/*<![CDATA[*//*]]>*/</script><script type="text/javascript" src="styles/shBrushJava.js">/*<![CDATA[*//*]]>*/</script><script type="text/javascript" src="styles/shBrushXml.js">/*<![CDATA[*//*]]>*/</script><script type="text/javascript" src="styles/shBrushPython.js">/*<![CDATA[*//*]]>*/</script><script type="text/javascript" src="styles/shBrushPowerShell.js">/*<![CDATA[*//*]]>*/</script><link rel="stylesheet" href="styles/shCoreDefault.css" type="text/css" /><link rel="stylesheet" href="styles/shCoreMidnight.css" type="text/css" /><script type="text/javascript">/*<![CDATA[*/
+SyntaxHighlighter.all();
+/*]]>*/</script>
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="ams_dms_simugTOC.html">Contents</a></li><li><a class="prev" href="wreal_Nets_at_Mixed-Language_Boundaries.html" title="wreal_Nets_at_Mixed-Language_Boundaries">wreal_Nets_at_Mixed-Language_B ...</a></li><li style="float: right;"><a class="viewPrint" href="ams_dms_simug.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Using_wreal_in_Assertions.html" title="Using_wreal_in_Assertions">Using_wreal_in_Assertions</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Writing Bidirectional Model Behavior</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p><span class="confluence-anchor-link" id="WritingBidirectionalModelBehavior-wtran_model"></span>You can use the&#160;<code>$cds_get_external_drivers</code>&#160;system task in module definitions to model bidirectional behavior like pass gates, for nets with user-defined nettypes (UDNs). For example, you may use <code>$cds_get_external_drivers</code>&#160;in module definitions to model the bidirectional behavior of WTRAN models with SV-wreal nettypes.</p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>You can also use the abbreviated name, <span><code>$cged</code> instead of <code>$cds_get_external_drivers</code>.</span></p>
+</div>
+</div>
+
+<p>The use model is similar to the connect modules that support SIE with the following differences:</p>
+<ul><li>The module cannot contain any analog ports</li><li>The module is not limited to just two ports like the SIE connect modules</li></ul>
+<p>The module can have an arbitrary number of digital ports. All inout ports that have a&#160;<code>$cds_get_external_drivers</code>&#160;call associated with them receive additional SIE processing to create shadow networks. All ports that do not have a&#160;<code>$cds_get_external_drivers</code>&#160;call associated with them receive normal SystemVerilog port processing.</p>
+
+<p>The module cannot have a&#160;<code>$cds_get_external_drivers</code>&#160;call associated with a port that is not declared (or has default direction) as <code>inout</code>. Also, all ports that have a&#160;<code>$cds_get_external_drivers</code>&#160;calls associated with them must be nets; <code>$cds_get_external_drivers</code>&#160;cannot be called on a var port. However, normal ports that do not get SIE processing can have any legal port kind, type, or direction. Also, module/UDP instantiation inside SIE model is not supported.</p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>Starting with Xcelium&#160;19.09, bidirectional behavior of WTRAN models is supported with mixed-language (Verilog/VHDL) net connections also. So, you can instantiate Verilog SIE model inside VHDL (VHDL on parent and Verilog SIE model on child).</p>
+</div>
+</div>
+
+<p>Following is an example of a <code>wreal1driver</code>&#160;pass gate model that can be modeled with SIE ports:</p>
+<div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">import cdn_rnm_pkg::*;
+module wreal1driver_pass_gate(inout wreal1driver a, inout wreal1driver b, wire en);
+real aVal, bVal;
+real aOut, bOut;
+initial
+begin
+$cds_get_external_drivers(a, aVal);
+$cds_get_external_drivers(b, bVal);
+aOut = `wrealZState;
+bOut = `wrealZState;
+end
+
+always @(aVal, bVal, en)
+begin
+//en is high so the pass gate is open
+if(en===1)
+begin
+if(aVal === `wrealZState)
+begin
+// a is Z so we pass b to a
+aOut = bVal;
+bOut = `wrealZState;
+end
+else if(bVal === `wrealZState)
+begin
+// b is Z so pass a to b
+bOut = aVal;
+aOut = `wrealZState;
+end
+else
+begin
+// both a and b are nonZ so we have contention and output X
+aOut = `wrealXState;
+bOut = `wrealXState;
+end
+end
+else if(en===0)
+begin
+// en is low so we aren&#39;t passing values. just drive Z
+aOut = `wrealZState;
+bOut = `wrealZState;
+end
+else
+begin
+// en is X or Z so output X
+aOut = `wrealXState;
+bOut = `wrealXState;
+end
+end
+// assign the pass values to the port so they are visible to external receivers
+assign a = aOut;
+assign b = bOut;
+endmodule</pre>
+</div>
+</div>
+
+<p>In the above example, if the enable is high and only one of the model ports is driven, that value is passed to the other side. For cases where both ports are driven and the enable is high, both sides of the pass gate resolve to&#160;<code>wrealXState</code>. If the enable is low, both sides of the pass gate are isolated from each other (the pass gate drives out&#160;<code>`wrealZValue)</code>. If the enable is X or Z, both sides resolve to&#160;<code>`wrealXState</code>.</p>
+
+<p>Following is an example of a&#160;<code>WTRANIF1</code>&#160;model that can be modeled with SIE ports:</p>
+<div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">import cds_rnm_pkg::*;
+&#160;
+module wtranif1(inout wreal4state a, inout wreal4state b, input var bit en);
+real a_val;
+real b_val;
+wreal4state a_ord;
+wreal4state b_ord;
+real Zval;
+real Xval;
+&#160;
+initial
+begin
+Zval = `wrealZState;
+Xval = `wrealXState;
+$cds_get_external_value(a, a_ord);
+$cds_get_external_value(b, b_ord);
+end
+/* disable full resolution on the shadow net */
+assign a_ord = (en!==1)? Xval : Zval;
+assign b_ord = (en!==1)? Xval : Zval;
+
+assign #1 a = (en!==1&#39;b1)? Zval : b_ord;
+assign #1 b = (en!==1&#39;b1)? Zval : a_ord;
+
+endmodule // wtranif1</pre>
+</div>
+</div>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p><code>wreal4state</code> is analogous to a digital 4-state wire and is the only type that can be used to model a WTRANIF gate.</p>
+</div>
+</div>
+
+<p>The following figure illustrates a typical use scenario of the WTRANIF1 switch.</p>
+<p align="left"><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" data-base-url="https://rdwiki.cadence.com" data-image-src="attachments/475368323/475368324.png" data-linked-resource-container-id="475368323" data-linked-resource-container-version="1" data-linked-resource-content-type="image/png" data-linked-resource-default-alias="chap4.11.1.4.png" data-linked-resource-id="475368324" data-linked-resource-type="attachment" data-linked-resource-version="1" data-unresolved-comment-count="0" src="attachments/475368323/475368324.png" width="640px" /></span></p>
+
+<p>The&#160;<code>$cds_get_external_value</code>&#160;function is used to resolve the drive strength of A and B.</p>
+<ul><li>When enable EN=1<ul><li>If A is&#160;<code>wrealZState</code>&#160;and B is not, the value of B drives A</li></ul></li></ul><ul><li style="list-style-type: none;background-image: none;"><ul><li>If B is&#160;<code>wrealZState</code>&#160;and A is not, the value of A drives B</li></ul></li></ul><ul><li style="list-style-type: none;background-image: none;"><ul><li>If none of them are&#160;<code>wrealZState</code>, they resolve to wrealXState</li></ul></li><li>When enable EN=0, A and B maintain their values</li></ul>
+<p>Modeling bidirectional behavior for WTRAN models may affect elaboration performance. You can use the&#160;<code>xrun</code>&#160;option,&#160;<code>-amsie_task_perf</code>, to optimize elaboration performance for such models.</p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>Modeling arbitrary networks of pass gates may not be possible for every resolution function as the pass gate model relies heavily on the resolution behavior of the net. For some resolutions (like for instance <code>wrealavg</code>), it may not be possible to use this methodology to model pass gate like behavior (<code>wrealavg</code> ports may have different values on each port because the internal driver gets averaged with the external drivers, which may be different on each port in a multi-driver situation). Therefore, if you intend to model pass gate behavior, you should define the resolution function such that it supports your pass gate models.</p>
+</div>
+</div>
+<h5 id="WritingBidirectionalModelBehavior-RelatedTopics">Related Topics</h5><ul><li><a href="Resolving_Disciplines_for_Verilog-AMS_wreal_Nets.html">Resolving Disciplines for Verilog-AMS wreal Nets</a></li><li><a href="wreal_Nets_at_Mixed-Language_Boundaries.html">wreal Nets at Mixed-Language Boundaries</a></li></ul>
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="wreal_Nets_at_Mixed-Language_Boundaries.html" id="prev" title="wreal_Nets_at_Mixed-Language_Boundaries">wreal_Nets_at_Mixed-Language_B ...</a></em></b><b><em><a href="Using_wreal_in_Assertions.html" id="nex" title="Using_wreal_in_Assertions">Using_wreal_in_Assertions</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>

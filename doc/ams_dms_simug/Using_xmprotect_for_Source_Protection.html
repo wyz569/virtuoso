@@ -1,0 +1,147 @@
+
+<html><head><title>Using xmprotect for Source Protection</title>
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="jaini" />
+<meta name="CreateDate" content="2023-03-01" />
+<meta name="CreateTime" content="1677669109" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the Virtuoso AMS Designer simulator and Xcelium Simulator with mixed-signal option that supports the Verilog-AMS,  VHDL-AMS, and SystemVerilog-AMS language standards." />
+<meta name="DocTitle" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Using xmprotect for Source Protection" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="task" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Analog Mixed-Signal,Digital Mixed-Signal," />
+<meta name="prod_subfeature" content="Spectre, Performance," />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="" />
+<meta name="FileType" content="Chapter" />
+<meta name="Keyword" content="ams_dms_simug" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-03-01" />
+<meta name="ModifiedTime" content="1677669109" />
+<meta name="NextFile" content="Protecting_All_Modules_in_a_Source_Description.html" />
+<meta name="Group" content="Mixed-Signal Simulation" />
+<meta name="Platform" content="Functional Verification," />
+<meta name="PrevFile" content="Appendix_C__Source_Protection.html" />
+<meta name="c_product" content="Xcelium," />
+<meta name="Product" content="Xcelium," />
+<meta name="ProductFamily" content="Xcelium," />
+<meta name="ProductVersion" content="22.09" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide -- Using xmprotect for Source Protection" />
+<meta name="Version" content="22.09" />
+<meta name="Renderer" content="WIKI" />
+<meta name="SpaceKey" content="amssimug2209" />
+<meta name="confluence-version" content="7.4.1" />
+<meta name="ecms-plugin-version" content="04.10.026" />
+
+        
+        <link href="styles/site.css" rel="stylesheet" type="text/css" />
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("img").forEach((img, index) => {
+   img.addEventListener("click", (e) => { 
+    document.querySelector("#cad_image_modal").classList.add("opac");
+      document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0; margin: auto;max-height: 96%;max-width: 96%;" src="${e.target.src}">`;});});});
+</script>
+
+<style>
+ img{cursor:pointer;
+ }
+ #cad_image_modal{
+ position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;
+ }
+ #cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;
+ }
+ #cad_image_modal span{
+  position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;
+ }
+ </style>
+
+</head><body style="background-color: #FFFFFF;"><!-- Begin Buttons --><header xmlns:html="http://www.w3.org/1999/xhtml"><div class="docHeadr">Product Documentation<img src="images/Cadence-Logo.jpg" /></div>
+<nav class="blueHead"><ul><li><a class="content" href="ams_dms_simugTOC.html">Contents</a></li><li><a class="prev" href="Appendix_C__Source_Protection.html" title="Appendix_C__Source_Protection">Appendix_C__Source_Protection</a></li><li style="float: right;"><a class="viewPrint" href="ams_dms_simug.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Protecting_All_Modules_in_a_Source_Description.html" title="Protecting_All_Modules_in_a_Source_Description">Protecting_All_Modules_in_a_So ...</a></li></ul></nav></header><!-- End Buttons --><div xmlns:html="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:1.42857142857;margin:20px 0 0 0;font-weight:bold;"><center>Spectre AMS Designer and Xcelium Simulator Mixed-Signal User Guide<br />Product Version 22.09, September 2022</center></div>
+<div xmlns:html="http://www.w3.org/1999/xhtml" style="margin-left:5%;">
+<p></p>
+
+<p></p>
+<div id="main-header">
+                    
+                    
+                                                <h1 style="margin: 4px 0 4px;"><span>Using xmprotect for Source Protection</span></h1>
+
+                    
+                </div>
+<div class="wiki-content group" id="main-content">
+                    
+<p><span class="confluence-anchor-link" id="UsingxmprotectforSourceProtection-1017070"></span><span class="confluence-anchor-link" id="UsingxmprotectforSourceProtection-ncprotect"></span>When you use the&#160;<code>xmprotect</code>&#160;utility to prevent access to or modification of Verilog-AMS, Verilog (digital), VHDL-AMS, VHDL (digital), and Verilog-A source code, you can</p>
+<ul><li>Protect selected design units or models</li></ul><ul><li>Protect selected regions within design units or models</li></ul><ul><li>Automatically protect all design units and models in a file</li></ul>
+<p>Source protection prevents access to protected regions. When you use source protection, software or commands that normally report information that depends on code do not return any information that might reveal the contents of the protected regions. In addition, AMS either suppresses warning and error messages from protected regions or issues generic messages that do not disclose protected information. You can use the protected code as usual in the simulation flow and it produces the same results as unprotected code.</p>
+
+<p>To protect the source description of selected modules or regions:</p>
+<ol><li>Place protection pragmas in the source description to define the protected region.<br /><br />The pragmas, which are in the form of comments, are:<br /><ul><li><strong><code>pragma protect</code></strong>:&#160;<span style="">Indicates the start of a protection block. Used in conjunction with </span><code>pragma protect begin</code>.</li><li><strong><code>pragma protect begin</code></strong><span style="">: Indicates the start of the data to be encrypted.</span></li><li><strong><code>pragma protect end</code></strong><span style="">: Indicates the end of the data to be encrypted.</span></li></ul>
+<p>You use the protection pragmas to mark regions you want to protect in Verilog-AMS, Verilog (digital), VHDL-AMS, and VHDL (digital) code and Verilog-A code in your model files.&#160;See&#160;<a href="#UsingxmprotectforSourceProtection-1017093">Examples of Using the Protection Pragmas</a>.</p>
+
+<p>You can use the protection pragmas <code>protect begin</code>&#160;and <code>protect end</code>&#160;inside or outside of design units, provided that you pair each <code>protect begin</code>&#160;pragma with a <code>protect end</code>&#160;pragma in the same source file. If you insert a <code>protect begin</code>&#160;pragma without a corresponding <code>protect end</code>&#160;pragma, the software issues a warning and encrypts everything remaining in the file.</p>
+
+<p>You can use multiple sets of the <code>protect begin</code>&#160;and <code>protect end </code>pragmas within design units. However, you cannot nest blocks of source code bounded by<code> protect begin </code>and<code> protect end </code>pragmas inside one another.</p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>The following tasks do nothing when they are located inside an area that is protected: <code>$strobe</code>,<code>&#160;$fstrobe</code>,<code>&#160;$display</code>,<code>&#160;$fdisplay</code>,<code>&#160;$debug</code>,<code>&#160;$fdebug</code>,<code>&#160;$write</code>,&#160;<code>$fwrite</code>.</p>
+</div>
+</div>
+</li><li>Run the <a href="../IPProtect/xmprotect_Command_Syntax_and_Options.html"><code>xmprotect</code></a>&#160;command on the input files containing the regions to be protected.&#160;<br /><br />The protection&#160;pragmas mark the regions you want to protect; encryption actually occurs when you run the <code>xmprotect</code>&#160;command on the source description files.&#160;<br />
+<p>Processing a source description with the <code>xmprotect</code>&#160;command generally protects only the regions marked with <code>protect begin</code>&#160;and <code>protect end</code>&#160;pragmas. The command creates a new source file that differs from the original file in the following ways:</p>
+<ul><li>The pragmas <code>protect begin</code>&#160;and <code>protect end</code>&#160;become <code>protect begin_protected</code>&#160;and&#160;<code>protect end_protected</code>, respectively. The software adds other pragmas for the encryption.</li><li>The regions you marked for protection in the original source description become unreadable.</li></ul><br />By default, the new file has the same name as the original file, but with an appended p.<br /><br />Ensure that the encrypted file is not changed after it is generated, perhaps by making the file read-only. Changing the encrypted code by hand corrupts the file, causing error messages such as the following:<br /><br /><code>Error while decrypting : Corrupted encrypted block, checksum did not match</code><br /><br />If you get such an error, you can resolve the problem by recreating or reinstalling the protected code.</li></ol>
+<p>To use the protected modules, you run the compiler as usual. The compiler decrypts the encrypted files and compiles the design units in the file. You can then elaborate the design and simulate the snapshot. Downstream programs provide restricted visibility and access to the protected units.</p>
+
+<p><code> </code></p>
+<h2 id="UsingxmprotectforSourceProtection-1017093ExamplesofUsingtheProtectionPragmas"><span class="confluence-anchor-link" id="UsingxmprotectforSourceProtection-1017093"></span>Examples of Using the Protection Pragmas</h2>
+
+<p>These examples show how to use the <code>protect begin</code>&#160;and <code>protect end</code>&#160;pragmas in a source file.</p>
+
+<p>The following example shows how to mark a region in the module <code>top_design</code>&#160;for protection:&#160;<span class="confluence-anchor-link" id="UsingxmprotectforSourceProtection-1018616"></span><span class="confluence-anchor-link" id="UsingxmprotectforSourceProtection-firstexample"></span></p>
+
+<p><code> module top_design (a, b, c)<br />&#160;&#160;&#160;&#160;bottom inst ();<br />//&#160;&#160;pragma protect<br />//&#160;&#160;pragma protect begin<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;initial<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$display (&quot;Inside module top_design&quot;);<br />//&#160;&#160;pragma protect endendmodule </code></p>
+
+<p>The protected version of the example takes the following form, allowing read access to the first two lines while encrypting the remainder of the module:</p>
+
+<p><code> module top_design (a, b, c) // readable<br />    bottom inst ();&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// readable<br />//pragma protect begin_protected<br />//pragma protect key_keyowner=Cadence Design Systems.<br />//pragma protect key_keyname=CDS_KEY<br />//pragma protect key_method=RC5<br />//pragma protect key_block<br />hjQ2rsuJMpL9F3O43Xx7zf656dz2xxBxdnHC0GvJFJG3Y5HL0dSoPcLMN5Zy6Iq+ySMMWcOGkowbtoHVjNn3UdcZFD6NFlWHJpb7KIc8Php8iT1uEZmtwTgDSy64yqLLSCaqKffWXhnJ5n/936szbTSvc8vs2ILJYG4FnjIZeYARwKjbofvTgA==<br />//pragma protect end_key_block<br />//pragma protect digest_block<br />uilUH9+52Dwx1U6ajpWVBgZque4=<br />//pragma protect end_digest_block<br />//pragma protect data_block<br />jGZcQn3lBzXvF2kCXy+abmSjUdOfUzPOp7g7dfEzgN96O2ZRQP4aN7kqJOCA9shIjcvO6pnBhjaTNlxUJBSbBA==<br />//pragma protect end_data_block<br />//pragma protect digest_blockt<br />zEpxTPg7KWB9yMYYlqfoVE3lVk=<br />//pragma protect end_digest_block<br />//pragma protect end_protected<br />endmodule </code></p>
+
+<p>The new, protected, source files do not overwrite the original, unprotected, source files. When you protect the original source file with <code>xmprotect</code>, you can specify an optional file extension you want the software to append to the name of the protected source file. If you do not specify an extension, the <code>xmprotect</code>&#160;command automatically appends a <code>p</code>&#160;to the source file name to create the protected file name.</p>
+
+<p>For example, the following command protects the file <code>src.v.</code> By default, the software appends a<code> p </code>to the protected source file name: <code>src.vp.</code></p>
+
+<p><code> xmprotect src.v </code></p>
+
+<p>The following command specifies an extension<code> myext </code>for the protected version of <code>design.v: design.v.myext</code>.</p>
+
+<p><code> xmprotect design.v -extension myext</code></p>
+<div class="confluence-information-macro confluence-information-macro-note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body">
+<p>If the name of the protected file conflicts with the name of an existing file, the <code>xmprotect</code> command does not create the protected file; instead, it issues a message that alerts you to the conflict.</p>
+</div>
+</div>
+
+<p>The following example shows how to mark an entire module, including the module name, for protection:</p>
+
+<p><code> // pragma protect<br />// pragma protect begin<br /> &#160;&#160;&#160;&#160;module bottom ();<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;initial<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;begin<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;$display (&quot;Inside module bottom&quot;);<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;end<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;endmodule<br /> // pragma protect end </code></p>
+
+<p>The following example illustrates how to protect a region in a VHDL description:</p>
+
+<p><code> architecture behavior of myblock is<br />-- pragma protect<br />-- pragma protect begin<br />SIGNAL s: bit:= &#39;0&#39;; </code></p>
+
+<p><code> BEGIN<br />&#160;&#160;&#160;&#160;digital: process (s)<br />&#160;&#160;&#160;&#160;BEGIN<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;s &lt;= NOT s after 1 ms;<br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;REPORT &quot;s=&quot; &amp; bit.image(s);<br />&#160;&#160;&#160;&#160;END PROCESS digital;<br />END behavior;<br />-- pragma protect end<br />END myblock;</code></p>
+<h5 id="UsingxmprotectforSourceProtection-RelatedTopics">Related Topics</h5><ul><li><a href="../IPProtect/xmprotect_Command_Syntax_and_Options.html">xmprotect Command Syntax and Options</a></li><li><a href="Using_spectre_encrypt_for_Source_Protection.html">Using spectre_encrypt for Source Protection</a></li></ul>
+                    </div>
+<br /><br /></div>
+<footer xmlns:html="http://www.w3.org/1999/xhtml"><nav class="navigation"><b><em><a href="Appendix_C__Source_Protection.html" id="prev" title="Appendix_C__Source_Protection">Appendix_C__Source_Protection</a></em></b><b><em><a href="Protecting_All_Modules_in_a_Source_Description.html" id="nex" title="Protecting_All_Modules_in_a_Source_Description">Protecting_All_Modules_in_a_So ...</a></em></b></nav><div>
+          For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved.
+        </div>
+</footer><br xmlns:html="http://www.w3.org/1999/xhtml" />
+<div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;&#10240;</center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div>
+
+</body></html>
