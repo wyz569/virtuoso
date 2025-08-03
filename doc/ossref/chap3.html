@@ -1,0 +1,1365 @@
+
+<html><head><title>Customizing the Simulation Environment (SE)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rgirdhar" />
+<meta name="CreateDate" content="2023-06-14" />
+<meta name="CreateTime" content="1686770750" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes reference information about the Open Simulation System, which gives easy access to supported simulators and lets you customize and integrate new simulators into the Cadence system" />
+<meta name="DocTitle" content="Open Simulation System Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Customizing the Simulation Environment (SE)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="ossref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-14" />
+<meta name="ModifiedTime" content="1686770750" />
+<meta name="NextFile" content="chap4.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap2.html" />
+<meta name="c_product" content="Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Open Simulation System Reference -- Customizing the Simulation Environment (SE)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="ossrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="ossrefTOC.html">Contents</a></li><li><a class="prev" href="chap2.html" title="Integrating Simulators">Integrating Simulators</a></li><li style="float: right;"><a class="viewPrint" href="ossref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap4.html" title="Customizing the Interactive Simulation Environment (ISE)">Customizing the Interactive Si ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Open Simulation System Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>3
+<a id="pgfId-1032656"></a></h1>
+<h1>
+<a id="pgfId-1036841"></a><hr />
+Customizing the Simulation Environment (SE)<hr />
+</h1>
+
+<p>
+<a id="pgfId-1036848"></a><a id="marker-1036845"></a>The <a id="marker-1036846"></a>Simulation Environment (SE) controls all steps of the simulation process. It lets you manage the complex series of steps required to run a simulation, making simulation appear to be a single-step process to the designer.</p>
+<p>
+<a id="pgfId-1032665"></a>SE can be customized using the Cadence standard language, <a id="marker-1032664"></a>SKILL. This is the same language and syntax used to customize the output of the Flat Netlister (FNL) and the Hierarchical Netlister (HNL). In addition to the commands available in SKILL, database access functions are also available. These commands have been enhanced with additional commands and functions specific to running simulations.</p>
+<p>
+<a id="pgfId-1032666"></a>This chapter explains the strategy behind SE, how it works, and how to customize it to run your simulator.</p>
+
+<h2>
+<a id="pgfId-1032669"></a>SE Goals<a id="SE Goals"></a></h2>
+
+<p>
+<a id="pgfId-1032671"></a>A designer typically uses several <a id="marker-1032670"></a>design analysis tools throughout the design cycle: tools to verify timing, simulate the design at various levels, and verify the physical against the logical design. In traditional computer-aided design (CAD) systems, each of these tools was separate, distinct, and had a separate non-standard user interface. In addition, running each design analysis tool frequently required several steps. These include generation of a netlist, sometimes translating the netlist from a standard format such as Electronic Design Interchange Format (EDIF) to the syntax required by the simulator, creating input stimulus in the syntax required by the analysis tool, and translating the results to either a user-readable format, or converting the output to a syntax required by other display tools. The designer needs to manually perform many of these steps.</p>
+<p>
+<a id="pgfId-1032673"></a><a id="marker-1032672"></a>SE simplifies this process. SE provides a single user interface designers can use to access all their design analysis tools. Cadence uses SE to provide the interface to all of the simulators it supports. With the Open Simulation System (OSS), you can use SE to interface your design analysis tool into the Cadence system, and provide your designers with the same consistent user-friendly interface.</p>
+<p>
+<a id="pgfId-1032675"></a>Underlying the visible user interface is a simulation interface framework. This framework provides functions to perform the steps required in the simulation process. When you specify default values for the parameters used by these functions, the functions alter their <a id="marker-1032676"></a>behavior to perform the steps required by your application. Integrating your application into SE consists of specifying these parameters, which consist of a set of SKILL variables and functions. Designers never need to know the details of this framework because they see only the user interface. However, to add your simulator into this framework, you must thoroughly understand the framework.</p>
+<p>
+<a id="pgfId-1032678"></a><a id="marker-1032677"></a>This chapter explains how SE works, and then shows how to customize it to run your simulator. Before continuing, you need to do the following:</p>
+<ol><li>
+<a id="pgfId-1032679"></a>Familiarize yourself with the simulation user interface. <br />
+<a id="pgfId-1032680"></a>Before you can customize SE, you should have an in-depth knowledge of running simulations using the Cadence system. To do this, first read the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em>. Then, design a few small circuits and simulate them using SE.</li><li>
+<a id="pgfId-1032681"></a>Acquire a working knowledge of SKILL.<br />
+<a id="pgfId-1032682"></a>SE is customized using the Cadence standard language, SKILL. Before you attempt to customize SE, you must have a working knowledge of SKILL. First, read the <em><a actuate="user" class="URL" href="../sklanguser/sklanguserTOC.html#firstpage" show="replace" xml:link="simple">Cadence SKILL Language User Guide</a></em>. Then, write a few small programs in SKILL and run them in SE or using SKILL in the Cadence graphics environment.</li><li>
+<a id="pgfId-1032683"></a>Acquire a working knowledge of database access functions. <br />
+<a id="pgfId-1032684"></a>Database access functions are the SKILL level database access functions available from Cadence. You do not need to understand the structure of the Cadence database to customize SE to run your simulator; however, you can use these features to develop advanced simulation interfaces. Read the <a actuate="user" class="URL" href="../skdfref/skdfrefTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Environment SKILL Reference</a><em> </em>to become familiar with the Cadence database structure and the functions available to access it. Then, write a small program to access the design database.</li><li>
+<a id="pgfId-1032685"></a>Customize HNL or the FNL netlisting. <br />
+<a id="pgfId-1032686"></a>The first step to performing a simulation is generating a netlist suitable as input to your simulator. Before customizing SE, customize either HNL or FNL to generate a netlist in the syntax required by your simulator. This process is described in the &#8220;Customizing the Hierarchical Netlister (HNL)&#8221; and &#8220;Customizing the Flat Netlister (FNL)&#8221; chapters in this manual. These chapters also explain how and why name mapping is performed in the Cadence system. This knowledge is required to understand the name translation steps performed during a simulation.</li><li>
+<a id="pgfId-1032687"></a>Familiarize yourself with the probe file.<br />
+<a id="pgfId-1032689"></a><a id="marker-1032688"></a>Error backannotation is performed using probes. You can store error messages from your simulator in a file that can later be graphically displayed on the design. The format of this file is documented in the &#8220;Probe File Format&#8221; section of the Graphics Editor chapter of the <a actuate="user" class="URL" href="../skdfref/skdfrefTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Environment SKILL Reference</a>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1032695"></a>SE Steps<a id="SE Steps"></a></h2>
+
+<p>
+<a id="pgfId-1032697"></a>SE performs several steps during the simulation process. This section includes an explanation of the following major steps and their functions:</p>
+<ul><li>
+<a id="pgfId-1032698"></a>Run Directory Initialization</li><li>
+<a id="pgfId-1032699"></a>Netlisting</li><li>
+<a id="pgfId-1032700"></a>Simulation Input Translation</li><li>
+<a id="pgfId-1032701"></a>Running the Simulator</li><li>
+<a id="pgfId-1032702"></a>Simulator Output Translation</li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1032705"></a>Run Directory Initialization<a id="Run Directory Initialization"></a><a id="marker-1032704"></a></h3>
+
+<p>
+<a id="pgfId-1032706"></a>When a simulation is run on the Cadence system, all inputs and outputs of the simulation process are contained in a single directory. This directory is called the Simulation Run Directory (or <a id="marker-1032707"></a><code>run directory</code>). The first step in the simulation process is to ensure required files exist in this directory. Most design analysis tools require instructions as to what actions are to be performed. These instructions are stored in the <code>control</code><a id="marker-1032708"></a> file. You can provide a default set of instructions in a file, and then whenever your designers request creation of a new run directory, SE copies this file into that directory. In addition, you can perform more sophisticated control file creation. For example, you could read in the design, and for every terminal in the top level of the design, create a default set of stimuli.</p>
+
+<h3>
+<a id="pgfId-1032711"></a>Netlisting<a id="Netlisting"></a><a id="marker-1032710"></a></h3>
+
+<p>
+<a id="pgfId-1032713"></a>Netlisting is the process of converting the <a id="marker-1032712"></a>connectivity of a design into a textual description suitable as input to a design analysis tool. Netlisting is the most complex step in integrating your simulator into the Cadence system. Therefore, the details of these steps are contained in separate chapters. The &#8220;Customizing the Flat Netlister (FNL)&#8221; and &#8220;Customizing the Hierarchical Netlister (HNL)&#8221; chapters in this manual describe in detail how to customize the output of the Cadence-provided netlisters. In addition, the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual explains the modifications required to SE to run the netlister.</p>
+<p>
+<a id="pgfId-1032715"></a><a id="marker-1032714"></a>Name mapping is frequently performed by the netlisters. The Cadence system allows you flexibility in naming components of your design. These names are occasionally not valid in the syntax of the target design analysis tool. In addition, when generating a flat netlist, a new name must be generated to uniquely identify a device contained in a hierarchical design. The designer never needs to know what name was assigned by the system; only the designer-assigned names are of concern. <a id="marker-1032716"></a>Part of the SE functionality automatically translates between these names as needed by the application.</p>
+
+<h3>
+<a id="pgfId-1032719"></a><a id="marker-1032717"></a>Simulation Input Translation<a id="Simulation Input Translation"></a></h3>
+
+<p>
+<a id="pgfId-1032720"></a>As mentioned in the previous &#8220;Netlisting&#8221; section in this chapter, names in the netlist are frequently not the names the designer placed in the design. However, the names in the netlist are the only ones the design analysis tool recognizes. To enable the designer to specify the same names in the design and the input to the simulator (stimulus and commands), the <code>control</code><a id="marker-1032721"></a> file is translated before it is provided as input to the simulator. Any names that were mapped to a different name during the netlisting process are then substituted with the name used for the netlist. This way, the designer does not need to know the names used in the netlist, and the simulator is always presented a consistent set of names.</p>
+
+<h3>
+<a id="pgfId-1032724"></a>Running the Simulator</h3>
+
+<p>
+<a id="pgfId-1032725"></a>Once the input for the simulator has been prepared, the simulator is run. Tools are provided within SE to specify the UNIX&#174; command to run your simulator. SE then runs the simulator, and waits for it to complete execution. When the simulator has completed, the simulator output needs to be prepared for analysis by the designer. The <a id="marker-1032726"></a>simulation output is in the textual form.</p>
+
+<h3>
+<a id="pgfId-1032730"></a><a id="marker-1032728"></a>Simulation Output Translation<a id="Simulation Output Translation"></a></h3>
+
+<p>
+<a id="pgfId-1032731"></a>The simulator text output also requires translation. The names in the output file referencing the design are the same ones that appeared in the netlist. These may not be the same names as those entered in the design; therefore, the names need to be converted back to the names the designer entered.</p>
+
+<h2>
+<a id="pgfId-1032735"></a>How SE Works<a id="How SE Works"></a></h2>
+
+<p>
+<a id="pgfId-1032738"></a><a id="marker-1032736"></a>SE has both a graphics environment, <a id="marker-1032737"></a>Cadence graphics, and a non-graphics environment, <a id="marker-1032739"></a>Simulation Interface (SI). Designers can perform all simulation functions in either environment. For example, they can generate netlists, run name translations, and complete simulations by entering commands from menus in the Cadence graphics environment. They can also perform these tasks by starting SI in UNIX and entering commands. </p>
+<p>
+<a id="pgfId-1032741"></a><a id="marker-1032740"></a>In the Cadence graphics environment, designers can run simulation functions in the <a id="marker-1032742"></a>foreground or in the <a id="marker-1032743"></a>background after running the <code>Initialize</code> command from the Simulation menu. For example, if they run the <code>netlist</code><a id="marker-1032744"></a> command in the foreground, the Cadence graphics environment is locked while the netlist is generated. If they run <code>netlist</code> in the background, they can continue to issue other commands.</p>
+<p>
+<a id="pgfId-1032747"></a>In SI, designers can run simulation in either <a id="marker-1032745"></a>batch or <a id="marker-1032746"></a>enter commands to a command interpreter. If they enter the <code>si</code> command with the <code>-batch</code> option, the program initializes itself and runs the single command they specify following the <code>-command</code> option. If they do not enter a command, SI runs the complete simulation process. If designers want to run the simulation and be prompted for commands, they enter the <code>si</code> command without the <code>-batch</code> option. A SKILL command interpreter is invoked when the program has been initialized. Designers can then run any SKILL or SE function. In this mode, unlike batch mode, designers can enter more than one command. </p>
+<p>
+<a id="pgfId-1032751"></a><h-hot><a href="chap3.html#37508"></a><xrefstd>Figure&#160;3-1<h-hot /></xrefstd></h-hot> shows the steps performed during a simulation using the SILOS&#174; simulator. Included in the diagram are the files used as input to each step, and the resulting output files. The numbers next to the files in the initialization step specify the order in which the files are loaded. </p>
+
+<p><strong>Figure 3-1
+<a id="pgfId-1045181"></a><a id="37508"></a>Steps Performed During SILOS Simulation</strong></p>
+<p>
+<a id="pgfId-1045359"></a><a id="marker-1045358"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="652" src="images/chap3-2.gif" /></div>
+<p>
+<a id="pgfId-1033004"></a></p>
+<div class="webflare-div-image">
+<img width="669" height="388" src="images/chap3-3.gif" /></div>
+<h4>
+<a id="pgfId-1033007"></a>SE Initialization<a id="SE Initialization"></a><a id="marker-1033006"></a> </h4>
+
+<p>
+<a id="pgfId-1033011"></a><h-hot><a href="chap3.html#37508"></a><xrefstd>Figure&#160;3-1<h-hot /></xrefstd></h-hot> shows the steps performed during SILOS simulation. When SE starts executing, the first step is to initialize the SKILL environment with the default functions and variable settings used for running a simulation. This is accomplished by loading various files that are written in SKILL syntax. </p>
+<p>
+<a id="pgfId-1033013"></a><a id="marker-1033012"></a>All the files provided as part of the simulation environment are stored in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib</code> directory. This directory is relative to the hierarchy in which your Cadence software has been installed. For example, if your software has been installed in the <code>/usr1/cds</code> directory, these files would be located in the <code>/usr1/cds/etc/skill/si</code> directory. This directory also contains the <code>caplib</code><a id="marker-1033014"></a> directory, the SE capabilities library. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033017"></a>In the remainder of this chapter, directory files are specified as located in <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc&#8230;</code> The name of the directory is relative to where you install the Cadence software. When you see such a reference, replace the word <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span> with the file system pathname to where the software is installed. <a id="marker-1068131"></a>SE loads files in the following order to initialize the simulation environment:</div>
+<p class="webflare-indent1">
+<a id="pgfId-1033019"></a><code>si.env
+.simrc
+simcap.ile
+</code>simulator-specific SE customization
+simulator-specific FNL customization
+<code>caplib</code> files</p>
+
+<h4>
+<a id="pgfId-1039652"></a>How SE Locates <a id="csf_search"></a>Customization Files </h4>
+
+<p>
+<a id="pgfId-1039864"></a>All the customization files are searched through the Cadence Setup Search File mechanism (CSF) that uses the <code>setup.loc</code><a id="marker-1039865"></a> file for customized search paths. The <code>setup.loc</code> file is an ASCII file that specifies the locations to be searched and the order in which they should be searched.</p>
+<p>
+<a id="pgfId-1039867"></a>To specify the files that should be found through CSF, create an ASCII file, <code>csfLookupConfig</code><a id="marker-1039866"></a>, in any directory. This directory should be listed in your setup.loc file. In the <code>csfLookupConfig</code> file, specify the files that should be found through CSF. An example of a <code>csfLookupConfig</code> file is as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1039875"></a>INCLUDE si/&lt;<code><em>simulator</em></code>&gt;.ile<br />INCLUDE hnl/&lt;<code><em>simulator</em></code>&gt;.ile<br />INCLUDE hnl.ile<br />INCLUDE .simrc</pre>
+<p>
+<a id="pgfId-1039851"></a>You can access sample <code>csfLookupConfig.sample</code> and the default <code>setup.loc</code> files from <span class="webflare-courier-new" style="white-space:pre"><em>your_install_dir</em></span>/<code>share/cdssetup</code> directory. The default <code>setup.loc </code>file specifies a default search order, which includes commonly-used storage locations.</p>
+<p>
+<a id="pgfId-1039716"></a>The CSF search mechanism is used for the following files:</p>
+<ol><li>
+<a id="pgfId-1039717"></a>&lt;<span class="webflare-courier-new" style="white-space:pre"><em>simSimulator</em></span>&gt;<code>.ile</code> / &lt;<span class="webflare-courier-new" style="white-space:pre"><em>simSimulator</em></span>&gt;<code>.il</code></li><li>
+<a id="pgfId-1039718"></a><code>hnl.ile</code> and <code>hnl.il</code></li><li>
+<a id="pgfId-1039719"></a>All those files which are loaded using <code>simLoadNetlisterFiles</code> (for FNL)</li></ol>
+
+
+<p>
+<a id="pgfId-1039763"></a>The following files are excluded from the CSF search mechanism because they expect a specific directory order. Also because other applications may have files with the same name as these are generic names.</p>
+<ul><li>
+<a id="pgfId-1039730"></a><code>caplib/util.il </code></li><li>
+<a id="pgfId-1039738"></a><code>caplib/getfterms.il </code></li><li>
+<a id="pgfId-1039739"></a><code>caplib/init.ile </code></li><li>
+<a id="pgfId-1039740"></a><code>caplib/siminout.il </code></li><li>
+<a id="pgfId-1039749"></a><code>caplib/simulate.il </code></li><li>
+<a id="pgfId-1039750"></a><code>caplib/remote.il </code></li><li>
+<a id="pgfId-1039751"></a><code>caplib/netlist.il </code></li></ul>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1039752"></a>For more information about the CSF search mechanism, the <code>csfLookupConfig</code> and <code>setup.loc</code> file format refer to <em><a actuate="user" class="URL" href="../caiuser/chap3.html#firstpage" show="replace" xml:link="simple">Chapter 3, Cadence Setup Search File: setup.loc</a></em> of the <em>Application Infrastructure User Guide</em>.</p>
+<p>
+<a id="pgfId-1039659"></a>If you have not defined an entry for a global file, say .<code>simrc</code>, in the <code>csflookupConfig</code> file, then <code>.simrc</code> is searched for in the following order:</p>
+<p>
+<a id="pgfId-1066736"></a><span class="webflare-courier-new" style="white-space:pre"><em>$SIMRC/.simrc<br />$ossSimUserSiDir/.simrc<br />dfII/local/.simrc<br />Current UNIX directory/.simrc<br />~/.simrc</em></span></p>
+<p>
+<a id="pgfId-1066849"></a>The search stops when the first instance of the file is found. Other files are not loaded, unless the identified file loads them, allowing for tiered loading or for the local CAD group to alter or disallow the search mechanism. If it does not exist, no error is generated.</p>
+<p>
+<a id="pgfId-1039777"></a>If you do not want to use the CSF search mechanism, then you can continue to set the shell environment variable <code>$ossSimUserSiDir</code> to point to <code>$CDS_SITE/si</code> or any other directory. You can also use the hnl and fnl specific shell environment variables, <code>ossSimUserHnlDir</code> and <code>ossSimUserFnlDir</code> to specify a different directory containing the .ile files.</p>
+
+<h4>
+<a id="pgfId-1039709"></a>The <a id="marker-1039708"></a>si.env File</h4>
+
+<p>
+<a id="pgfId-1033022"></a>The <code>si.env</code> file is read in from the simulation run directory. This file is used to instruct SE which design to simulate and which simulator to use. In addition to the default information SE stores in this file, you can instruct SE to save any application-specific variables here by using the variable <code>simSimulatorSaveVars</code>. The file is overwritten by the SE function <code>simPrintEnvironment()</code> each time a simulation is run, and any other information stored in this file that SE has not been informed of is lost. The <code>si.env</code> file is used to communicate environment information between SE and the Cadence graphics program.</p>
+
+<h4>
+<a id="pgfId-1033024"></a>The <a id="marker-1033023"></a>.simrc File<a id="ossUserSimrc"></a></h4>
+
+<p>
+<a id="pgfId-1067457"></a>You can use the <code>.simrc</code> file to customize simulations. This file lets you set your defaults for the simulation variables. It overrides the contents of the <code>si.env</code> file. Therefore, the <code>.simrc</code> file provides a mechanism to set the defaults at the user or flow level. This file is optional and is loaded if it exists. </p>
+<p>
+<a id="pgfId-1067458"></a>If you want to use another file, instead of <code>.simrc</code>, to customize simulations for a specific flow, use the UNIX environment variable <code>ossUserSimrc</code> to set the path of that custom file. For example, the following command sets <code>mysimrc</code> as the custom file.</p>
+<p>
+<a id="pgfId-1067473"></a><code>$ setenv ossUserSimrc mysimrc</code></p>
+<p>
+<a id="pgfId-1067568"></a>The functionality provided by <code>ossUserSimrc</code> lets you customize the simulation environment to suit the specific requirements of different flows, without changing your <code>.simrc</code> file. If <code>ossUserSimrc</code> is not set, then the default CSF mechanism is used to load the simulation customization file. </p>
+
+<h4>
+<a id="pgfId-1067166"></a>The <a id="marker-1067165"></a>simcap.ile File</h4>
+
+<p>
+<a id="pgfId-1033030"></a>The <code>simcap.ile</code> file is read in from the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si </code>directory. This file is written in SKILL syntax and contains general variable default settings and function definitions. It is provided by Cadence as part of the simulation environment, and should not require modification to integrate your simulator. In addition to setting defaults, at the end of this file are calls to functions defined in SE. These functions are executed as the file is loaded. The <code>simcap</code>, <code>caplib</code>, <code>hnl</code>, <code>fnl</code> code is searched for in the following order:</p>
+<p>
+<a id="pgfId-1033031"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/[si,hnl,fnl]<br /></code><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/[si,hnl,fnl]</code></p>
+<p>
+<a id="pgfId-1033032"></a>This order lets you to build an interface without modifying Cadence- provided software hierarchy.</p>
+<p>
+<a id="pgfId-1033033"></a>The overall file loading process is described in more detail following these definitions of the initialization files.</p>
+
+<h4>
+<a id="pgfId-1033035"></a><a id="marker-1033034"></a>Simulator-Specific SE Customization </h4>
+
+<p>
+<a id="pgfId-1033036"></a>A file with the same name as the simulator and the <code>.ile</code> suffix is loaded from the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> or <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib</code> directory. For example, when running a SPICE simulation, a file with the name <code>spice.ile</code> is loaded from that directory. This file contains all the default variable settings specific to running a SPICE simulation. This is the file that you must create for SE to recognize your simulator. The command to load this file is contained in the <code>simcap.ile</code> file, and is executed when the <code>simcap.ile</code> file is loaded.</p>
+
+<h4>
+<a id="pgfId-1033037"></a>Simulator-Specific Flat Netlister (FNL) Customization</h4>
+
+<p>
+<a id="pgfId-1033038"></a>A file with the same name as the simulator and the <code>.ile</code> suffix is loaded from the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/fnl</code> or <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/fnl</code> directory. For example, when running a SPICE simulation, a file with the name <code>spice.ile</code> is loaded from that directory. This file contains all the default variable settings and function definitions used by FNL to output the netlist in your simulator&#39;s syntax. For more information on this file, refer to the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual. This file is optional and is loaded if it exists. If it does not exist, no error is generated.</p>
+
+<h4>
+<a id="pgfId-1033040"></a><code></code><a id="marker-1033039"></a>caplib Files </h4>
+
+<p>
+<a id="pgfId-1033041"></a>In addition to the files previously described in this section, the <code>init.ile</code>, <code>netlist.ile</code>, <code>siminout.ile</code>, <code>simulate.ile</code> and a few other files are loaded from the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib</code> directory. These files are loaded in the following order:</p>
+<ol><li>
+<a id="pgfId-1033042"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/util.ile</code></li><li>
+<a id="pgfId-1033043"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/getfterms.ile</code></li><li>
+<a id="pgfId-1033044"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/init.ile</code></li><li>
+<a id="pgfId-1033045"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/siminout.ile</code></li><li>
+<a id="pgfId-1033046"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/simulate.ile</code></li><li>
+<a id="pgfId-1033047"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/remote.ile</code></li><li>
+<a id="pgfId-1033048"></a><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/netlist.ile</code></li></ol>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1033049"></a>Besides defining global functions and default variable settings, the <code>simcap.ile</code> file contains calls to functions that complete the initialization of the simulation environment. These function calls are at the end of the file and are executed as the file is being loaded. The first function to be called is <code>simInitSimulator</code><a id="marker-1033050"></a>. The <code>simInitSimulator</code> function calls a function that you must write to set certain variables to values appropriate for running your simulator. This function must have the same name as your simulator and should be defined in a file that also has the same name as your simulator. This file should be stored in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory. A complete description of what this function and file must contain is in the &#8220;Simulator-Specific SE Customization File&#8221; section in this chapter.</p>
+<p>
+<a id="pgfId-1033052"></a><a id="marker-1033051"></a>Next, the <code>simCheckVariables</code> function is executed. This function checks if the following variables have been defined: </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033053"></a><code>simSimulator 
+simRunDir 
+simCellName
+simLibName
+simViewName
+simNlpGlobalLibName
+simNlpGlobalCellName
+simViewList 
+simStopList 
+simSedFile 
+simCommand </code></p>
+<p>
+<a id="pgfId-1033054"></a>These variables are required to enable SE to run a simulation. The first eight variables are defined in the <code>si.env</code> environment file and by SE. The remaining variables must be defined in the simulator-specific SE customization file you must write.</p>
+<p>
+<a id="pgfId-1033055"></a>That completes the initialization sequence performed by SE. At this point, control is either passed to the top-level SKILL command interpreter, and SE can be instructed to run specific commands, or the command specified when SE was invoked is executed.</p>
+
+<h4>
+<a id="pgfId-1033058"></a><a id="marker-1033056"></a>SE Execution<a id="SE Execution"></a></h4>
+
+<p>
+<a id="pgfId-1033059"></a>Once the simulation environment has been initialized, command execution begins. If SE is being run interactively, you are prompted to issue commands. You can then set variables and call any function <a id="marker-1033060"></a>defined in the simulation environment. If SE is being run in a batch mode, it executes a single command. You can optionally specify the command to be executed when you invoke SE (for more information refer to the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em>). This command can be any function defined in the simulation environment, for example, <code>netlist</code> or <code>simin</code>. If no command is specified, the default is to run a complete simulation, which is equivalent to executing the <code>sim</code> function. </p>
+<p>
+<a id="pgfId-1033062"></a><a id="marker-1033061"></a>SE runs a complete simulation by executing the <code>sim</code> function that is defined in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/si/caplib/simulate.ile</code> file. (A detailed description of this function is in the &#8220;SE Functions&#8221; section in this chapter.) A complete simulation consists of executing any steps required by the simulator being used including preparing the simulator input, running the simulator, and output post-processing. The order of steps performed is determined by the value of the <code>simActions</code> variable which is an ordered list of the functions to be executed when running a complete simulation. The default value is the following: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033063"></a>&#39;(simCheckVariables() <br />simInitRunDir() <br />netlist() <br />simin() <br />runsim() <br />)</pre>
+<p>
+<a id="pgfId-1033064"></a>If this sequence is not suitable for running your simulator, you can change the default by setting the <code>simActions</code> variable in your simulator-specific SE customization file. If any of the functions specified in this list fails to complete successfully (does not return <code>t</code>), the simulation process is halted. Once all of the functions have been executed, SE stops executing, and the simulation has completed.</p>
+<p>
+<a id="pgfId-1033065"></a>Following is a description of the steps performed by each of these functions:</p>
+
+<h4>
+<a id="pgfId-1033067"></a><a id="marker-1069098"></a>sim<a id="simcheckvariables"></a>CheckVariables( )</h4>
+
+<p>
+<a id="pgfId-1033068"></a>Checks that certain variables required by SE are defined:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033069"></a><code>simSimulator<br />simRunDir<br />simCellName<br />simLibName<br />simViewName<br />simViewList<br />simStopList<br />simSedFile<br />simCommand<br />simNlpGlobalLibName<br />simNlpGlobalCellName</code></pre>
+<p>
+<a id="pgfId-1033070"></a>This function is also executed as part of the simulation environment initialization sequence and again as part of the simulation sequence because the designer has the ability to run SE interactively. In doing so, it is possible for the designer to damage the environment, for example, by setting the listed variables to a <code>nil</code> value. By calling this function again, we reduce the chance that the environment has been corrupted to the point that simulation is not possible.</p>
+
+<h4><em>
+<a id="pgfId-1033071"></a><a id="siminitrundir"></a>simInitRunDir( )</em></h4>
+
+<p>
+<a id="pgfId-1033072"></a>Executes the initialization sequence specified by the simInitRunActions variable. By default, this is executing the simInitControl( ) and simInitRaw( ) functions. In addition, you can add new functions to create default input stimulus based on the design. </p>
+<p>
+<a id="pgfId-1033073"></a>The simInitControl function copies the default simulator control file into the simulation run directory if a control file does not already exist. If you want to provide a default simulator input file (template) for your designers, you must write the template file and place it in the install_dir/tools/dfII/local/si directory. Then, in your simulator-specific SE customization file, you must tell SE the name of that file. These files are described in detail in the &#8220;Necessary Files to Integrate your Simulator&#8221; section in this chapter. The simInitRaw function creates the raw directory used for storage of simulator waveform output in the simulation run directory. The name of the raw directory cannot be altered because it is the standard location used by the Cadence waveform display program to locate waveform data when displaying waveform results.</p>
+
+<h4><em>
+<a id="pgfId-1033075"></a><a id="marker-1033074"></a>netlist( )</em></h4>
+
+<p>
+<a id="pgfId-1033076"></a>Generates the textual netlist representing the connectivity of the design to be simulated. This netlist is later used as input to the simulator. Which design is netlisted, and how the hierarchy is traversed (including whether HNL or FNL is used), is determined by global variables. For running LVS in the batch mode using <code>si</code>, the command to be used is <code>sim</code> instead of <code>netlist()</code>. This is the case with formatters like auCdl. These variables can be set in your simulator-specific SE customization file.</p>
+
+<h4><em>
+<a id="pgfId-1033078"></a><a id="marker-1033077"></a>simin( )</em></h4>
+
+<p>
+<a id="pgfId-1033079"></a>Translates the designer-specified names in the simulator input file into the names used in the netlist. Since the names to be translated are determined by the designer, you do not need to make any changes to use this function.</p>
+
+<h4><em>
+<a id="pgfId-1033082"></a><a id="marker-1033080"></a><a id="marker-1033081"></a>runsim( )</em></h4>
+
+<p>
+<a id="pgfId-1033083"></a>Runs the simulator. First the <code>simCommand</code> variable is evaluated. This variable defines the actions to be performed to run the simulator. It should be set in your simulator-specific SE customization file. When the simulator has finished executing, the <code>simOutWithArgs</code> function is called which translates the netlister-assigned names for nets and <a id="marker-1033084"></a>instances in the given input files to the corresponding designer-specified names in the given output files. Since there is no fixed syntax to simulator output, you must instruct SE with a <code>sed</code> input file how to determine which names require translation. The <code>sed</code> files are described in the &#8220;Files Needed to Integrate your Simulator&#8221; section in this chapter.</p>
+
+<h2>
+<a id="pgfId-1033088"></a>Files Needed To Integrate Your Simulator<a id="Files Needed To Integrate Your Simulator"></a></h2>
+
+<p>
+<a id="pgfId-1033090"></a><a id="marker-1033089"></a>To fully integrate your simulator using SE you must create the following files:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1033092"></a><code>Simulator-Specific SE Customization File
+Template Control File
+Name Translation File</code><a id="marker-1033091"></a><a id="marker-1033093"></a><a id="marker-1033094"></a></p>
+<p>
+<a id="pgfId-1033095"></a>The following sections explain the purpose of each file, its contents, and its expected location.</p>
+
+<h3>
+<a id="pgfId-1033097"></a>Simulator-Specific SE Customization File<a id="Simulator-Specific SE Customization File"></a></h3>
+
+<p>
+<a id="pgfId-1033098"></a>The first step in customizing SE to run a new simulator is to define the environment and steps to execute. </p>
+<ol><li>
+<a id="pgfId-1033099"></a>Create a file with the same name as the new simulator and the 
+suffix <code>.ile</code>.</li><li>
+<a id="pgfId-1033100"></a>Place the file in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory.</li><li>
+<a id="pgfId-1033101"></a>Write the necessary SKILL procedures.</li><li>
+<a id="pgfId-1033102"></a>Set the needed variables for running SE.</li></ol>
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033103"></a>With the OSS system, you can define procedures and execute encrypted or non-encrypted SKILL code in SE. Any system equipped with the Simulation Environment (SE) product can run simulations using the interface you develop. To <a id="marker-1033104"></a>develop a new simulation interface, you can encrypt the SKILL file you write, by using the <code>encrypt</code><a id="marker-1033105"></a> command. This command is available in your development version of SE before you distribute the SKILL file to your designers.</div>
+<p>
+<a id="pgfId-1033106"></a>All files for the simulation are stored in the run directory. Because designers can start the Simulation Environment from any location in the file system, all accesses to files in the run directory must be made using full pathnames. If you cannot specify full pathnames for the files your application requires or produces (for example, if an output file from your application has a fixed name), you must make sure that the process that runs the application changes the current working directory to the run directory before the application is started. The examples in the following sections show you how to do this.</p>
+
+<h4>
+<a id="pgfId-1033109"></a><a id="marker-1033107"></a>Example of Customizing SE To Run a New Simulator<a id="marker-1033108"></a></h4>
+
+<p>
+<a id="pgfId-1033110"></a>As an example of how to customize SE to run a new simulator, follow the steps given in this section for the creation of the simulator-specific SE customization <code>spice.ile</code> file for the SPICE simulator. The name of the file differs for each simulator integrated. For example, if you are integrating a simulator called SILOS, this file is called <code>silos.ile</code>.</p>
+
+<h4>
+<a id="pgfId-1033112"></a>Set the Switch and Stop Lists<a id="marker-1033111"></a></h4>
+
+<p>
+<a id="pgfId-1033114"></a>This <code>spice.ile</code> file must contain the default values for the switch and stop lists used when netlisting. For a description of switch and stop lists, refer to &#8220;FNL Flattening Process&#8221; section in the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual. The <code>netlist</code><a id="marker-1033113"></a> function uses the <code>simViewList</code> and <code>simStopList</code> variables. The designer should not be allowed to set these variables directly. Instead, the designer sets switch and stop lists on a per-simulator basis by setting variables for the lists whose names include the name of the simulator. This way the designer can set default values for switch and stop lists for several different simulators in the <code>.simrc</code><a id="marker-1033115"></a> file. The following is an example of how to set the default values of these variables for SPICE: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033116"></a>; Set the default SPICE-specific view switch <br />;list for netlisting.<br />simSetDef( &#39;spiceSimViewList,&#39;(&quot;spice&quot; &quot;schematic&quot;) )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033117"></a>; Set the default SPICE-specific stopping <br />;view list for netlisting.<br />simSetDef( &#39;spiceSimStopList,&#39;(&quot;spice&quot;) ) </pre>
+<p>
+<a id="pgfId-1033119"></a>Instead of setting these variables using an equals sign (=), the <code>simSetDef</code><a id="marker-1033118"></a> function is called. This function sets the specified variable only if it has not already been set, or has been set to <code>nil</code>. This allows the designer to override the default by setting the variable in the <code>.simrc</code> file in the home login directory.</p>
+<p>
+<a id="pgfId-1033120"></a>Next, you must set the variables used by the <code>netlist</code> function from the simulator-specific versions of these variables using the following commands: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033121"></a>; Set the view switch list used for netlisting. <br />simViewList = spiceSimViewList</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033122"></a>; Set the stopping view list used for netlisting. <br />simStopList = spiceSimStopList </pre>
+<p>
+<a id="pgfId-1033123"></a>Now the equal sign is used instead of the <code>simSetDef</code> function. This is because the designer is not allowed to set these variables directly.</p>
+
+<h4>
+<a id="pgfId-1033125"></a>Set the Default Control File<a id="marker-1033124"></a></h4>
+
+<p>
+<a id="pgfId-1033127"></a>Tell SE the name of the <a id="marker-1033126"></a>simulator input control file template. This file is copied into the run directory when the directory is being created by SE. The control file template is explained in the &#8220;Template Control File&#8221; section later in this chapter. The name of the template file is <code>control.spi</code>. The following example shows how the <code>simSetDef</code> variable is set:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033128"></a>; Set the name of the default SPICE control file ;template.<br />simSetDef(&#39;simDefaultControl &quot;control.spi&quot;) </pre>
+
+<h4>
+<a id="pgfId-1033130"></a>Set the sed Input Filename<a id="marker-1033129"></a></h4>
+
+<p>
+<a id="pgfId-1033133"></a>SE must be told the name of the <code>sed</code><a id="marker-1033131"></a> input file used for simulator output name translation. This is done by setting the <code>simSedFile</code><a id="marker-1033132"></a> variable to the name of the <code>sed</code> file to be used. In the following example, the file is called <code>sed.spi</code>. What this <code>sed</code> file should contain is explained in the &#8220;Name Translation File&#8221; section later in this chapter. Following is an example of how to set the <code>simSedFile</code> variable: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033134"></a>; Set the sed script filename to trigger name ;translations. <br />simSedFile = prependInstallPath(&quot;local/si/sed.spi&quot;) </pre>
+<p>
+<a id="pgfId-1033135"></a>The <code>simSedFile</code> variable is set to the return value of the <code>prependInstallPath</code> function. This function prepends the install path of the Cadence software to the filename given as argument, thereby creating a full file system pathname. The filename the <code>simSedFile</code> variable is set to must be a full pathname.</p>
+
+<h4>
+<a id="pgfId-1033137"></a>Set the global <a id="marker-1033136"></a>cellview</h4>
+
+<p>
+<a id="pgfId-1033139"></a>SE must also be instructed which<a id="marker-1033138"></a> global cellview to use when running FNL. The global cellview is a database view that instructs FNL how the netlist is to be formatted. Refer to the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual. The name of the cell is determined by the <code>simNlpGlobalCellName</code> variable. The name of the view is usually the name of your simulator. This information is stored in the <code>simNlpGlobalLibName</code>, <code>simNlpGlobalCellName</code> and <code>simNlpGlobalViewName</code> variables. The first two are set to defaults by SE; the <code>simNlpGlobalViewName</code> variable must be set by you. The following is an example of how to set this variable for later use by the <code>netlist</code> function. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033140"></a>; Set the default name of the global view <br />;used for netlisting.<br />simSetDef(&#39;simNlpGlobalViewName &quot;spice&quot;) </pre>
+
+<h4>
+<a id="pgfId-1033142"></a>Set the Simulator Function<a id="marker-1033141"></a></h4>
+
+<p>
+<a id="pgfId-1033143"></a>All the variable settings so far described are placed inside the <code>spice.ile</code> file, outside any function so that the variables are defined as the file is loaded. </p>
+<p>
+<a id="pgfId-1033144"></a>The <code>spice.ile</code> file must also contain one function, which must have the same name as the simulator. In the following example, the function must therefore be called <code>spice</code>. This function is called by SE during the initialization phase and again before a simulation is run. Because SE can be run in an interactive mode, the designer can change at any time the values of the simulator-specific variables described in the &#8220;Simulator-Specific SE Customization File&#8221; section in this chapter. To ensure that the designer&#39;s changes also alter the variables used by SE, about which the designer is not informed (for example, <code>simViewList</code>), this function must reset those variables from their simulator-specific equivalents. The following two lines should be placed in the <code>spice</code> function: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033145"></a>simViewList = spiceSimViewList<br />simStopList = spiceSimStopList </pre>
+<p>
+<a id="pgfId-1033147"></a><a id="marker-1033146"></a>In addition to resetting these variables, the <code>spice</code> function must set the <code>simCommand</code> variable. This variable is evaluated by the <code>runsim</code> function to run the simulator. The value of this variable must be a SKILL expression. It should be a command that runs the simulator, and returns <code>t</code> if the simulator completed successfully, or <code>nil</code> if the simulator detects errors. You can use the <code>simExecute</code> function to execute a <a id="marker-1033148"></a>UNIX command. This function returns <code>t</code> if the command given as argument completes with an exit status of zero (0), otherwise it returns <code>nil</code>. The UNIX command you execute can then invoke your simulator. If your simulator takes its input from <code>stdin</code>, you can redirect its input from the file containing the input stimulus for your simulator. </p>
+<p>
+<a id="pgfId-1045377"></a><a id="marker-1045375"></a><a id="marker-1045376"></a>The simulator input file is called <code>si.inp</code>. The textual output of the simulator should be redirected to a file named <code>simout.tmp</code>, which is then translated by the <code>runsim</code> function. In addition, the <code>simCommand</code><a id="marker-1045378"></a> variable can include any run line arguments required by your simulator. </p>
+<p>
+<a id="pgfId-1045384"></a>The following is an example of how to set the <code>simCommand</code> variable to run the SPICE simulator: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033153"></a>simCommand = &#39;prog( (tmpCmd ) <br />; Run the SPICE simulator <br />sprintf(tmpCmd &quot;cd %s; exec spice -r raw/waves.tmp <br />   &lt; st.inp &gt; simout.tmp 2&gt;&amp;1&quot; simRunDir)<br />return(simExecute(tmpCmd)) <br />) </pre>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033155"></a><a id="marker-1033154"></a>The command to run the simulator includes the <code>cd simRunDir</code> command. This causes the child process that runs the simulator to change the current working directory to the simulation run directory. If the simulator reads in a file or writes a file using a relative pathname, such as <code>netlist</code>, that file will be in the simulation run directory.</div>
+<p>
+<a id="pgfId-1033156"></a>The <code>simCommand</code> variable can also perform other required preprocessing or postprocessing. For example, it can remove old waveform data before the simulator is run. This ensures that old results are not confused with a new simulation run. Set the <code>simCommand</code> as follows: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033157"></a>simCommand = &#39;prog( (tmpCmd)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033158"></a>; Remove old waveform file </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033159"></a>simDeleteRunDirFile(&quot;raw/waves&quot;) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033160"></a>simDeleteRunDirFile(&quot;raw/waves.tmp&quot;) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033161"></a>; Run the SPICE simulator </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033162"></a>sprintf(tmpCmd &quot;cd %s; exec spice -r raw/waves.tmp </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033163"></a>   &lt; st.inp &gt; simout.tmp 2&gt;&amp;1&quot; simRunDir)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033164"></a>return(simExecute(tmpCmd)) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1045411"></a>) </pre>
+<p>
+<a id="pgfId-1045413"></a>An example of how to use the <code>simActions</code> variable to do this can be found in the complete <code>spice.ile</code> file in <h-hot><a href="chap3.html#99865"></a><xrefstd>Figure&#160;3-4<h-hot /></xrefstd></h-hot>.</p>
+
+<h4>
+<a id="pgfId-1033179"></a>Set the Unbind<a id="marker-1033178"></a> Variables</h4>
+
+<p>
+<a id="pgfId-1033181"></a>To enable designers to simulate in the<a id="marker-1033180"></a> foreground, the SKILL simulation environment must be loaded into the Cadence graphics environment. This includes defining all SKILL functions and variables used in a simulation interface. The names of these functions and variables may conflict with those used in another simulation interface. For example, both the SPICE and the SILOS interfaces can define the <code>simActions</code> variable. If designers use SPICE and then use SILOS, they will get error messages when the simulator-specific code for the SILOS interface is loaded because the <code>simActions</code> variable has been defined for SPICE. To avoid this problem, SE unbinds all functions and variables it defines. Then it reloads the appropriate interface files when designers change simulators. The unbinding and loading of files occurs when designers execute the <code>Initialize</code><a id="marker-1033182"></a> command from the Simulation menu. </p>
+<p>
+<a id="pgfId-1033183"></a>All functions and variables defined by Cadence-supplied interfaces and SE will be unbound and redefined as needed. You must provide a list of all of the functions and variables you define. There are separate lists for functions and variables defined in the Hierarchical Netlister, the Flat Netlister, and SE. The following sections describe the variables you must define for SE.</p>
+
+<h4><em>
+<a id="pgfId-1033185"></a><a id="marker-1033184"></a>simSimulatorUnbindVars</em></h4>
+
+<p>
+<a id="pgfId-1033186"></a>The <code>simSimulatorUnbindVars</code> variable specifies the variables you define in your <code>spice.ile</code> file that must be unbound when simulators are switched. You should include any global variable you set in this list. Of primary importance are those that you set using the <code>simSetDef</code> function. If you do not include a variable in this list, designers will get warning messages indicating this variable has already been defined, and the correct value for the variable will not be used when they switch to a different simulator.</p>
+<p>
+<a id="pgfId-1033187"></a>Set this variable to a list containing the names of all of the variables you define. Define this variable in the <code>caplib</code> file outside of any function definition. The following is an example of how to set this variable for SPICE:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033188"></a>simSetDef(&#39;simSimulatorUnbindVars, &#39;(spiceSimViewList<br />   spiceSimStopList<br />   simDefaultControl</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033189"></a>)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033190"></a>)</pre>
+
+<h4><em>
+<a id="pgfId-1033192"></a><a id="marker-1033191"></a>simSimulatorUnbindFuncs</em></h4>
+
+<p>
+<a id="pgfId-1033193"></a>The <code>simSimulatorUnbindFuncs</code> variable specifies the functions you define in your <code>spice.ile</code> file that must be unbound when simulators are switched. You should include any functions you define in this list. Of primary importance are those that you define using the <code>simIfNoProcedure</code> function. If you do not include a function in this list, the correct function may not be used when designers switch simulators.</p>
+<p>
+<a id="pgfId-1033194"></a>Set this variable to a list containing the names of all of the functions you define. Define the variable in the <code>caplib</code> file outside of any function definition. The following is an example of how to set this variable for SPICE:</p>
+
+<p><strong>Figure 3-2
+<a id="pgfId-1033197"></a><a id="98991"></a>Using <a id="marker-1033196"></a>simCommand To Run SPICE and the Waveform Translator</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033198"></a>simSetDef( &#39;simSimulatorUnbindFuncs, &#39;(spice) )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033199"></a>simCommand = &#39;prog( (cmd fileName)<br />   ; Remove old waveform file <br />   simDeleteRunDirFile(&quot;raw/waves&quot;) <br />   simDeleteRunDirFile(&quot;raw/waves.tmp&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033200"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033201"></a>   ; Run the SPICE simulator <br />   sprintf(cmd &quot;cd %s;exec spice -r raw/waves.tmp &lt;si.inp&gt;<br />                        simout.tmp 2&gt;&amp;1&quot; simRunDir)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033202"></a>   if( simExecute(cmd) == nil then <br />      simPrintError( &quot;si: Spice did not complete without errors.&quot; )<br />      return(nil) <br />   ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033203"></a>   ; If a non-empty waveform file was created, then translate it<br />   ; into WSF syntax using the program spi2wsf <br />   sprintf(fileName &quot;%s/raw/waves.tmp &quot;simRunDir)<br />   if( isFile(fileName) then    <br />      if( fileLength(fileName) != 0) then <br />         sprintf(cmd &quot;cd %s;exec spi2wsf raw/waves.tmp &gt; raw/<br />            waves &quot;simRunDir)<br />         if( ! simExecute(cmd) then <br />            simPrintError( &quot;si: Can&#39;t translate raw/waves.tmp<br />               into wsf.\n&quot; ) <br />            return(nil) <br />         ) <br />      ) <br />      simDeleteRunDirFile(&quot;raw/waves.tmp&quot;) <br />   ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033204"></a>   return(t) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033205"></a>) </pre>
+<h4>
+<a id="pgfId-1033206"></a>Complete Sample SPICE Customization File</h4>
+
+<p>
+<a id="pgfId-1033207"></a>The last thing that must be placed in the <code>spice</code> function is a call to the <code>simPrintEnvironment</code> SE function. This function writes the current environment to the <code>si.env</code> file. </p>
+<p>
+<a id="pgfId-1033208"></a>Figure 3-3 is a complete example of a simulator-specific SE customization file for the SPICE simulator.</p>
+
+<p><strong>Figure 3-3
+<a id="pgfId-1033210"></a><a id="52752"></a>Complete Example of SPICE SE Customization File</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033211"></a>; <br />; This file contains the function that defines the sequence of<br />; steps for performing a spice simulation. <br />; <br />; Set the default SPICE-specific view switch list for netlisting.<br />simSetDef( &#39;spiceSimViewList,&#39;(&quot;spice&quot; &quot;schematic&quot;) ) <br />; Set the default SPICE-specific stopping view list for netlisting.<br />simSetDef( &#39;spiceSimStopList,&#39;(&quot;spice&quot;) ) <br />; Set the view switch list used for netlisting. <br />simViewList = spiceSimViewList <br />; Set the stopping view list used for netlisting. <br />simStopList = spiceSimStopList <br />; Set the name of the default SPICE control file template.<br />simSetDef(&#39;simDefaultControl &quot;control.spi&quot;) <br />; Set the sed script filename to trigger name translations. <br />simSedFile = prependInstallPath(&quot;local/si/sed.spi&quot;) <br />; Set the default view name of the global view used for netlisting.<br />simSetDef(&#39;simGlobalViewName &quot;spice&quot;)<br />;Set the lists of functions and variables that must be unbound when<br />;environments (simulators) are changed.<br />simSetDef(&#39;simSimulatorUnbindFuncs &#39;(spice))<br />simSetDef(&#39;simSimulatorUnbindVars &#39;(spiceSimViewList <br />                  spiceSimStopList simDefaultControl)<br />)<br />; <br />; spice() - <br />; This function sets the <code>simViewList</code> and <code>simStopList</code> variables to<br />; the simulator-specific values in &quot;spiceSimViewList&quot; and<br />; &quot;spiceSimStopList&quot; respectively. Then the <code>simCommand</code> variable<br />; is set to the commands required to run a SPICE simulation. <br />; This includes running the SPICE simulator and waveform<br />; translation. The simulator is not really run by<br />; this function, this function only sets the command to run it.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033213"></a>; Example: </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033214"></a>; spice() <br />simIfNoProcedure( spice() <br />   ; Set the switch and stop lists from the simulator-specific <br />   ; variables for SPICE in case the user has modified them when<br />   ; running SE interactively.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033215"></a>simViewList = spiceSimViewList     <br />simStopList = spiceSimStopList <br />simCommand = &#39;prog( (cmd fileName) <br />   ; Remove old waveform file <br />      simDeleteRunDirFile(&quot;raw/waves&quot;) <br />      simDeleteRunDirFile(&quot;raw/waves.tmp&quot;) <br />   ;    Run the SPICE simulator <br />sprintf(cmd &quot;cd %s;exec spice -r raw/waves.tmp &lt; si.inp &gt; simout.tmp 2&gt;&amp;1&quot; simRunDir)<br />if( ! simExecute(cmd) then <br />   simPrintError( &quot;si: Spice did not complete without errors.&quot;)<br />   return(nil) <br />) <br />; If a non-empty waveform file was created, then translate it <br />; into WSF syntax using the program spi2wsf<br />sprintf(fileName &quot;%s/raw/waves.tmp &quot;simRunDir) <br />if( isFile(fileName) then <br />   if( fileLength(filename) ! = 0) then<br />      sprintf(cmd &quot;cd %s;exec spi2wsf raw/waves.tmp&gt;raw/waves &quot;simRunDir)<br />      simPrintError( &quot;si: Can&#39;t translate raw/waves.tmp into wsf.\n&quot; ) <br />      return(nil) <br />   ) <br />   simDeleteRunDirFile(&quot;raw/waves.tmp&quot;) <br />) <br />return(t) <br />)<br />; Rewrite the environment file to ensure that it reflects the<br />; values used to run the simulation in case any values have<br />; been modified by the user while running SE interactively. <br />simPrintEnvironment() <br />) <br /></pre>
+<h4>
+<a id="pgfId-1033217"></a>Alternate SPICE <a id="marker-1033216"></a>caplib File</h4>
+
+<p>
+<a id="pgfId-1033222"></a><h-hot><a href="chap3.html#99865"></a><xrefstd>Figure&#160;3-4<h-hot /></xrefstd></h-hot> is another example of the same file and is functionally equivalent to <h-hot><a href="chap3.html#37508"></a><xrefstd>Figure&#160;3-1<h-hot /></xrefstd></h-hot><a id="marker-1065833"></a><a id="marker-1065823"></a>. The waveform translation step is different in implementation. Instead of encoding the waveform translation step in the <code>simCommand</code><a id="marker-1033226"></a> variable, the <code>simActions</code><a id="marker-1033227"></a> variable is now set. This is done because you want a set of functions other than the default to be executed when running a SPICE simulation. Most of the functions are the same; the only difference is that the <code>SpiceTranslateWaves</code> function, which performs the waveform translation, has been added after the <code>runsim</code> function. Use of the <code>simActions</code> variable allows you a great amount of flexibility. With it, you can select the functions to be executed when running a simulation, without ever modifying any Cadence-supplied code. In addition, the sequence of functions you select affect only SPICE (in this case) simulations. No other simulations are affected. </p>
+
+<p><strong>Figure 3-4
+<a id="pgfId-1033230"></a><a id="99865"></a>Performing a SPICE Simulation<a id="marker-1033229"></a></strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033231"></a>; This file contains the function that defines the sequence of <br />; steps for performing a SPICE simulation. <br />; <br />; Set the default SPICE-specific view switch list for<br />; netlisting. <br />simSetDef( &#39;spiceSimViewList,&#39;(&quot;spice&quot; &quot;schematic&quot;) ) <br />; Set the default SPICE-specific stopping view list<br />; for netlisting. <br />simSetDef( &#39;spiceSimStopList,&#39;(&quot;spice&quot;) ) <br />; Set the view switch list used for netlisting. <br />simViewList = spiceSimViewList <br />; Set the stopping view list used for netlisting. <br />simStopList = spiceSimStopList <br />; Set the name of the default SPICE control file template. <br />simSetDef(&#39;simDefaultControl &quot;control.spi&quot;) <br />; Set the sed script filename to trigger name translations. <br />simSedFile = prependInstallPath(&quot;local/si/sed.spi&quot;) <br />; Set the default name of the global view used for<br />; netlisting. <br />simSetDef( &#39;simNlpGlobalViewName &quot;spice&quot;)<br />; Set the default actions to be performed when running a SPICE<br />; simulation. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033232"></a>simSetDefWithNoWarn( &#39;simActions,&#39;(simCheckVariables()<br />                     simInitRaw() <br />                     simInitRunDir<br />                     netlist() <br />                     simin() <br />                     runsim() <br />                     SpiceTranslateWaves() <br />                  ) <br />) <br /></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033233"></a>;Set the lists of functions and variables that must be unbound when <br />;the environments (simulators) are changed.<br />simSetDef(&#39;simSimulatorUnbindFuncs&#39;(SpiceTranslateWaves))<br />simSetDef(&#39;simSimulatorUnbindVars&#39;(SpiceSimViewList piceSimStopList             simDefaultControl)<br />)<br />;<br />; SpiceTranslateWaves() - <br />; This function translates the SPICE waveform raw/waves.tmp<br />; output file into WSF syntax, and places it in the raw/waves<br />; file for use by waveform display. <br />; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033234"></a>; Example: </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033235"></a>; SpiceTranslateWaves() <br />simIfNoProcedure( SpiceTranslateWaves() <br />   prog( (fileName cmd) <br />      ; If a non-empty waveform file was created, then translate <br />      ; it into WSF syntax using the program spi2wsf <br />      sprintf(fileName &quot;%s/raw/waves.tmp &quot;simRunDir)<br />      if( isFile(fileName) then <br />         if( fileLength (fileName) != 0) then <br />            sprintf(cmd &quot;cd %s;exec spi2wsf raw/waves.tmp&gt;raw/<br />                     waves &quot;simRunDir)<br />            if( ! simExecute(cmd) then<br />               simPrintError( &quot;si: Can&#39;t translate raw/<br />                     waves.tmp into wsf.\n&quot; ) <br />               return(nil) <br />            ) <br />         ) <br />         simDeleteRunDirFile(&quot;raw/waves.tmp&quot;) <br />      ) <br />   ) <br />) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033236"></a>; This function sets the simViewList and simStopList variables to<br />; the simulator-specific values in &quot;spiceSimViewList&quot; and <br />; &quot;spiceSimStopList&quot; respectively. Then the simCommand variable<br />; is set to the commands required to run a SPICE simulation. The<br />; simulator is not really run by this function, this function <br />; only sets the command to run it.<br />; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033237"></a>; Example: </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033238"></a>; spice() <br />simIfNoProcedure( spice(cmd) <br />   ; Set the switch and stop lists from the simulator-specific <br />   ; variables for SPICE in case the user has modified them when<br />   ; running SE interactively. <br />simViewList = spiceSimViewList <br />simStopList = spiceSimStopList <br />simCommand = &#39;prog( () <br />      ; Remove old waveform file <br />      simDeleteRunDirFile(&quot;raw/waves&quot;) <br />      simDeleteRunDirFile(&quot;raw/waves.tmp&quot;) <br />      ; Run the SPICE simulator <br />   sprintf(cmd &quot;cd %s;exec spice -r raw/waves.tmp &lt; si.inp &gt; <br />            simout.tmp 2&gt;&amp;1&quot;simRunDir) <br />   if( ! simExecute(cmd) then<br />      simPrintError( &quot;si: Spice did not complete without<br />            errors.\n&quot; )<br />      return(nil)<br />   ) <br />   return(t) <br />) <br />; Rewrite the environment file to ensure that it reflects the<br />; values used to run the simulation in case any values have<br />; been modified by the user while running SE interactively.<br />simPrintEnvironment() <br />) </pre>
+<h3>
+<a id="pgfId-1033240"></a><a id="marker-1033239"></a><a id="35356"></a>Template Control File</h3>
+
+<p>
+<a id="pgfId-1033243"></a><a id="marker-1033241"></a>When the simulation run directory is created,<a id="marker-1033242"></a> part of the process of initializing the directory is copying in a template control file. The control file is the simulator input file which is translated by the <code>simin</code> function as part of the simulation process to produce the <code>si.inp</code><a id="marker-1033244"></a> file. This translation is required because of the name mapping performed during the netlisting process. The <code>si.inp </code>file is then used as input to the simulator. You are not required to create a template control file, but it gives your designers a starting point when creating their simulator stimulus.</p>
+<p>
+<a id="pgfId-1033246"></a>When <code>simin</code><a id="marker-1033245"></a> translates the control file, all text in the control file is copied to the <code>si.inp</code> file, unless it is surrounded by square brackets ( [ ] ). An opening square bracket ( [ ) signals that the following text up to the closing square bracket ( ] ) is to be interpreted. The entire expression is replaced by the resulting interpreted value. Following the opening square bracket ( [ ) should be one of the following command characters:</p>
+<table class="webflareTable" id="#id1069201">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069203"></a><code># [#netname]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069205"></a>Replace the [#netname] expression with the netlister-assigned net name for <code>netname</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069207"></a><code>$ [$instname]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069209"></a>Replace the [$instname] expression with the netlister-assigned instance name for <code>instname</code>. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069211"></a><code>! [!filename]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069213"></a>Replace the [!filename] expression with the contents of the <code>filename</code> file. If you want to include a file from a directory other than the simulation directory, you must use the full file system pathname. If the file does not exist, an error is generated. The contents of the new file are also parsed with the same translations being performed on the contents of the included file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069215"></a><code>? [?filename]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069217"></a>Replace the expression [?filename] with the contents of the <code>filename</code> file. If you want to include a file from a directory other than the simulation directory, you must use the full system pathname. If the file does not exist, <em>no</em> error is generated. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069219"></a><code>n! [n!filename]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069249"></a>Same as [! filename], except that the contents of the new file are not parsed, and square-bracketed expressions are <em>not</em> interpreted.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069227"></a><code>n? [n?filename]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069271"></a>Same as [? filename], except that the contents of the new file are not parsed, and square-bracketed expressions are <em>not</em> interpreted.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1033253"></a>You can use any of these six expressions in your template control file. With the exception of the above substitution expressions, the control file you create must be in the syntax required by your simulator. The <code>simin</code><a id="marker-1033254"></a> function does not translate syntax. Its main purpose is to allow designers to enter the same names they did in their designs when generating simulator input. Using this translation mechanism, designers never need to know the netlister-assigned names.</p>
+<p>
+<a id="pgfId-1033255"></a>Figure 3-5 shows a sample control file template for SPICE.</p>
+
+<p><strong>Figure 3-5
+<a id="pgfId-1033256"></a>Sample SPICE Control File Template</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033257"></a>* Spice template control file </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033258"></a>.options acct opts nopage limpts=1000 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033259"></a>.width in=80 out=80 </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033260"></a>[ !spice.inp ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033261"></a>[ !spice.sim ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033262"></a>[ !netlist ] </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033263"></a>.end </pre>
+
+<p>
+<a id="pgfId-1033265"></a><a id="marker-1033264"></a>The name of this file must be the same as the name you assigned to the <code>simDefaultControl</code> variable in your simulator-specific SE customization file. In <h-hot><a href="chap3.html#52752"></a><xrefstd>Figure&#160;3-3<h-hot /></xrefstd></h-hot>, the file is called <code>control.spi</code>. It is customary to name the <code>control</code> file <code>control</code>, suffixed with part of the simulator name. When you have finished writing this file, place it in the <code>/cds/local/si</code> directory.</p>
+
+<h3>
+<a id="pgfId-1033270"></a>Name Translation File<a id="Name Translation File"></a></h3>
+
+<p>
+<a id="pgfId-1033272"></a><a id="marker-1033271"></a>The textual simulator output contains the netlister-assigned names. To make the output more readable for the designer these names must be translated back to the names assigned in the schematic. This translation is performed by the <code>simout</code><a id="marker-1033273"></a> function which is the inverse of <code>simin</code>. The <code>simout</code> function translates the netlister-assigned names in the <code>simout.tmp</code> file back to the designer-assigned names, and places the result in the <code>si.out</code> file. The syntax required to trigger these translations is the same as for <code>simin</code>. All text in the <code>simout.tmp</code> file is copied verbatim to the <code>si.out</code> file, unless text is surrounded by square brackets ( [ ] ). The opening square bracket ( [ ) signals that the following text up to the closing square bracket ( ] ) is to be interpreted. The entire expression is replaced by the resulting interpreted value. </p>
+<p>
+<a id="pgfId-1033274"></a>Following the opening square bracket ( [ ) should be one of the following command characters:</p>
+<table class="webflareTable" id="#id1069315">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069317"></a><code># [#netname]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069319"></a>Replace the [#netname] expression with the designer-assigned net name for netlister-assigned name <code>netname</code>. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069321"></a><code>$ [$instname]</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1069323"></a>Replace the [$instname] expression with the designer-assigned instance name for the netlister-assigned name <code>instname</code>. </p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1033277"></a>Because names requiring translation are not output by the simulator surrounded by square brackets, you must insert these into the file so that the required names are translated. This is done using the<a id="marker-1033278"></a> UNIX <code>sed</code> function. You must provide the <code>sed</code> input file that inserts the correct substitution characters. For a description of the <code>sed</code> command language, refer to the UNIX manuals that come with your computer. Your <code>sed</code> script must parse the simulator&#39;s text output, and detect any names requiring translation. These names must then be surrounded by square brackets ( [ ] ), and the correct command character must be inserted after the opening square bracket ( [ ). For example, if the name &#8220;netname&#8221; must be translated back to the designer-assigned name for the net, the <code>sed</code> script must replace the word &#8220;<code>netname</code>&#8221; with &#8220;<code>[#netname]</code>&#8221; so that the <code>simout</code> function translates it. </p>
+<p>
+<a id="pgfId-1033282"></a><a href="chap3.html#65774">Figure&#160;3-6</a> shows how the <code>sed</code> script is used in the output name translation process. </p>
+
+<p><strong>Figure 3-6
+<a id="pgfId-1033285"></a><a id="65774"></a>Output Name Translation<a id="marker-1033284"></a> </strong></p>
+<p>
+<a id="pgfId-1033353"></a></p>
+<div class="webflare-div-image">
+<img width="625" height="274" src="images/chap3-4.gif" /></div>
+
+<p>
+<a id="pgfId-1033354"></a>Depending on the output syntax of your simulator, and the netlister-assigned names it requires, the <code>sed</code> script can be either simple or complex. </p>
+<p>
+<a id="pgfId-1033355"></a>For example, the following is the complete <code>sed</code> script required for the text output of the SILOS simulator:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033356"></a>s/\(N [ 0-9 ] [ 0-9 ]*\ )/[#\1]/g <br />s/\(I [ 0-9 ] [ 0-9 ]*\)/[$\1]/g </pre>
+<p>
+<a id="pgfId-1033357"></a>Figure 3-7 is a partial <code>sed</code> script for SPICE output.</p>
+
+<p><strong>Figure 3-7
+<a id="pgfId-1033359"></a><a id="17454"></a>Partial sed Script for SPICE Output</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033360"></a>/INPUT LISTING/,/^\.END/{<br />   /^\./{<br />      s/V(([0-9][0-9]*\)*,*\([0-9][0-9]*\)*)/V([#\1],[#\2])/g<br />      s/V((*\[0-9][0-9]*\)*)/V([#\1])/g<br />      s/V\([RIMP]\)(*\([0-9][0-9]*\)*,([0-9]<br />            [0-9]*\)*)/V\1([#\2],[#\3])/g<br />      s/V\([RIMP]\)(*\([0-9][0-9]*\)*)/V\1([#\2])/g<br />      s/VDB(*\([0-9][0-9]*\)*,*\([0-9][0-9]*\)*)/<br />            VDB([#\1],[#\2])/g<br />      s/VDB(*\([0-9][0-9]*\)*)/VDB([#\1])/g<br />}<br />/^[K\*]/b<br />/^[CLRFHVID]/s/\([0-9][0-9]*\)*\([0-9][0-9]*\)/[#\1][#\2]/<br />/^[JQ]/s/\([0-9][0-9]*\)*([0-9][0-9]*\)*\([0-9]<br />[0-9]*\)/[#\1][#\2][#\3]/<br />}<br />/(*\([0-9][0-9]*\))/s/(*\([0-9][0-9]*\))/([#\1])/g<br />/*$#[0-9][0-9]*/s/$#\([0-9] [0-9]*\)/[$1]/g <br /></pre>
+
+<p>
+<a id="pgfId-1033361"></a>You can test your <code>sed</code> script by taking an existing textual output file from your simulator and running your <code>sed</code> script on it by issuing the following UNIX command: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033362"></a>sed -f <code><em>sed_file_name</em></code> &lt; <code><em>simulator_output_file_name<br /></em></code> &gt; <code><em>file_name</em></code> </pre>
+
+<p>
+<a id="pgfId-1033363"></a>Then edit the <span class="webflare-courier-new" style="white-space:pre"><em>file_name</em></span> file and make sure that all names requiring translation are surrounded by square brackets ( [ ] ) and have the correct command character following the opening square bracket ( [ ).</p>
+<p>
+<a id="pgfId-1033364"></a>The name of this <code>sed</code> file should be the same as the one used to set the <code>simSedFile</code> variable in the simulator-specific SE customization <a id="marker-1033365"></a>file (<em>spice</em>). In <h-hot><a href="chap3.html#17454"></a><xrefstd>Figure&#160;3-7<h-hot /></xrefstd></h-hot>, this file name is the full file system path to the <code>sed.spi</code> file. It is customary to name this <code>sed</code> file <code>sed</code>, suffixed with the first three letters of the name of the simulator used, for example, <code>sed.spi</code>.</p>
+<p>
+<a id="pgfId-1033370"></a><a id="marker-1033369"></a>If you can modify the simulator itself to produce names in the output file with the necessary name translation syntax, then you do not need to write a <code>sed</code> file.</p>
+
+<h2>
+<a id="pgfId-1033373"></a>SE Naming Conventions<a id="SE Naming Conventions"></a></h2>
+
+<p>
+<a id="pgfId-1033375"></a><a id="marker-1033374"></a>SE follows the Cadence standard naming conventions for SKILL code. The first letter of all variable and function names is lowercase. The remainder of the name is also lowercase except for the first letter of each word which is uppercase.</p>
+<p>
+<a id="pgfId-1033376"></a>To ensure you do not use any of the same names used within SE, it is recommended that you begin all variable and function names with an uppercase letter. Then make the remainder of the name lowercase, except for the first letter of each word. This makes variable names effortless to read and ensures that SE does not alter the value of your variables.</p>
+
+<h2>
+<a id="pgfId-1033381"></a><a id="marker-1033377"></a>SE Varia<a id="SEvariables"></a>bles<a id="SE Variables"></a> </h2>
+
+<p>
+<a id="pgfId-1033382"></a>The following is a list of global variables which are defined in SE:</p>
+
+<h3>
+<a id="pgfId-1033387"></a><a id="marker-1033386"></a>simActions</h3>
+
+<p>
+<a id="pgfId-1033388"></a>Default list of functions to be executed in order to run a complete simulation. If these functions do not provide the proper sequence of steps to be performed for a particular simulator, the variable can be set in the simulator-specific file stored in the <code>local/si/caplib</code> directory with the same name as the simulator. You can set this variable outside any function or in the function of the same name as the simulator. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033389"></a>Defined in: local/si/caplib/simulate.ile<br />Default: ( simCheckVariables()<br />      simInitRunDir()<br />      netlist() <br />      simin() <br />      runsim() <br />) </pre>
+<h3>
+<a id="pgfId-1065879"></a>simAlwaysAddPrefixInInstName<a id="simAlwaysAddPrefixInInstName"></a></h3>
+
+<p>
+<a id="pgfId-1065880"></a>Always prefixes the instance name with the <code>namePrefix</code> of the device type. If set to <code>nil</code>, and if the instance name already starts with the name prefix, then the instance name is not changed. For example, if a resistor instance name is <code>R0</code>, and the <code>namePrefix</code> is <code>R</code>, the instance name is not changed to <code>RR0</code>.</p>
+<p>
+<a id="pgfId-1065881"></a>When set to true, all instance names are always prefixed with the <code>namePrefix</code>. OSS maintains a table mapping the original name to the new names. Therefore, OSS stores the instance name mapping for <code>R0</code> as <code>R0</code> <code>RR0</code>. Since OSS keeps a record of old and new instance names, it is also possible to backannotate, which is not possible if the netlister generates the prefixed instance names.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1066672"></a>Defined In: .simrc, libInit.il, or a customer SKILL file loaded in a Virtuoso session</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1066673"></a>Default value: nil</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067995"></a>Example: simAlwaysAddPrefixInInstName = t</pre>
+
+<p>
+<a id="pgfId-1067996"></a>You can override the simAlwaysAddPrefixInInstName variable to always add the prefix for hierarchical instances but not for primitives, by using the following procedure:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067933"></a>procedure(auCdlAlwaysAddPrefixInInstName()</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067860"></a>    ;;do not always add prefix to primitives&#160;&#160;&#160;&#160;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067861"></a>    if(hnlIsAStoppingCell( hnlCurrentMaster ) then</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067862"></a>      simAlwaysAddPrefixInInstName = nil</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067863"></a>    else</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067864"></a>    ;;always add prefix to hierarchical instances    </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067865"></a>      simAlwaysAddPrefixInInstName = t</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067866"></a>    )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1067848"></a>)</pre>
+<h3>
+<a id="pgfId-1033391"></a><a id="simCapUnit"></a>simCapUnit</h3>
+
+<p>
+<a id="pgfId-1033392"></a>Scaling factor for capacitance. Refer to the netlister documentation for details of how the value is used.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033393"></a>Defined in: etc/skill/si/simcap.ile <br />Default: 1.0e-15</pre>
+<h3>
+<a id="pgfId-1033395"></a><a id="37756"></a>simCel<a id="simcellname"></a>lName</h3>
+
+<p>
+<a id="pgfId-1033397"></a><a id="marker-1033396"></a>Name of the top-level cellname of the design.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033398"></a>Defined in: si.env<br />Default: myCell</pre>
+<h3>
+<a id="pgfId-1067668"></a>simCel<a id="simCellViewModifiedAction"></a>lViewModifiedAction</h3>
+
+<p>
+<a id="pgfId-1067689"></a><a id="marker-1067669"></a>When this variable is set to <code>warning</code> or <code>ignore</code>, netlisting continues when some edits are made to a writable schematic that does affect the connectivity of the design. If however, this variable is set to <code>error</code> or is not specified in the <code>.simrc</code>, an error message is displayed and netlisting discontinues.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1076166"></a>Defined in: .simrc</pre>
+<h3>
+<a id="pgfId-1076168"></a>simCheckNetCollision<a id="simCheckNetCollisionAction"></a>Action</h3>
+
+<p>
+<a id="pgfId-1076169"></a>Detects and reports errors caused by name collision due to net name mapping. It takes on the following values with the corresponding action:</p>
+<ul><li>
+<a id="pgfId-1076170"></a><code>ignore</code>: Generates no warning or error message. The colliding nets are quietly remapped to new net names.</li><li>
+<a id="pgfId-1076171"></a><code>info</code>: Generates an info message for each net name collision. The collided nets are remapped, and the netlist is created.</li><li>
+<a id="pgfId-1076172"></a><code>warning</code>: Generates a warning message for each net name collision. The collided nets are remapped, and the netlist is created. </li><li>
+<a id="pgfId-1076173"></a><code>error</code>: Generates an error message in case of net name collision and aborts the netlist. You need to remap collided nets and create the netlist.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1076081"></a>Default: <code>ignore</code></p>
+
+<h3>
+<a id="pgfId-1033399"></a>simCleanFileList</h3>
+
+<p>
+<a id="pgfId-1033401"></a><a id="marker-1033400"></a>List of files to delete from the current run directory when the <code>simCleanRun()</code> function or clean run menu command is executed. The <code>simCleanFileList </code>variable should be set to a list of file names, for example,</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033402"></a>simCleanFileList=&#39;(&quot;save.cmm&quot; &quot;save.sim&quot;)<br />Defined in: simulator-specific file in local/si/caplib directory.<br />Default: nil</pre>
+<h3>
+<a id="pgfId-1033405"></a><a id="marker-1033404"></a>simCommand</h3>
+
+<p>
+<a id="pgfId-1045438"></a>Actions to perform to run the simulator used for this simulation. This variable is used by the <code>runsim() </code>function to run the simulator. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033407"></a>Defined in: simulator-specific file in local/si/caplib directory. <br />Default: None </pre>
+
+<p>
+<a id="pgfId-1033408"></a>Example: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033409"></a>simCommand = &#39;prog( (cmd)<br />simDeleteRunDirFile(&quot;raw/waves&quot;) <br />sprintf( cmd &quot;cd %s&quot; &quot;exec pacsim si.inp 2&gt;&amp;1 &gt;simout.tmp&quot;simRunDir)<br />if( ! simExecute(cmd) then <br />simPrintError(&quot;si: Pacsim did not complete without errors. \n&quot; )<br />return(nil)<br />) <br />return(simPacsimRawToWaves( &quot;waves.tmp&quot; ) )<br />) </pre>
+<h3>
+<a id="pgfId-1033411"></a><a id="marker-1033410"></a>simCompleteMessage</h3>
+
+<p>
+<a id="pgfId-1033412"></a>Default completion message printed by the <code>sim()</code> function. This message is printed if the function does <em>not</em> have an error during execution. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033413"></a>Defined in: etc/skill/si/simcap.ile <br />Default: &quot;Simulation completed successfully.&quot;</pre>
+<h3>
+<a id="pgfId-1033416"></a><a id="marker-1033414"></a>simContr<a id="simcontrolfile"></a>olFile</h3>
+
+<p>
+<a id="pgfId-1033417"></a>Full pathname to control file template usually stored in the <code>etc/si</code> directory. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033418"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil <br />Example: simControlFile = &quot;/usr2/companyDefaults/etc/si/control.sil&quot;</pre>
+<h3>
+<a id="pgfId-1033421"></a><a id="marker-1033419"></a>simDefaultC<a id="simdefaultcontrol"></a>ontrol</h3>
+
+<p>
+<a id="pgfId-1033422"></a>Relative pathname to the default control file template. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033423"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil <br />Example: simDefaultControl = &quot;control.sil&quot;</pre>
+<h3>
+<a id="pgfId-1033425"></a><a id="marker-1033424"></a>simDefaultRunDir</h3>
+
+<p>
+<a id="pgfId-1033426"></a>Relative pathname to the default simulation run directory. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033427"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil <br />Example: simDefaultControl = &quot;silos.run1&quot;</pre>
+<h3>
+<a id="pgfId-1033429"></a><a id="marker-1033428"></a>simDefaultSimulator</h3>
+
+<p>
+<a id="pgfId-1033430"></a>Name of the default simulator. You can use this variable to set the name of the default simulator in your site.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033431"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil <br />Example: simDefaultControl = &quot;silos&quot;</pre>
+<h3>
+<a id="pgfId-1071692"></a><a id="marker-1071691"></a>simDetectPCellFailure</h3>
+
+<p>
+<a id="pgfId-1071693"></a>Detects evaluation errors in Pcells when modifications are made at any level of hierarchy in the design before netlist generation. </p>
+<p>
+<a id="pgfId-1071849"></a>Possible values are:</p>
+<ul><li>
+<a id="pgfId-1071885"></a><code>Ignore</code>: No Pcell evaluation failures are detected or reported. This might result in an erroneous netlist. </li><li>
+<a id="pgfId-1071886"></a><code>Callback</code>: Default. Detects all Pcell evaluation failures by triggering a database callback. An erroneous netlist is generated, and errors are reported by the netlister. </li><li>
+<a id="pgfId-1071887"></a><code>Label</code>: Detects all Pcell evaluation failures in labels belonging to the master Pcell. Netlist generation is stopped when a failure is detected and reported. </li><li>
+<a id="pgfId-1071877"></a><code>Both</code>: Detects both <code>Callback</code> and <code>Label</code> Pcell evaluation failures. Netlist generation is stopped when a failure is detected and reported.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1071694"></a>Example </h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1072434"></a>simDetectPCellFailure = &quot;Ignore&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1072675"></a>simDetectPCellFailure = &quot;Label&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1072700"></a>simDetectPCellFailure = &quot;Both&quot;</pre>
+<h3>
+<a id="pgfId-1033433"></a><a id="marker-1033432"></a>simDoNetlist</h3>
+
+<p>
+<a id="pgfId-1033434"></a>Non-nil if a new netlist should be generated.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033435"></a>Defined in: etc/skill/si/simcap.ile <br />Default: t</pre>
+<h3>
+<a id="pgfId-1033437"></a><a id="marker-1033436"></a>simDoNotForkNetlist</h3>
+
+<p>
+<a id="pgfId-1033438"></a>If set to <code>nil</code>, the netlist function will be forked and run under a new process. This variable is only used when netlisting does not run in the graphics program. Netlisting in the graphics program is never run under a forked process. <a id="marker-1033439"></a></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033440"></a>Defined in: etc/skill/si/simcap.ile. <br />Default: nil</pre>
+<h3>
+<a id="pgfId-1033441"></a>simFailedMessage</h3>
+
+<p>
+<a id="pgfId-1033442"></a>Default completion message printed by the <code>sim()</code> function. This message is printed if the function has an error during execution. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033443"></a>Defined in: etc/skill/si/simcap.ile <br />Default: &quot;Simulation did not complete.&quot;</pre>
+<h3>
+<a id="pgfId-1033445"></a><a id="marker-1033444"></a>simGenWarnings</h3>
+
+<p>
+<a id="pgfId-1033446"></a>Variable to indicate whether to generate warnings for user overrides of simulator initialization. This variable is used by the <code>simSetDef()</code> function. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033447"></a>Defined in: etc/skill/si/simcap.ile <br />Default: t </pre>
+<h3>
+<a id="pgfId-1033450"></a><a id="marker-1033448"></a>simH<a id="simHost"></a>ost</h3>
+
+<p>
+<a id="pgfId-1033451"></a>Host name of the computer on which the simulator is to be run. This variable is used only for remote simulation.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033452"></a>Defined in: etc/skill/si/simcap.ile <br />Default: simHost = &quot;localhost&quot;</pre>
+<h3>
+<a id="pgfId-1033455"></a><a id="marker-1033453"></a>simHo<a id="simHostDiffers"></a>stDiffers</h3>
+
+<p>
+<a id="pgfId-1033456"></a>Variable is <code>nil</code> if the remote host used for simulation has an identical binary storage format; otherwise, it is <code>t</code>. This variable is used only for remote simulation. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033457"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil</pre>
+<h3>
+<a id="pgfId-1051412"></a>simIgnoreTerm</h3>
+
+<p>
+<a id="pgfId-1055832"></a>OSS reads the <code>nlAction</code> property on terminals and ignores the terminals while netlisting if the <code>simIgnoreTerm</code> variable is set to <code>true</code> and the <code>nlAction</code> property is set to <code>ignore</code>. If the <code>simIgnoreTerm</code> variable is not set or is set to <code>nil</code>, OSS does not read the <code>nlAction</code> property on the terminals.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1051409"></a>Defined in: simulator-specific file in local/si/caplib directory or .simrc file.<br />Default: nil</pre>
+<h3>
+<a id="pgfId-1069690"></a>simResolveStopCellImplicitConns</h3>
+
+<p>
+<a id="pgfId-1069718"></a>By default, the netlister propagates the explicit inherited connections to the upper level of the hierarchy and does not consider the implicit inherited connections for stopping cellviews, In such cases, the instance line in the netlist only contains the explicit inherited connections. </p>
+<p>
+<a id="pgfId-1070623"></a>To promote implicit inherited connections to the upper level of the hierarchy of stopping cells, set the <code>simResolveStopCellImplicitConns</code> flag to <code>t</code> in the <code>.simrc</code> file. </p>
+<p>
+<a id="pgfId-1070700"></a>When <code>simResolveStopCellImplicitConns</code> is set to <code>t</code>, the netlist contains both the explicit and implicit inherited connections of stopping cellviews at the instance line. </p>
+<p>
+<a id="pgfId-1069962"></a>When set to <code>t</code>, this flag can also be used with the following flags:</p>
+<ul><li>
+<a id="pgfId-1070054"></a>If you set the <code>simPrintInhConnAttributes</code> variable to <code>nil</code>, it creates pseudo ports at the top level, wherever required.</li><li>
+<a id="pgfId-1069974"></a>For stopping cells, the netlister evaluates both implicit and explicit inherited connections defined at the top level of the switch master. You can also use the <a href="../ncveruser/chap5.html#hnlUserStopCVList">hnlUserStopCVList</a> flag to define stopping cells. </li></ul>
+
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1069692"></a>Defined in: .simrc file.<br />Default: nil</pre>
+<h3>
+<a id="pgfId-1033459"></a>simInitRunActions<a id="marker-1033458"></a></h3>
+
+<p>
+<a id="pgfId-1033460"></a>List of functions to call when initializing a new run directory. If you want a different sequence of steps when a run directory is initialized for your tool, you must redefine this variable in your tools <code>caplib</code> file.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033461"></a>Defined in: etc/skill/si/caplib/init.ile<br />Default: simInitRunActions = &#39;(simInitControl()simInitRaw())</pre>
+<h3>
+<a id="pgfId-1033463"></a><a id="marker-1033462"></a>simInstNamePrefix</h3>
+
+<p>
+<a id="pgfId-1033464"></a>String prefix that should be used when outputting FNL-assigned instance names. If <code>nil</code>, only numbers are output. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033465"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil<br />Example: simInstNamePrefix = &quot;I&quot;</pre>
+<h3>
+<a id="pgfId-1033467"></a><a id="24361"></a>simLibNa<a id="simlibname"></a>me</h3>
+
+<p>
+<a id="pgfId-1033469"></a><a id="marker-1033468"></a>The name of the library containing the top-level cellview of the design.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033470"></a>Defined in: si.env<br />Default: &quot;myLib&quot;<br />Example: simLibName = &quot;testLib&quot;</pre>
+<h3>
+<a id="pgfId-1033472"></a><a id="marker-1033471"></a>simMaxNetlistErrors</h3>
+
+<p>
+<a id="pgfId-1033473"></a>Specifies the maximum number of errors that can be encountered during netlisting before netlisting aborts. Currently, FNL, not HNL, observes this variable. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033474"></a>Defined in: etc/skill/si/simcap.ile <br />Default: 25 <br />Example: simMaxNetlistErrors = 50</pre>
+<h3>
+<a id="pgfId-1033476"></a><a id="marker-1033475"></a>simModelNamePrefix</h3>
+
+<p>
+<a id="pgfId-1033477"></a>String prefix used when outputting FNL-assigned model names. If this is set to <code>nil</code>, only numbers are output. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033478"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil <br />Example: simModelNamePrefix = &quot;Model&quot;</pre>
+<h3>
+<a id="pgfId-1033481"></a><a id="marker-1033479"></a>simNetlis<a id="simnetlisthier"></a>tHier</h3>
+
+<p>
+<a id="pgfId-1033482"></a>Non-nil if the netlist should be hierarchical.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033483"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil</pre>
+<h3>
+<a id="pgfId-1033485"></a><a id="marker-1073278"></a>simNetNamePrefix</h3>
+
+<p>
+<a id="pgfId-1033486"></a>String prefix that should be used when outputting FNL-assigned node names. If <code>nil</code>, only numbers are output. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033487"></a>Defined in: etc/skill/si/simcap.ile <br />Default: nil <br />Example: simNetNamePrefix = &quot;N&quot;</pre>
+<h3>
+<a id="pgfId-1033489"></a>simNlpGlobalCell<a id="simnlpglobalcellname"></a>Name</h3>
+
+<p>
+<a id="pgfId-1033491"></a><a id="marker-1033490"></a>Name of the cell containing the global netlist format property definitions for FNL. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033492"></a>Defined in: etc/skill/si/simcap.ile<br />Default: &quot;nlpglobals&quot;</pre>
+<h3>
+<a id="pgfId-1033495"></a><a id="marker-1033493"></a>simNlpGlobalL<a id="simnlpgloballibname"></a>ibName</h3>
+
+<p>
+<a id="pgfId-1033496"></a>Name of the library containing the global netlist format property definitions for FNL. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033497"></a>Defined in: etc/skill/si/simcap.ile<br />Default: &quot;basic&quot;</pre>
+<h3>
+<a id="pgfId-1033499"></a>simNlpGlobalVie<a id="simnlpglobalviewname"></a>wName</h3>
+
+<p>
+<a id="pgfId-1033501"></a><a id="marker-1033500"></a>Name of the view containing the global cellview netlist format property definitions for FNL. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033502"></a>Defined in: simulator-specific file in local/si/caplib or etc/skill/si/caplib<br />Default: None</pre>
+<h3>
+<a id="pgfId-1033504"></a>simNot<a id="simnotincremental"></a>Incremental</h3>
+
+<p>
+<a id="pgfId-1033506"></a><a id="marker-1033505"></a>When set to <code>t</code>, HNL will try to netlist in non-incremental mode if the target simulator formatter will allow it to. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037052"></a>Defined in: etc/skill/si/simcap.ile<br />Default: nil</pre>
+<h3>
+<a id="pgfId-1037053"></a>simPcellPrefix</h3>
+
+<p>
+<a id="pgfId-1038048"></a><a id="marker-1039967"></a>String prefix for all Pcells. If set to <code>nill</code> or not defined, there will be no impact on the existing Pcell names.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038049"></a>Defined in: .simrc</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038050"></a>Default: nill</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1038051"></a>Example: Pcell name Xpcell246Y is renamed to myPrefix_Xpcell246Y in the netlist.</pre>
+<h3>
+<a id="pgfId-1038047"></a><a id="60353"></a>simPin<a id="simpinglobals"></a>Globals</h3>
+
+<p>
+<a id="pgfId-1037054"></a><a id="marker-1037059"></a>When set to <code>t</code>, the top-cell sub-circuit header as well as other cells list all global nets that are physically connected to at least one instance terminal and all resolved inherited terminals. All these new terminals propagate upwards until the top cell. Global nets that are floating or not connected to any instance terminal (but may be connected to pins only) are not listed in either the top cell or the sub-circuit of the current cell. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1037023"></a>Defined in: .simrc<br />Default: nil<br />Example: simPinGlobals=&#8217;t</pre>
+<h3>
+<a id="pgfId-1037013"></a>simReN<a id="simrenetlistall"></a>etlistAll</h3>
+
+<p>
+<a id="pgfId-1033511"></a><a id="marker-1033510"></a>When set to <code>t</code>, will force HNL (when running in incremental mode) to renetlist all cells used in the design. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033512"></a>When HNL is not running in incremental mode, all cells are always renetlisted. </div>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033513"></a>Defined in: etc/skill/si/simcap.ile.<br />Default: nil</pre>
+<h3>
+<a id="pgfId-1065276"></a><a id="marker-1065274"></a><a id="54402"></a>simVie<a id="simviewname"></a>wName</h3>
+
+<p>
+<a id="pgfId-1065277"></a>Name of the top-level view of the design.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065278"></a>Defined in: si.env in the simulation run directory<br />Default: &quot;myView&quot;<br />Example: simViewName = &#39;(&quot;verilog&quot;)</pre>
+<h3>
+<a id="pgfId-1033516"></a><a id="marker-1033514"></a><a id="48775"></a>simV<a id="simviewlist"></a>iewList</h3>
+
+<p>
+<a id="pgfId-1033517"></a>List of views to attempt to open for each cell when traversing the design hierarchy during netlisting and name translation (<code>simin()</code>, <code>simout()</code>). This variable must be set by the function of the simulator name, for example, <code>silos( )</code>, to be the simulator-specific view list. For example, the <code>silos()</code> function sets it as follows: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033518"></a>simViewList = silosSimViewList </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033519"></a>Defined in: etc/skill/si/simcap.ile <br />Default: &quot;si: no view list has been specified.&quot;</pre>
+<h3>
+<a id="pgfId-1033520"></a><a id="86567"></a>simRunDir</h3>
+
+<p>
+<a id="pgfId-1033522"></a><a id="marker-1033521"></a>Directory in which SE data is stored.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033523"></a>Defined in: bin/si and also in the Cadence graphics program <br />Default: depends on simulator and design <br />Example: simRunDir = &quot;/mnt2/dave/a<code><em>lu_simulations</em></code>/silos1&quot;</pre>
+<h3>
+<a id="pgfId-1033525"></a><a id="marker-1033524"></a>simRunningInSi</h3>
+
+<p>
+<a id="pgfId-1040014"></a>Variable to indicate SKILL code is being executed in <code>bin/si.</code> If this variable is set to <code>nil</code>, then you can make use of SKILL functions that require graphics (such as <code>hiDisplayForm( )</code> ). By testing the value of this variable, you can write SKILL code that can be run in both SE and the Cadence graphics program.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033527"></a>Defined in: bin/si and also in the Cadence graphics program<br />Default: t in bin/si; nil in the Cadence graphics program</pre>
+<h3>
+<a id="pgfId-1033529"></a><a id="marker-1033528"></a>simSedFile</h3>
+
+<p>
+<a id="pgfId-1033530"></a>Name of the <code>sed</code> input script used by the <code>simout() </code>and <code>simOutWithArgs()</code> simulator output name translation functions. This <code>sed</code> input script must surround each name that requires translation in the simulator output file with square brackets ( [ ] ) and insert the correct command character after the opening bracket ( [ ). For example, if the name <code>netname</code> must be translated back to the designer-assigned name for the net, the <code>sed</code> script must replace the word <code>netname</code> with <code>[#netname] </code>so that the <code>simout</code> function translates it. For more information, refer to the <code>simout()</code> or <code>simOutWithArgs()</code> functions. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033531"></a>Defined in: simulator-specific file in local/si/caplib <br />Default: depends on simulator <br />Example: simSedFile = &quot;/cds/local/si/sed.sil&quot;</pre>
+<h3>
+<a id="pgfId-1033533"></a><a id="marker-1033532"></a>simSimulatorSaveVars</h3>
+
+<p>
+<a id="pgfId-1033534"></a>List for symbols whose values you want written to the environment file, in addition to the default variables. The type of the value will be checked, and the proper format will be printed into the <code>si.env </code>file. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033535"></a>Defined in: simulator-specific file in local/si/caplib<br />Default: nil<br />Example: simSimulatorSaveVars = &#39;(compareSchematic compareLayout)</pre>
+<h3>
+<a id="pgfId-1033537"></a><a id="marker-1033536"></a>simSimulatorUnbindFuncs</h3>
+
+<p>
+<a id="pgfId-1033538"></a>Specifies the functions in your simulator-specific <code>caplib</code> file that must be unbound when designers switch simulators. Define this variable in the <code>caplib</code> file outside of any function definition. Set it to a list of the names of all functions you define. If you do not include a function in this list, the correct function might not be used when designers switch simulators.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033539"></a>Defined in: simulator-specific file in local/si/caplib <br />Default: depends on simulator </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033540"></a>Example: setting this variable in the caplib/silos.ile file.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033541"></a>simSetDef( &#39;simSimulatorUnbindFuncs,&#39;( silos simInitSilosIncludes ))</pre>
+<h3>
+<a id="pgfId-1033542"></a>simSimulatorUnbindVars</h3>
+
+<p>
+<a id="pgfId-1033543"></a>Specifies the variables in your simulator-specific <code>caplib</code> file that must be unbound when designers switch simulators. Define this variable in the <code>caplib</code> file outside any function definition. Set it to a list of the names of all global variables you define. If you do not include a variable in this list, designers will get warning messages indicating this variable has already been defined, and the correct value for the variable will not be used when they switch to a different simulator.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033544"></a>Defined in: simulator-specific file in local/si/caplib <br />Default: depends on simulator <br />Example: setting this variable in the caplib/silos.ile file.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033545"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033546"></a>simSetDef( &#39;simSimulatorUnbindVars, &#39;(silosSimViewList<br />   silosSimStopList<br />   simDefaultControl silosBinary<br />   simSilosSave simNetNamePrefix<br />   simInstNamePrefix<br />   simModelNamePrefix<br />   )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033547"></a>)</pre>
+<h3>
+<a id="pgfId-1033550"></a><a id="marker-1033548"></a>simS<a id="simstoplist"></a>topList</h3>
+
+<p>
+<a id="pgfId-1040026"></a>List of views that are valid stopping points for expansion used during netlisting. This variable must be set by the function of the simulator name, for example, <code>silos()</code>, to be the simulator-specific stopping list. For example, the <code>silos( )</code> function sets it as follows: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040027"></a>simStopList = silosSimStopList </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033553"></a>Defined in: simulator-specific file in the local/si/caplib directory.<br />Default: None <br />Example: simStopList = &#39;(&quot;silos&quot;)</pre>
+<h3>
+<a id="pgfId-1073296"></a>simStopNetlistOnPcellFailure<a id="simStopNetlistOnPcellFailure"></a></h3>
+
+<p>
+<a id="pgfId-1073297"></a>Stops netlist generation if evaluation failures are detected in Pcells when modifications are made at any level of hierarchy in the design. </p>
+<p>
+<a id="pgfId-1074502"></a>The Pcell submaster must be created for netlisting to occur. This evaluation can occur either before netlisting, for example, when the corresponding schematic is opened in Virtuoso Schematic Editor, or during netlisting. When a Pcell fails to evaluate, a <code>pcellEvalFailed</code> label is created on the submaster.</p>
+<p>
+<a id="pgfId-1073387"></a>Possible values of <code>simStopNetlistOnPcellFailure</code> are: </p>
+<ul><li>
+<a id="pgfId-1073450"></a><code>Never</code>: No Pcell evaluation failures are detected or reported. Netlisting is not stopped. This might result in an incorrect netlist. </li><li>
+<a id="pgfId-1073395"></a><code>CheckNetlistOnly</code>: Detects and reports Pcell evaluation failures that occur during the netlisting process. The detection is performed using a database trigger which adds no performance overhead. Netlisting is terminated.</li><li>
+<a id="pgfId-1073604"></a><code>CheckNetlistAndSchLabels</code>: Pcell evaluation failures are detected during netlisting and include detection of the label <code>pcellEvalFailed</code>. In this case, previously detected evaluation failures are also reported. Scanning all labels can be slow and adversely impact performance. </li></ul>
+
+
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1073286"></a>Defined in: simulator-specific file in the local/si/caplib directory.<br />Default: CheckNetlistAndSchLabels <br />Example: simStopNetlistOnPcellFailure = &#39;(&quot;Never&quot;)</pre>
+<h3>
+<a id="pgfId-1033556"></a><a id="simTimeUnit"></a>simTimeUnit</h3>
+
+<p>
+<a id="pgfId-1033557"></a>Scaling factor for delay times. Refer to the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual for details of how the value is used. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033558"></a>Defined in: etc/skill/si/simcap.ile <br />Default: 1.0e-9</pre>
+<h3>
+<a id="pgfId-1033560"></a>simSimul<a id="simsimulator"></a>ator</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033562"></a><a id="marker-1033561"></a>Defined in: si.env in the simulation run directory<br />Default: &quot;spice&quot;<br />Example: simSimulator = &quot;spectre&quot;</pre>
+<h3>
+<a id="pgfId-1036933"></a><a id="marker-1036932"></a>sim<a id="simsupportduplicateports"></a>SupportDuplicatePorts</h3>
+
+<p>
+<a id="pgfId-1039929"></a>Determines whether to remove duplicate ports from a netlist. The value of this variable is <code>t</code> by default and the simulator accepts duplicate ports. If the variable is set to <code>nil</code>, the netlister removes duplicate ports from a netlist.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1039930"></a>The removal of duplicate ports might slow OSS down for a large design. </div>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036980"></a>Defined in: User customization file,.simrc or Virtuoso&#174; Design Environment workbench if running in foreground mode<br />Default: &#8216;t<br />Example: simSupportDuplicatePorts = nil</pre>
+<h3>
+<a id="pgfId-1036930"></a>simSymbolModifiedAction<a id="simsymbolmodifiedaction"></a></h3>
+
+<p>
+<a id="pgfId-1033566"></a>Indicates whether to report an error, or to generate a warning or ignore, in case the symbol master of an instance is newer than the time the instance was last changed. </p>
+<p>
+<a id="pgfId-1066392"></a>The following table lists the valid values of <code>simSymbolModifiedAction</code>, along with the actions that the netlister takes for these values.</p>
+
+<p>
+<a id="pgfId-1066604"></a></p>
+<table class="webflareTable" id="#id1066587">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1066589">
+<a id="pgfId-1066589"></a>Value</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1066591">
+<a id="pgfId-1066591"></a>Netlister Action</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1066593"></a><code>ignore</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1066595"></a>Continue generating the netlist without displaying any message. </p>
+<p>
+<a id="pgfId-1066638"></a>This is also the default action that the netlister performs when the variable is not set.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1066597"></a><code>warning</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1066599"></a>Continue generating the netlist, and display a warning message about the symbol master being newer than the corresponding instance.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1066601"></a><code>error</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1066603"></a>Stop generating the netlist, and display an error message about the symbol master being newer than the corresponding instance.</p>
+</td>
+</tr>
+</tbody></table>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1066606"></a>Defined in: etc/skill/si/simcap.ile <br />Default: ignore<br />Example: simSymbolModifiedAction=&quot;warning&quot; ; </pre>
+<h2>
+<a id="pgfId-1066369"></a>SE SKILL Functions</h2>
+
+<p>
+<a id="pgfId-1066145"></a>The SKILL functions defined by the simulation environment (SE) let you simplify the integration of your simulator. These functions are in both the Cadence graphics program and the SE program.</p>
+<p>
+<a id="pgfId-1066285"></a>For details on the SE SKILL functions, see <em><a actuate="user" class="URL" href="../netlistsimulateref/ossFunctions.html" show="replace" xml:link="simple">OSS Functions</a></em> in the <em>Digital Design Netlisting and Simulation SKILL Reference</em>.</p>
+
+<h2>
+<a id="pgfId-1041976"></a>SE Graphics Variables<a id="SE Graphics Variables"></a> </h2>
+
+<p>
+<a id="pgfId-1041977"></a>You can use the following SE graphics variables to determine what SE does at the end of a batch job: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041980"></a><code>simPostAnalysisProcessingFunc<br />simDoNotDisplayDialogBox</code><a id="marker-1041978"></a><a id="marker-1041979"></a><a id="marker-1041981"></a><a id="marker-1041982"></a></pre>
+
+<p>
+<a id="pgfId-1041983"></a>These variables let you register a function to be called after a batch job started in SE completes. For example, you could have SE clean up the run directory or generate required files for the next steps in the design analysis process. </p>
+<p>
+<a id="pgfId-1041984"></a>To use this feature, you must write your post-analysis processing function and register your function with SE through the <code>simPostAnalysisProcessingFunc</code> variable. SE uses this variable to call your registered function. </p>
+<p>
+<a id="pgfId-1041985"></a>The following example shows you how to register a function for SE to call at the end of a batch job: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041986"></a>procedure( b( paramA )<br />   println( paramA-&gt;status )<br />    println( paramA-&gt;rundir )<br />    t<br />)<br />simPostAnalysisProcessingFunc = &#39;b</pre>
+
+<p>
+<a id="pgfId-1041987"></a>Function <code>b</code> is the function you want SE to call. It must accept one parameter, which is a property list with two properties, <code>status</code> and <br /><code>rundir.paramA&gt;status</code> returns a string indicating the status of the completed batch job: <code>succeeded</code>, <code>failed</code>, or <code>killed</code>. <code>paramA-&gt;rundir</code> returns the pathname of the run directory in which the batch job was started. </p>
+<p>
+<a id="pgfId-1041988"></a>The assignment statement <code>simPostProcessingFunc = &#39;b</code> is where your function is reassigned.</p>
+<p>
+<a id="pgfId-1041989"></a>By default, SE brings up a dialog box at the end of a batch job indicating the completion status of the job. If you do not want SE to bring up the dialog box, set <code>simDoNotDisplayDialogBox</code>, to <code>t</code>.</p>
+
+<h4><em>
+<a id="pgfId-1041990"></a>simDoNotDisplayDialogBox</em></h4>
+
+<p>
+<a id="pgfId-1041991"></a>If set to <code>t</code>, stops SE from displaying a dialog box that notifies the designer that the batch job has finished.</p>
+<p>
+<a id="pgfId-1041992"></a>Defined: <code>etc/skill/si/simcap.ile<br /></code>Default: <code>nil</code></p>
+
+<h4><em>
+<a id="pgfId-1041993"></a>simPostAnalysisProcessingFunc</em></h4>
+
+<p>
+<a id="pgfId-1041994"></a>Used to call the postprocessing function you registered with SE. This postprocessing function is called after a batch job completes.</p>
+<p>
+<a id="pgfId-1041995"></a>Defined: <code>etc/skill/si/simcap.ile<br /></code>Default: <code>nil</code></p>
+<p>
+<a id="pgfId-1034617"></a><code></code></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap2.html" id="prev" title="Integrating Simulators">Integrating Simulators</a></em></b><b><em><a href="chap4.html" id="nex" title="Customizing the Interactive Simulation Environment (ISE)">Customizing the Interactive Si ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

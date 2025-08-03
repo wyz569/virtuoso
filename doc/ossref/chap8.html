@@ -1,0 +1,393 @@
+
+<html><head><title>Customizing Post-Layout Simulation</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rgirdhar" />
+<meta name="CreateDate" content="2023-06-14" />
+<meta name="CreateTime" content="1686770763" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes reference information about the Open Simulation System, which gives easy access to supported simulators and lets you customize and integrate new simulators into the Cadence system" />
+<meta name="DocTitle" content="Open Simulation System Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Customizing Post-Layout Simulation" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="ossref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-14" />
+<meta name="ModifiedTime" content="1686770763" />
+<meta name="NextFile" content="chap9.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap7.html" />
+<meta name="c_product" content="Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Open Simulation System Reference -- Customizing Post-Layout Simulation" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="ossrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="ossrefTOC.html">Contents</a></li><li><a class="prev" href="chap7.html" title="Customizing the Flat Netlister (FNL)">Customizing the Flat Netlister ...</a></li><li style="float: right;"><a class="viewPrint" href="ossref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap9.html" title="Generating a Library">Generating a Library</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Open Simulation System Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>8
+<a id="pgfId-1032656"></a></h1>
+<h1>
+<a id="pgfId-1032659"></a><hr />
+Customizing Post-Layout Simulation<hr />
+</h1>
+
+<p>
+<a id="pgfId-1032661"></a><em>Post-layout simulation</em> is the process of running a simulation on a design with the parasitic parameters obtained from the corresponding physical layout. This is an important process in the design cycle because the results obtained from this process are much more precise compared to simulation on the schematic design alone.<a id="marker-1032660"></a><a id="marker-1032662"></a></p>
+<p>
+<a id="pgfId-1032664"></a>In the Cadence system, you can create physical layouts manually using the <a id="marker-1032663"></a>layout editor or automatically using the <a id="marker-1032665"></a>Place and Route tool, and you can translate physical layouts from the <a id="marker-1032666"></a>Electronic Design Interchange Format (EDIF) format using the <em>edifin</em><a id="marker-1032667"></a> program. You obtain the parasitic parameters from the physical layout, using the layout parameter extractor. </p>
+
+<h2>
+<a id="pgfId-1032670"></a>Parasitics Extracted by the Layout Extractor <a id="Parasitics Extracted by the Layout Extractor"></a></h2>
+
+<p>
+<a id="pgfId-1032675"></a><h-hot><a href="chap8.html#Using the Layout Extractor to Extract Parasitics, Figure 6-1"></a><xrefstd>Figure&#160;8-1<h-hot /></xrefstd></h-hot> shows the situation where the parasitic parameters are extracted using the layout extractor. The layouts created by the layout editor and the <em>edifin</em><a id="marker-1032674"></a><a id="marker-1032676"></a><a id="marker-1032677"></a><a id="marker-1032678"></a> program can be used as input to the layout extractor. The <a id="marker-1032679"></a>layout extractor generates an extracted layout view which can be netlisted and used later as input to the simulator. The parasitic parameters are part of the extracted layout view; thus, they can be netlisted directly by the appropriate substitution expression (<code>nlpExpr</code>) or by the SKILL command () that conforms to the syntax of your simulator. Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information on the netlist commands.</p>
+<p>
+<a id="pgfId-1032680"></a>If this method is sufficient, then just refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for instructions about producing a netlist from the extracted layout view and to the <em>Diva Interactive Verification User Guide</em> for more information on how to extract parasitic parameters from a layout. </p>
+
+<p><strong>Figure 8-1
+<a id="pgfId-1032683"></a><a id="Using the Layout Extractor to Extract Parasitics, Figure 6-1"></a>Using the Layout Extractor To Extract Parasitics</strong></p>
+<p>
+<a id="pgfId-1032803"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="657" src="images/chap8-2.gif" /></div>
+<h2>
+<a id="pgfId-1032806"></a><a id="Parasitics Extracted by the Symbolic Layout Parameter Extraction Tool"></a>Parasitics Extracted by the Symbolic Layout Parameter Extraction Tool </h2>
+
+<p>
+<a id="pgfId-1032811"></a><h-hot><a href="chap8.html#Using the Place and Route Tool to Extract Parasitics, Figure 6-2"></a><xrefstd>Figure&#160;8-2<h-hot /></xrefstd></h-hot> shows the situation where the Symbolic Layout Parameter Extraction (LPE) tool is used to calculate the parasitic parameters. In this case, the capacitance for all the nets in a routed view (generated by the Place and Route tool) are calculated and printed to a file called <code>sim.cap</code><a id="marker-1032810"></a><a id="marker-1032812"></a><a id="marker-1032813"></a>. Refer to the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em> for more information on how to create the net capacitance file. </p>
+<p>
+<a id="pgfId-1035168"></a>The information in the <code>sim.cap</code> file is translated into the format of your simulator and then merged with the netlist from the schematic as input to your simulator. The net capacitance in the <code>sim.cap</code> file can be displayed on the schematic regardless of which simulator is used. Refer to the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em> for more information on the display functions. Currently, this Place and Route extraction method (shown in Figure 8-2) is supported for the Cadence Timing Analyzer (TA), SILOS II&#174;, and HILO3™. Furthermore, this same method supports both hierarchical and flat netlisting. </p>
+<p>
+<a id="pgfId-1032816"></a>The remainder of this chapter describes how to customize this method for your simulator. Before continuing, your simulator should already be integrated into the Cadence system, so you should be familiar with the Simulation Environment (SE) and its requirements. Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information on how to integrate your simulator.</p>
+
+<p><strong>Figure 8-2
+<a id="pgfId-1032819"></a><a id="Using the Place and Route Tool to Extract Parasitics, Figure 6-2"></a>Using the <a id="marker-1032818"></a>Place and Route Tool To Extract Parasitics</strong></p>
+<p>
+<a id="pgfId-1032928"></a></p>
+<div class="webflare-div-image">
+<img width="557" height="670" src="images/chap8-3.gif" /></div>
+<h3>
+<a id="pgfId-1032931"></a>Customization Steps<a id="Customization Steps"></a><a id="marker-1032930"></a></h3>
+
+<p>
+<a id="pgfId-1032934"></a>The customizing steps include translating the <a id="marker-1032932"></a>net capacitance file (<code>sim.cap</code><a id="marker-1032933"></a>) to the format of your simulator and merging the translated result with the netlist description. You must write a new function to implement the translation step. This new function should be added to the file having the same name as your simulator plus the &#8220;<code>.ile</code>&#8221; suffix in the <br /><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory. To avoid a naming conflict with the simulation interface, the name of the new function should follow the recommended SE naming conventions. That is, the first letter of each word comprising the name should be upper case and the rest of the name lower case, for example, <code>YourSimTranslation</code>. </p>
+<p>
+<a id="pgfId-1032935"></a>The following sections describe the net capacitance file, customizing the translation process, customizing the control file to include the translated result, and all the variables and functions that are currently used for the supported simulators. </p>
+
+<h4>
+<a id="pgfId-1032937"></a>Net Capacitance File<a id="marker-1032936"></a></h4>
+
+<p>
+<a id="pgfId-1032940"></a>The format for the <a id="marker-1032938"></a>net capacitance file <a id="marker-1032939"></a>is important because the new function needs to parse and format it for your simulator. The net capacitance file format is shown here: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032941"></a>;Net Capacitance File for Lib:testLib Cell:test1<br />  View:layout<br />&quot;&lt;net name&gt;&quot;   &lt;capacitance&gt;   ;&lt;comment&gt;<br />&quot;&lt;net name&gt;&quot;   &lt;capacitance&gt;<br />;&lt;comment&gt;<br />&quot;&lt;net name&gt;&quot;&#160;&#160; &lt;capacitance&gt;</pre>
+
+<p>
+<a id="pgfId-1032942"></a>The first line serves as a header stamp to verify the integrity of the data, and it must be set as shown in the example. The rest of the first line can be any text. Comments must start with a semicolon (;), and they can be placed anywhere in the file. The unit of the capacitance is <code>farad</code>. If necessary, the <code>simCapUnit</code> variable should be used to convert the capacitance to the appropriate unit in your simulator. The <code>&lt;net name&gt;</code> is the full path name of the signal corresponding to the flattened design. For example, a signal name might look like this: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032943"></a>&quot;/cpu/alu1/control&quot;</pre>
+
+<p>
+<a id="pgfId-1032944"></a>The name of this file must be called <code>sim.cap</code>, and it should be located in the <code>perun</code> directory, contained in the directory that includes the library containing the cellview being simulated. </p>
+<p>
+<a id="pgfId-1032945"></a>For example, if the <code>simLibName</code> variable is set to <code>testLib</code>, and <code>testLib</code> is found in the directory <code>/mnt/usr/test</code>, then, by default, the <code>sim.cap</code> file is located in <code>/mnt/usr/test/perun/sim.cap</code>.</p>
+<p>
+<a id="pgfId-1032946"></a>If the <code>simCapFileDir</code> variable is not defined, then the system uses the library directory to construct the file system full pathname to locate the <code>sim.cap</code> file. Otherwise, the <code>simCapFileDir</code> variable must contain the full pathname of the <code>sim.cap</code> file. <h-hot><a href="chap8.html#10109"></a><xrefstd>Figure&#160;8-3<h-hot /></xrefstd></h-hot> shows an example of the default location of the <code>sim.cap</code> file. Refer to the &#8220;Variables&#8221; and &#8220;Functions&#8221; sections in this chapter for more information on the <code>simCapFileDir</code> variable. </p>
+
+<p><strong>Figure 8-3
+<a id="pgfId-1032951"></a><a id="10109"></a>Example of Directories With sim.cap and net.cap Files</strong></p>
+<p>
+<a id="pgfId-1033012"></a></p>
+<div class="webflare-div-image">
+<img width="557" height="311" src="images/chap8-4.gif" /></div>
+<h4>
+<a id="pgfId-1033014"></a>Customizing the Translation Process<a id="marker-1033013"></a> </h4>
+
+<p>
+<a id="pgfId-1033016"></a>The primary task in customizing the translation process is to write the function that parses the<a id="marker-1033015"></a> <code>sim.cap</code> file and translates it into the format of your simulator. For ease of programming, the translated result is always stored in the<a id="marker-1033017"></a> <code>net.cap</code> file, and it is located in the current run directory. The <code>net.cap</code> file is then merged with the netlist from the schematic as input to the new simulator. Refer to <h-hot><a href="chap8.html#Using the Place and Route Tool to Extract Parasitics, Figure 6-2"></a><xrefstd>Figure&#160;8-2<h-hot /></xrefstd></h-hot> and <h-hot><a href="chap8.html#10109"></a><xrefstd>Figure&#160;8-3<h-hot /></xrefstd></h-hot> for the control flow and the location of the <code>net.cap</code> file, respectively. </p>
+<p>
+<a id="pgfId-1033027"></a><h-hot><a href="chap8.html#Sample Translation Process File, Figure 6-4"></a><xrefstd>Figure&#160;8-4<h-hot /></xrefstd></h-hot> is a sample file of the function that implements the translation process. Of course, the exact format of your simulator should be inserted, and the function name <code>YourSimTranslation</code> should be replaced by a name that conforms to the SE naming conventions. This function should be added to the file with the same name as your simulator plus the <code>.ile</code> suffix in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory. The location of the function within the file is not important. </p>
+
+<p><strong>Figure 8-4
+<a id="pgfId-1033029"></a><a id="Sample Translation Process File, Figure 6-4"></a>Sample Translation Process File</strong></p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033030"></a>; YourSimTranslation<br />; Function to convert net capacitance file into the format of your<br />; simulator. The sim.cap file is translated into the file called<br />; net.cap in the current run directory.<br />;<br />; Global Variables<br />;    simDoPostLayout  - controls the post-layout process.<br />;<br />procedure( simDoSilosTranslation()<br />    prog( (capFile inf outf extName line message)<br />   ;<br />   ; Remove old capacitance file.<br />   ;<br />   simDeleteRunDirFile( &quot;net.cap&quot; )<br />   ;<br />   ; return immediately if post-layout simulation<br />   ; option is not chosen<br />   ;<br />   if( simDoPostLayout == nil return(t) )<br />   ;<br />   ; return if can not locate the full path to the sim.cap file<br />   ;<br />   if( ( capFile = simCapFileDir ) == nil then<br />      return( t )<br />   )<br />   ;<br />   ; setup for name mapping <br />   ;<br />   if simPreNameConvert(simLibName simLibConfigName             simCellName<br />               simViewName simVersionName simRunDir) == nil then<br />      return( nil )<br />   )<br />   ;<br />   ; &quot;sim.cap&quot; file does not exist, just return<br />   ;<br />   if ( (inf = infile(capFile)) == nil return(t) )<br />   ;<br />   ; verify the header stamp<br />   ;<br />   if( ! simCheckHeader(inf) then<br />      return( nil )<br />   )<br />   ;<br />   ; Output file is called &quot;net.cap&quot;<br />   ;<br />   if( (outf = simRunDirOutfile(&quot;net.cap&quot;)) == nil then<br />      close( inf )<br />      return( nil )<br />   )<br />   ;<br />   ; Parse the sim.cap file<br />   ;<br />   while( (line = lineread(inf)) != nil<br />       if( listp(line) then<br />             if( (! stringp(car(line))) || (! numberp<br />                  (cadr(line))) then<br />       sprintf(message &quot;ERROR: illegal file format, %s&quot;<br />         &quot;expecting \&quot;&lt;net name&gt;\&quot; &lt;value&gt; - &quot;)<br />       simPrintError( message )<br />           simPrintErrorLine(line)<br />       sprintf(message &quot;Line ignored.\n&quot;)<br />       simPrintError( message )<br />             else<br />       ;<br />       ; INSERT YOUR CODE HERE TO:<br />       ; translate the net name into the mapped name, scale <br />       ; the capacitance if necessary and print the<br />       ; information according to the format of your simulator<br />       ;<br />             )<br />        )<br />   )<br />   ;<br />   ; Clean up for name mapping<br />   ;<br />   simPostNameConvert()<br />   close( inf )<br />   close( outf )<br />   return( t )<br />             )<br />   )</pre>
+
+<p>
+<a id="pgfId-1033031"></a>The following is a step-by-step walk-through of the function.</p>
+<ol><li>
+<a id="pgfId-1033032"></a>First, the old translated file (<code>net.cap</code>) must be removed.</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033033"></a>;<br />;Remove old capacitance file.<br />;<br />simDeleteRunDirFile( &quot;net.cap&quot; )</pre>
+
+<p class="webflare-indent1">
+<a id="pgfId-1033034"></a>This step prevents old capacitance information from merging with the netlist description.</p>
+<ol><li>
+<a id="pgfId-1033035"></a>Next, the <code>simDoPostLayout</code> variable is checked. This step is desirable because post-layout simulation is an optional step, and thus, you should be allowed to disable it (by setting the variable to <code>nil</code>). The default value is <code>t</code>. Refer to the &#8220;Variables&#8221; section for more information on the <code>simDoPostLayout</code> variable.</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033036"></a>;<br />   ;Return immediately if post-layout simulation<br />;option is not chosen<br />;<br />if( simDoPostLayout == nil return(t) )</pre>
+
+<ol><li>
+<a id="pgfId-1033037"></a>The full path name for the <code>sim.cap</code> file is constructed.</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033038"></a>;<br />;Return if can not locate the full path to the <br />;sim.cap file<br />;<br />if( ( capFile = simCapFileDir ) == nil then<br />return( t )<br />)</pre>
+
+<ol><li>
+<a id="pgfId-1033041"></a>Initialize the name mapping procedure.</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033042"></a>;<br />;Set up for name mapping<br />;<br />if( simPreNameConvert(simLibName simLibConfigName<br />                      simCellName simViewName<br />                      simVersionName<br />                      simRunDir) == nil then<br />           return( nil )<br />)</pre>
+
+<ol><li>
+<a id="pgfId-1033043"></a>The <code>sim.cap</code> file is opened for reading. If the <code>sim.cap</code> file does not exist, return immediately.</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033044"></a>;   <br />;&quot;sim.cap&quot; file does not exist, just return<br />;<br />if( (inf = infile(capFile)) == nil return(t) )</pre>
+
+<ol><li>
+<a id="pgfId-1033045"></a>The header stamp of the <code>sim.cap</code> file is verified.</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033046"></a>;<br />;Verify the header stamp<br />;<br />if( ! simCheckHeader(inf) then<br />               close( inf )<br />         return( nil )<br />)</pre>
+
+<p class="webflare-indent1">
+<a id="pgfId-1033047"></a>The translation process is terminated if the header stamp is incorrect. Refer to the &#8220;Net Capacitance File&#8221; section for more information on the header stamp.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033048"></a>The resultant <code>net.cap</code> file is opened in the current run directory for writing.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033049"></a>;<br />   ;Output file is called &quot;net.cap&quot;<br />;<br />if( (outf = simRunDirOutfile(&quot;net.cap&quot;)) == nil then<br />        close( inf )<br />           return( nil )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033050"></a>)</pre>
+
+<ol><li>
+<a id="pgfId-1033051"></a>The <code>sim.cap</code> file is parsed, formatted, and printed to the <code>net.cap</code> file. </li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033052"></a>;<br />   ;Parse the sim.cap file<br />;<br />while( (line = lineread(inf)) != nil<br />            if( listp(line) then<br />            if( (! stringp(car(line))) || <br />                      (! numberp(cadr(line))) then<br />               sprintf(message &quot;ERROR: illegal file<br />                  format, %s&quot;<br />                 &quot;expecting \&quot;&lt;net name&gt;\&quot; &lt;value&gt; - &quot;)<br />                        simPrintError( message )<br />                        simPrintErrorLine(line)<br />                        sprintf(message &quot;Line ignored.\n&quot;)<br />                        simPrintError( message )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033053"></a>           else<br />                 ;<br />                       ; INSERT YOUR CODE HERE TO:<br />                       ; translate the net name into the<br />                    ;  mapped name, scale the<br />                       ; capacitance if necessary and print<br />                 ; out the information<br />                       ; according to the format of your<br />                 ; simulator<br />                       ;<br />           )<br />       )<br />   )</pre>
+
+<p class="webflare-indent1">
+<a id="pgfId-1033054"></a>The <code>lineread</code> function returns a line that looks like:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033055"></a>( &quot;&lt;net name&gt;&quot; &lt;capacitance&gt; )</pre>
+
+<p class="webflare-indent1">
+<a id="pgfId-1033056"></a>and returns <code>t</code> for a comment line. Thus, the <code>listp</code> function filters out the comment lines.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1033057"></a>The <code>&lt;net name&gt;</code> entry corresponds to the full net pathname of the schematic design. Mapping is needed from the &lt;<code>net name</code>&gt; to the name generated by the netlister. The <code>simNetCdsNameExtName</code> function performs the mapping, for example, </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033058"></a>extName = simNetCdsNameExtName(&quot;/cpu/alu1/control&quot;) </pre>
+
+<p class="webflare-indent1">
+<a id="pgfId-1033059"></a>The name generated by the netlister is stored in the <code>extName</code> variable. Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter for more information on name mapping and the <code>simNetCdsNameExtName</code> function. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033060"></a>Insert the formatting and printing code after the <code>else</code> keyword. The code depends on the capability of your simulator. If your simulator can adjust the fanout loading, due to the capacitance on the net, the net capacitance (obtained from the <code>sim.cap</code> file) can be added to the net directly. Otherwise, you should add an additional grounded capacitor for each net in the <code>sim.cap</code> file. Furthermore, you should adjust the unit of the capacitance if your simulator does not use <code>farads</code>. Finally, you may round off the adjusted result depending on the precision of your simulator. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033061"></a>In the following example, the formatting code fragment for a simulator that can adjust the fanout loading on each net is shown: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033062"></a>extName = simNetCdsNameExtName(car(line))</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033063"></a>fprintf(outf &quot;.LOAD %s=%.1f\n&quot; extName </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033064"></a>   cadr(line)/simCapUnit) </pre>
+<p class="webflare-indent1">
+<a id="pgfId-1033065"></a>The simulator operates in fanout units. Thus, the unit of the capacitance must be converted from <code>farad</code> to fanout units. You use the <code>simCapUnit</code> variable to do the conversion. Finally, the adjusted fanout unit is rounded off to the nearest tenths. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033066"></a>In another example, the following is the formatting code fragment for adding a grounded capacitor for each net capacitance in the <code>sim.cap</code> file: </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033067"></a>extName = simNetCdsNameExtName(car(line))</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033068"></a>capDeviceCount = 0</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033069"></a>capVal = round(cadr(line)/1.e-15)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033070"></a>fprintf(outf &quot;CAPACITOR(%d) IC%1d(%s);\n&quot; capVal <br />   capDeviceCount++ extName) </pre>
+<p class="webflare-indent1">
+<a id="pgfId-1033071"></a>To avoid a naming conflict with the existing instance names, these added capacitors are prefixed by <code>IC</code> and suffixed with a unique number (<code>capDeviceCount</code>). In this case, the grounded capacitor unit is <code>femtofarad</code>, and it must be an integer. Thus, conversion is by dividing the capacitance by 1.e-15 and rounding to the nearest integer.</p>
+<ol><li>
+<a id="pgfId-1033072"></a>Close the name mapping process.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1033073">
+<a id="pgfId-1033073"></a>;
+; Clean up for name mapping
+;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033074">
+<a id="pgfId-1033074"></a>simPostNameConvert()   </pre></li><li>
+<a id="pgfId-1033075"></a>Finally, the <code>sim.cap</code> and <code>net.cap</code> files are closed and the function returns <code>t</code>.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1033076">
+<a id="pgfId-1033076"></a>close ( inf )
+close ( outf )
+return ( t )</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033077">
+<a id="pgfId-1033077"></a></pre></li></ol>
+
+
+
+
+
+<p>
+<a id="pgfId-1033078"></a>The following are steps to include this new function.</p>
+<ol><li>
+<a id="pgfId-1033079"></a>Instruct SE to execute this function during the post-layout simulation process. You should modify the <code>simActions</code> variable to include the new function name. This variable is defined in the file which has the same name as your simulator plus the .<code>ile</code> suffix and is located in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory. <br />
+<a id="pgfId-1033080"></a>The <code>simActions</code> variable might look like this: <pre class="webflare-pre-block webflare-courier-new" id="#id1033081">
+<a id="pgfId-1033081"></a>;
+;Set the default actions to be performed by your ;simulator
+;
+simSetDef( &#39;simActions,&#39;(simCheckVariables()
+   simInitRunDir()
+   netlist()
+   YourSimTranslation()
+   simin()
+   runSim()
+  ) </pre>
+<a id="pgfId-1033082"></a>The new function (<code>YourSimTranslation</code>) should come after the <code>netlist</code> function because your function needs the names generated by the netlister to perform the name mapping. Similarly, the new function should come before the <code>simin</code> function because the <code>simin</code> function merges the translated result (<code>net.cap</code>) with the netlist description. You may add more functions to this list; however, you must preserve the order of the functions <code>netlist()</code>, <code>YourSimTranslation()</code>, and <code>simin( )</code>. The &#8220;Customizing the Control File&#8221; section in this chapter describes the process of merging the <code>net.cap</code> file and the netlist file.</li><li>
+<a id="pgfId-1033083"></a>Add <code>YourSimTranslation</code> to the list of functions to be unbound when the designer switches simulators. Modify the <code>simSimulatorUnbindFuncs</code> variable to include the new function. This variable is in the file with the same name as your simulator plus the &#8221;.<code>ile</code>&#8221; suffix and is located in the 
+<span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory. You might want to include other functions in the <code>simSimulatorUnbindFuncs</code> list. Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information on this variable.</li></ol>
+
+
+
+
+
+<h4>
+<a id="pgfId-1033085"></a>Customizing the Control File<a id="marker-1033084"></a></h4>
+
+<p>
+<a id="pgfId-1033088"></a>Use the <code>control</code><a id="marker-1033086"></a> file to merge the translated result (<code>net.cap</code><a id="marker-1033087"></a>) with the netlist description. The <code>control</code> file contains information such as the netlist description, the input stimuli, the simulation time points, and any formatted net capacitance <code>(net.cap)</code>. Use the command character &#8220;?&#8221; to include the content of the <code>net.cap</code> file because this file may not exist. The command character &#8220;!&#8221; is also used to include a file. However, it generates an error message if the file does not exist. For example, the template <code>control</code> file for the <code>SILOS</code> simulator looks like this: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033089"></a>batch batch.out</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033090"></a>input netlist</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033091"></a>input .term</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033092"></a>$ This is the silos control template file &#8221;control.sil&#8221;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033093"></a>[?net.cap]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033094"></a>[!silos.inp]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033095"></a>!type errors</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033096"></a>[!silos.sim]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033097"></a>!type errors</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033098"></a>.end</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033099"></a>exit</pre>
+
+<p>
+<a id="pgfId-1033100"></a>The location of the [<code>?net.cap</code>] line depends on your simulator. In most cases, the [<code>?net.cap</code>] line should come after the netlist inclusion because you use the contents of the <code>net.cap</code> file to modify or add to the netlist description. </p>
+<p>
+<a id="pgfId-1033101"></a>You should create a template control file similar to the preceding sample file for your simulator so that future simulation runs include the post-layout simulation capability. In addition, all current control files associated with your simulator should be modified to include the [<code>?net.cap</code>] line in the appropriate locations. Refer to the &#8220;Template Control File&#8221; section of the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information related to the <code>control</code> file. </p>
+
+<h3>
+<a id="pgfId-1033104"></a>Variables<a id="Variables"></a><a id="marker-1033103"></a></h3>
+
+<p>
+<a id="pgfId-1033105"></a>This section lists all variables used in the post-layout simulation process. You can set the values of these variables in the .<code>simrc</code> file in the <br /><span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local</code> directory, the directory you start the software in, or your home directory. Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information.</p>
+
+<h4><em>
+<a id="pgfId-1033107"></a><a id="marker-1033106"></a>simDoPostLayout</em></h4>
+
+<p>
+<a id="pgfId-1033108"></a>Enables/disables the post-layout simulation process. If the value is <code>nil</code>, then the process is disabled; otherwise, the process is enabled. </p>
+<p>
+<a id="pgfId-1033109"></a>Defined in: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033110"></a>etc/skill/si/simcap.ile</pre>
+
+<p>
+<a id="pgfId-1033111"></a>Default: <code>nil</code></p>
+
+<h4><em>
+<a id="pgfId-1033113"></a><a id="marker-1033112"></a>simCapFileDir</em></h4>
+
+<p>
+<a id="pgfId-1033114"></a>Defines the full file system pathname of the net capacitance <code>(sim.cap)</code> file. </p>
+<p>
+<a id="pgfId-1033115"></a>Defined in: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033116"></a>NONE </pre>
+
+<p>
+<a id="pgfId-1033117"></a>Example: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033118"></a>&quot;/mnt/usr/test/sim.cap&quot;</pre>
+<h4><em>
+<a id="pgfId-1033121"></a><a id="marker-1033119"></a>simCapU<a id="simcapunit"></a>nit</em></h4>
+
+<p>
+<a id="pgfId-1033122"></a>Converts the capacitance unit to the unit used in the target simulator. </p>
+<p>
+<a id="pgfId-1033123"></a>Defined in: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033124"></a>etc/skill/si/simcap.ile </pre>
+
+<p>
+<a id="pgfId-1033125"></a>Default: <code>1e-15</code></p>
+
+<h3>
+<a id="pgfId-1033128"></a>Functions<a id="Functions"></a><a id="marker-1033127"></a></h3>
+
+<p>
+<a id="pgfId-1033129"></a>The following section lists all functions used in the post-layout simulation process for the supported simulators. Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information.</p>
+
+<h4><em>
+<a id="pgfId-1033131"></a><a id="marker-1033130"></a>simCheckHeader   </em></h4>
+
+<p>
+<a id="pgfId-1033411"></a>Refer to chapter &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual for more information.</p>
+<p>
+<a id="pgfId-1031936"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap7.html" id="prev" title="Customizing the Flat Netlister (FNL)">Customizing the Flat Netlister ...</a></em></b><b><em><a href="chap9.html" id="nex" title="Generating a Library">Generating a Library</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

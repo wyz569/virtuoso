@@ -1,0 +1,1132 @@
+
+<html><head><title>Customizing the Flat Netlister (FNL)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rgirdhar" />
+<meta name="CreateDate" content="2023-06-14" />
+<meta name="CreateTime" content="1686770762" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes reference information about the Open Simulation System, which gives easy access to supported simulators and lets you customize and integrate new simulators into the Cadence system" />
+<meta name="DocTitle" content="Open Simulation System Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Customizing the Flat Netlister (FNL)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="ossref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-14" />
+<meta name="ModifiedTime" content="1686770762" />
+<meta name="NextFile" content="chap8.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap6.html" />
+<meta name="c_product" content="Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Open Simulation System Reference -- Customizing the Flat Netlister (FNL)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="ossrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="ossrefTOC.html">Contents</a></li><li><a class="prev" href="chap6.html" title="Customizing the HNL Net-Based Netlister">Customizing the HNL Net-Based  ...</a></li><li style="float: right;"><a class="viewPrint" href="ossref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap8.html" title="Customizing Post-Layout Simulation">Customizing Post-Layout Simula ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Open Simulation System Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>7
+<a id="pgfId-1032656"></a></h1>
+<h1>
+<a id="pgfId-1032657"></a><hr />
+Customizing the Flat Netlister (FNL)<hr />
+</h1>
+
+<p>
+<a id="pgfId-1034329"></a>Most simulators and design analysis tools require a textual description of the design to be analyzed as input. Some of these tools require this description to be completely flat. This type of a network description is called a &#8220;flat netlist.&#8221; A<a id="marker-1032659"></a> flat netlist contains a complete description of the devices used in the design, their delays, and the connectivity between these devices. In addition, the flat netlist may contain model descriptions, which are ways of setting the parameters of a simulator primitive view for a device (for example, the saturation current <em>IS</em> and ohmic resistance <em>RS</em> of a diode in SPICE). A flat netlist must not contain any hierarchy. This requirement means that descriptions for a cell used in the design and references to the cell later in the netlist are not output. Instead, the contents of each cell are output every time the cell is referenced.</p>
+<p>
+<a id="pgfId-1038246"></a>The <a id="marker-1038245"></a>Flat Netlister (FNL) is a Cadence tool to produce flat netlists. FNL flattens the design and presents the data in a simplified form for use by output formatting instructions. You can write these instructions to produce a new netlist syntax suitable as input to your simulator.<a id="marker-1038247"></a> Output formatting can be performed using the Cadence standard language, SKILL, the netlister&#39;s own substitution expressions, or a combination of both. <a id="marker-1038248"></a>FNL substitution expressions are a compact and simple language which can be used to format the netlister output without any understanding of the Cadence database structure. It can be used for most of your formatting needs. For more complex formats, it may be necessary to use SKILL instructions to produce some of the output. The full capability of SKILL is available for use in writing your format functions. In addition, several functions and variables specific to netlisting have been added. These functions give you complete access to the design database, as well as to the internal structure of the netlister. To use some of these functions effectively, you need to understand the basic structure of the Cadence database as described in the <h-hot><a actuate="user" class="URL" href="../skdfref/skdfrefTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Environment SKILL Reference</a></h-hot>.</p>
+<p>
+<a id="pgfId-1032664"></a>This chapter describes how FNL works, how the design is flattened, how and why names are generated, and how the output is formatted. Included in the explanation of output formatting is a description of the substitution expression syntax and the SKILL functions specific to the netlister which you can use to simplify customizing the FNL output. After netlister functionality is explained, the steps you must perform to modify the netlister output for a new syntax are explained. There is also a description of recommended library structure pertaining to netlisting and the modifications that need to be made to the Simulation Environment (SE) if you are netlisting for a new simulator. Examples of library elements from the SPICE library and the formatting instructions used to output the connectivity for these devices to the netlist file are at the end of this chapter.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1032665"></a>FNL always outputs unit connectivity. Hence, the data presented to the formatter is usually on a signal as opposed to a net basis. Some FNL variable names still contain the string <code>Net</code> within them. Read the descriptions of these variables carefully. As the descriptions state, they probably return data about signals and not about nets.</div>
+
+<h2>
+<a id="pgfId-1032668"></a><a id="10824"></a>How FNL Works <a id="How FNL Works"></a></h2>
+
+<p>
+<a id="pgfId-1032669"></a>FNL consists of two parts: the first part contains the output formatting instructions that you must provide; the second part contains the database traversal routines provided by Cadence.</p>
+
+<h3>
+<a id="pgfId-1032672"></a><a id="marker-1032670"></a><a id="97463"></a>Formatting Instructions<a id="Formatting Instructions"></a></h3>
+
+<p>
+<a id="pgfId-1032674"></a>When netlisting begins, a cell, usually called <code>nlpglobals</code><a id="marker-1032673"></a>, is read, and the output formatter is initialized. Along with preparing internal data structures, the primary formatting properties that can be defined only in this cellview are searched for, and if found, they are precompiled for later formatting of each device and net. Which formatting properties are found determines whether the netlist contains certain types of data. The primary formatting properties are shown here:<a id="marker-1032675"></a></p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1032676"></a><code>NLPcompleteElementString<br />NLPcreateModelString<br />NLPcreateNetString<br />NLPnetlistHeader<br />NLPnetlistFooter<br />NLPLineLength<br />NLPLinePrefix<br />NLPLinePostfix<br />NLPsingleLineCommentString</code></pre>
+<p>
+<a id="pgfId-1032677"></a>These are the only predetermined property names that the netlister searches for to format the netlist, and the global cellview is the only place searched for their values. (Refer to the &#8220;Global Cellview (<code>nlpglobals</code>) Contents&#8221; section in this chapter for a description of these properties.) If any other property value is placed in the netlist, one of these properties must specify the necessary search to find that property value and the way it should be formatted in the netlist.</p>
+
+<h3>
+<a id="pgfId-1032680"></a><a id="marker-1032678"></a><a id="74763"></a>Database Traversal Routines<a id="Database Traversal Routines"></a></h3>
+
+<p>
+<a id="pgfId-1032681"></a>Next, the design hierarchy is read into memory, and an internal view of the design is built that can be traversed as if the design had been flattened. <a id="marker-1032682"></a>Flattening is the process of replacing each instance, or reference to a device, with the contents of that device. This process is explained in detail in the &#8220;FNL Flattening Process&#8221; section in this chapter. </p>
+<p>
+<a id="pgfId-1032683"></a>As the design is flattened, the names of all of the instances and nets must be expanded to ensure that each device is still uniquely identifiable by its name within the design. This is done by preceding the name of each instance (or net) with the name of the instance that contains it and separating the names with a slash (&#8220;/&#8221;). For example, if you place two inverters in your design, one called &#8220;inv1&#8221; and the other called &#8220;inv2,&#8221; and each contains a transistor called &#8220;trans1,&#8221; the flattened design contains two instances of transistor &#8220;trans1,&#8221; one with the name &#8220;/inv1/trans1,&#8221; and the other with the name &#8220;/inv2/trans1.&#8221; In a large hierarchical design, these names can quickly become too large for most simulators to accept. Therefore, as the design is flattened, each instance and net is assigned another name acceptable to the target simulator. This name is created by taking a prefix, which you can specify, and suffixing it with a unique number. This name relation is stored in a name map which the Cadence system can read and use to translate between the two names. Your users never need to see the name that was created for the restrictive name space of a simulator.</p>
+<p>
+<a id="pgfId-1032684"></a>During this process certain consistency checks (such as terminal mismatches between levels of hierarchy) are performed. If there are no errors in this process, the output formatting begins. The flattened design data, which is now in core, is traversed again. As each device and net is encountered, one of the properties which must be defined in the global cellview is evaluated. (Refer to the &#8220;Formatting Instructions&#8221; section in this chapter.) This property must be either a substitution expression () or a SKILL function (<code>ilExpr</code>). If the property is a substitution expression, it specifies for the netlister how to output the connectivity for the current device or net. If the property is a SKILL function, it is evaluated, and the SKILL command either outputs any needed information to the netlist file directly or returns a value which the netlister outputs to the netlist file. The use and syntax of substitution expressions is explained in the &#8220;Formatting Substitution Expressions&#8221; section in this chapter. Netlist formatting using SKILL, including the extra functions and variables that have been added to simplify this process, are explained in the &#8220;SKILL Formatting&#8221; section in this chapter.</p>
+
+<h2>
+<a id="pgfId-1032688"></a><a id="marker-1032685"></a><a id="40249"></a>FNL Naming Conventions <a id="FNL Naming Conventions"></a></h2>
+
+<p>
+<a id="pgfId-1032689"></a>Properties with predetermined names that the netlister searches for are prefixed with the letters <em>NLP</em> and are searched for only in the global cellview. (Refer to the &#8220;Global Cellview (<code>nlpglobals</code>) Contents&#8221; section in this chapter.) To avoid any confusion concerning which functions refer to these properties, as well as any property name conflicts, do not prefix your property names with the letters <em>NLP</em>. If you are using an existing simulation interface supported by Cadence, then netlisting format properties can also be found on the simulation primitive for each device.</p>
+<p>
+<a id="pgfId-1032690"></a>All of the SKILL functions and variables defined in the netlister begin with the letters <code>fnl</code>. The name is lower case, except for the first letter of each word, which is upper case. To avoid variable or function name conflicts, do not prefix your function or variable names with the letters <code>fnl</code>. Predefined netlister functions and variables are explained in the &#8220;SKILL Formatting&#8221; section in this chapter.</p>
+
+<h2>
+<a id="pgfId-1032694"></a><a id="13451"></a>FNL Flattening Proces<a id="marker-1032692"></a>s <a id="FNL Flattening Process"></a></h2>
+
+<p>
+<a id="pgfId-1032695"></a>The Cadence netlister &#8220;flattens&#8221; a design hierarchy and produces an expanded description of the design chosen for simulation. The way the design hierarchy is &#8220;expanded&#8221; to produce the netlist as well as the syntax of the netlist depend on the simulator used. For example, when generating a network description for input to the SILOS simulator, you may want the description to be at the logical gate level, since SILOS is capable of simulating such primitives as AND gates and AOIs. If you want to run a SPICE simulation on the same design, the network description must be expanded down to the transistor level, since SPICE has no understanding of logic gates.</p>
+<p>
+<a id="pgfId-1032696"></a>Schematics usually consist of instances of symbols connected by nets. When expanding a schematic for input to a simulator, the symbol instances must be associated with their corresponding schematics or netlisting views so that the target simulator can understand the components in the design.</p>
+
+<h3>
+<a id="pgfId-1032698"></a><a id="43275"></a>Locating an Instance of a Device <a id="Locating Instance of a Device"></a></h3>
+
+<p>
+<a id="pgfId-1032699"></a>First, each instance (occurrence) in the schematic (represented by the symbol instance) must be located. The <code>cds.lib</code> file contains the path list that your design library, which contains the top-level schematic of the design, and reference libraries are located in. Each instance of the master (symbol) could be located in either the design library or the reference library. If the instance of the master is from one of the reference libraries, the instance maintains the referenced library&#39;s name. Therefore, it is important to put the same library path and library names in the <code>cds.lib</code> file. This maintains consistency if you run your simulation from within the Cadence-provided environment. When the netlister finds an instance of a device in a schematic, it tells the design manager to locate the library containing the device. The library is specified in the <code>cds.lib</code> file. Once the netlister locates the device in the specified library, it continues the design hierarchy expansion process. If the netlister does not locate the device, it generates an error message because it cannot create a netlist.</p>
+
+<h3>
+<a id="pgfId-1032701"></a><a id="90309"></a>Switching Views <a id="Switching Views"></a></h3>
+
+<p>
+<a id="pgfId-1032702"></a>Once the device referred to in the schematic has been located, the symbol instance for the device needs to be associated with its corresponding schematic or simulator primitive. This process is called <em>switching</em><a id="marker-1032703"></a> views. The list of valid views to be used for <em>switching</em> is defined by the SE <code>simViewList</code><a id="marker-1032704"></a> variable. Each view in this list, along with the device&#39;s name, comprise an identification that is searched for in the specified library. If no identification (cell&#39;s name and view&#39;s name) in the simViewList is found in the specified library, an error message is generated, and no netlist can be produced.</p>
+
+<h3>
+<a id="pgfId-1032706"></a><a id="64459"></a>Stopping Views <a id="Stopping Views"></a></h3>
+
+<p>
+<a id="pgfId-1032708"></a>A view that is the most detailed description desired for simulation is called a <em>stopping</em><a id="marker-1032707"></a> view. The list of valid stopping views is defined by the SE <code>simStopList</code> variable. If the view located in the previous switching views step corresponds to one specified in the <code>simStopList</code>, the expansion process for this instance is stopped, and the connectivity information for this instance is printed to the netlist file. If the view does not correspond to a stopping point, the expansion process continues, and you return to the step of locating all of the instances contained in this cellview.</p>
+<p>
+<a id="pgfId-1032711"></a>The following are the SE variables that control the <a id="marker-1032709"></a>expansion <a id="marker-1032710"></a>process:</p>
+
+<h4><em>
+<a id="pgfId-1032713"></a><a id="marker-1032712"></a>simLibName</em></h4>
+
+<p>
+<a id="pgfId-1032714"></a>The library name containing the top schematic of the design.</p>
+
+<h4><em>
+<a id="pgfId-1032717"></a><a id="marker-1032715"></a><a id="marker-1032716"></a>simViewList   </em></h4>
+
+<p>
+<a id="pgfId-1032718"></a>The &#8220;viewing switch list.&#8221; Each of the views in this list is searched for in the order it is listed in the library. The first view found is switched in place of the symbol.</p>
+
+<h4><em>
+<a id="pgfId-1032720"></a><a id="marker-1032719"></a>simStopList</em></h4>
+
+<p>
+<a id="pgfId-1032721"></a>The &#8220;stopping point view list.&#8221; The view found in the <code>simViewList</code> is checked to see if it is in this list. If it is, expansion stops. If it is not, the expansion process is applied to the new view.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1032722"></a> <code>simViewList</code> and <code>simStopList</code> are the variables used by SE and the netlister internally. Users cannot set the variable directly. The <code>simViewList</code> and <code>simStopList</code> variables can be set only on a per-simulator basis. To override the default view list or stop list, users set the corresponding list for the simulator they are using in their <code>.simrc</code> file, and the appropriate internal list is set to the same value by each simulation interface. The &#8220;Modify the Simulation Environment (SE)&#8221; section in this chapter explains how to set these lists.</div>
+<p>
+<a id="pgfId-1032723"></a>The following are examples of the variables controlling expansion: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032724"></a>simViewList = &#39;(&quot;spice&quot; &quot;schematic&quot;)<br />simStopList = &#39;(&quot;spice&quot;) </pre>
+
+<p>
+<a id="pgfId-1032725"></a>Stop on a cell with a view named &quot;spice.&quot; Otherwise, expand to the cell with view name &quot;schematic.&quot;</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032726"></a>simViewList = &#39;(&quot;spice&quot; &quot;cmos.sch&quot; &quot;schematic&quot;)<br />simStopList = &#39;(&quot;spice&quot;) </pre>
+
+<p>
+<a id="pgfId-1032727"></a>Stop if the cell&#39;s view name is &#8220;spice&#8221;. Otherwise, expand the view&#160;&#160;&#8220;cmos.sch&#8221; or &#8220;schematic&#8221;.</p>
+<p>
+<a id="pgfId-1032728"></a>The concise algorithm for turning a design hierarchy into a netlist is explained next.</p>
+
+<h3>
+<a id="pgfId-1032730"></a><a id="67681"></a>Opening a Design<a id="Opening a Design"></a></h3>
+
+<p>
+<a id="pgfId-1032731"></a>Open the design (<code>simCellName simViewName</code>) in the <code>simLibName</code> library.</p>
+
+<h3>
+<a id="pgfId-1032733"></a><a id="48778"></a>Locating a Cellview<a id="Locating Cell View"></a></h3>
+
+<p>
+<a id="pgfId-1032734"></a>For each instance in the current schematic, get the cell name (master name) of the instance, then take each of the names in turn from the list of views (<code>simViewList</code>), and look for the specified cellview in the available reference libraries.</p>
+
+<h3>
+<a id="pgfId-1032736"></a><a id="Expand Or Format"></a>Expand or Format</h3>
+
+<p>
+<a id="pgfId-1032737"></a>If you find a cellview with a view name from the <code>simViewList</code>, check to see if the view name is also in the <code>simStopList</code><a id="marker-1032738"></a>. If the view name is a stopping point, write out the instance in the netlist file. If you do not find a view name from the <code>simViewList</code>, generate an error message. If the view name does not appear in the <code>simStopList</code>, repeat the <em>Locating Cell View</em> step to expand the cellview.</p>
+<p>
+<a id="pgfId-1032743"></a><a id="FNL"></a><h-hot><a href="chap7.html#Inverter Schematic"></a><xrefstd>Figure&#160;7-1<h-hot /></xrefstd></h-hot> is a diagram showing the algorithm used to expand the simulation master into a netlist.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1032744"></a>Fig 7-1Netlist Algorithm To Expand the Simulation Master</div>
+<p>
+<a id="pgfId-1032828"></a><a id="Netlist Algorithm to Expand the Simulation Master, Figure 5-1"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="620" src="images/chap7-2.gif" /></div>
+<h3>
+<a id="pgfId-1032831"></a><a id="marker-1032829"></a><a id="35948"></a>Global Nets <a id="Global Nets"></a></h3>
+
+<p>
+<a id="pgfId-1032832"></a>During the flattening process, if two nets in the same or different cellviews of the design hierarchy are called <code>netName</code> and are marked as global, then both nets are assigned the same name by the netlister. Because simulators make connections by name, both nets are perceived as electrically equivalent by the simulator.</p>
+
+<h3>
+<a id="pgfId-1034480"></a><a id="Support of Multiplicity Factors for Flat Netlisters"></a>Support of Multiplicity Factors for Flat Netlisters</h3>
+
+<p>
+<a id="pgfId-1034254"></a>Multiplicity factor means that for a given instance on which this property is specified, the instance will be treated as an array of instances with the upper limit being the <em>number</em> specified by this property. This is also referred to as <em>m-factor</em> and is denoted by an integer value.</p>
+<p>
+<a id="pgfId-1034255"></a>This feature was introduced for customers to avoid keeping multiple copies of the same design for simulation and verification purposes since FNL till now didn&#8217;t support this property. The support of this feature will enable users to specify the property on the instance with the SKILL variable <code>useMfactorToIterateInstances</code> set to <code>t </code>and the instances will be connected in parallel. The user can specify the following variable in the <code>.simrc</code> file.</p>
+<p>
+<a id="pgfId-1034256"></a><strong>SKILL Variable</strong>: <code>useMfactorToIterateInstances</code></p>
+<p>
+<a id="pgfId-1034257"></a><strong>Type</strong>: <code>Boolean</code></p>
+<p>
+<a id="pgfId-1034258"></a><strong>Valid Value</strong>: <code>t/nil</code></p>
+<p>
+<a id="pgfId-1034259"></a>This variable when set to <code>true (t)</code> will direct OSS to handle the instances which have the <em>m-factor</em> set to some integer value as iterated instances and thus the instance will appear in the flattened netlist, number of times as specified by the value of the <em>m-factor</em>. If this variable is set to <code>false (nil)</code>, OSS will continue its default behavior and ignore the <em>m-factor</em> properties set on the instances.</p>
+<p>
+<a id="pgfId-1034251"></a>For simulation purposes, there would not be any change needed because this variable will not impact the default behavior of the hierarchical netlisters.</p>
+
+<h2>
+<a id="pgfId-1032842"></a>FNL Name Ma<a id="FNL"></a>p <a id="FNL Name Map"></a></h2>
+
+<p>
+<a id="pgfId-1032843"></a>As explained in the &#8220;Database Traversal Routines&#8221; section in this chapter, the netlister automatically generates new names for each instance and net to avoid problems with names not being acceptable in a simulator input syntax. These names are generated by suffixing a prefix with a unique number. You can specify the netlister prefixes by setting variables in SE as explained in the &#8220;Modify the Simulation Environment (SE)&#8221; section in this chapter. The netlister automatically stores the cross-references between these two sets of names in a &#8220;map&#8221; file. You do not need to add the names to this map. If you need to know either name for a signal or instance, the functions and variables to retrieve this information are listed in the &#8220;Formatting Substitution Expressions&#8221; and &#8220;SKILL Formatting&#8221; sections in this chapter.</p>
+
+<h2>
+<a id="pgfId-1032847"></a>FNL Output Formatting<a id="FNL Output Formatting"></a><a id="FNL"></a> </h2>
+
+<p>
+<a id="pgfId-1032848"></a>FNL automatically flattens the design and produces a name map, but it does not output any connectivity until it has been instructed on how to format the netlist. There is no default netlist syntax. The netlist syntax is determined by the property values with fixed names stored in a database cellview called the global cellview, or frequently called<a id="nlpglobals"></a> <code>nlpglobals</code>. To produce a netlist with the syntax required by your simulator, you must first create this global cellview. <a id="global cellview"></a></p>
+<p>
+<a id="pgfId-1032851"></a>In this global cellview, you add several properties to instruct the netlister how to format various aspects of the netlist. These instructions usually refer to other properties defined on library elements (the primitive views for your simulator) or SKILL procedures that format the output for each device type. You can also add global default format instructions to the global cellview property list. The format instructions on primitive library elements can then refer to, and share, these instructions.</p>
+<p>
+<a id="pgfId-1032852"></a>The following sections explain the global cellview, the predefined properties you must create, substitution expression syntax, and SKILL formatting instructions.</p>
+
+<h3>
+<a id="pgfId-1032855"></a>Global Cellview (<a id="nlpglobals"></a>nlpglobals) Contents<a id="Global Cellview (nlpglobals) Contents"></a></h3>
+
+<p>
+<a id="pgfId-1032856"></a>The global cellview is basically a schematic. It must contain one instance whose master is (dummy dummy). (This is explained in the &#8220;Create Global Cellview&#8221; section in this chapter.) It must also contain the netlist formatting instructions. In addition, netlist formatting properties applicable to the entire design can also be stored in the global cellview. This global cellview is a way of storing common format instructions in a single place. For example, there is a property in the global cellview that specifies how each instance should be formatted. This property usually refers to a property on the primitive for each element found in the library; the property contains details on how this device type should be formatted. Formatting instructions that are common to many types of gates, such as formatting the delay characteristics of a logic gate, can also be stored in the global cellview and then referred to by all primitives for logic gates found in your library.</p>
+
+<h3>
+<a id="pgfId-1032859"></a><a id="FNL"></a>Creating Predetermined Properties<a id="Creating Predetermined Properties"></a></h3>
+
+<p>
+<a id="pgfId-1032860"></a>The following list shows all the predetermined property names the netlister searches for to determine the netlist format. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1032861"></a><code>NLPcompleteElementString<br />NLPcreateModelString<br />NLPcreateNetString<br />NLPnetlistHeader<br />NLPnetlistFooter<br />NLPLineLength<br />NLPLinePrefix<br />NLPLinePostfix<br />NLPsingleLineCommentString</code></pre>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1032862"></a>These properties can be placed only in the global cellview, and these are the only properties the netlister looks for to determine the netlist syntax. If you want to place any other properties in the netlist, the value of these properties must specify how to locate, as well as how to format the property in the netlist. An example is included in the description of each property. Where pertinent, the examples are taken from the global cellview for SPICE. The example syntax is the same as that used for adding a property to a cellview using the Symbol/Simulation Library Generator (S/SLG). The detailed syntax of the substitution expressions (<code>nlpExpr</code>), and the SKILL expressions (<code>ilExpr</code>) are explained in the two following sections.</div>
+
+<h4>
+<a id="pgfId-1032864"></a><a id="NLPcompleteElementString;FNL"></a>NLPcompleteElement-String </h4>
+
+<p>
+<a id="pgfId-1032865"></a>This property is the most important one in the global cellview because its value instructs the netlister how to format each instance in the design being netlisted. Since FNL is instance-based (as opposed to net-based), this format instruction outputs all of the connectivity for the design. There is no default for this property. If you do not define its value in the global cellview, no connectivity information is placed in the netlist. The property type must be either <code>ilExpr</code> or <code>nlpExpr</code>.</p>
+<p>
+<a id="pgfId-1032866"></a>This property value usually refers only to another property placed in the simulation primitive for each device in the library. In the following examples, the property value instructs the netlister to search for another property, which is called <code>NLPElementPostamble</code> in this example (although it can be any string) and uses the value to format the reference to this element. In the Cadence library, this property is located in each primitive.</p>
+<p>
+<a id="pgfId-1032868"></a><a id="marker-1032867"></a>When this property is evaluated, your formatting instruction has access to two types of property searches: you can specify either a local property search or a search throughout the design hierarchy. The method for specifying the type of property search is explained in the &#8220;Formatting Substitution Expressions&#8221; and &#8220;SKILL Formatting&#8221; sections in this chapter. A local property search looks for a property of the specified name only on the primitive instance currently being output to the netlist. A property search throughout the design hierarchy first looks for the property on the primitive instance currently being output to the netlist, then looks on the instance that contains it, and so on up the instance hierarchy. If it does not find the property on any of the instances, it looks for the property on the view switched master of the stopping instance. The stopping instance is the simulator primitive for the device found in the library. If it still does not find the property, it searches the global cellview for a property of this name.</p>
+<p>
+<a id="pgfId-1032870"></a><a id="marker-1032869"></a>The property search throughout the design hierarchy allows you flexibility in setting defaults, as well as the possibility of overriding them. You can place the default value of a property in the cellview for each library element type and make it specific for that device type, or you can place a default in the global cellview and make it a default for the entire design. You can override the default for all devices below a particular level of hierarchy or on only one instance. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1032871"></a>This property search mechanism is different than that used by the hierarchical netlister. Because most simulators cannot inherit properties through the design hierarchy entered using a hierarchical netlist, properties in the hierarchical netlister can be accessed only on the instance of the primitive and its master. This condition can produce different simulation results when the same design is simulated using a hierarchical and a flat netlist.</div>
+<p>
+<a id="pgfId-1032872"></a>In addition to properties stored in the design, certain netlister-defined properties are also accessible; these properties are defined in the &#8220;Formatting Substitution Expressions&#8221; and &#8220;SKILL Formatting&#8221; sections in this chapter.</p>
+<p>
+<a id="pgfId-1032873"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032874"></a>NLPcompleteElementString = nlpExpr(&quot;[@ NLPElementPostamble]\\n&quot;)</pre>
+
+<p>
+<a id="pgfId-1032875"></a>or:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032876"></a>NLPcompleteElementString = nlpExpr(&quot;[@ NLPElementPostamble:%: **No element format property found for element [@ InstPathName]]\\n&quot;)</pre>
+
+<p>
+<a id="pgfId-1032877"></a>or:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032878"></a>NLPcompleteElementString = ilExpr(&quot;SpiceFormatElement()&quot;)</pre>
+<h4>
+<a id="pgfId-1032880"></a><a id="NLPcreateModelString property;FNL properties"></a>NLPcreateModelString</h4>
+
+<p>
+<a id="pgfId-1032881"></a>The value of this property instructs the netlister how to format the model description for each device type in the design being netlisted. </p>
+<p>
+<a id="pgfId-1032882"></a>This format instruction is evaluated only the first time each device type is encountered. For example, if your design includes two diodes and you defined this property in your global cellview, the property is evaluated only for the first diode encountered. The <code>NLPcompleteElementString</code> property is evaluated for each diode instance.</p>
+<p>
+<a id="pgfId-1032883"></a>There is no default for this property, and you do not need to define it if your simulator does not require model descriptions. Model descriptions are required by circuit simulators such as SPICE, but not by most logic simulators. If you define this property in your global cell, its type must be either <code>ilExpr</code> or <code>nlpExpr</code>.</p>
+<p>
+<a id="pgfId-1032884"></a>The property value usually only refers to another property placed in the simulation primitive for each library device. In the following example, the property value instructs the netlister to search for the <code>NLPModelPreamble</code> property and uses the value to format the model description for this element type. In the Cadence library, this property is located in each primitive.</p>
+<p>
+<a id="pgfId-1032885"></a>When this property is evaluated, your formatting instructions have access to properties stored in the simulation primitive corresponding to the device being output to the netlist and to properties stored in the global cellview. Since only one model statement is output irrespective of how many instances refer to it, it cannot output information stored on any of the device instances. In addition to properties stored in the design, certain netlister-defined properties are also accessible. These properties are defined in the &#8220;Formatting Substitution Expressions&#8221; and &#8220;SKILL Formatting&#8221; sections in this chapter.</p>
+<p>
+<a id="pgfId-1032886"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032887"></a>NLPcreateModelString = nlpExpr(&quot;[@ NLPModelPreamble:%\\n]&quot;)</pre>
+
+<p>
+<a id="pgfId-1032888"></a>or:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032889"></a>NLPcreateModelString = ilExpr(&quot;SpiceFormatModel()&quot;)</pre>
+<h4>
+<a id="pgfId-1032891"></a><a id="NLPcreateNetString property;FNL properties"></a>NLPcreateNetString</h4>
+
+<p>
+<a id="pgfId-1032892"></a>The value of this property instructs the netlister how to format each signal description in the design being netlisted. Signal descriptions are not required by most simulators that use an instance-based netlist as input (that is, HILO or SPICE). However, signal descriptions can be used as comments in the netlist file to put a cross-reference between user-assigned node names and netlister-assigned node names. The second example is an example of this use.</p>
+<p>
+<a id="pgfId-1032893"></a>There is no default for this property, and you do not need to define it if your simulator does not require signal descriptions. If you do define this property in your global cellview, its type must be either <code>ilExpr</code> or <code>nlpExpr</code>.</p>
+<p>
+<a id="pgfId-1032894"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032895"></a>NLPcreateNetString = nlpExpr(&quot;[@ NLPNetFormat:%\\n]&quot;)</pre>
+
+<p>
+<a id="pgfId-1032896"></a>or:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032897"></a>NLPcreateNetString = nlpExpr(&quot;$  [@ NodeNumber] = [@ <br />   NetPathName]\\n&quot;)</pre>
+<h4>
+<a id="pgfId-1032899"></a><a id="NLPnetlistHeader property;FNL properties"></a>NLPnetlistHeader</h4>
+
+<p>
+<a id="pgfId-1032900"></a>The value of this property instructs the netlister how to format any header information to be placed in the netlist. This property is evaluated before any other information is printed to the netlist file.</p>
+<p>
+<a id="pgfId-1032901"></a>There is no default for this property, and you do not need to define it if your simulator does not require any netlist header information. If you do define this property in your global cellview, its type must be either <code>ilExpr</code> or <code>nlpExpr</code>.</p>
+<p>
+<a id="pgfId-1032902"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032903"></a>NLPnetlistHeader = ilExpr(&quot;MysimFormatHeader()&quot;)</pre>
+<h4>
+<a id="pgfId-1032905"></a><a id="NLPnetlistFooter property;FNL properties"></a>NLPnetlistFooter</h4>
+
+<p>
+<a id="pgfId-1032906"></a>The value of this property instructs the netlister how to format any footer information to be placed in the netlist. This property is evaluated last after all other information is printed to the netlist file and can be used to place any closing information needed in the netlist file. You can also use it to clean up after netlisting. For example, you can call a SKILL function from this property to close any files you opened during the netlist process.</p>
+<p>
+<a id="pgfId-1032907"></a>There is no default for this property, and you do not need to define it if your simulator does not require any netlist footer information. If you do define this property in your global cellview, its type must be either <code>ilExpr</code> or <code>nlpExpr</code>.</p>
+<p>
+<a id="pgfId-1032908"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032909"></a>NLPnetlistFooter = ilExpr(&quot;MysimFormatFooter()&quot;)</pre>
+<h4>
+<a id="pgfId-1032910"></a>NLPLineLength</h4>
+
+<p>
+<a id="pgfId-1032911"></a>FNL automatically folds (or wraps) lines when the line length in the netlist exceeds a specified maximum. The default maximum length is 72 characters. If the line length exceeds this maximum, the netlister searches backwards in the text to be output and inserts a new line at the first blank it encounters. The remaining text is put on the next line (or subsequent lines if the text is still too long to fit on the next line).</p>
+<p>
+<a id="pgfId-1032912"></a>To change the default maximum line length, set the <code>NLPLineLength</code> property in the global cellview you are creating to an integer value.</p>
+<p>
+<a id="pgfId-1032913"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032914"></a>NLPLineLength = 65</pre>
+<h4>
+<a id="pgfId-1032916"></a><a id="NLPLinePrefix property;FNL properties"></a>NLPLinePrefix</h4>
+
+<p>
+<a id="pgfId-1032917"></a>The netlister can automatically continue lines that are too long. If your simulator requires it, the netlister can add any line continuation character at the beginning of the next line. To put a continuation character at the beginning of the next line being continued, set the <code>NLPLinePrefix</code> property in your global cellview to any string value. This property has no default value and is not required by the netlister.</p>
+<p>
+<a id="pgfId-1032918"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032919"></a>NLPLinePrefix = &quot;+&quot;</pre>
+<h4>
+<a id="pgfId-1032921"></a><a id="NLPLinePostfix property;FNL properties"></a>NLPLinePostfix</h4>
+
+<p>
+<a id="pgfId-1032922"></a>The netlister can automatically continue lines that are too long. If your simulator requires it, the netlister can add any line continuation character at the end of the current line. To put a continuation character at the end of the line requiring continuation, set the <code>NLPLinePostfix</code> property in your global cellview to any string value. This property has no default value and is not required by the netlister.</p>
+<p>
+<a id="pgfId-1032923"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032924"></a>NLPLinePostfix = &quot;+&quot;</pre>
+<h4>
+<a id="pgfId-1032926"></a><a id="NLPsingleLineCommentString property;FNL properties"></a>NLPsingleLine-CommentString</h4>
+
+<p>
+<a id="pgfId-1032927"></a>In addition to automatically post fixing and prefixing lines that the netlister folds, the netlister can distinguish between comments and other netlist lines. Some simulators do not allow continuation of comments in the netlist. When you put a comment string in the netlist, the netlister folds the line as usual, but instead of inserting a continuation character at the beginning of the new line, it inserts a comment character, converting a single comment which exceeds the simulator internal limit to two or more single-line comments. The <code>NLPsinglLineCommentString</code> property in the global cellview specifies the comment character used by your simulator. The netlister uses this character both to detect if the current output line is a comment and to insert the character at the beginning of a new line if a comment line needs to be broken into more than one line.</p>
+<p>
+<a id="pgfId-1032928"></a>There is no default for this property, and you do not need to define it if your simulator allows continuation characters to be used in comments. If you do define this property in your global cellview, it must be a string value.</p>
+<p>
+<a id="pgfId-1032929"></a>Example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032930"></a>NLPsingleLineCommentString = &quot;*&quot;</pre>
+<h3>
+<a id="pgfId-1032932"></a>Formatting Substitution Expressions<a id="Formatting Substitution Expressions"></a></h3>
+
+<p>
+<a id="pgfId-1032933"></a>There are two ways to format the FNL output: You can use either the Cadence standard language, SKILL, or the <a id="netlister"></a>netlister substitution language. These two languages are completely compatible and can be intermixed. Since netlist formatting is done by evaluating properties, one property could be a substitution expression and could refer to another property which is a call to a SKILL function. This section describes only the netlister substitution language. For details on SKILL formatting, refer to the &#8220;SKILL Formatting&#8221; section in this chapter.</p>
+<p>
+<a id="pgfId-1032935"></a>The property type signals how the netlister should interpret it. If the property type is <code>nlpExpr</code>, the netlister interprets it as a substitution expression. All text in a substitution expression is copied verbatim to the netlist unless it is contained within square brackets ( [ ] ). The opening square bracket ( [ ) signals that the following string must be interpreted and substituted or replaced with another value. The character following the opening square bracket is a command to the netlister. The following is a complete list of the command characters that the netlister understands:<a id="marker-1032936"></a></p>
+<p class="webflare-indent1">
+<a id="pgfId-1032937"></a>vertical bar    ( <code>|</code> )
+&#8220;at&#8221; sign   ( <code>@</code> )
+period    ( <code>.</code> )
+asterisk    ( <code>*</code> )
+dollar sign    ( <code>$</code> )
+pound sign    ( <code>#</code> )
+backquote   ( <code>&#8216;</code> )
+up arrow    ( ↑ ) 
+ampersand    ( <code>&amp;</code> )</p>
+<p>
+<a id="pgfId-1032938"></a>Refer to the following explanations for details on the use of each character. </p>
+<p>
+<a id="pgfId-1032939"></a>The netlister interprets the remainder of the string within the square brackets, as specified by the command character. The netlister then replaces the entire bracketed expression, including the square brackets and command character, with the evaluation of the expression.</p>
+<p>
+<a id="pgfId-1032940"></a>The following sections explain the various commands available in a substitution expression, enhanced substitution expression syntax, and special netlister-defined properties that you can access by means of substitution expressions.</p>
+
+<h4>
+<a id="pgfId-1032941"></a>Terminal Name Substitution </h4>
+
+<p>
+<a id="pgfId-1032942"></a>A vertical bar ( | ) following an opening square bracket signals the netlister that the following string is a terminal name. Thus, the netlister replaces the entire bracketed expression with the netlister-assigned signal name attached to the named terminal of the current instance being output to the netlist. For example, the following format string defines a two-input NAND gate, in the syntax required by the SILOS simulator, with an output pin called <code>Q</code> and inputs called <code>A</code> and <code>B</code>.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032943"></a>[ |Q ] .NAND [ |A]&#160;&#160;[ |B] </pre>
+
+<p>
+<a id="pgfId-1032944"></a>When the netlister processes this format string, the substitution expressions are evaluated and a line like the following is added to the netlist:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032945"></a>N23&#160;&#160; .NAND&#160;&#160; N12&#160;&#160; N14 </pre>
+
+<p>
+<a id="pgfId-1032946"></a>The names substituted are the letter <code>N</code> followed by a number. The netlister generates names by adding a unique number to a user-defined prefix. For more information on how to set these prefixes, refer to the &#8220;Modify the Simulation Environment (SE)&#8221; section in this chapter.</p>
+
+<h4>
+<a id="pgfId-1032948"></a><a id="marker-1032947"></a>Property Substitution </h4>
+
+<p>
+<a id="pgfId-1032949"></a>An &#8220;at&#8221; sign (@) or a period (.) following an opening square bracket signals the netlister that the following string is the property name. Thus, the netlister replaces the entire bracketed expression with the property value if it is found. If the property is not found, nothing is output to the netlist. The difference between the &#8220;at&#8221; sign (@) and the period (.) is where the netlister searches for the property value. If the period (.) is used, the netlister searches only for the property on the instance currently being output to the netlist. If the &#8220;at&#8221; sign (@) is used, the netlister searches throughout the design hierarchy for the property. </p>
+<p>
+<a id="pgfId-1032950"></a>First, the netlister searches on the instance currently being output to the netlist, then it searches on the instance of the cell that contains this instance, and so on up the instance hierarchy. Next, it searches for the property on the current instance master. The master is usually the simulation primitive for this device in the library (that is, the <code>nand2</code> <code>silos</code> cellview). The final place it searches is the global cellview for your simulator (that is, the <code>nlpglobals</code> <code>silos</code> view). The property search is halted and the value output to the netlist when a property of the specified name is found.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1032951"></a> This property search differs from that used by HNL. The scope of property searches in HNL is limited to the current instance and its master.</div>
+<p>
+<a id="pgfId-1032952"></a>The sample format string is expanded by adding a substitution expression for the gate strength and its rise and fall delay times:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032953"></a>[ |Q ]&#160;&#160;.NAND[.strg]&#160;&#160;[ @ tr ]&#160;&#160;[@ tf ]&#160;&#160;[ |A]&#160;&#160;[ |B ]</pre>
+
+<p>
+<a id="pgfId-1032954"></a>Next, assume that the <code>strg</code> property with value &#8220;<code>/C</code>&#8221; exists on the instance of the NAND gate and that the <code>tr</code> and <code>tf</code> properties have values 5 and 8, respectively. When the netlister processes this format string, the substitution expressions are evaluated and a line like the following is added to the netlist:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032955"></a>N23&#160;&#160; .NAND/C&#160;&#160; 5&#160;&#160; 8&#160;&#160; N12&#160;&#160; N14 </pre>
+
+<p>
+<a id="pgfId-1032956"></a>You can define the <code>strg</code> property only on the instance of the NAND gate, whereas the delay properties can be defined either there or on the cell instance that contained the gate. If you did not add any of these properties in your design, the following line would have been added to the netlist:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032957"></a>N23&#160;&#160; .NAND&#160;&#160; N12&#160;&#160; N14 </pre>
+
+<p>
+<a id="pgfId-1032958"></a>Using these property searches, you can parameterize the output of the netlister and allow users to specify parameters and delays to be output to the netlist from within their design.</p>
+
+<h4>
+<a id="pgfId-1032960"></a><a id="marker-1032959"></a>Netlister-Defined Properties </h4>
+
+<p>
+<a id="pgfId-1032961"></a>To simplify netlist formatting, the netlister defines &#8220;properties&#8221; to provide information needed in most netlists. These properties have reserved names and you cannot set them. If a property of the same name exists in the design, it is ignored, and the netlister-defined value is returned. These properties do not exist in the design hierarchy, and they can be accessed only by querying the netlister. You can output the value of any of these properties in the same manner that user-defined properties are output. For example, to output the netlister-assigned instance name for the device currently being output to the netlist, your substitution expression format string can contain the following expression:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032962"></a>[@ElementNumber ]</pre>
+
+<p>
+<a id="pgfId-1032963"></a>The following is the complete list of netlister-defined properties:</p>
+
+<h4><em>
+<a id="pgfId-1032965"></a><a id="marker-1032964"></a>ElementNumber</em></h4>
+
+<p>
+<a id="pgfId-1032966"></a>Represents the netlister-assigned name for the current iteration of the current instance being output to the netlist. It is defined only during processing of the <code>NLPcompleteElementString</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1032968"></a><a id="marker-1032967"></a>InstPathName</em></h4>
+
+<p>
+<a id="pgfId-1032969"></a>Represents the full user-assigned instance path name of the instance currently being output to the netlist. It is defined only during processing of the <code>NLPcompleteElementString</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1032971"></a><a id="marker-1032970"></a>NodeNumber</em></h4>
+
+<p>
+<a id="pgfId-1032972"></a>Represents the netlister-assigned name for the signal currently being output to the netlist. It is defined only during processing of the <code>NLPcreateNetString</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1032974"></a><a id="marker-1032973"></a>NetPathName</em></h4>
+
+<p>
+<a id="pgfId-1032975"></a>Represents the full user-assigned signal pathname of the signal currently being output to the netlist. It is defined only during processing of the <code>NLPcreateNetString</code> property. If a net has more than one bit, then the netlister outputs each member of the net separately.</p>
+
+<h4><em>
+<a id="pgfId-1032977"></a><a id="marker-1032976"></a>BlockName</em></h4>
+
+<p>
+<a id="pgfId-1032978"></a>Represents the master cellname of the instance currently being output to the netlist. It is defined only during processing of the <code>NLPcompleteElementString</code> and <code>NLPcreateModelString</code> properties.</p>
+
+<h4><em>
+<a id="pgfId-1032980"></a><a id="marker-1032979"></a>ModelNumber</em></h4>
+
+<p>
+<a id="pgfId-1032981"></a>Represents the netlister-assigned model name of the model referred to either by the instance currently being output to the netlist or by the model description currently being output. It is defined only during processing of the <code>NLPcompleteElementString</code> and <code>NLPcreateModelString</code> properties.</p>
+
+<h4>
+<a id="pgfId-1032983"></a><a id="marker-1032982"></a>Net and Instance Name Substitution </h4>
+
+<p>
+<a id="pgfId-1032984"></a>The pound sign (#) and dollar sign ($) following an opening square bracket ( [ ) are used as substitutions for netlister-assigned signal and instance names of entities other than the current one being output to the netlist. This situation is required, for example, in processing a SPICE mutual inductor, where the mutual inductance between two instances is expressed. The format string to generate the mutual inductance between the current instance and an instance called <code>inductor2</code> is shown here: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032985"></a>K [@ ElementNumber]&#160;&#160;L [@ ElementNumber]&#160;&#160;L [$inductor2]&#160;&#160;[@ value]</pre>
+
+<p>
+<a id="pgfId-1032986"></a>This string is defined as a property on the current instance, along with the property <code>value</code>. [$inductor2] means substitute the netlister-generated instance name for the instance with the user-assigned name <code>inductor2</code>.</p>
+<p>
+<a id="pgfId-1032987"></a>Suppose you have a three-terminal symbol for an <em>NMOS</em> enhancement transistor with its bulk node connected to ground. The beginning of the format string for this symbol might look like:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032988"></a>M [@ ElementNumber] [ |D] [ |G] [ |S] [ #gnd! ]</pre>
+
+<p>
+<a id="pgfId-1032989"></a>where [<code>#gnd!</code>] means to substitute the netlister-generated signal name of the global signal <code>gnd!</code>.</p>
+<p>
+<a id="pgfId-1032990"></a>The scope of the &#8220;#&#8221; and &#8220;$&#8221; substitutions is restricted to the cellview that the netlister was traversing when it encountered the current instance or signal being output to the netlist.</p>
+
+<h4>
+<a id="pgfId-1032992"></a><a id="marker-1032991"></a>Format Specification </h4>
+
+<p>
+<a id="pgfId-1032993"></a>String substitutions can optionally contain a format specification that tells the netlister how to print the value of a property. The format follows the property name to be substituted and is preceded by a colon (:). A percent sign (%) in the format string indicates where to insert the property value. All other text in the format string is copied verbatim to the netlist file. The format is used only if the property exists. If the property is not found, no text is output to the netlist file.</p>
+<p>
+<a id="pgfId-1032994"></a>This formatting specification allows you to generate keywords along with property values. For example, for a SPICE transistor with a channel length of 3 microns and width of 12 microns, the format string:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032995"></a>M [@ ElementNumber] [ |D ] [|G ] [ |S ] [ |B] [@ W:W=%] [@ L:L=%] </pre>
+
+<p>
+<a id="pgfId-1032996"></a>produces the following line in the netlist file if the properties <em>W</em> and <em>L</em> exist in the instance hierarchy:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032997"></a>M1&#160;&#160;1&#160;&#160;2&#160;&#160;3&#160;&#160;0&#160;&#160;W=12&#160;&#160;L=3 </pre>
+
+<p>
+<a id="pgfId-1032998"></a>However, if the values of <code>W</code> and <code>L</code> are undefined, the result is:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032999"></a>M1&#160;&#160;1&#160;&#160;2&#160;&#160;3&#160;&#160;0 </pre>
+
+<p>
+<a id="pgfId-1033000"></a>A format string can also contain a second optional format specification. The second format specification is also preceded by a colon (:) and can follow only the first format specification. The second format string is used if the property being searched for is not found. In this case, the meaning of</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033001"></a>[@ property:format1:format2 ]</pre>
+
+<p>
+<a id="pgfId-1033002"></a>is the following:</p>
+<p>
+<a id="pgfId-1033003"></a>if the property exists then </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033004"></a>use format1 </p>
+<p>
+<a id="pgfId-1033005"></a>else </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033006"></a>use format2 </p>
+<p>
+<a id="pgfId-1033007"></a>endif </p>
+<p>
+<a id="pgfId-1033008"></a>This powerful tool can be used to provide default values and to indicate error conditions. This example provides defaults for property values:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033009"></a>[ |Y ]&#160;&#160;.INV [@ tr:tr=%:tr=1] [@ tf:tf=%:tf=1] [ |A ]</pre>
+
+<p>
+<a id="pgfId-1033010"></a>If the property called <code>tr</code> exists, then the output shows the string <code>tr=</code> followed by its value. If the property does not exist, the output shows the string <code>tr=1</code>. If the property <code>tr</code> is defined on an inverter instance and has a value of 7 but the property <code>tf</code> is not defined, then the substitution expression example results in this entry in the netlist file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033011"></a>N23&#160;&#160;.INV&#160;&#160;tr=7&#160;&#160;tf=1&#160;&#160;N32 </pre>
+
+<p>
+<a id="pgfId-1033013"></a><a id="marker-1033012"></a>You can also nest substitution expressions. You can specify that a property is searched for only if another property exists. Nesting of format strings occurs in two ways, direct and indirect. </p>
+<p>
+<a id="pgfId-1033014"></a>In the direct case, a string substitution function appears inside another string substitution function, as shown in this example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033015"></a> [@ prop1: PROP1 = % [@ prop2] ] </pre>
+
+<p>
+<a id="pgfId-1033016"></a>This substitution expression instructs the netlister to search for a property called <code>prop1</code>. If it is found, the output shows the string <code>PROP1=</code> followed by the property value. Then, the netlister searches for a property called <code>prop2</code>, and if found, the output shows its value. If the <code>PROP1</code> property is not found, nothing is output to the netlist, and the netlister does not search for the <code>prop2</code> property.</p>
+<p>
+<a id="pgfId-1033017"></a>In the indirect case, a format string contains a property substitution that has a format string as its value. Consider the following four properties and their values:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033018"></a>tr = 2 <br />tf = 3 <br />SilosDelayTimes = [@ tr]  [@ tf] <br />SilosFormatString =&#160;&#160;[|Y]&#160;&#160;.NAND [@ SilosDelayTimes] [ |A ] [ |B ]</pre>
+
+<p>
+<a id="pgfId-1033019"></a>This type of substitution expression is one way of producing a format string for a NAND gate in SILOS syntax. If the netlister evaluates this formatting instruction when it encounters a NAND gate in a schematic, the following entry is output in the netlist file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033020"></a>N34&#160;&#160;.NAND&#160;&#160;2&#160;&#160;3&#160;&#160;N12&#160;&#160;N5 </pre>
+
+<p>
+<a id="pgfId-1033021"></a>This indirect substitution expression is basically how the libraries provided with a Cadence simulation interface are structured. The required netlister property <code>NLPcompleteElementString</code> is defined in the global cell SILOS view to refer to a property such as <code>SilosFormatString</code>. This can be done by setting the <code>NLPcompleteElementString</code> property type to <code>nlpExpr</code> and its value to &#8220;[@ SilosFormatString].&#8221; The <code>SilosFormatString</code> property is then defined in the SILOS view of the NAND2 gate found in the library to be of type <code>nlpExpr</code> and to have a value as in the example. The <code>SilosDelayTimes</code> property is then defined in the global cell SILOS view as well. By placing it in the global cell, it can be shared by many different library elements. In this example, there is little to be gained by doing so, but the real formatting instructions for each library element are more complex. Placing shared properties in a single location not only reduces the size of your library, but it also reduces the number of devices that need to be fixed if an error is detected in formatting delay values.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033022"></a> When using nested formatting instructions, the search for each property begins on the current instance being output to the netlist file. Although the <code>SilosDelayTimes</code> property in the example was defined in the global cellview, when the property substitution expression value is interpreted and the netlister is instructed to search for the property tr, it begins at the instance currently being output to the netlist, then searches on the instance of the cell that contains the instance of the NAND gate, and so on. The property search using the &#8220;at&#8221; sign (@) command character is the same, irrespective of where the property is located.</div>
+
+<h4>
+<a id="pgfId-1033024"></a>Property Scaling<a id="marker-1033023"></a> </h4>
+
+<p>
+<a id="pgfId-1033025"></a>Scaling enables you to use property values from schematics or simulation views for target programs requiring values in different units. For example, TA (the Cadence Timing Analyzer program) and the SILOS simulator both use delay values, but they have different units of time. TA expects time values in seconds, whereas SILOS uses <code>SILOS time units</code>. (A <code>SILOS time unit</code> may be 1 nanosecond, 1 picosecond, or any unit which is convenient.)</p>
+<p>
+<a id="pgfId-1033026"></a>Without a scaling capability, you have to enter <code>n</code> sets of time-valued properties, where <code>n</code> is the number of different time scales. This situation is inefficient and leads to inconsistencies between the data used by different target programs. Time-valued properties should be given values in seconds. Then, scaling can be applied in the SILOS netlister formatting strings so that values are converted to <code>SILOS time units</code> before they are written into a SILOS netlist. If all time values are in seconds, then no scaling is required for TA.</p>
+<p>
+<a id="pgfId-1033027"></a>The netlister scales are stored in SE variables. Scaling is performed by dividing property values by the value of the appropriate variable. For time scaling, the variable is called <code>simTimeUnit</code>. This variable has a default value of 1E-9, giving a <code>SILOS time unit</code> of 1 nanosecond. (Refer to the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual or the <em>Design Analysis User Guide</em> for more information on setting defaults in SE.)</p>
+<p>
+<a id="pgfId-1033029"></a><a id="marker-1033028"></a>A property to be output by the netlister can be scaled by placing a command character that specifies the type of scaling to be performed before the command character specifying the property search to be used. The following is a description of the scaling factors available and examples of their use. If these scaling factors are not sufficient for your needs, use SKILL formatting instructions to provide any scaling required by your simulator.</p>
+
+<h4><em>
+<a id="pgfId-1033030"></a>Asterisk</em></h4>
+
+<p>
+<a id="pgfId-1033032"></a>The <a id="marker-1033031"></a>asterisk scaling character (*) instructs the netlister to take the property value if found and divide its value by the value of the SE <code>simTimeUnit</code> variable. The default value of the <code>simTimeUnit</code> variable is 1E-9. The result of this division is then rounded to the nearest integer and output to the netlist. The following is an example of a substitution expression using this scaling:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033033"></a>[*@ tr:% ]</pre>
+<h4><em>
+<a id="pgfId-1033034"></a>Backquote</em></h4>
+
+<p>
+<a id="pgfId-1033036"></a>The <a id="marker-1033035"></a>backquote scaling character (&#8216;) instructs the netlister to take the property value if found, multiply it by the value of the SE <code>simCapUnit</code> variable, and then divide the result by the value of the SE <code>simTimeUnit</code> variable (that is, <code>mr*simCapUnit / simTimeUnit</code>). The default value of the <code>simTimeUnit</code> variable is 1E-9 and of the <code>simCapUnit</code> variable is 1E-15. The result of this calculation is a floating-point number rounded to the nearest tenth. The following is an example of a substitution expression using this scaling:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033037"></a>[&#8216;@ mr:% ]</pre>
+<h4><em>
+<a id="pgfId-1033038"></a>Up arrow</em></h4>
+
+<p>
+<a id="pgfId-1033040"></a>The <a id="marker-1033039"></a>up arrow scaling character ( ↑ ) instructs the netlister to take the property value if found and divide its value by the value of the SE <code>simTimeUnit</code> variable. The default value of the <code>simTimeUnit</code> variable is 1E-9. This division produces a fixed-point result. The following is an example of a substitution expression using this scaling:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033041"></a>[ ↑@ mr:% ]</pre>
+<h4><em>
+<a id="pgfId-1033042"></a>Ampersand</em></h4>
+
+<p>
+<a id="pgfId-1033044"></a>The <a id="marker-1033043"></a>ampersand scaling character (&amp;) instructs the netlister to take the property value if found and divide its value by the value of the SE <code>simCapUnit</code> variable. The default value of the <code>simCapUnit</code> variable is 1E-15. The result is then rounded to the nearest integer and output to the netlist. The following is an example of a substitution expression using this scaling:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033045"></a>[&amp;@ c ]</pre>
+<h3>
+<a id="pgfId-1033046"></a>SKILL Formatting</h3>
+
+<p>
+<a id="pgfId-1033048"></a>This section explains the SKILL formatting ability of the netlister. The <a id="marker-1033047"></a>property type signals how the netlister attempts to interpret it. If the type of a property is <code>ilExpr</code>, the netlister attempts to execute its value as a SKILL expression. Only simple arithmetic operations and SKILL procedures can be executed in an <code>ilExpr</code> formatting instruction. Write your SKILL formatting instructions as SKILL procedures, store them in a file with the same name as your simulator with either an <code>.il</code> or an <code>.ile</code> suffix added. If you prefer to encrypt the file, use the SKILL <code>encrypt</code> function available in SE. If you store this file in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/fnl</code> directory, the netlister automatically loads it, and the SKILL functions defined in it can be called from your format instructions.</p>
+<p>
+<a id="pgfId-1033049"></a>SKILL formatting allows you greater flexibility than is available using only substitution expression formatting instructions. In addition to the full functionality of the SKILL language, your SKILL formatting instructions have all information stored in the design hierarchy available by means of the SKILL-Level Database Access and netlister-defined functions and global variables. With these database access functions and netlister functions and variables, you can write complex formatting instructions. For example, you can output properties only if the value of another property is within a specified range, perform calculations based on the values of any number of properties, instruct the netlister to output the result into the netlist, manually traverse the connectivity of the design, or query the netlister for information about the design using netlister-defined global variables and functions.</p>
+<p>
+<a id="pgfId-1033050"></a>The SKILL procedures you write can output information to the netlist in several ways. There is a netlister function that you can call to output information to the netlist, as well as a SKILL port that can be used to write to the netlist file. You can use either of these to write to the netlist file, but you cannot use both in the same netlist run. In addition, the return value of your procedure is interpreted. The return value is both an error flag and a means of outputting information to the netlist. If the SKILL formatting property returns <code>t</code>, the netlister does not output any information to the netlist file. This is a way of signaling that the procedure executed successfully, and that the formatting instruction has already output any required information to the netlist. If the function returns or evaluates to a SKILL <code>string</code>, <code>fixnum</code>, or <code>flonum</code>, the netlister outputs this value to the netlist file. A return value of <code>nil</code> signals that an error has occurred, and the netlister uses this information to determine that the netlisting process failed.</p>
+<p>
+<a id="pgfId-1033051"></a>The following two sections explain the various functions and variables defined by the netlister that you can use in your SKILL formatting instructions. Following these sections is a short example of how SKILL formatting instructions could be used to output the connectivity of a two-input gate into the netlist. A complete output formatting example using the SKILL language is provided at the end of this chapter.</p>
+
+<h4>
+<a id="pgfId-1033053"></a><a id="marker-1033052"></a>Netlister-Defined Variables </h4>
+
+<p>
+<a id="pgfId-1033054"></a>The following global variables are defined by the netlister which you can access as any SKILL variable. Not all are set, depending on the output functions being used. The scope of these variables is the same as their counterparts in the netlister-defined properties used in substitution expressions. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033055"></a> These variables are read only. Never try to set these variables directly.</div>
+
+<h4><em>
+<a id="pgfId-1033057"></a><a id="marker-1033056"></a>fnlNetlistFile</em></h4>
+
+<p>
+<a id="pgfId-1033058"></a>This variable is a SKILL <em>port</em>, the netlist output file, and is defined throughout the execution of the netlist run. If you write to this port directly, do not use the <code>fnlPrint()</code> function. The <code>fnlPrint()</code> function buffers its output for speed so that it can automatically fold lines that are too long. If you intermix calls to the <code>fnlPrint</code> function and write to the <code>fnlNetlistFile</code> port, the internal buffer for the print function may not be flushed and the netlist becomes garbled.</p>
+
+<h4><em>
+<a id="pgfId-1033060"></a><a id="marker-1033059"></a>fnlCurrentNetExtName</em></h4>
+
+<p>
+<a id="pgfId-1033061"></a>This variable is a SKILL <code>string</code> and corresponds to the netlister-defined <code>NodeNumber</code> property. It represents the netlister-assigned signal name for the current signal being expanded. The variable is valid only during evaluation of the <code>NLPcreateNetString</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1033063"></a><a id="marker-1033062"></a>fnlCurrentInstExtName</em></h4>
+
+<p>
+<a id="pgfId-1033064"></a>This variable is a SKILL <code>string</code> and corresponds to the netlister-defined <code>ElementNumber</code> property. It represents the netlister-assigned instance name for the current iteration of the current instance being expanded. The variable is valid only during evaluation of the <code>NLPcompleteElementString</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1033066"></a><a id="marker-1033065"></a>fnlLineLength</em></h4>
+
+<p>
+<a id="pgfId-1033067"></a>This variable is a SKILL <code>fixnum</code> and corresponds to the netlister-defined <code>NLPLineLength</code> property. It represents the maximum line length in the output netlist. The variable is valid throughout the execution of the netlist run.</p>
+
+<h4><em>
+<a id="pgfId-1033069"></a><a id="marker-1033068"></a>fnlLinePrefix</em></h4>
+
+<p>
+<a id="pgfId-1033070"></a>This variable is a SKILL <code>string</code> and corresponds to the netlister-defined <code>NLPLinePrefix</code> property. It represents the continuation string to be output at the beginning of the next line if the current netlist line exceeds the maximum length. The variable is valid throughout the execution of the netlist run; however, it may be <code>nil</code> if you have not set the <code>NLPLinePrefix</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1033072"></a><a id="marker-1033071"></a>fnlLinePostfix</em></h4>
+
+<p>
+<a id="pgfId-1033073"></a>This variable is a SKILL <code>string</code> and corresponds to the netlister-defined <code>NLPLinePostfix</code> property. It represents the continuation string to be output at the end of the current line if the current netlist line exceeds the maximum length. The variable is valid throughout the execution of the netlist run; however, it may be <code>nil</code> if you have not set the <code>NLPLinePostfix</code> property.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1034868"></a>The FNL API SimRunNetlist returns a list (nlpUnresolvedInhExprList) of unresolved net expressions when nlpCollectUnresolvedInhExpr is set to t as shown in the following sample output netlist:
+<code>((&quot;newdefault!&quot; &quot;[@new:%:newdefault!]&quot; &quot;[@VDD:%:newdefault!]&quot;) (&quot;new!&quot; &quot;[@VDD:%:new!]&quot;) (&quot;netvdd!&quot; &quot;[@VDD:%:netvdd!]&quot;)) </code></div>
+
+<h4><em>
+<a id="pgfId-1033075"></a>All <a id="marker-1033074"></a>SE variables</em></h4>
+
+<p>
+<a id="pgfId-1033076"></a>Any variable or function defined or set in SE can be accessed during netlist formatting by a SKILL format instruction. This feature enables you to write your netlister formatting functions as part of SE and refer to them from formatting properties in the netlister. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1043379"></a>Although you can read values and execute functions defined in SE, you cannot return values or define functions during netlisting for later use by SE after netlisting has completed.</div>
+
+<h4>
+<a id="pgfId-1033077"></a>Netlister-Defined Functions </h4>
+
+<p>
+<a id="pgfId-1033078"></a>The following functions are defined in the netlister and can be called by your output functions. These functions are designed to provide any data used by the netlister that may be needed to format the netlist. Some of the functions listed here may seem similar to the global variables. They appear as functions instead of variables to improve the speed of the netlisting process, since not all of the data may be required by a particular output format.</p>
+<p>
+<a id="pgfId-1033079"></a>Some of the functions provide valid results only when used during evaluation of the specified property. For example, there is no &#8220;current signal&#8221; when expanding an instance, since many signals may connect to a particular instance. Many of the functions also have counterparts as netlister-defined properties. The same restrictions applying to those properties also apply to the corresponding functions. (Refer to the &#8220;Formatting Substitution Expressions&#8221; section in this chapter.) The major difference between these functions and their corresponding properties is that a substitution expression, such as &#8220;[@ tr],&#8221; prints the property value to the netlist file, whereas a function returns the property value but does not print the value to the netlist file. You must explicitly call a function to output information to the netlist.</p>
+
+<h4><em>
+<a id="pgfId-1033081"></a><a id="marker-1033080"></a>fnlTopCell</em></h4>
+
+<p>
+<a id="pgfId-1033082"></a>Returns the top-level cellview being netlisted. The function takes no arguments and returns a cellview object identifier (<span class="webflare-courier-new" style="white-space:pre"><em>d_cellviewId</em></span>). The function is valid throughout the netlist process. It may be especially useful during evaluation of the <code>NLPnetlistHeader</code> and <code>NLPnetlistFooter</code> properties, where you can use it to output information about the top-level design for the header and footer of the netlist. There is no equivalent netlister-defined property.</p>
+
+<h4><em>
+<a id="pgfId-1033084"></a><a id="marker-1033083"></a>fnlCurrentSigPathName</em></h4>
+
+<p>
+<a id="pgfId-1033085"></a>Returns the full pathname of the current signal being expanded. It corresponds to the netlister-defined <code>NetPathName</code> property. As the corresponding property, this function is valid only during evaluation of the <code>NLPcreateNetString</code> property. This function takes no argument and returns a SKILL string. The full signal pathname returned by this function differs from <code>signal ~&gt; name</code> in that all the instance names down the hierarchy to the current signal are included in the name. For example, <code>signal ~&gt;name</code> can be &#8221;<code>dataIn</code>,&#8221; while this function returns &#8221;<code>/chip1/ALU/dataIn</code>&#8221; to uniquely identify this signal in the flattened design.</p>
+
+<h4><em>
+<a id="pgfId-1033087"></a><a id="marker-1033086"></a>fnlCurrentSig</em></h4>
+
+<p>
+<a id="pgfId-1033088"></a>Returns the current signal being expanded. The function takes no arguments and returns a signal object identifier (<span class="webflare-courier-new" style="white-space:pre"><em>d_sigId</em></span>).</p>
+
+<h4><em>
+<a id="pgfId-1033090"></a><a id="marker-1033089"></a>fnlSigCdsNameExtName</em></h4>
+
+<p>
+<a id="pgfId-1033091"></a>Returns the netlister-assigned name for the signal name given as an argument. The function is equivalent to the substitution expression &#8220;[#name].&#8221; As with the matching expression, the signal names allowed as arguments are restricted to the signals in the schematic that the netlister was traversing when it encountered the current instance or to the signals in the top-level design if the function is called during evaluation of the <code>NLPnetlistHeader</code> or <code>NLPnetlistFooter</code> properties. The function takes a string argument and returns a SKILL string if the signal is found. If the signal is not found, <code>nil</code> is returned.</p>
+
+<h4><em>
+<a id="pgfId-1033094"></a><a id="marker-1033093"></a>fnlInstCdsNameExtName</em></h4>
+
+<p>
+<a id="pgfId-1033095"></a>Returns the netlister-assigned name for the instance name given as an argument. This function is equivalent to the substitution expression &#8220;[$name].&#8221; As with the matching expression, the instance names allowed as arguments are restricted to the instances in the schematic the netlister was traversing when it encountered the current instance or to the instances in the top-level design if the function is called during evaluation of the <code>NLPnetlistHeader</code> or <code>NLPnetlistFooter</code> properties. The function takes a string argument and returns a SKILL string if the instance is found. If the instance is not found, <code>nil</code> is returned.</p>
+
+<h4><em>
+<a id="pgfId-1033097"></a><a id="marker-1033096"></a>fnlCurrentInst</em></h4>
+
+<p>
+<a id="pgfId-1033098"></a>Returns the current instance being expanded. The function takes no arguments and returns a instance object identifier (<span class="webflare-courier-new" style="white-space:pre"><em>d_instanceId</em></span>). It is valid only during expansion of the <code>NLPcompleteElementString</code> property. Do not use the master field of the resulting <code>instanceId</code>. If you use it, you get the symbol cellview rather than the stopping cellview corresponding to the symbol placed in the schematic. To get the instance master in a format instruction, use the <code>fnlCurrentCell</code> function. </p>
+
+<h4><em>
+<a id="pgfId-1033100"></a><a id="marker-1033099"></a>fnlCurrentInstCdsName</em></h4>
+
+<p>
+<a id="pgfId-1033101"></a>Returns the name of the current instance being expanded. The function takes no arguments and returns a SKILL string that is the full instance pathname to the current instance being expanded. The function is valid only during expansion of the <code>NLPcompleteElementString</code> property. The full instance pathname returned by this function differs from <code>instance ~&gt;name</code> in that all the instance names down the hierarchy to the current element are included in the name. For example, <code>instance ~&gt; name</code> can be <code>count1</code>, while this function returns <code>/</code>chip1/ALU/count to uniquely identify this instance in the flattened design.</p>
+
+<h4><em>
+<a id="pgfId-1033103"></a><a id="marker-1033102"></a>fnlCurrentCell</em></h4>
+
+<p>
+<a id="pgfId-1033104"></a>Returns the master of the current instance being expanded. The function takes no arguments and returns a cellview object identifier (<span class="webflare-courier-new" style="white-space:pre"><em>d_cellviewId</em></span>). It is valid only during evaluation of the <code>NLPcompleteElementString</code> and <code>NLPcreateModelString</code> properties. The cellview returned by this function may differ from <code>instance ~&gt;master</code>. Do not de-reference the master field of an instance directly in any format instruction evaluated by the netlister. The cellview returned by this function takes into account the view list used during netlisting. This function returns the stopping cellview used to format the netlist, whereas the <code>instance ~&gt; master</code> normally returns the symbol cellview placed in the schematic. </p>
+
+<h4><em>
+<a id="pgfId-1033106"></a><a id="marker-1033105"></a>fnlCurrentCellCdsName   </em></h4>
+
+<p>
+<a id="pgfId-1033107"></a>Returns the master cell name of the current instance being expanded. The function takes no arguments, returns a SKILL string, and is valid only during evaluation of the <code>NLPcompleteElementString</code> and <code>NLPcreateModelString</code> properties. The function corresponds to the netlister-defined <code>BlockName</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1033109"></a><a id="marker-1033108"></a>fnlCurrentModelExtName   </em></h4>
+
+<p>
+<a id="pgfId-1033110"></a>Returns the netlister-assigned model name of the current instance being expanded. The function takes no arguments, returns a SKILL string, and is valid only during evaluation of the <code>NLPcompleteElementString</code> and <code>NLPcreateModelString</code> properties. The function corresponds to the netlister-defined <code>ModelNumber</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1033112"></a>fnlGetGlobalSigNames   <a id="marker-1033111"></a></em></h4>
+
+<p>
+<a id="pgfId-1033113"></a>Returns a list of strings that are the names for all of the global signals contained in the design hierarchy. If the netlister-assigned name is required, you can pass these names to the <code>fnlSigCdsNameExtName()</code> function to translate them during the header or footer evaluation. This function takes no arguments and can be called at any time during the netlisting process.</p>
+
+<h4><em>
+<a id="pgfId-1033114"></a>fnlAbortNetlist()</em></h4>
+
+<p>
+<a id="pgfId-1033116"></a><a id="marker-1033115"></a>Aborts netlisting. When the formatter detects an error during netlisting, it calls this function to inform the netlister to abort netlisting.</p>
+
+<h4><em>
+<a id="pgfId-1033117"></a>fnlTermCdsNameExtName( name )</em></h4>
+
+<p>
+<a id="pgfId-1033119"></a><a id="marker-1033118"></a>Returns each netlister-assigned signal name for the signal attached to the terminal whose name is given as an argument. The function is equivalent to the substitution expression [ |name ]. As with the matching expression, the terminal names allowed as arguments are restricted to the terminals attached to the current instance. The function takes a string argument and returns a SKILL string if the terminal is found. If the terminal is not found, <code>nil</code> is returned.</p>
+
+<h4><em>
+<a id="pgfId-1033120"></a>fnlTermExtName( terminal bit )</em></h4>
+
+<p>
+<a id="pgfId-1033122"></a><a id="marker-1033121"></a>Returns the netlister-assigned name for the signal attached to the bit of the terminal given as an argument. The function is similar to the substitution expression [ |name ]. As with the matching expression, the terminals allowed as arguments are restricted to the formal terminals of the master of the current instance. The function takes two arguments: the first is a <code>FormalTerminal</code> (<span class="webflare-courier-new" style="white-space:pre"><em>d_termId</em></span>), the second is a SKILL <code>fixnum</code> that is the bit of the terminal whose net name you are requesting. The function returns a SKILL string if the requested bit of the terminal is found. If the bit is not found, <code>nil</code> is returned. This function is valid only during the evaluation of the <code>NLPcompleteElementString</code> property.</p>
+
+<h4><em>
+<a id="pgfId-1033124"></a><a id="marker-1033123"></a>fnlSearchPropString( propName localSearch )</em></h4>
+
+<p>
+<a id="pgfId-1033125"></a>Returns the SKILL string value of the property whose name is given as an argument. The <code>localSearch</code> argument can be either <code>nil</code> or <code>t</code>. If <code>localSearch</code> is <code>nil</code>, the function call corresponds to the substitution expression \&#8220;[@ propName] \&#8221; .If the <code>localSearch</code> argument is <code>t</code>, it corresponds to the expression \&#8220;[propName].&#8221;</p>
+<p>
+<a id="pgfId-1033126"></a>This function searches for the properties and evaluates their values as if the property name was used in a substitution expression. Any <code>ilExpr</code> or <code>nlpExpr</code> type properties are fully evaluated, and the result of the evaluation is returned.</p>
+<p>
+<a id="pgfId-1033127"></a>If the property is not found, this function returns <code>nil</code>. If the property is found, but there is no output, <code>t</code> is returned. If an error occurs during either the property search or evaluation, a Lisp Error is generated. Errors may occur because of SKILL syntax errors, errors during evaluation of a SKILL expression, netlister substitution expression syntax errors, or by exceeding an internal buffer size. The maximum size of any property value returned by a SKILL expression is 4K characters.</p>
+<p>
+<a id="pgfId-1033128"></a>This function is valid only during evaluation of the <code>NLPcreateModelString</code> and <code>NLPcompleteElementString</code> properties.</p>
+
+<h4><em>
+<a id="pgfId-1033130"></a><a id="marker-1033129"></a>fnlPrint( string )</em></h4>
+
+<p>
+<a id="pgfId-1033131"></a>Prints its argument to the netlist file. The argument can be either <code>t</code> or <code>nil</code>, which do not add any text to the netlist file and are simply a convenience, or any of the SKILL <code>string</code>, <code>fixnum</code>, or <code>flonum</code> types. The file is the same as defined by the <code>fnlNetlistFile</code> variable. If the argument exceeds the maximum line length of the netlist file (as defined by the <code>NLPlineLength</code> property), the string is broken at white space intervals and new lines are inserted. If the <code>NLPsingleLineCommentString</code>, <code>NLPlinePrefix</code>, or <code>NLPlinePostfix</code> properties are defined, the property values are used to insert comment characters or pre/postfix continuation strings, as needed.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033132"></a> If you use this function to output information to the netlist file, do <em>not</em> write to the netlist file directly. This function buffers its output for speed. If you call this function and write to the netlist file directly, the internal buffer for this function may not be flushed and the netlist becomes garbled.</div>
+<p>
+<a id="pgfId-1033133"></a>This function is defined throughout the netlist process.</p>
+
+<h4><em>
+<a id="pgfId-1033134"></a>fnlPathList</em></h4>
+
+<p>
+<a id="pgfId-1033136"></a>Takes no arguments and returns a list representing the current <a id="marker-1033135"></a>instance path down the schematic hierarchy to the current instance or signal being expanded. The returned list is a list of lists, where each sublist is a (<code>inst cellview index</code>) triple (the <code>inst</code> member can also be a <code>signal</code>). You can test this by doing an <code>objType</code> and checking whether it is a signal or an instance. When called during <code>NLPcreateNetString</code> expansion, the second element is a <code>signal</code>; otherwise, it is an instance. The instance/signal pointer is a pointer to the instance or signal being expanded in the prior cellview. The first instance is essentially invalid since it points to the instance of the top-level schematic which the netlister has placed as an instance in the <code>nlpglobals</code> cellview. The cellview pointer is the master cellview for the instance. For a low-level device, it is the stopping cellview, not the symbol; at intermediate levels, it is the schematic, not the symbol. The last element is an index which specifies the current index of an iterated instance. If the <code>inst ~&gt; objType</code> is a signal, then the index value will be <code>zero</code>. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1033137"></a>Sample: ((inst cellview index) (inst cellview index) (signal cellview index)) </p>
+
+<h4><em>
+<a id="pgfId-1033139"></a>f<a id="marker-1033138"></a>nlCurrentIteration</em></h4>
+
+<p>
+<a id="pgfId-1033140"></a>Takes no arguments and returns an index of the current iterated instance being expanded. Only an instance can be iterated and placed in the schematic. If the <code>inst ~&gt; objType</code> is a signal, then the index value is <code>zero</code>.</p>
+
+<h4>
+<a id="pgfId-1033142"></a>SKILL Formatting Example<a id="marker-1033141"></a></h4>
+
+<p>
+<a id="pgfId-1033143"></a>The following example is the type of syntax that can be used when formatting the netlist with <code>ilExpr</code> properties. The example shows how formatting different cellviews can be done using SKILL functions and provides a specific example of formatting a two-input AND gate and the needed support functions. Functions and variables not defined in this example are defined by the netlister. For documentation on these, refer to the &#8220;Netlister-Defined Functions&#8221; and &#8220;Netlister-Defined Variables&#8221; sections in this chapter.</p>
+<p>
+<a id="pgfId-1033144"></a>This example assumes that in the <code>nlpglobals</code> cellview, the <code>NLPcompleteElementString</code> property is type <code>ilExpr</code> and its value is a call to the user-defined SKILL <code>FormatInstance</code> function. When <code>FormatInstance</code> is executed, it searches for the <code>FormatInstanceString</code> property on the stopping cellview of the instance. The <code>FormatInstanceString</code> property is also type <code>ilExpr</code>. For the two-input AND gate, its value is the user-defined SKILL <code>Format2InputGate(&quot;AND&quot;)</code> function call. The <code>Format2InputGate</code> function also calls the <code>FormatDelayTimes</code> function to format the delay values into the output string. These functions are then defined in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/fnl/</code><span class="webflare-courier-new" style="white-space:pre"><em>simulator_name</em></span><code>.ile</code> file. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033145"></a>simSetDef( &#39;fnlFormatterUnbindFuncs <br />&#39;( FormatInstance<br />Format2InputGate FormatDelayTimes )<br />)<br />; This function locates the format property for each<br />; device and evaluates it. <br />procedure( FormatInstance() <br />fnlSearchPropString(&quot;FormatInstanceString&quot; nil) <br />)<br />; This function outputs the connectivity <br />; for a two-input logic gate.<br />; <br />procedure( Format2InputGate( gateName ) <br />let( (tmp)<br />; Print the netlister-assigned name for the net<br />; attached to terminal <br />; &quot;Y&quot; followed by the name of this gate. <br />sprintf( tmp &quot;%s .%s&quot; fnlTermCdsNameExtName(&quot;Y&quot;) <br />gateName )<br />fnlPrint(tmp)<br />; Print any delay times for this gate. <br />FormatDelayTimes()<br />; Print the netlister assigned names for the nets <br />; attached to the terminals &quot;A&quot; and &quot;B&quot;. <br />sprintf( tmp &quot;%s %s\n&quot; fnlTermCdsNameExtName(&quot;A&quot;)    <br />fnlTermCdsNameExtName(&quot;B&quot;)) <br />fnlPrint(tmp)<br />) <br />)<br />; This function outputs the delay times for a basic logic<br />; gate.<br />procedure( FormatDelayTimes() <br />; Print the value of the rise time property. Note we do not <br />; check the return value, because fnlPrint will not output <br />; anything if passed t or nil. <br />fnlPrint( fnlSearchPropString(&quot;tr&quot; nil) )<br />; Print the value of the fall time property. <br />fnlPrint( &quot; &quot; ) <br />fnlPrint( fnlSearchPropString(&quot;tf&quot; nil) )<br />)<br />The following line is added to the netlist file when a two input AND gate is encountered in the design.<br />N45&#160;&#160; .AND&#160;&#160; 2&#160;&#160; 3&#160;&#160; N63&#160;&#160; N64 </pre>
+<h2>
+<a id="pgfId-1033148"></a><a id="41556"></a>Customizing FNL Output<a id="Customizing FNL Output"></a> </h2>
+
+<p>
+<a id="pgfId-1033149"></a>Customizing FNL output consists of these steps:</p>
+<ol><li>
+<a id="pgfId-1033150"></a>Read documentation on, and have a working knowledge of, required tools.</li><li>
+<a id="pgfId-1033151"></a>Create a global cellview.</li><li>
+<a id="pgfId-1033152"></a>Create library elements.</li><li>
+<a id="pgfId-1033153"></a>Write SKILL formatting procedures.</li><li>
+<a id="pgfId-1033154"></a>Modify SE to recognize your simulator.</li></ol>
+
+
+
+
+<p>
+<a id="pgfId-1033155"></a>The following sections explain the details of what is required in each step.</p>
+
+<h3>
+<a id="pgfId-1033157"></a>Learn Required Information <a id="Learn Required Information"></a></h3>
+
+<p>
+<a id="pgfId-1033158"></a>Before attempting to modify the FNL, read the following material: </p>
+<ul><li>
+<a id="pgfId-1033159"></a><em><a actuate="user" class="URL" href="../sklanguser/sklanguserTOC.html#firstpage" show="replace" xml:link="simple">Cadence SKILL Language User Guide</a></em></li><li>
+<a id="pgfId-1033160"></a>The &#8220;Database Access&#8221; chapter of the <a actuate="user" class="URL" href="../skdfref/chap2.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Environment SKILL Reference</a></li><li>
+<a id="pgfId-1033161"></a><em><a actuate="user" class="URL" href="../comphelp/comphelpTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Schematic Editor L User Guide</a></em></li><li>
+<a id="pgfId-1033162"></a><em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em></li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1033165"></a>Create Global Cell<a id="marker-1033163"></a>view<a id="Create Global Cellview"></a></h3>
+
+<p>
+<a id="pgfId-1033166"></a>Before you can modify the netlister output, you must create a global cellview. The global cellview is basically a schematic. The netlister uses it as the root of the design being netlisted and as a storage location for global netlist formatting instructions. The default name of this cell is <code>nlpglobals</code>. When netlisting begins, the netlister tells the design manager to locate a library containing the cell with this name. The library is specified in the <code>cds.lib</code> file. This same process is used to flatten the design hierarchy.</p>
+<p>
+<a id="pgfId-1033167"></a>To create the global cellview, create a schematic with the cell name <code>nlpglobals</code> and with the view name the same as your simulator name. For example, if your simulator name is <code>spice</code>, create a schematic called (<code>nlpglobals spice</code>). Place this schematic in a library to be included in the library search path used by your designers. Inside of this schematic, place a single instance whose master is (<code>dummy dummy</code>). This device can be found in the Cadence-provided library <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/cdslib/basic</code>. When the netlister flattens the design, this instance is replaced by the design being netlisted. This is the only device that must be placed in the global cellview.</p>
+<p>
+<a id="pgfId-1033169"></a><a id="marker-1033168"></a>It is possible to place other devices or nets in the global cellview. If any additional devices are placed in the global cellview, every time your formatting instructions for FNL are used, the connectivity for these devices is output to the netlist following the connectivity for the design being netlisted.</p>
+<p>
+<a id="pgfId-1033171"></a><a id="marker-1033170"></a>Once you have added this device, you must extract and save the schematic. Then, you must define some of the netlist formatting properties you want the netlister to search for in this cellview. To define these, you can use either the property list editor or S/SLG. If you use the property list editor, you must extract and save the schematic when you have finished adding your formatting properties. It is recommended that you use S/SLG to add your netlist formatting properties. With S/SLG you can create a text file specifying the properties you want added to the global cellview (along with any other library elements you create), and simply load the file into the S/SLG program whenever you modify the property values or add new properties.</p>
+<p>
+<a id="pgfId-1033172"></a>Since FNL is instance-based, start by adding the <code>NLPcompleteElementString</code> property. This property is the main formatting function for the netlister since it outputs the connectivity for each device. To simplify this format string, it is customary to make its value a substitution expression, which is a search for another property. This second property is then placed on a device in the library with the cell name of the device it represents (that is, <code>inv</code> or <code>nmos</code>) and a view name which is the same as your simulator (that is, <code>spice</code>). The same property is placed on every primitive device in your library, but its value differs for each. The value of the property in each device is the netlister formatting instruction for how to output a reference to this device type in the netlist. For more information on creating these library elements, refer to the &#8220;Create Library&#8221; section in this chapter.</p>
+<p>
+<a id="pgfId-1033173"></a>Once you have added this property to the global cellview, you may want to complete the steps listed in the &#8220;Customizing FNL Output&#8221; section in this chapter to be able to run the netlister and test your format instruction. You can define any number of the properties the netlister looks for (listed in the &#8220;Create Global Cellview&#8221; section in this chapter) in the global cellview. It is recommended that you first create a few library elements, modify SE to recognize your simulator, and create a small schematic to test your format instructions. After you have completed the steps required to run the netlister, and it outputs the correct connectivity for your test schematic in the syntax required by your simulator, you can return to this point and complete the global cellview creation.</p>
+<p>
+<a id="pgfId-1033174"></a>Completing the global cellview consists of adding properties to format any needed netlist header, netlist footer, and model descriptions, if your simulator requires them.</p>
+
+<h3>
+<a id="pgfId-1033177"></a>Create Library Elements<a id="Create Library Elements"></a><a id="marker-1033176"></a></h3>
+
+<p>
+<a id="pgfId-1033178"></a>Once you have created the global cellview, the next step is to create a library of simulation primitives. These primitives serve two purposes: the netlister uses them to detect when to stop the flattening process and to define how this specific element type is to be output to the netlist. For example, if the <code>NLPcompleteElementString</code> property in your global cellview was type <code>nlpExpr</code> and had the value &#8220;[@ SpiceElementFormat],&#8221; you would add a property with the name <code>SpiceElementFormat</code> to every element in your library. This element would then instruct the netlister how to output this type of gate to the netlist. For example, to output the connectivity for a capacitor in the syntax required by the SPICE simulator, the (<code>capacitor spice</code>) element in the library would contain a property whose name is <code>SpiceElementFormat</code>, whose type is <code>nlpExpr</code>, and whose value is:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033179"></a>&quot;C[@ ElementNumber]  [ |PLUS]  <br />[ |MINUS]   poly [@ c]  [@ ic:ic=%] <br />&quot; </pre>
+
+<p>
+<a id="pgfId-1033180"></a>The properties you must place in the simulation primitives in your library are determined by how you write your formatting instructions defined in the global cellview. The netlister does not search for any format instructions on your simulation primitives unless instructed to do so by the properties you define in the global cellview. The only requirement the netlister imposes on these elements is that they contain the same terminals that exist in the corresponding symbol placed in the schematic. This terminal correspondence is guaranteed if you use S/SLG to create your simulation primitives.</p>
+<p>
+<a id="pgfId-1033182"></a><a id="marker-1033181"></a>Use S/SLG to create all of your simulation primitives. Not only does this ensure that the terminal correspondence between your symbols and primitives are correct, it also allows you to create a text file specifying all of the properties and their values that you want added to each primitive. Then, you can create your entire library simply by loading this file into S/SLG.</p>
+<p>
+<a id="pgfId-1033183"></a>Create one or two of these primitives with the correct netlist formatting instructions for your simulator syntax. Then, create a small schematic containing only these elements and complete the steps required to run the netlister on this small design. Once you have netlisted this small design and are satisfied with the results, you can return to this step and complete your library for all of the elements required by your designers.</p>
+
+<h3>
+<a id="pgfId-1033186"></a>Write SKILL Formatting Procedures<a id="Write SKILL Formatting Procedures"></a><a id="marker-1033185"></a> </h3>
+
+<p>
+<a id="pgfId-1033187"></a>If you use SKILL formatting instructions to format your netlist, these are the procedures you write and store in a file. Your <code>ilExpr</code> type format properties can refer to these functions directly. </p>
+<p>
+<a id="pgfId-1033188"></a>Give the encrypted or non-encrypted version of this file the same name as your simulator suffixed with &#8220;<code>.ile</code>&#8221; and place it in the <code>etc/skill/fnl</code> directory. This directory is relative to the directory in which your Cadence software is installed. For example, if the <code>si</code> program is stored in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/bin</code> directory and your simulator is called spice, then store your functions in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/fnl/spice.ile</code> file. When you store them in this standard location, they are automatically loaded and available for use by the netlister.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033189"></a>You must use the <code>fnlFormatterUnbindFuncs</code> variable to list all functions you define in SKILL to format the netlist. You must use the <code>fnlFormatterUnbindVars</code> variable to list all the variables you define in SKILL to format the netlist. The following sections describe these variables in detail.</div>
+
+<h4><em>
+<a id="pgfId-1033191"></a><a id="marker-1033190"></a>fnlFormatterUnbindFuncs   </em></h4>
+
+<p>
+<a id="pgfId-1033192"></a>The <code>fnlFormatterUnbindFuncs</code> variable specifies the functions you define in your simulator-specific <code>fnl</code> file that must be unbound when the designer switches simulators. You must specify any functions you define. If you do not include a function in this list, the correct function may not be used when the designer switches simulators.</p>
+<p>
+<a id="pgfId-1033193"></a>Set this variable to a list containing the names of all of the functions you define. Define this variable in the <code>fnl</code> file for your netlist formatter outside of any function definition. The following is an example of how to set this variable for SILOS in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/fnl/silos.ile</code> file (because Cadence provides an interface to this simulator, the exact file location is <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/etc/skill/fnl/silos.ile</code> but your interface file should be placed in the location specified):</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033194"></a>simSetDef( &#39;fnlFormatterUnbindFuncs,&#39;(   silosFormatHeader<br />   silosFormatFooter<br />      )<br />)</pre>
+<h4><em>
+<a id="pgfId-1033196"></a><a id="marker-1033195"></a>fnlFormatterUnbindVars</em></h4>
+
+<p>
+<a id="pgfId-1033197"></a>The <code>fnlFormatterUnbindVars</code> variable specifies the variables you define in your simulator-specific <code>fnl</code> file that must be unbound when the designer switches simulators. You must include any variables you define. If you do not include a variable in this list, the correct value may not be used when the designer switches simulators.</p>
+<p>
+<a id="pgfId-1033198"></a>Set this variable to a list containing the names of all of the variables you define. Define this variable in the <code>fnl</code> file for your netlist formatter outside of any function definition. The following is an example of how to set this variable for SILOS in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/fnl/silos.ile</code> file:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033199"></a>simSetDef( &#39;fnlFormatterUnbindVars,&#39;(   silosPinList<br />      silosPropList )<br />)</pre>
+<h3>
+<a id="pgfId-1033202"></a>Modify the Simulation Environment (SE)<a id="Modify the Simulation Environment (SE)"></a><a id="marker-1033201"></a></h3>
+
+<p>
+<a id="pgfId-1033203"></a>FNL is run as part of SE. Before you can run the netlister, you must modify SE to recognize your simulator. You do this by creating a file with the name of your simulator suffixed with &#8220;<code>.ile</code>&#8221; and placing it in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory. This file must contain the default variable settings for variables used by the netlister to flatten a design. The file is written using the Cadence standard language, SKILL. The following example uses the spice simulator. When creating your file, replace the word <code>spice</code> with the name of your simulator and then you are ready to run the netlister.</p>
+<ol><li>
+<a id="pgfId-1033204"></a>Set the default switch and stop lists. The normal procedure is to have a simulator-specific switch and stop list, which the designer can override on a per-simulator basis. Then, use these lists to set the netlister variables. Add the following two lines to the file:</li></ol>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033205"></a>simSetDef( &#39;spiceSimViewList,&#39;(&quot;spice&quot; &quot;schematic&quot;) ) <br />simSetDef( &#39;spiceSimStopList,&#39;(&quot;spice&quot;) ) </pre>
+
+<p class="webflare-indent1">
+<a id="pgfId-1033206"></a>The first line sets the default view switching list and the second line sets the default stopping point list. Notice that instead of using the equal sign (=) to set the variables, you call the <code>simSetDef</code> function. This function only sets a variable if it has not already been set. This feature allows the designer to override the default value. This function, along with all other SE functions, is explained in the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual. Set both of these variables to a SKILL list of strings.</p>
+<ol><li>
+<a id="pgfId-1033207"></a>Set the variables used by the netlister. Do this with the following two lines:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1033208">
+<a id="pgfId-1033208"></a>simViewList = spiceSimViewList 
+simStopList = spiceSimStopList </pre><br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033209"></a>These variables are set with an equals sign (=). This is because the designer should not be allowed to set these variables directly. If the designer wants to change the default value, the simulator-specific version of the variables should be set.</div></li><li>
+<a id="pgfId-1033210"></a>Instruct the netlister which global cellview to use and in which library this global cellview is located. The SE <code>simNlpGlobalCellName</code> variable is the global cell name, and the default value is <code>nlpglobals</code>. The SE <code>simNplGlobalViewName</code> variable is the global cell&#39;s view name, and it should be the name of your simulator. The SE <code>simNlpGlobalLibName</code> variable is the library name that contains this global element (<code>simNlpGlobalCellName simNlpGlobalViewName</code>). </li><li>
+<a id="pgfId-1033211"></a>Because you are currently only generating a netlist and no name translation of simulator output is to be performed, you must inform SE by setting the <code>simSedFile</code> variable:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1033212">
+<a id="pgfId-1033212"></a>simSedFile = &#39;simNoSedFile </pre></li><li>
+<a id="pgfId-1033213"></a>The SE <code>simActions</code> variable controls the steps that are performed when you run a simulation using SE. Setting this variable is not required at this time. However, setting it to verify only the existence of needed variables and run the netlister allows you either to select the netlist or simulate commands and have the system generate only a netlist. As you continue to develop your simulation interface, you may want to modify the default value of this variable to perform additional steps when running a simulation. At this point, you can copy the following to your file:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1033214">
+<a id="pgfId-1033214"></a>simSetDef( &#39;simActions,&#39;( simCheckVariables() </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033215">
+<a id="pgfId-1033215"></a>netlist() </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033216">
+<a id="pgfId-1033216"></a>)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033217">
+<a id="pgfId-1033217"></a>) </pre></li><li>
+<a id="pgfId-1033218"></a>SE calls a function with the same name as the simulator to be executed as part of the initialization function. The initialization function is to set any needed variables. This function is usually set up to reset many of the variables you have already added to your file. This is because it is possible to run SE interactively. By doing so, the designer can change the defaults for the simulator-specific variables that have been discussed. To ensure that the netlister makes use of these new values, you must reset the previously listed variables. In addition, this function is expected to set the <code>simCommand</code> variable. This variable defines the command used to run the simulator. Since the simulator is not to be executed yet, this can be a command to return. At the end of this procedure is a call to the <code>simPrintEnvironment</code> function. This function writes an environment file that is later used by the Cadence graphics program. <br />
+<a id="pgfId-1033219"></a>The following is an example of the minimum contents of the function you should define:<pre class="webflare-pre-block webflare-courier-new" id="#id1033220">
+<a id="pgfId-1033220"></a>simIfNoProcedure( spice() 
+   simViewList = spiceSimViewList 
+   simStopList = spiceSimStopList 
+   ; global library name
+   simSetDef( &#39;simNlpGlobalLibName &quot;sample&quot; )
+      ; global cell&#39;s view name 
+   simSetDef( &#39;simNlpGlobalViewName &quot;spice&quot; )
+   simCommand = &#39;prog( () return(t) )
+   simPrintEnvironment()</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033221">
+<a id="pgfId-1033221"></a>)</pre></li><li>
+<a id="pgfId-1033222"></a>You must specify all functions you define in your <code>caplib</code> file with the <code>simSimulatorUnbindFuncs</code> variable. Specify all variables you define with the <code>simSimulatorUnbindVars</code> variable. You can use the following settings for the sample <code>caplib</code> file:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1033223">
+<a id="pgfId-1033223"></a>simSetDef( &#39;simSimulatorUnbindVars &#39;   (   spiceSimViewList
+         spiceSimStopList
+         simActions
+   )
+)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1033224">
+<a id="pgfId-1033224"></a>simSetDef( &#39;simSimulatorUnbindFuncs&#39;(spice))</pre></li><li>
+<a id="pgfId-1033225"></a>At this point you are ready to run the netlister. The following section has a complete example of the file you need to create.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1033227"></a>Sample <a id="marker-1033226"></a>caplib File </h4>
+
+<p>
+<a id="pgfId-1033228"></a>The following is an example of the file you must create before SE can run the netlister. </p>
+<ol><li>
+<a id="pgfId-1033229"></a>Change every name that contains the simulator name <code>spice</code> to contain the name of your simulator. For example, change <code>spiceSimViewList</code> to <code>verilogSimViewList</code>. </li><li>
+<a id="pgfId-1033230"></a>You have the option of encrypting or not encrypting the file. Encrypt this file using the SKILL <code>encrypt</code> command available in SE. </li><li>
+<a id="pgfId-1033231"></a>Give the file the same name as your simulator suffixed with &#8220;.<code>ile</code>&#8221; and place it in the <code>install_dir/tools/dfII/local/si/caplib</code> directory. </li></ol>
+
+
+<p>
+<a id="pgfId-1033232"></a>You are now ready to run the netlister. It can be executed as if it were a standard Cadence product. Refer to the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em> for details on how to run a simulation.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1033233"></a>; Set the default spice specific view switch list for netlisting.<br />simSetDef( &#39;spiceSimViewList,&#39;(&quot;spice&quot; &quot;schematic&quot;) )<br />; Set the default spice specific stopping view list for netlisting.<br />simSetDef( &#39;spiceSimStopList,&#39;(&quot;spice&quot;) )<br />; Set the view switch list used for netlisting. <br />simViewList = spiceSimViewList<br />; Set the stopping view list used for netlisting. <br />simStopList = spiceSimStopList<br />; Set the default name of the global cell and view used for <br />; netlisting.<br />simSetDef( &#39;simNlpGlobalLibName &quot;sample&quot;)<br />simSetDef( &#39;simNlpGlobalViewName &quot;spice&quot;)<br />; Signal that no sed input file for name translation exists. <br />simSedFile = &#39;simNoSedFile<br />; Set the default actions to be performed when a simulation is <br />; run. At this point, verify that the required variables have <br />; been set, and run the netlister. <br />simSetDef( &#39;simActions,&#39;( simCheckVariables() <br />netlist() <br />) <br />)<br />; Set the list of functions and variables that must be unbound <br />; when environments (simulators) are switched.<br />
+simSetDef( &#39;simSimulatorUnbindVars &#39;&#160;&#160; (   spiceSimViewList <br />      spiceSimStopList<br />      simActions)<br />)<br />simSetDef( &#39;simSimulatorUnbindFuncs &#39;(spice))<br />;<br />; spice() - <br />; This function sets the variables &quot;simViewList&quot; and &quot;simStopList&quot;<br />; to the simulator specific values in &quot;spiceSimViewList&quot; <br />; and &quot;spiceSimStopList&quot; respectively.<br />; Then the variable &quot;simCommand&quot; is set to the commands required<br />; to run a SPICE simulation(at this point, no simulation is run). <br />; This function is called by SE as part of its initialization process.<br />simIfNoProcedure( spice()<br />; Reset the global variables used by the netlister in case the user<br />; has modified the simulator specific versions by running SE<br />; interactively.<br />simViewList = spiceSimViewList <br />simStopList = spiceSimStopList <br />simCommand = &#39;prog( () <br />return(t) <br />) <br />; Write the environment file in case the user has modified<br />; the environment while running SE interactively. <br />simPrintEnvironment() </pre>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033234"></a>)</pre>
+<h4>
+<a id="pgfId-1033236"></a>Modify <a id="marker-1033235"></a>Netlister-Generated Names </h4>
+
+<p>
+<a id="pgfId-1033237"></a>The netlister generates new unique names for signals, instances, and models in the flattened design by appending a unique number to a name prefix which you can specify. If you do not specify a prefix, the netlister assigns numbers as new names. There are three variables within SE that allow you to set these name prefixes. Their default value is <code>nil</code>, which instructs the netlister that no name prefix is to be used. If they are set to a string value, that string is used as the prefix.</p>
+<p>
+<a id="pgfId-1033238"></a>The three variables are <code>simNetNamePrefix</code>, <code>simInstNamePrefix</code>, and <code>simModelNamePrefix</code>.</p>
+
+<h4><em>
+<a id="pgfId-1033240"></a><a id="marker-1033239"></a>simNetNamePrefix</em></h4>
+
+<p>
+<a id="pgfId-1033241"></a>Specifies the name prefix to be used when the netlister generates a unique signal name.</p>
+
+<h4><em>
+<a id="pgfId-1033243"></a><a id="marker-1033242"></a>simInstNamePrefix</em></h4>
+
+<p>
+<a id="pgfId-1033244"></a>Specifies the name prefix to be used when the netlister generates a unique instance name.</p>
+
+<h4><em>
+<a id="pgfId-1033246"></a><a id="marker-1033245"></a>simModelNamePrefix</em></h4>
+
+<p>
+<a id="pgfId-1033247"></a>Specifies the name prefix to be used when the netlister generates a unique model name.</p>
+
+<h4>
+<a id="pgfId-1033249"></a>Set <a id="marker-1033248"></a>Netlister Name Prefixes</h4>
+
+<p>
+<a id="pgfId-1033250"></a>The following is a sample of what you could add to the SE customization file that you placed in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib</code> directory to set the net, instance, and model name prefixes to <code>N</code>, <code>I</code>, and <code>Model</code>, respectively.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033251"></a>; Set the default signal name prefix used for generating<br />; names when netlisting.<br />simSetDef(&#39;simNetNamePrefix &quot;N&quot; )<br />; Set the default instance name prefix used for generating<br />; names when netlisting.<br />simSetDef(&#39;simInstNamePrefix &quot;I&quot; )<br />; Set the default model name prefix used for generating<br />; names when netlisting. <br />simSetDef(&#39;simModelNamePrefix &quot;Model&quot; )</pre>
+<h2>
+<a id="pgfId-1033254"></a><a id="58202"></a>FNL Format Example<a id="FNL Format Example"></a> </h2>
+
+<p>
+<a id="pgfId-1033255"></a>The following is an example of formatting instructions for the netlister. The example is a simplified version of a portion of the Cadence SPICE<sup>™</sup> Simulation Interface. You can enter these examples into your system and run them using the SE sample <code>caplib</code> file given as an example in the &#8220;Modify the Simulation Environment (SE)&#8221; section in this chapter. As with that file, change all occurrences of the name <code>spice</code> to the name of your simulator before entering them. This is to ensure that you do not overwrite the more complete versions provided by a Spice Simulation Interface.</p>
+<p>
+<a id="pgfId-1033257"></a><a id="marker-1033256"></a>The following is an S/SLG input file. It can be used to add the netlister properties to the global cellview. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1043399"></a>You must first create the global cellview and add the <code>dummy</code> device. (Refer to the &#8220;Create Global Cell&#8221; section in this chapter for more details.)</div>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033258"></a>replaceViewProp = t<br />lmDefViewProp( nlpglobals spice <br />NLPLineLength = 65 <br />NLPLinePrefix = &quot;+&quot; <br />NLPsingleLineCommentString = &quot;*&quot; <br />NLPElementComment = nlpExpr(&quot;* [@BlockName] ( [@ElementNumber] ) = [@InstPathName] &quot;) <br />NLPcreateNetString = nlpExpr(&quot;* [ net @NodeNumber ] = [@NetPathName ] \ n&quot;)<br />NLPcompleteElementString = nlpExpr(&quot;[@NLPElementPostamble:%:** No element format property found for element [@InstPathName ] ] \n&quot;)<br />NLPcreateModelString = nlpExpr(&quot;[@NLPModelPreamble:%\n ] &quot;)<br />NLPmosfetModelCard = nlpExpr(&quot;.MODEL Model [ @ModelNumber]<br />[ @modelType] [ @level:level=% ]  [@kp:kp=% @gamma:gamma=%]  [ @lambda:lambda=% ] &quot;) <br />&quot;graphicsEditorUnits per userUnit&quot; = 160.0 <br />userUnits = &quot;inches&quot; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033259"></a>) </pre>
+
+<p>
+<a id="pgfId-1033260"></a>The following is another S/SLG input file. It can be used to create the netlister library elements to output the connectivity for a <code>capacitor</code>, <code>nmos</code>, and <code>pmos</code>. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1043409"></a>This file expects a <code>symbol</code> view to exist for each of these elements. They are used as templates by S/SLG to ensure that the correct terminal information is added to the new primitive views.</div>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033261"></a>lmSimView( nmos symbol spice <br />NLPElementPostamble = nlpExpr(&quot; [ @NLPElementComment:%\n ] M [@ElementNumber]  [ |D ]  [ |G ]  [  |S ]  [ #gnd! ] Model  [@ModelNumber]  [ @l: l=%]  <br />[ @w: w=%]  [ @ic:ic=% ] &quot;) <br />NLPModelPreamble = nlpExpr(&quot; [ @NLPmosfetModelCard ] &quot;) <br />gamma = 0.2 <br />&quot;graphicsEditorUnits per userUnit&quot; = 160.0 <br />lambda = 0.02 <br />level = 2 <br />modelType = &quot;nmos&quot; <br />tox = 6e-07 <br />userUnits = &quot;inches&quot; <br />)<br />lmSimView( pmos symbol spice <br />NLPElementPostamble = nlpExpr(&quot; [ @NLPElementComment:%\n ] M [@ElementNumber ]  [|D ]  [ |G ]  [ |S ]  [ #vdd! ] Model [@ModelNumber]  [ @l: l=% ]  [@w: w=%] [@ic:ic=% ]&quot;) <br />NLPModelPreamble = nlpExpr(&quot; [ @NLPmosfetModelCard ] &quot;) <br />gamma = 0.4 <br />&quot;graphicsEditorUnits per userUnit&quot; = 160.0 <br />lambda = 0.03 <br />level = 2 <br />modelType = &quot;pmos&quot; <br />tox = 6e-07 <br />userUnits = &quot;inches&quot; <br />)<br />lmSimView( capacitor symbol spice <br />NLPElementPostamble = nlpExpr(&quot; [ @NLPElementComment:%\n ] C [@ElementNumber]  [ |PLUS ]  [ |MINUS ]   poly [@c ]  [@ic:ic=% ] &quot;) <br />&quot;graphicsEditorUnits per userUnit&quot; = 160.0 <br />userUnits = &quot;inches&quot; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033262"></a>)</pre>
+
+<p>
+<a id="pgfId-1033263"></a>If you have used these files to create the corresponding library elements and have added the SE file as described, the following netlist is produced when you run the netlister on the schematic shown in <h-hot><a href="chap7.html#Inverter Schematic"></a><xrefstd>Figure&#160;7-1<h-hot /></xrefstd></h-hot>. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033267"></a>* net 1 = vdd! <br />* net 0 = gnd! <br />* net 2 = /IN <br />* net 3 = /OUT <br />.MODEL Model1 pmos level=2 gamma=.4 lambda=.03 <br />* pmos(0) = /1 <br />M0 1 2 3 1 Model1 l=10u w=10u <br />* capacitor(1) = /2 <br />C1 3 0 poly 1pf <br />.MODEL Model3 nmos level=2 gamma=.2 lambda=.02 <br />* nmos(2) = /0 <br />M2 3 2 0 0 Model3 l=10u w=10u</pre>
+<p><strong>Figure 7-1
+<a id="pgfId-1033269"></a><a id="Inverter Schematic"></a>Inverter Schematic (inv schematic)</strong></p>
+<p>
+<a id="pgfId-1033330"></a></p>
+<div class="webflare-div-image">
+<img width="346" height="323" src="images/chap7-3.gif" /></div>
+<h2>
+<a id="pgfId-1037357"></a><a id="89911"></a>FNL SKILL Functions<a id="FNL SKILL Functions"></a> </h2>
+
+<p>
+<a id="pgfId-1041522"></a>For details on the FNL SKILL functions, see <em><a actuate="user" class="URL" href="../netlistsimulateref/ossFunctions.html" show="replace" xml:link="simple">OSS Functions</a></em> in the <em>Digital Design Netlisting and Simulation SKILL Reference</em>.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap6.html" id="prev" title="Customizing the HNL Net-Based Netlister">Customizing the HNL Net-Based  ...</a></em></b><b><em><a href="chap8.html" id="nex" title="Customizing Post-Layout Simulation">Customizing Post-Layout Simula ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

@@ -1,0 +1,300 @@
+
+<html><head><title>Integrating Simulators</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rgirdhar" />
+<meta name="CreateDate" content="2023-06-14" />
+<meta name="CreateTime" content="1686770748" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes reference information about the Open Simulation System, which gives easy access to supported simulators and lets you customize and integrate new simulators into the Cadence system" />
+<meta name="DocTitle" content="Open Simulation System Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Integrating Simulators" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="ossref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-14" />
+<meta name="ModifiedTime" content="1686770748" />
+<meta name="NextFile" content="chap3.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap1.html" />
+<meta name="c_product" content="Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Open Simulation System Reference -- Integrating Simulators" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="ossrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="ossrefTOC.html">Contents</a></li><li><a class="prev" href="chap1.html" title="Introducing the Open Simulation System (OSS)">Introducing the Open Simulatio ...</a></li><li style="float: right;"><a class="viewPrint" href="ossref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap3.html" title="Customizing the Simulation Environment (SE)">Customizing the Simulation Env ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Open Simulation System Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>2
+<a id="pgfId-1033418"></a></h1>
+<h1>
+<a id="pgfId-1033420"></a><hr />
+Integrating Simulators<hr />
+</h1>
+
+<p>
+<a id="pgfId-1033422"></a>In this chapter, you can find information about the following topics:<a id="Overview"></a></p>
+<ul><li>
+<a id="pgfId-1032663"></a><a href="chap2.html#21993">Requirements</a></li><li>
+<a id="pgfId-1032667"></a><a href="chap2.html#27995">Simulation Steps</a></li><li>
+<a id="pgfId-1034556"></a><a href="chap2.html#22343">Integration Steps</a></li></ul>
+
+
+<p>
+<a id="pgfId-1034558"></a>From the user perspective, a simulation in the Cadence system can be run with a single command. Figure 2-1 shows the structure of the <a id="marker-1034559"></a>Simulation Environment (SE), which allows integrated simulators to have the same single-step simulation interface to your users. This simple interface can be provided by SE, the controlling environment used to run simulations. </p>
+
+<p><strong>Figure 2-1
+<a id="pgfId-1032675"></a><a id="24458"></a>The Simulation Environment (SE)</strong></p>
+<p>
+<a id="pgfId-1032699"></a></p>
+<div class="webflare-div-image">
+<img width="495" height="268" src="images/chap2-2.gif" /></div>
+
+<p>
+<a id="pgfId-1032700"></a>SE is a non-graphics program that uses the SKILL language, the same language and syntax known as SKILL™<a id="marker-1032701"></a> in the Cadence graphics program, as its interface. The difference between SKILL in the<a id="marker-1032702"></a> Cadence graphics program and SKILL in SE is the extensions that have been made to them in each program. In SE, the SKILL language has been extended with several commands, or functions, that are specific to running simulations and generating netlists. In the Cadence graphics program, the SKILL language has been extended to contain commands for graphic access and database manipulation. These are not needed and not available in SE. The syntax of the language is the same in both programs, and the same basic commands are available in both.</p>
+
+<h2>
+<a id="pgfId-1032706"></a><a id="21993"></a>Requirements<a id="Requirements"></a></h2>
+
+<p>
+<a id="pgfId-1032707"></a>Before you attempt to integrate your simulator into the Cadence system, you must have certain background information.</p>
+
+<h3>
+<a id="pgfId-1032708"></a>SKILL</h3>
+
+<p>
+<a id="pgfId-1032710"></a><a id="SKILL"></a>You must have a working knowledge of SKILL because many of the tools you are using can be modified using the Cadence standard language, SKILL. Before continuing, you should read the <em><a actuate="user" class="URL" href="../sklanguser/sklanguserTOC.html#firstpage" show="replace" xml:link="simple">Cadence SKILL Language User Guide</a></em>. Then, write some small SKILL programs to make sure you understand the language and its syntax. You can load and run your programs using SE or SKILL in the Cadence graphics environment.</p>
+
+<h3>
+<a id="pgfId-1032713"></a>Database Access Functions (<a id="marker-1032711"></a>SKILL Database Access)<a id="Database Access Functions (SKILL Database Access)"></a></h3>
+
+<p>
+<a id="pgfId-1032714"></a>You should have a good understanding of the Cadence database structure, as described in the <h-hot><a actuate="user" class="URL" href="../skdfref/skdfrefTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Environment SKILL Reference</a></h-hot>, and the functions available to read the database. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1036420"></a>SE does not allow database modification.<a id="marker-1032715"></a></div>
+<p>
+<a id="pgfId-1032717"></a><a id="marker-1032716"></a>The Cadence tools make it possible for you to interface most simulators without knowing any of the database structure. With database structure knowledge you can develop a better and more efficient interface. It is strongly recommended that you have such background knowledge before you attempt to integrate your simulator into the Cadence system. After you have read the database access functions documentation, write a few small functions to display textual information about a design you create. For example, open a design and make a parts list, or print the names and widths of all of the terminals and nets in the top-level design. You can load and run your programs using SE or SKILL in the Cadence graphics program.</p>
+
+<h3>
+<a id="pgfId-1032719"></a>Running Simulation Using SE<a id="Running Simulation Using SE"></a></h3>
+
+<p>
+<a id="pgfId-1035083"></a>To be able to develop an interface, you must understand what you want the interface to look like and what tools are available to you. The simplest way to do this is to use an existing interface. First, read the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em>. Next, create a small schematic, simulate it, and analyze the results in text.</p>
+
+<h3>
+<a id="pgfId-1035087"></a>Creating Stimuli Using STL<a id="Creating Stimuli Using STL"></a><a id="marker-1035086"></a></h3>
+
+<p>
+<a id="pgfId-1033368"></a>Since the Simulation Test Language (STL) functionality has been removed from OSS, customers need to develop their own simulation test and data.</p>
+
+<h3>
+<a id="pgfId-1032726"></a>Developing a Simulator Interface<a id="Developing a Simulator Interface"></a></h3>
+
+<p>
+<a id="pgfId-1032727"></a>After you have read the recommended chapters and completed the suggested exercises, you should have enough background information to develop your simulator interface. The rest of this section explains the basic structure and interrelationship of the tools provided in the OSS and customizing each tool to your specific needs. When you develop an interface, you are not simply creating separate and distinct tools for your designers to use. Rather, you are creating an integrated design analysis system. Therefore, a description of how each tool can be modified is not enough. You need the steps to integrate these tools and produce a single unified interface. The remainder of this chapter explains the various simulation processes performed in the Cadence system and their interrelationships. Detailed explanations for each tool are in separate chapters in the remainder of this manual.</p>
+
+<h2>
+<a id="pgfId-1032731"></a><a id="27995"></a>Simulation Steps <a id="Simulation Steps"></a></h2>
+
+<p>
+<a id="pgfId-1032732"></a>To decide which tools you want to use to develop your interface, you must first understand the operation, function, and features of each tool as it relates to simulation as well as the simulation flow in the Cadence system. </p>
+<p>
+<a id="pgfId-1032733"></a>Figure 2-2 illustrates the steps performed during a simulation. </p>
+
+<p><strong>Figure 2-2
+<a id="pgfId-1032735"></a><a id="Simulation Steps, Figure 2-2"></a>Simulation Steps</strong></p>
+<p>
+<a id="pgfId-1032799"></a></p>
+<div class="webflare-div-image">
+<img width="664" height="373" src="images/chap2-3.gif" /></div>
+
+<p>
+<a id="pgfId-1033429"></a><a id="marker-1032800"></a>The input preparation and simulation steps must be performed in the order shown in Figure 2-2; however, the <a id="marker-1032802"></a>post-processing steps can be performed in any order. The following sections describe the function of the tools in performing each of the corresponding steps in the diagram. In addition to explaining what the tool does, there is an explanation of why the tool was designed to function in this manner. This background information should help you decide how best to use each of the tools.</p>
+
+<h3>
+<a id="pgfId-1032804"></a>Generating Stimuli<a id="Generating Stimuli"></a></h3>
+
+<p>
+<a id="pgfId-1032808"></a><a id="marker-1032805"></a>Most design analysis tools require a set of <a id="marker-1032806"></a>vectors or input patterns<a id="marker-1032807"></a> to drive the analysis or simulation, and these stimuli must be provided before you can run a simulation. The designer running a simulation can produce these manually.</p>
+
+<h3>
+<a id="pgfId-1032811"></a>Generating a Netlist<a id="Generating a Netlist"></a></h3>
+
+<p>
+<a id="pgfId-1032813"></a>All design analysis tools require a description of the <a id="marker-1032812"></a>connectivity for the design to be analyzed. Since non-Cadence tools are not able to read the Cadence database directly, a textual description (or netlist) of the connectivity must be <a id="marker-1032814"></a>produced. In addition to connectivity, the netlist may contain information such as model descriptions for devices used (required by such simulators as SPICE™), delay information for devices used (such as rise and fall times), and node settings for constant nodes (such as <em>VDD</em> and <em>GND</em>).</p>
+
+<h4>
+<a id="pgfId-1032815"></a>Ne<a id="marker-1036121"></a>tlist Formatting</h4>
+
+<p>
+<a id="pgfId-1032816"></a>Each design analysis tool has its own input syntax for connectivity information. Therefore, as part of OSS, you are able to modify the output syntax produced by the tools that generate these textual connectivity descriptions. Two tools provided to generate netlists are the <a id="marker-1032817"></a>Flat Netlister (FNL) and the <a id="marker-1032818"></a>Hierarchical Netlister (HNL). Both of these tools generate textual network descriptions and can be modified in a similar manner. The difference between them is in the type of output produced. (Refer to the &#8220;Hierarchical and Flat Netlisting&#8221; section in this chapter.)</p>
+<p>
+<a id="pgfId-1032819"></a>Both HNL and FNL allow you to format the netlist output using the Cadence standard language, SKILL. In addition to the basic commands available in SKILL, you can use the database access functions, as well as specific netlister-defined functions that simplify the netlisting process.</p>
+<p>
+<a id="pgfId-1032821"></a>In addition to SKILL formatting, FNL provides its own <a id="marker-1032820"></a>formatting language. This is a fast and compact language consisting of predefined variable names and substitution expressions. It is a superset of the syntax used for interpreted labels in schematic entry and requires no database knowledge to use. You can customize the netlister output using either language (SKILL or FNL formatting), or a blend of both. This formatting ability is only available in FNL and is explained in detail in the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual.</p>
+
+<h4>
+<a id="pgfId-1032822"></a>Hierarchical and Flat Netlisting</h4>
+
+<p>
+<a id="pgfId-1032823"></a>The Cadence design entry system allows the designer to enter designs hierarchically. This means that the designers only need to enter a schematic once and can then reference, or use, that schematic in subsequent designs.<a id="marker-1032824"></a> FNL<a id="marker-1032825"></a> &#8220;flattens&#8221; (or expands) the <a id="flattening a design;design"></a>design hierarchy before outputting the connectivity information. By flattening the design, the netlister replaces all symbols with the connectivity in the schematics they represent. Refer to <h-hot><a href="chap2.html#Example of Flattened Design, Figure 2-3"></a><xrefstd>Figure&#160;2-3<h-hot /></xrefstd></h-hot>. If a schematic for an inverter consists of a pair of transistors and a capacitor (a), and if another schematic contains two symbol views (b) of these inverters (c), the flattened netlist produced by FNL will contain four transistors, two capacitors, and the connectivity describing their interconnections as represented by the schematic in (d). </p>
+
+<p><strong>Figure 2-3
+<a id="pgfId-1032830"></a>Example of Flattened Design</strong></p>
+<p>
+<a id="pgfId-1033062"></a><a id="Example of Flattened Design, Figure 2-3"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="540" src="images/chap2-4.gif" /></div>
+
+<p>
+<a id="pgfId-1033064"></a>HNL does not flatten the hierarchy before outputting the connectivity. Instead, it produces a <a id="marker-1033065"></a>hierarchical netlist. Therefore, it outputs the connectivity for low-level cells first, then the connectivity for cells that reference them. In the example in the previous paragraph, a description of the schematic for an inverter is output first, and then a description of the schematic that references the inverters. Instead of outputting the connectivity for the inverter for each reference to it, the connectivity is only output once, and this description is then referenced in subsequent uses of the inverter.</p>
+<p>
+<a id="pgfId-1033066"></a>Not all simulators are able to read in a hierarchical netlist. If your simulator can only read in a flat network description, use FNL to produce the netlist for your simulator. If your simulator can read in either type of netlist, you can use either HNL or FNL. Though it is also possible to write your own netlister using SKILL, this is strongly discouraged because the rest of the Cadence system does not understand the name mapping you need to perform.</p>
+
+<h4>
+<a id="pgfId-1033067"></a>Netlister Name Mapping</h4>
+
+<p>
+<a id="pgfId-1033069"></a>The Cadence design entry system allows the designer great flexibility in <a id="marker-1033068"></a>naming instances (devices) and nets contained in a design. Most simulators are much more restrictive in the names they can accept. For example, some simulators require that names begin with an alphabetic character. Others have name length restrictions: For example, names may be required to be unique within or not longer than 12 characters. These restrictions usually force some form of name mapping. The names in the design cannot always be used in the netlist produced for a particular simulator. This is especially true in flat netlists. Since a particular schematic may be referenced several times in a higher level schematic, a name must be generated for each net and instance that is unique within the flattened design.<a id="marker-1033070"></a>This name is generated by putting together the name of each instance (reference) to a lower level schematic down to the most primitive level and separating them by slashes (/). These names quickly become too large for most simulator name spaces. To solve this problem, both netlisters provide a name-mapping mechanism that allows you to map names that are invalid for your simulator to names that are valid.</p>
+<p>
+<a id="pgfId-1033072"></a>This <a id="marker-1033071"></a>name mapping is saved with the netlist for use by the rest of the Cadence system. That way, designers can still reference names placed in designs when generating stimuli for their simulators without being concerned if the name was mapped when the netlist was generated. Functions are provided to <a id="marker-1033073"></a>translate between the name found in the design and the name placed in the netlist. The users always enter the name they placed in the design. This name is then translated to the name in the netlist before it is given as input to the simulator. The simulator output is then parsed, and the names are translated back to those the user entered. This way, the user never needs to see the names that appeared in the netlist. Refer to the <em><a actuate="user" class="URL" href="../se/seTOC.html#firstpage" show="replace" xml:link="simple">Simulation Environment Help</a></em> for more information on name mapping.</p>
+
+<h3>
+<a id="pgfId-1033075"></a>Translating Stimuli Names<a id="Translating Stimuli Names"></a></h3>
+
+<p>
+<a id="pgfId-1033076"></a>As explained in the &#8220;Netlister Name Mapping&#8221; section in this chapter, the names appearing in the netlist are not always the same ones entered by the designer. However, designers should always be able to refer to components in their designs using the names they specified. This is true when they generate their simulator input and when they analyze the output. Designers need to be aware that<a id="marker-1033077"></a> name mapping occurs during netlisting, but they do not need to know the mechanism or the mapped name.</p>
+<p>
+<a id="pgfId-1033079"></a><a id="marker-1033078"></a>For designers to use and see the names they enter in the design, there are name-mapping functions available in SE. When generating their stimuli, designers simply mark names used in their designs. As part of the simulation process, SE translates all names in the simulator input file before providing it as input to the simulator. From the designer&#8217;s perspective, the translation is a transparent part of the simulation process.</p>
+
+<h3>
+<a id="pgfId-1033081"></a>Running the Simulator<a id="Running the Simulator"></a></h3>
+
+<p>
+<a id="pgfId-1033082"></a>SE is the environment that controls all the simulation process steps. It provides you with the ability to manage the complex series of steps required to run a simulation and make simulation appear as a single-step process to the designer.</p>
+<p>
+<a id="pgfId-1033084"></a><a id="marker-1033083"></a>SE can be customized using the Cadence standard language, SKILL. This is the same language and syntax used to customize FNL and HNL output. The basic commands in SKILL have been enhanced with the addition of commands and functions specific to running simulations.</p>
+<p>
+<a id="pgfId-1033085"></a>SE can be run interactively or batch from a stand-alone ASCII terminal, or it can be run from within the Cadence graphics environment.</p>
+
+<h3>
+<a id="pgfId-1033087"></a>Translating Names in Simulator Text Output<a id="Translating Names in Simulator Text Output"></a></h3>
+
+<p>
+<a id="pgfId-1033088"></a>Since netlist names and input stimuli provided to the simulator may have been mapped from user-assigned names to simulator-acceptable names, the text output of the simulator must have these names translated back to the user-assigned names. Functions to do this have been provided in SE and can be run as a transparent part of the simulation process. These functions are explained in detail in the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual. </p>
+<p>
+<a id="pgfId-1033095"></a></p>
+
+<h3>
+<a id="pgfId-1033099"></a>Creating Backannotation Error Messages<a id="Creating Backannotation Error Messages"></a></h3>
+
+<p>
+<a id="pgfId-1033101"></a>To simplify locating errors in a design, you can graphically <a id="marker-1033100"></a>backannotate error messages into the schematic by means of<a id="marker-1033102"></a> probes. Probes are the same mechanism used to graphically select nets for <a id="marker-1033103"></a>waveform display. The information necessary for placing the probes is stored with the error messages in the Probe File. The syntax of this file is described in the &#8220;Probe File Format&#8221; section of the &#8220;Graphics Editor&#8221; chapter of the SKILL reference manuals. You can <a id="marker-1033104"></a>convert the error messages from your simulator as a transparent part of the simulation process using SE, or, preferably, modify your simulator to produce this syntax directly.</p>
+<p>
+<a id="pgfId-1035098"></a><a id="marker-1035097"></a>The designer can then display all errors found during simulation with a single command. The error regions are highlighted graphically, and the designer can step through each error and display the error message associated with that region. Errors can be associated with nets, instance, or terminals.</p>
+
+<h2>
+<a id="pgfId-1035102"></a><a id="22343"></a>Integration Steps<a id="Integration Steps"></a></h2>
+
+<p>
+<a id="pgfId-1033111"></a>The &#8220;Simulation Steps&#8221; section in this chapter describes the &#8220;what&#8221; of simulator integration while this section describes the &#8220;how to.&#8221; There are many steps to fully<a id="marker-1033112"></a> integrate a simulator into the Cadence system. You need not complete them all at once; the development can be done in stages. As each stage is completed, you can test that portion. Once that stage is functioning to your satisfaction, you can proceed to the next stage of integration. Some of the tools provided in OSS depend on others being functional first. For example, to make use of FNL, you should first set up an initialization file in SE. To ensure there are no missing dependent packages as you develop any portion of your interface, follow these steps:</p>
+
+<ol><li>
+<a id="pgfId-1033113"></a>Learn background information. <ul><li>
+<a id="pgfId-1033114"></a>SKILL</li><li>
+<a id="pgfId-1033115"></a>database access functions</li><li>
+<a id="pgfId-1033116"></a>Running Simulations Using SE</li></ul></li><li>
+<a id="pgfId-1033117"></a>Create basic SE command files to run the netlister to produce the netlist for your simulator. <ul><li>
+<a id="pgfId-1033118"></a>Read the &#8220;Customizing the Simulation Environment (SE)&#8221; chapter in this manual.</li><li>
+<a id="pgfId-1033119"></a>Create the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span>/<code>tools/dfII/local/si/caplib/simulator.ile</code> file.</li></ul></li><li>
+<a id="pgfId-1033120"></a>Customize netlister output to produce syntax needed for your simulator.<br />
+<a id="pgfId-1033121"></a>If you want to produce hierarchical netlists, use HNL; to produce flat netlists, use FNL.<ul><li>
+<a id="pgfId-1033122"></a>Customize HNL output: </li></ul><br />
+<a id="pgfId-1033123"></a>Read the &#8220;Customizing the Hierarchical Netlister (HNL)&#8221; chapter in this manual.<br />
+<a id="pgfId-1033124"></a>Create HNL format functions in the 
+<span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/hnl/simulator.ile</code> file.<br />
+<a id="pgfId-1033125"></a>Create library elements for netlister use.<ul><li>
+<a id="pgfId-1033126"></a>Customize FNL output: </li></ul><br />
+<a id="pgfId-1033127"></a>Read the &#8220;Customizing the Flat Netlister (FNL)&#8221; chapter in this manual.<br />
+<a id="pgfId-1033128"></a>Create a global view whose cellname is <code>nlpglobals</code>, and whose viewname is the same as the name of your simulator.<br />
+<a id="pgfId-1033129"></a>Create FNL format functions in the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/fnl/simulator.ile</code> file. <br />
+<a id="pgfId-1033130"></a>Create library elements for netlister use.</li><li>
+<a id="pgfId-1033131"></a>Customize SE to run your simulator in addition to generating netlists. <ul><li>
+<a id="pgfId-1033132"></a>Modify the <span class="webflare-courier-new" style="white-space:pre"><em>install_dir</em></span><code>/tools/dfII/local/si/caplib/simulator.ile</code> file.</li><li>
+<a id="pgfId-1035110"></a>Create a sed input file for simulator output name translation. </li></ul></li><li>
+<a id="pgfId-1035113"></a>Customize STL output using the OSCG option of STL. <br />
+<a id="pgfId-1033143"></a>The Open Simulation Code Generator (OSCG) functionality has been removed from OSS. The customer need to develop its own code generator.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1033144"></a>Modification of SE is performed at each step in the development of your interface because SE is the controlling program that invokes each step of the simulation process. As you add steps to this process, you must instruct SE to also run these steps. This is done to simplify the simulation process for your users. </div>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap1.html" id="prev" title="Introducing the Open Simulation System (OSS)">Introducing the Open Simulatio ...</a></em></b><b><em><a href="chap3.html" id="nex" title="Customizing the Simulation Environment (SE)">Customizing the Simulation Env ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

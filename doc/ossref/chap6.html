@@ -1,0 +1,514 @@
+
+<html><head><title>Customizing the HNL Net-Based Netlister</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rgirdhar" />
+<meta name="CreateDate" content="2023-06-14" />
+<meta name="CreateTime" content="1686770761" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes reference information about the Open Simulation System, which gives easy access to supported simulators and lets you customize and integrate new simulators into the Cadence system" />
+<meta name="DocTitle" content="Open Simulation System Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Customizing the HNL Net-Based Netlister" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="ossref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-14" />
+<meta name="ModifiedTime" content="1686770761" />
+<meta name="NextFile" content="chap7.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap5.html" />
+<meta name="c_product" content="Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Open Simulation System Reference -- Customizing the HNL Net-Based Netlister" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="ossrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="ossrefTOC.html">Contents</a></li><li><a class="prev" href="chap5.html" title="Customizing the Hierarchical Netlister (HNL)">Customizing the Hierarchical N ...</a></li><li style="float: right;"><a class="viewPrint" href="ossref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap7.html" title="Customizing the Flat Netlister (FNL)">Customizing the Flat Netlister ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Open Simulation System Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>6
+<a id="pgfId-1032656"></a></h1>
+<h1>
+<a id="pgfId-1032657"></a><hr />
+Customizing the HNL Net-Based Netlister<hr />
+</h1>
+
+<p>
+<a id="pgfId-1032659"></a><a id="marker-1032658"></a>In addition to instance-based netlisting capability, HNL supports net-based netlisting to facilitate the interface to net-based simulators and tools.</p>
+<p>
+<a id="pgfId-1032661"></a><a id="marker-1032660"></a>Similar to the instance-based capability, HNL traverses a given design, retrieves the relevant information, and sets up the environment for a formatter to generate the required netlist. Most processes are performed automatically by HNL, but generating a netlist in the targeted syntax is performed by the formatter.</p>
+<p>
+<a id="pgfId-1032662"></a>The design of the formatter is similar to an instance-based one. When designing a net-based netlist formatter, the designer MUST set the HNL variable <code>hnlInstBased</code> to <code>nil</code>, which signals that the net-based capability is desired.</p>
+
+<h2>
+<a id="pgfId-1032665"></a>Flow of Net-Based HNL<a id="Flow of Net-Based HNL"></a></h2>
+
+<p>
+<a id="pgfId-1032667"></a><a id="marker-1032666"></a>When running in the net-based mode, HNL first traverses all models (cells) in the given design, identifying all global signals while <a id="marker-1032668"></a>preparing for the netlist generation steps. The design traversal and global signals identification processes are identical for both net-based <a id="marker-1032669"></a>and instance-based HNL, but are different from the incremental HNL. The net-based traversal cannot be used with the hierarchical netlister in incremental mode.</p>
+<p>
+<a id="pgfId-1032670"></a>After the initial design traversal, HNL prints the required netlist header as instructed, then goes through all referred models in the design for netlist generation, beginning with call <code>hnlPrintNetlistHeader()</code>, then going through call <code>hnlDoNetBased()</code> and call <code>hnlPrintNetlistFooter()</code>.</p>
+<p>
+<a id="pgfId-1032671"></a>The <code>hnlPrintNetlistHeader()</code> and <code>hnlPrintNetlistFooter()</code> procedures are explained in the HNL chapter of this manual. The <code>hnlDoNetBased()</code> procedure addresses each cell, prepares the internal data structures, and calls the procedures specified by the HNL variable, <code>hnlTopCellNetFuncs</code>, if the cell being netlisted is the top design cellview, or <code>hnlMacroCellNetFuncs</code> otherwise.</p>
+<p>
+<a id="pgfId-1032672"></a>By default, <code>hnlTopCellNetFuncs</code> will activate the procedures <code>hnlPrintTopCellHeader</code>, <code>hnlPrintSignal</code>, and <code>hnlPrintTopCellFooter</code> while <code>hnlMacroCellNetFuncs</code> activates <code>hnlPrintDeviceHeader</code>, <code>hnlPrintPorts</code>, <code>hnlPrintSignal</code>, and <code>hnlPrintDeviceFooter</code>. The <code>hnlPrintSignal</code> procedure is responsible for netlisting each signal and its connection while the procedures with the name &#8220;Header&#8221; are responsible for netlisting the header of a cellview and netlist that are to appear before the signals and their connections. Similarly, &#8220;Footer&#8221; procedures are for netlisting all netlists that are to appear after the connections and the footer.</p>
+<p>
+<a id="pgfId-1032673"></a>The default procedure, <code>hnlPrintSignal</code>, goes through all signals in <code>hnlCurrentCell</code>, finds the connectivity to the signal, then assigns the proper values to the supported variables for netlist formatting. For each signal, the procedures <code>hnlPrintSignalHeader</code>, <code>hnlPrintInst</code>, and <code>hnlPrintSignalFooter</code> are called to generate the netlist. </p>
+<p>
+<a id="pgfId-1032674"></a>For descriptions of the above-mentioned procedures, refer to the &#8220;HNL Procedures for Net-Based Netlisting&#8221; section in this chapter.</p>
+<p>
+<a id="pgfId-1032675"></a>The default flow of <code>hnlPrintSignal</code> is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032676"></a>for each signal in the cell being netlisted<br />     call <code>hnlPrintSignalHeader( )</code></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032677"></a>     for each instance connect to current signal<br />        prepare variables for netlisting<br />        call <code>hnlPrintInst( )<br /></code>    endfor<br />    call <code>hnlPrintSignalFooter( )<br /></code> endfor</pre>
+
+<p>
+<a id="pgfId-1032678"></a>For details on the variables available for the netlist formatter, refer to the &#8220;HNL Variables for Net-Based Netlisting&#8221; section in this chapter.</p>
+
+<h2>
+<a id="pgfId-1032681"></a>HNL Variables for Net-Based Netlisting<a id="HNL Variables for Net-Based Netlisting"></a></h2>
+
+<p>
+<a id="pgfId-1032683"></a><a id="marker-1032682"></a>The following HNL variables are available for use by the formatter for net-based netlisting. Some of these variables can be redefined by the user, and some are only defined during the evaluation of certain functions.</p>
+<p>
+<a id="pgfId-1032684"></a>All variables used for managing the name mapping function are the same as for instance-based HNL. All variables used for performing output formatting are also identical to instance-based HNL. All names provided by HNL for performing net-based netlisting are single bit names, which means that signal names are always used instead of net names, and the name of each iteration of an instance is used for iterated instances.</p>
+
+<h4><em>
+<a id="pgfId-1032686"></a><a id="marker-1032685"></a>hnlInstBased</em></h4>
+
+<p>
+<a id="pgfId-1032687"></a>The default is <code>t</code>. You must set the <code>hnlInstBased</code> variable to <code>nil</code> to run HNL in net-based mode.</p>
+
+<h4><em>
+<a id="pgfId-1032689"></a><a id="marker-1032688"></a>hnlListOfAllCells</em></h4>
+
+<p>
+<a id="pgfId-1032690"></a>The list of all cellviews used in the given design. Defined after the initial design traversal is completed.</p>
+
+<h4><em>
+<a id="pgfId-1032691"></a>hnlListOfAllStoppingCells</em></h4>
+
+<p>
+<a id="pgfId-1032693"></a>The<a id="marker-1032692"></a> list of all primitives (stopping cellviews) used in the given design. Defined after the initial design traversal is completed.</p>
+
+<h4><em>
+<a id="pgfId-1032694"></a>hnlCurrentCell</em></h4>
+
+<p>
+<a id="pgfId-1032696"></a><a id="marker-1032695"></a>The <code>dbCellViewId</code> of the current cell being netlisted. Defined by <code>hnlDoNetBased()</code>. </p>
+
+<h4><em>
+<a id="pgfId-1032697"></a>hnlAllTerms</em></h4>
+
+<p>
+<a id="pgfId-1032699"></a><a id="marker-1032698"></a>The list of all terminals in <code>hnlCurrentCell</code>. Defined by <code>hnlDoNetBased()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032701"></a><a id="marker-1032700"></a>hnlAllTermNames</em></h4>
+
+<p>
+<a id="pgfId-1032702"></a>The list of the names of all of the bits of all of the terminals in <code>hnlCurrentCell</code>. The names in this list are flattened (reduced to single bit names) and stored in the same order as <code>hnlAllTerms</code>. Defined by <code>hnlDoNetBased()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1035760"></a><a id="hnlCellAllTermNames"></a>hnlCellAllTermNames</em></h4>
+
+<p>
+<a id="pgfId-1035873"></a>Contains the terminal names of the current cell in the same order as that of the nets connected to them in the SKILL variable <a href="chap5.html#18979">hnlCellNetsOnTerms</a>. It is populated only when either of the two SKILL variables, <code>hnlProcessDifferentPmAndInstTerminalRepresentation</code> or <code>hnlProcessConnectionsInAscendingOrder</code>, is set to <code>t</code>. If neither of these two variables is set, <code>hnlCellAllTermNames</code> is set to <code>nil</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032704"></a><a id="marker-1035815"></a>hnlCellInTerms</em></h4>
+
+<p>
+<a id="pgfId-1032705"></a>The list of all input terminals in <code>hnlCurrentCell</code>. Defined by <code>hnlDoNetBased()</code>.</p>
+<p>
+<a id="pgfId-1032706"></a>Inherited terminals can be found in this list but since these are real terminals there are db id. associated with them. Here for inherited terminals the relationship with the entries in <code>hnlCellInputs</code> are db id. to <em>netlister-generated </em>names. These <em>netlister-generated</em> names are the same ones that appeared in <code>hnlCellInputs</code>.</p>
+<p>
+<a id="pgfId-1032707"></a>Example</p>
+<p>
+<a id="pgfId-1032708"></a>For module <em>buffer</em>, the value is list( db_id_IN ).</p>
+
+<h4><em>
+<a id="pgfId-1032710"></a><a id="marker-1032709"></a>hnlCellInTermName</em></h4>
+
+<p>
+<a id="pgfId-1032711"></a>The list of the names of all the bits of all input terminals in <code>hnlCurrentCell</code>. They are flattened and stored in the same order as <code>hnlCellInTerms</code>. Defined by <code>hnlDoNetBased()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032713"></a><a id="marker-1032712"></a>hnlCellOutTerms</em></h4>
+
+<p>
+<a id="pgfId-1032714"></a>The list of all output terminals in <code>hnlCurrentCell</code>. Defined by <code>hnlDoNetBased()</code>.</p>
+<p>
+<a id="pgfId-1032715"></a>Inherited terminals can be found in this list but since these are real terminals there are db id. associated with them. Here for inherited terminals the relationship with the entries in <code>hnlCellOutputs</code> are db id. to <em>netlister-generated</em> names. These <em>netlister-generated</em> names are the same ones that appeared in <code>hnlCellInputs</code>.</p>
+<p>
+<a id="pgfId-1032716"></a>Example</p>
+<p>
+<a id="pgfId-1032717"></a>For module <em>buffer</em>, the value is list( db_id_OUT ).</p>
+
+<h4><em>
+<a id="pgfId-1032719"></a><a id="marker-1032718"></a>hnlCellOutTermNames</em></h4>
+
+<p>
+<a id="pgfId-1032720"></a>The list of the names of all the bits of the output terminals in <code>hnlCurrentCell</code>. They are flattened and stored in the same order as <code>hnlCellOutTerms</code>. Defined by <code>hnlDoNetBased()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032722"></a><a id="marker-1032721"></a>hnlCellOtherTerms</em></h4>
+
+<p>
+<a id="pgfId-1032723"></a>The list of all terminals in <code>hnlCurrentCell</code> that are neither input nor output terminals. Defined by <code>hnlDoNetBased()</code>.</p>
+<p>
+<a id="pgfId-1032724"></a>Logically there is no db id. for pseudo port created as a result of inherited signal. A <em>netlister-generated-name</em> generated by HNL is used as a place-holder instead. Inherited terminals can be found in this list but since these are real terminals there are db id. associated with them. Here for inherited terminals the relationship with the entries in <code>hnlCellOutputs</code> are db id. to <em>netlister-generated</em> names. These <em>netlister-generated</em> names are the same ones that appeared in <code>hnlCellOthers</code>.</p>
+<p>
+<a id="pgfId-1032725"></a>Example</p>
+<p>
+<a id="pgfId-1032726"></a>For module <em>buffer</em>, there are no db ids for the pseudo ports created but <em>pseudo-names</em> generated by HNL are used as the place holders for the inherited connections. The value is list( &#8220;inh_gnd&#8221; &#8220;inh_vdd&#8221;)</p>
+
+<h4><em>
+<a id="pgfId-1032728"></a><a id="marker-1032727"></a>hnlCellOtherTermNames</em></h4>
+
+<p>
+<a id="pgfId-1032729"></a>The list of the names of all the bits of the terminals in <code>hnlCurrentCell</code> that are neither input nor output terminals. They are flattened and stored in the same order as <code>hnlCellOtherTerms</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032731"></a><a id="marker-1032730"></a>hnlTopCell</em></h4>
+
+<p>
+<a id="pgfId-1032732"></a>The <code>dbCellViewId</code> of the top cellview of the design being netlisted. This variable is defined throughout the netlisting process, but is invalidated after netlisting is completed because the top cell is automatically closed by HNL.</p>
+
+<h4><em>
+<a id="pgfId-1032734"></a><a id="marker-1032733"></a>hnlTopCellNetFuncs</em></h4>
+
+<p>
+<a id="pgfId-1032735"></a>A variable defining the procedures to be called by <code>hnlDoNetBased</code> for netlisting the top cellview. The default value is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032736"></a>&#39;( &quot;hnlPrintTopCellHeader( )&quot;<br />   &quot;hnlPrintSignal( )&quot;<br />   &quot;hnlPrintTopCellFooter( )&quot;<br />   )</pre>
+<h4><em>
+<a id="pgfId-1032738"></a><a id="marker-1032737"></a>hnlCurrentSignal</em></h4>
+
+<p>
+<a id="pgfId-1032739"></a>The signal in <code>hnlCurrentCell</code> that is being netlisted. Defined in <code>hnlPrintSignal()</code>. It becomes invalid after all signals in <code>hnlCurrentCell</code> have been netlisted.</p>
+
+<h4><em>
+<a id="pgfId-1032740"></a>hnlCurrentSignalTerms</em></h4>
+
+<p>
+<a id="pgfId-1032742"></a><a id="marker-1032741"></a>The names of the terminals in <code>hnlCurrentCell</code> that are connected to the bits of the <code>hnlCurrentSignal</code>. Defined in <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032743"></a>hnlCurrentSignalName</em></h4>
+
+<p>
+<a id="pgfId-1032745"></a><a id="marker-1032744"></a>Name of <code>hnlCurrentSignal</code>. Defined in <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032747"></a><a id="marker-1032746"></a>hnlCurrentInst</em></h4>
+
+<p>
+<a id="pgfId-1032748"></a>The instance in <code>hnlCurrentCell</code> which has one of its pins connected to <code>hnlCurrentSignal</code>. This variable may refer to an iterated instance. The variable <code>hnlCurrentInst</code> should be used in conjunction with the variable <code>hnlCurrentIteration</code> to identify the instance being netlisted. Defined by <code>hnlPrintSignal()</code> after <code>hnlPrintSignalHeader()</code> has been called.</p>
+
+<h4><em>
+<a id="pgfId-1032750"></a><a id="marker-1032749"></a>hnlCurrentInstName</em></h4>
+
+<p>
+<a id="pgfId-1032751"></a>The name of the iteration of the instance that is currently being netlisted as defined by <code>hnlCurrentInst</code> and <code>hnlCurrentIteration</code>. Defined in <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032753"></a><a id="marker-1032752"></a>hnlCurrentIteration</em></h4>
+
+<p>
+<a id="pgfId-1032754"></a>The iteration number of the instance of <code>hnlCurrentInst</code> which is being netlisted. Defined in <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032756"></a><a id="marker-1032755"></a>hnlCurrentType</em></h4>
+
+<p>
+<a id="pgfId-1032757"></a>The cell name of the master of <code>hnlCurrentInst</code>. Defined in <br /><code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032759"></a><a id="marker-1032758"></a>hnlCurrentMaster</em></h4>
+
+<p>
+<a id="pgfId-1032760"></a>The <code>dbCellViewId</code> of the view switched master of <code>hnlCurrentInst</code>. Defined by <code>hnlPrintSignal()</code>. It is valid only during evaluation of the <code>hnlPrintInst()</code> function.</p>
+
+<h4><em>
+<a id="pgfId-1032762"></a><a id="marker-1032761"></a>hnlCurrentInstPort</em></h4>
+
+<p>
+<a id="pgfId-1032763"></a>The instance terminal of <code>hnlCurrentInst</code> which is connected to <code>hnlCurrentSignal</code>. This variable may refer to a multiple bit terminal in order to access the terminal bit that is connected. <code>hnlCurrentInstPortIndex</code> should be used when needed. Defined by <code>hnlPrintSignal()</code>. Valid only during evaluation of the <code>hnlPrintInst()</code> function.</p>
+
+<h4><em>
+<a id="pgfId-1032765"></a><a id="marker-1032764"></a>hnlCurrentPortName</em></h4>
+
+<p>
+<a id="pgfId-1032766"></a>The name of <code>hnlCurrentInstPort</code>. Defined by <code>hnlPrintSignal()</code>. To get the name of the terminal bit that is connected to <code>hnlCurrentSignal</code>, you must use <code>dbGetMemName(hnlCurrentInstPortName hnlCurrentInstPortIndex)</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032768"></a><a id="marker-1032767"></a>hnlCurrentInstPortIndex</em></h4>
+
+<p>
+<a id="pgfId-1033378"></a>The index of the bit of <code>hnlCurrentInstPort</code> that is connected to the current signal. Defined by <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1033380"></a><a id="marker-1033379"></a>hnlInstMasterPort</em></h4>
+
+<p>
+<a id="pgfId-1032772"></a>The terminal on <code>hnlCurrentMaster</code> that is connected to the current signal. Defined by <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1032774"></a>hnlMacroCell<a id="marker-1032773"></a>NetFuncs</em></h4>
+
+<p>
+<a id="pgfId-1032775"></a>A variable defining the procedure to be called by <code>hnlDoNetBased</code> for netlisting all cells that are not the top cell. The default value is</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032776"></a>&#39;( &quot;hnlPrintDeviceHeader( )&quot;<br />   &quot;hnlPrintPorts&quot;<br />   &quot;hnlPrintSignal( )&quot;<br />   &quot;hnlPrintDeviceFooter( )&quot;<br />   )</pre>
+<h4><em>
+<a id="pgfId-1035076"></a>hnlProcessAliasSignalWithSourceDirection</em></h4>
+<p>
+<a id="pgfId-1035102"></a>A variable that specifies that the netlister uses aliasing between more than two signals. By default, it is set to <code>nil</code>. It requires adding the <code>direction</code> property of the net, where the property value must be set to the source.</p>
+<p>
+<a id="pgfId-1035103"></a>The following example shows aliasing between the signals <code>a</code>, <code>z&lt;0&gt;</code>, and <code>z&lt;1&gt;</code>. </p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1035132"></a></pre>
+<div class="webflare-div-image">
+<img width="361" height="70" src="images/chap6-2.gif" /></div>
+<p>
+<a id="pgfId-1035136"></a>Here, if the source net is <code>a</code>, then the <code>direction</code> property must be set on net a, where the property value is set to source.</p>
+<h4><em>
+<a id="pgfId-1035197"></a>hnlProcessConnectionsI<a id="hnlProcessConnectionsInAscendingOrder"></a>nAscendingOrder</em></h4>
+
+<p>
+<a id="pgfId-1035198"></a>Specifies that pins should be printed in ascending order during netlisting. By default, it is set to <code>nil</code>.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1035199"></a>To remove duplicate pins from the netlist, set <code>simSupportDuplicatePorts</code> to <code>nil</code>.</div>
+<h2>
+<a id="pgfId-1032779"></a>HNL Procedures for Net-Based Netlisting<a id="HNL Procedures for Net-Based Netlisting"></a></h2>
+
+<p>
+<a id="pgfId-1034265"></a>Various HNL SKILL functions are available for use by the formatter for net-based netlisting. For details, see <em><a actuate="user" class="URL" href="../netlistsimulateref/ossFunctions.html" show="replace" xml:link="simple">OSS Functions</a></em> in the <em>Digital Design Netlisting and Simulation SKILL Reference</em>.</p>
+
+<h2>
+<a id="pgfId-1032831"></a>Other Variables and Procedures<a id="Other Variables and Procedures"></a></h2>
+
+<p>
+<a id="pgfId-1032832"></a>In addition to the variables and procedures previously described, other variables and procedures are available, as categorized below:</p>
+
+<h3>
+<a id="pgfId-1032835"></a><a id="marker-1032833"></a>Controlling the Format of the Netlist File<a id="Controlling the Format of the Netlist File"></a></h3>
+
+<p>
+<a id="pgfId-1032836"></a>If you call <code>hnlPrintString()</code> to output the netlist, you should set the following variables.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1032837"></a><code>hnlMaxLineLength<br />hnlCommentStr<br />hnlDriverWillPrint<br />hnlLinePostfix<br />hnlLinePrefix</code></pre>
+
+<h3>
+<a id="pgfId-1032840"></a><a id="marker-1032838"></a>Variable and Name Mapping Functions<a id="Variable and Name Mapping Functions"></a></h3>
+
+<p>
+<a id="pgfId-1032841"></a>The same set of name mapping procedures are supported for net-based netlisting as for instance based netlisting. All the related variables should be set by the formatter accordingly. Following are the variables you should set.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1032842"></a><code>hnlMapIfFirstChar<br />hnlMapIfInName<br />hnlMapInstFirstChar<br />hnlMapInstInName<br />hnlMapModelFirstChar<br />hnlMapModelInName<br />hnlMapNetFirstChar<br />hnlMapInNetName<br />hnlMaxNameLength<br />hnlNamePrefix<br />hnlMapTermFirstChar<br />hnlMapTermInName<br />simNetNamePrefix<br />simInstNamePrefix<br />simModeNamePrefix</code></pre>
+<p>
+<a id="pgfId-1032844"></a><a id="marker-1032843"></a>Following are the available name mapping functions.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1032845"></a><code>hnlMapInstName
+hnlMapModelName
+hnlMapNetName
+hnlMapName</code></p>
+
+<h3>
+<a id="pgfId-1032847"></a>Other Procedures and Functions<a id="Other Procedures and Functions"></a></h3>
+
+<p>
+<a id="pgfId-1032848"></a>All procedures and functions supported for instance-based netlisting are also supported for net-based netlisting, unless redefined in the &#8220;HNL Procedures for Net-Based Netlisting&#8221; section. For details on these procedures and functions, refer to the &#8220;Customizing the Hierarchical Netlister&#8221; chapter in this manual.</p>
+
+<h3>
+<a id="pgfId-1032850"></a>Other Variables<a id="Other Variables"></a></h3>
+
+<p>
+<a id="pgfId-1032851"></a>All variables supported in instance-based HNL are also supported for net-based netlisting, unless redefined in the &#8220;HNL Variables for Net-Based Netlisting&#8221; section.</p>
+
+<h2>
+<a id="pgfId-1032854"></a>Procedures the Formatter Must Define<a id="Procedures the Formatter Must Define"></a></h2>
+
+<p>
+<a id="pgfId-1032855"></a>The following procedures must be included when you define the formatter.</p>
+
+<h4><em>
+<a id="pgfId-1032856"></a>hnlPrintTopCellHeader( )</em></h4>
+
+<p>
+<a id="pgfId-1032858"></a><a id="marker-1032857"></a>The procedure called before calling <code>hnlPrintSignal()</code> for netlisting the top-level cell. All the variables set up by <code>hnlDoNetBased()</code> are available.</p>
+
+<h4><em>
+<a id="pgfId-1032860"></a><a id="marker-1032859"></a>hnlPrintTopCellFooter( )</em></h4>
+
+<p>
+<a id="pgfId-1032861"></a>The procedure called after <code>hnlPrintSignal()</code> is completed for the top cell. This is the last procedure called for netlisting the top cell.</p>
+
+<h4><em>
+<a id="pgfId-1032862"></a>hnlPrintDeviceHeader( )</em></h4>
+
+<p>
+<a id="pgfId-1033410"></a><a id="marker-1033409"></a>The procedure called before calling <code>hnlPrintSignal()</code> for all but the top-level cellview. All the variables set up by <code>hnlDoNetBased()</code> are available. This procedure calls for netlisting information that is not managed/netlisted by <code>hnlPrintSignal()</code>.</p>
+
+<h4><em>
+<a id="pgfId-1033412"></a><a id="marker-1033411"></a>hnlPrintDeviceFooter( )</em></h4>
+
+<p>
+<a id="pgfId-1032867"></a>The procedure called after <code>hnlPrintSignal()</code> is completed for all but the top-level cellview. This procedure is called to generate a netlist after all signals&#8217; connectivities that are not handled by <code>hnlPrintSignal()</code>. Default is <code>nil</code> procedure.</p>
+
+<h4><em>
+<a id="pgfId-1032869"></a><a id="marker-1032868"></a>hnlPrintPorts( )</em></h4>
+
+<p>
+<a id="pgfId-1032870"></a>The procedure to netlist the port definition for each cellview.</p>
+
+<h4><em>
+<a id="pgfId-1032872"></a><a id="marker-1032871"></a>hnlPrintSignalHeader( )</em></h4>
+
+<p>
+<a id="pgfId-1032873"></a>The procedure to netlist the signal definition before it is netlisted. Called by <code>hnlPrintSignal</code> before <code>hnlPrintInst()</code>, which is before all instances connected to <code>hnlCurrentSignal</code> have been netlisted. </p>
+
+<h4><em>
+<a id="pgfId-1032874"></a>hnlPrintSignalFooter( )</em></h4>
+
+<p>
+<a id="pgfId-1032876"></a><a id="marker-1032875"></a>The procedure to netlist the signal definition after it is netlisted. Called by <code>hnlPrintSignal</code> after <code>hnlPrintInst()</code>, which is after all instances connected to <code>hnlCurrentSignal</code> have been netlisted.</p>
+
+<h4><em>
+<a id="pgfId-1032877"></a>hnlPrintInst( )</em></h4>
+
+<p>
+<a id="pgfId-1032879"></a><a id="marker-1032878"></a>The procedure to netlist an instance (defined by <code>hnlCurrentInst</code> and <code>hnlCurrentIteration</code>) and its connectivity to signal <code>hnlCurrentSignal</code>. All variables described in the previous section are available and assigned the proper values when this procedure is called. This procedure MUST be defined by all formatters. </p>
+
+<p>
+<a id="pgfId-1032880"></a></p>
+<h2>
+<a id="pgfId-1032883"></a>Designing an HNL Net-Based Formatter<a id="Designing an HNL Net-Based Formatter"></a></h2>
+
+<p>
+<a id="pgfId-1032886"></a><a id="marker-1032884"></a>Designing a formatter for net-based syntax is similar to designing a <a id="marker-1032885"></a>formatter for instance-based syntax. Most of the required data is available, and the environment is ready to be used. Simply follow the procedure below to complete designing and coding of your formatter.</p>
+
+<h3>
+<a id="pgfId-1032888"></a>Determine Name Mapping and Netlist Syntax Needed<a id="Determine Name Mapping and Netlist Syntax Needed"></a></h3>
+
+<p>
+<a id="pgfId-1032889"></a>Determine the netlist and name mapping requirements needed to generate the correct netlist.</p>
+
+<h3>
+<a id="pgfId-1032892"></a><a id="marker-1032890"></a>Initialize Variables<a id="Initialize Variables"></a></h3>
+
+<p>
+<a id="pgfId-1032894"></a>You must set <code>hnlInstBased</code> to <code>nil</code>. Do not forget to set the hnl variables that control name mapping and output formatting to the desired values. If you want to set values for other HNL variables, refer to the &#8220;Customizing the Hierarchical Netlister&#8221; chapter in this manual.<a id="marker-1032893"></a></p>
+
+<h3>
+<a id="pgfId-1032897"></a><a id="marker-1032895"></a>Code the Needed Procedures<a id="Code the Needed Procedures"></a></h3>
+
+<p>
+<a id="pgfId-1032898"></a>Design the procedures for your formatter by following the procedure in the &#8220;Controlling the Format of the Netlist File&#8221; section. Then, code the following routines accordingly: <code>hnlPrintInst()</code>, <code>hnlPrintTopCellHeader()</code>, <code>hnlPrintTopCellFooter()</code>, <code>hnlPrintSignalHeader()</code>, <code>hnlPrintSignalFooter()</code>, <code>hnlPrintPorts()</code>, <code>hnlPrintDeviceHeader()</code>, and <code>hnlPrintDeviceFooter()</code>. You may need to code some additional procedures to help handle some specific formatter needs.</p>
+
+<h2>
+<a id="pgfId-1032902"></a><a id="marker-1032900"></a>Net-Based Netlister Design Example<a id="Net-Based Netlister Design Example"></a></h2>
+
+<p>
+<a id="pgfId-1032904"></a><a id="marker-1032903"></a>This section includes a simple net-based netlister design to demonstrate the fundamentals of designing a similar netlist formatter using the variables and procedures previously discussed.</p>
+<p>
+<a id="pgfId-1032905"></a>For this example, the syntax of the target netlist complies with the following form:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032906"></a>Model modelName;<br />Ports<br />   [PortNames [=signalName] ;]*<br />endPorts<br />Object<br />   [InstanceName InstanceType ;]*<br />endObjects<br />Connection<br />   [signalName [InstanceName.pinName]* ;]*<br />endConnection<br />endModel [modelName].</pre>
+
+<p>
+<a id="pgfId-1032907"></a>where [ ] specifies optional field, [ ]+ specifies a field that must appear at least once, and [ ]* specifies a field that may occur any number of times. This syntax applies to all modules of a design, except that the keyword <code>Design</code> is to be used in place of <code>Model</code> for the top-level modules.</p>
+
+<h3>
+<a id="pgfId-1032910"></a><a id="marker-1032908"></a>Designing the Netlister<a id="Designing the Netlister"></a></h3>
+
+<p>
+<a id="pgfId-1032911"></a>For this example, the legal syntax for a name is a string that starts with an alphabet and does not contain any of the following: &#8220;.&#8221; &#8220;,&#8221; &#8220;+&#8221; &#8220;-&#8221; &#8220;*&#8221; &#8220;@&#8221; &#8220;%&#8221; &#8220;#&#8221; and &#8220;!&#8221;. All comment lines are preceded by &#8220;#&#8221;. It is also assumed that &#8220;.&#8221; is used by the target simulator as hierarchy delimiter.</p>
+<p>
+<a id="pgfId-1032912"></a>All module names are mapped using <code>hnlMapModelName()</code>, all signal (net) names are mapped using <code>hnlMapNetName()</code>, all port names are mapped using <code>hnlMapped Name()</code>, and all instance names are mapped by <code>hnlMapInstName()</code>. The port names are derived directly from the terminal names. Pin names of instances are the port names of its master cellview.</p>
+
+<h3>
+<a id="pgfId-1032915"></a><a id="marker-1032913"></a>The Formatter<a id="The Formatter"></a></h3>
+
+<p>
+<a id="pgfId-1032916"></a>The netlist formatter is designed as shown below.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032917"></a>;<br />; This example shows how to use HNL to design a net-based netlist formatter.<br />;<br />; First, define the need variable for net-based netlisting.<br />hnlInstBased = nil<br />hnlFormatFuncsLoaded = t<br />hnlNetlistFileName = &quot;netlist&quot;<br />hnlSetDef( &#8217;hnlMaxNameLength 12 )<br />hnlSetDef( &#8217;hnlHierarchyDelimeter &quot;.&quot; )<br />hnlSetDef( &#8217;hnlMaxLineLength 72 ) <br />hnlSetDef( &#8217;hnlMapTermFirstChar list( &quot;0&quot; &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; &quot;5&quot; &quot;6&quot; &quot;7&quot; &quot;8&quot; &quot;9&quot;<br />      &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;%&quot; &quot;@&quot; &quot;#&quot; &quot;!&quot; <br />)<br />   )<br />hnlSetDef( &#8217;hnlMapTermInName list( &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;#&quot; &quot;!&quot; &quot;@&quot; &quot;&lt;&quot; &quot;&gt;&quot; )<br />    )<br />hnlSetDef( &#8217;hnlMapNetFirstChar list( &quot;0&quot; &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; &quot;5&quot; &quot;6&quot; &quot;7&quot; &quot;8&quot; &quot;9&quot;<br />      &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;%&quot; &quot;@&quot; &quot;#&quot; &quot;!&quot;<br />)<br />   )<br />hnlSetDef( &#8217;hnlMapNetInName list( &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;#&quot; &quot;!&quot; &quot;@&quot; &quot;&lt;&quot; &quot;&gt;&quot; )<br />    )<br />hnlSetDef( &#8217;hnlMapInstFirstChar list( &quot;0&quot; &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; &quot;5&quot; &quot;6&quot; &quot;7&quot; &quot;8&quot; &quot;9&quot;<br />      &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;%&quot; &quot;@&quot; &quot;#&quot; &quot;!&quot;<br />)<br />   )<br />hnlSetDef( &#8217;hnlMapInstInName list( &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;#&quot; &quot;!&quot; &quot;@&quot; &quot;&lt;&quot; &quot;&gt;&quot; )<br /> )<br />hnlSetDef( &#8217;hnlMapModelFirstChar list( &quot;0&quot; &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; &quot;5&quot; &quot;6&quot; &quot;7&quot; &quot;8&quot; &quot;9&quot;<br />      &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;%&quot; &quot;@&quot; &quot;#&quot; &quot;!&quot;<br />)<br />   )<br />hnlSetDef( &#8217;hnlMapModelInName list( &quot;.&quot; &quot;,&quot; &quot;+&quot; &quot;-&quot; &quot;*&quot; &quot;#&quot; &quot;!&quot; &quot;@&quot; &quot;&lt;&quot; &quot;&gt;&quot; )<br />   )<br />
+hnlSetDef( &#8217;hnlFormaterUnbindFuncs &#8217;( hnlSetOutPutVars
+&#160;&#160; hnlPrintNetlistHeader                    hnlPrintNetlistFooter<br />   hnlPrintTopCellHeader           hnlPrintTopCellFooter<br />   hnlPrintDeviceHeader            hnlPrintDeviceFooter<br />   hnlPrintPorts                   hnlPrintInst<br />   hnlPrintSignalHeader         hnlPrintSignalFooter<br />   hnlPrintMyPort               hnlListMyObject<br />      )<br />   )<br />;<br />;  Set the variables which control name mapping and output.<br />;<br />hnlIfNoProcedure( hnlSetOutputVars()<br />  prog( ()<br />     hnlNamePrefix = &quot;hnl&quot;<br />     simNetNamePrefix = &quot;N&quot;<br />     simModelNamePrefix = &quot;M&quot;<br />     simTermNamePrefix  = &quot;T&quot;<br />     simInstNamePrefix  = &quot;I&quot;<br />     simLinePrefix  = &quot;+&quot;<br />     simCommentStr = &quot;#&quot;<br />     hnlDriverWillPrint = t<br />     return( t )<br />     )<br />)<br />;<br />;  Print one line of comment at the begining of netlist.<br />;<br />hnlIfNoProcedure( hnlPrintNetlistHeader()<br /> let( ( buffer )<br />        sprintf( buffer &quot;#\n#Netlist for design %s.\n#\n&quot; hnlTopCell ~&gt; cellName )<br />        hnlPrintString( buffer )<br />    )<br />)<br />;<br />;  Print one line of comment at the end of netlist.<br />;<br />hnlIfNoProcedure( hnlPrintNetlistFooter()<br />    hnlPrintString( &quot;#\n#End of Netlist.\n#\n&quot; )<br />)<br />;<br />;  Because the IO port definition is taken care off elsewhere, do <br />;    nothing.<br />;<br />hnlIfNoProcedure( hnlPrintPorts()<br />  t<br />)<br />;<br />;  Print the top cell definition for the generated netlist.<br />;<br />hnlIfNoProcedure( hnlPrintTopCellHeader()<br /> let( ( buffer )<br />    sprintf( buffer &quot;#\n# Netist for top level Cell.\n#&quot;<br />                hnlPrintString( buffer )<br />    if( hnlMultipleCells( hnlCurrentCell ~&gt; cellName ) then<br />         sprintf( buffer &quot;Design %s ;\n&quot; hnlMapModelName( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032918"></a>                        fileName ))<br />    else<br />        sprintf( buffer &quot;Design %s ;\n&quot; hnlMapModelName( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032919"></a>                                                                                                                                           cellName ))<br />    )<br />    hnlPrintString( buffer ) <br />    hnlPrintMyPorts()<br />    hnlMyListObjects()<br />  )<br />)<br />;<br />;  Print the cell definition closure for the top cell.<br />;<br />hnlIfNoProcedure( hnlPrintTopCellFooter()<br />  let( ( buffer )<br />      if( hnlMultipleCells( hnlCurrentCell ~&gt; cellName ) then<br />        sprintf( buffer &quot;endDesign %s.\n&quot; hnlMapModelName( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032920"></a>                        fileName ))<br />      else<br />        sprintf( buffer &quot;endDesign %s.\n&quot; hnlMapModelName( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032921"></a>                              cellName ))<br />      )<br />      hnlPrintString( buffer ) <br />  )<br />)<br />;<br />;  Print the netlisting definition for a macro cell.<br />;<br />hnlIfNoProcedure( hnlPrintDeviceHeader()<br />  let( ( buffer )<br />      sprintf( buffer &quot;#\n# Netist for macro Cell.\n#&quot; )<br />      hnlPrintString( buffer )<br />      if( hnlMultipleCells( hnlCurrentCell ~&gt; cellName ) then<br />        sprintf( buffer &quot;Design %s ;\n&quot; hnlMapModelName<br />            ( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032922"></a>                        fileName ))<br />      else<br />        sprintf( buffer &quot;Design %s ;\n&quot; hnlMapModelName<br />            ( hnlCurrentCell ∼&gt;<br />                        cellName ))<br />      )<br />      hnlPrintString( buffer ) <br />      hnlPrintMyPorts()<br />      hnlMyListObjects()<br />   )<br />)<br />
+;
+;&#160;&#160;Print the netlist definiton closeure for a macro cell.<br />;<br />
+hnlIfNoProcedure( hnlPrintDeviceFooter()
+&#160;&#160;let( ( buffer )<br />     if( hnlMultipleCells( hnlCurrentCell ~&gt; cellName ) then<br />        sprintf( buffer &quot;endModel %s.\n&quot; hnlMapModelName<br />            ( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032923"></a>                        fileName ))<br />     else<br />        sprintf( buffer &quot;endModel %s.\n&quot; hnlMapModelName<br />            ( hnlCurrentCell ∼&gt;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032924"></a>                        cellName ))<br />     )<br />     hnlPrintString( buffer ) <br />   )<br />)<br />;<br />;  Print IO port definition.<br />;<br />hnlIfNoProcedure( hnlPrintMyPorts()<br />  let( ( term termNames thisName count bit buffer signal )<br />     hnlPrintString( &quot;Ports\n&quot; )<br />     termNames = hnlAllTermNames<br />     foreach( term hnlAllTerms<br />        count = term ∼&gt; width - 1<br />        for( bit 0 count<br />             thisName = car( termNames )<br />             termNames = cdr( termNames )<br />             hnlPrintString( hnlMapTermName( thisName ) )<br />             if( ( signal = dbGetMemNetSigName( term ~&gt; <br />                  net bit ) ) == nil<br />               then  hnlPrintString( &quot;= NC ;\n&quot; )<br />             else<br />               sprintf( buffer &quot;= %s ;\n&quot; hnlMapNetName( signal ) )<br />               hnlPrintString( buffer ) <br />            )<br />        )<br />    )<br />    hnlPrintString( &quot;endPorts\n&quot; )<br />  )<br />)<br />;<br />;  Print the instance type definition.<br />;<br />hnlIfNoProcedure( hnlMyListObjects()<br />  let( ( buffr inst allInst allMaster master temp count num cellName )<br />     hnlPrintString( &quot;Objects\n&quot; )<br />     allInst = hnlFindAllInstInCell( hnlCurrentCell )<br />     allMaster = hnlGetMasterCells( allInst )<br />     temp = allMaster<br />     foreach( inst allInst<br />        master = car( temp )<br />        temp = cdr( temp )<br />        if( hnlMultipleCells( master ~&gt; cellName ) then<br />          cellName = hnlMapModelName( master ~&gt; fileName )<br />        else<br />          cellName = hnlMapModelName( master ~&gt; cellName )<br />        )<br />        count = inst ∼&gt; numInst - 1<br />        for( num 0 count<br />          sprintf( buffer &quot;%s %s ;\n&quot; hnlMapInstName(<br />                        dbGetMemName( inst ~&gt; name num ) ) cellName )<br />          hnlPrintString( buffer )<br />           )<br />      )<br />      hnlPrintString( &quot;endObjects\n&quot; )<br />   )<br />)<br />;<br />;  Print the signal definition.<br />;<br />hnlIfNoProcedure( hnlPrintSignalHeader()<br />  let( ( buffer )<br />      sprintf( buffer &quot;# Signal %s.\n&quot; hnlCurrentSignalName )<br />      hnlPrintString( buffer )<br />      hnlPrintString( hnlMapNetName( hnlCurrentSignalName ) )<br />  )<br />)<br />;<br />;  Print the definition closure for a signal.<br />;<br />hnlIfNoProcedure( hnlPrintSignalFooter()<br />   hnlPrintString( &quot;;\n&quot; )<br />)<br />;<br />;  For each inst-terminal connected to hnlCurrentSig, print the <br />;  the connectivity in the desired format.<br />;<br />hnlIfNoProcedure( hnlPrintInst()<br />  let( ( buffer )<br />     sprintf( buffer &quot; %s.%s&quot; hnlMapInstName( hnlCurrentInstName ) <br />                           hnlMapTermName( hnlCurrentInstPortName ) )<br />     hnlPrintString( buffer )<br />   )<br />)</pre>
+<h3>
+<a id="pgfId-1032926"></a>Sample Output from Formatter Design<a id="Sample Output From Formatter Design"></a></h3>
+
+<p>
+<a id="pgfId-1032928"></a><a id="marker-1032927"></a>The following is sample output from the formatter design example shown in the previous section.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1032929"></a>#<br />#Netlist for design design.<br />#<br />#<br /># Netist for macro Cell.<br />#Design test1 ;<br />Ports<br />I0= I0 ;<br />I1= I1 ;<br />T0= N1 ;<br />T2= N3 ;<br />O= O ;<br />endPorts<br />Objects<br />I1 or2 ;<br />I0 or2 ;<br />I2 xor2 ;<br />endObjects<br /># Signal I1.Y.<br />N4 I1.Y I2.B;<br /># Signal D&lt;0&gt;.<br />N1 I1.A;<br /># Signal I0.Y.<br />N5 I0.Y I2.A;<br /># Signal I1.<br />I1 I0.B;<br /># Signal I0.<br />I0 I0.A;<br /># Signal D&lt;1&gt;.<br />N3 I1.B;<br /># Signal O.<br />O I2.Y;<br />endModel test1.<br />#<br /># Netist for macro Cell.<br />#Design test2 ;<br />Ports<br />T6= N7 ;<br />T8= N9 ;<br />T0= N1 ;<br />T2= N3 ;<br />OUT= OUT ;<br />endPorts<br />Objects<br />I0 test1 ;<br />endObjects<br /># Signal D&lt;0&gt;.<br />N1 I0.T0;<br /># Signal I&lt;0&gt;.<br />N7 I0.I0;<br /># Signal D&lt;1&gt;.<br />N3 I0.T2;<br /># Signal OUT.<br />OUT I0.O;<br /># Signal I&lt;1&gt;.<br />N9 I0.I1;<br />endModel test2.<br />#<br /># Netist for macro Cell.<br />#Design test ;<br />Ports<br />O1= O1 ;<br />I1= I1 ;<br />I2= I2 ;<br />I3= I3 ;<br />I0= I0 ;<br />endPorts<br />Objects<br />I4 and2 ;<br />I5 and2 ;<br />I0 xor2 ;<br />endObjects<br /># Signal I4.Y.<br />N10 I4.Y I0.A;<br /># Signal O1.<br />O1 I0.Y;<br /># Signal I3.<br />I3 I5.B;<br /># Signal I2.<br />I2 I5.A;<br /># Signal I1.<br />I1 I4.B;<br /># Signal I0.<br />I0 I4.A;<br /># Signal I5.Y.<br />N11 I5.Y I0.B;<br />endModel test.<br />#<br /># Netist for top level Cell.<br />#Design design ;<br />Ports<br />T12= N13 ;<br />T14= N15 ;<br />T= T ;<br />N= N ;<br />P= P ;<br />D= D ;<br />M= M ;<br />J= J ;<br />JUNK= JUNK ;<br />T16= N17 ;<br />T18= N19 ;<br />T20= N21 ;<br />T22= N23 ;<br />T24= N25 ;<br />T26= N27 ;<br />T28= N29 ;<br />T30= N31 ;<br />endPorts<br />Objects<br />I2 or2 ;<br />R10 res ;<br />I11 buffer ;<br />I12 inv ;<br />I15 cmos ;<br />N19 nmos ;<br />P20 pmos ;<br />I3 and2 ;<br />I0 test ;<br />I32 test2 ;<br />I1 test1 ;<br />endObjects<br /># Signal A&lt;3&gt;.<br />N23 I1.I0 I0.I3;<br /># Signal D.<br />D I15.D N19.D;<br /># Signal R10.Y.<br />N32 R10.Y I12.A;<br /># Signal A&lt;1&gt;.<br />N19 I1.T0 I0.I1;<br /># Signal N19.S.<br />N33 P20.D N19.S;<br /># Signal DATA&lt;2&gt;.<br />N29 I32.T0;<br /># Signal I0.O1.<br />N34 I0.O1 I3.A I2.A;<br /># Signal IN&lt;3&gt;.<br />N25 I32.T6;<br /># Signal R&lt;1&gt;.<br />N15 I3.Y;<br /># Signal I1.O.<br />N35 I1.O I3.B I2.B;<br /># Signal A&lt;2&gt;.<br />N21 I1.I1 I0.I2;<br /># Signal T.<br />T I12.Y;<br /># Signal I11.Y.<br />N36 I11.Y R10.A;<br /># Signal JUNK.<br />JUNK I32.OUT;<br /># Signal A&lt;0&gt;.<br />N17 I1.T2 I0.I0;<br /># Signal P.<br />P I15.GP;<br /># Signal N.<br />N I15.GN N19.G;<br /># Signal DATA&lt;3&gt;.<br />N31 I32.T2;<br /># Signal M.<br />M P20.S;<br /># Signal J.<br />J P20.G I15.S I11.A;<br /># Signal IN&lt;4&gt;.<br />N27 I32.T8;<br /># Signal R&lt;2&gt;.<br />N13 I2.Y;<br />endDesign design.<br />#<br />#End of Netlist.<br /></pre>
+
+<p>
+<a id="pgfId-1032930"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5.html" id="prev" title="Customizing the Hierarchical Netlister (HNL)">Customizing the Hierarchical N ...</a></em></b><b><em><a href="chap7.html" id="nex" title="Customizing the Flat Netlister (FNL)">Customizing the Flat Netlister ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
