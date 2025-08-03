@@ -1,0 +1,2091 @@
+
+<html><head><title>Migrating from PIPO to XStream </title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rishu" />
+<meta name="CreateDate" content="2023-09-22" />
+<meta name="CreateTime" content="1695381149" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Adoption guide for moving from DFII on the CDB database to the Virtuoso Studio design environment on OpenAccess." />
+<meta name="DocTitle" content="Virtuoso Studio Design Environment Adoption Guide" />
+<meta name="DocType" content="Installation" />
+<meta name="FileTitle" content="Migrating from PIPO to XStream" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="dfoaAdopt" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-22" />
+<meta name="ModifiedTime" content="1695381149" />
+<meta name="NextFile" content="appA.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="chap5.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="Virtuoso Shared Tools" />
+<meta name="ProductFamily" content="Virtuoso Shared Tools" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Studio Design Environment Adoption Guide -- Migrating from PIPO to XStream" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="dfoaAdoptIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="dfoaAdoptTOC.html">Contents</a></li><li><a class="prev" href="chap5.html" title="Changes to Environment Objects and Shapes">Changes to Environment Objects ...</a></li><li style="float: right;"><a class="viewPrint" href="dfoaAdopt.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appA.html" title="prRules Conversion Messages">prRules Conversion Messages</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Studio Design Environment Adoption Guide<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>6
+<a id="pgfId-1032955"></a></h1>
+<h1>
+<a id="pgfId-1035250"></a><hr />
+Migrating from <a id="44786"></a>PIPO to XStream <hr />
+</h1>
+
+<p>
+<a id="pgfId-1045650"></a><a id="marker-1046595"></a>This chapter contains the following sections:</p>
+<ul><li>
+<a id="pgfId-1045654"></a><a href="chap6.html#23870">Overview</a></li><li>
+<a id="pgfId-1045658"></a><a href="chap6.html#43476">PIPO-XStream Template File Differences</a><ul><li>
+<a id="pgfId-1045662"></a><a href="chap6.html#96861">Stream In Template File Mapping</a></li><li>
+<a id="pgfId-1045666"></a><a href="chap6.html#15658">Stream Out Template File Mapping</a></li></ul></li><li>
+<a id="pgfId-1045670"></a><a href="chap6.html#41223">Using the PIPO-XStream Template Conversion Utility</a></li></ul>
+
+
+
+
+
+<h2>
+<a id="pgfId-1045672"></a><a id="23870"></a>Overview</h2>
+
+<p>
+<a id="pgfId-1045673"></a>From the ICOA5.1.51 release PIPO has been replaced by XStream on OpenAccess. Both PIPO and XStream provide Stream Out capability to generate GDSII format data required for mask generation, and both provide a Stream In capability to restore that data into a Virtuoso environment database. However there are differences in the functionality and use model of PIPO and XStream. The following sections explain these differences in terms of command line usage, arguments and options, template file, and syntax. </p>
+<p>
+<a id="pgfId-1045675"></a><a id="31992"></a>One difference between PIPO and XStream is that you could, to some extent, use PIPO as a Virtuoso environment database archival mechanism. For example, using PIPO you can preserve Pcells and keep ROD data though these options are not sufficient to archive the complete design information, such as connectivity or user defined groups. XStream on the other hand does not allow you to preserve Pcells and ROD data. XStream does not duplicate the archival mechanism of PIPO in OpenAccess.</p>
+
+<h2>
+<a id="pgfId-1045677"></a><a id="43476"></a>PIPO-XStream Template File Differences</h2>
+
+<p>
+<a id="pgfId-1045678"></a>As a PIPO user, you might be running PIPO Stream In - Stream Out from the command line or from customized scripts with the command line function embedded within. These scripts might use established PIPO template files which can be managed outside of the Virtuoso environment GUI. </p>
+<p>
+<a id="pgfId-1045679"></a>Moving to XStream, some options and the template file syntax has changed, so you cannot directly use existing PIPO template files with XStream. For example, PIPO template file implements the SKILL list syntax, whereas the XStream template file uses a straight ASCII text, space, and line delimited format. Each line contains the option or argument, the value, and an optional comment or description.</p>
+<p>
+<a id="pgfId-1045680"></a>For a Boolean argument, the value is not shown. A <code>nil</code> or an unasserted option is preceded by the comment character, <code>#</code>. A <code>t</code> or asserted option is just listed without a value as shown below: </p>
+
+<p>
+<a id="pgfId-1045694"></a></p>
+<table class="webflareTable" id="#id1045681">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1045683">
+<a id="pgfId-1045683"></a>PIPO</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1045685">
+<a id="pgfId-1045685"></a>XStream Equivalent</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045687"></a><code>&#8216;ignoreBox &quot;nil&quot;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045689"></a><code>#ignoreBox</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045691"></a><code>&#8216;ignoreBox &quot;t&quot;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045693"></a><code>ignoreBox</code></p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1045695"></a>For all text, lists, and other string values, the values can be specified with or without quotes.</p>
+<p>
+<a id="pgfId-1045696"></a>Numeric values are specified without any special characters. In-line comments, if present, are preceded by the comment character, #.</p>
+<p>
+<a id="pgfId-1045697"></a>Although most PIPO options have identical XStream equivalents, some may have the same functionality but not an identical option name. Some of the seemingly arbitrary option name changes in XStream have been done to maintain compatibility with the native OA Stream translator.</p>
+<p>
+<a id="pgfId-1045698"></a>The following section explains the differences in the commands and the options between PIPO and XStream. </p>
+
+<h3>
+<a id="pgfId-1045700"></a><a id="96861"></a>Stream In Template File Mapping</h3>
+
+<p>
+<a id="pgfId-1045701"></a>The following table maps the PIPO Stream In options with the corresponding XStream options with notes on differences in functionality and changes in the use model.</p>
+
+<p>
+<a id="pgfId-1046016"></a></p>
+<table class="webflareTable" id="#id1045702">
+<caption style="text-align:left;"><p>
+</p><div class="ft-figtabl-title">
+<a id="pgfId-1045704"></a>Stream In Template File Options</div></caption>
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1045710">
+<a id="pgfId-1045710"></a>PIPO Option</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1045712">
+<a id="pgfId-1045712"></a>XStream Option</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1045714">
+<a id="pgfId-1045714"></a>Notes</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045716"></a>runDir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045718"></a>runDir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045720"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045722"></a>inFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045724"></a>strmFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045726"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045728"></a>primaryCell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045730"></a>topCell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045732"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045734"></a>libName</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045736"></a>library</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045738"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045740"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045742"></a>view</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045744"></a>New option</p>
+<p>
+<a id="pgfId-1045745"></a>XStream allows you to specify the view name, default being <code>layout</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045747"></a>techFileName</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045749"></a>loadTechFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045751"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045753"></a>scale</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045755"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045757"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045758"></a>In DFII on CDB, you could change the DBU/UU of a design at the library level. This is not permitted on OpenAccess and therefore not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045760"></a>errFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045762"></a>logFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045764"></a>In PIPO, the error file contains messages and summary information. Therefore the PIPO template option <code>errFile</code> is equivalent to using both the <code>logFile</code> and <code>summaryFile</code> options in XStream. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045766"></a>cellMapTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045768"></a>cellMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045770"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045772"></a>layerTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045774"></a>layerMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045776"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045778"></a>textFontTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045780"></a>fontMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045782"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045784"></a>restorePin</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045786"></a>pinAttNum</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045788"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045790"></a>propMapTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045792"></a>propMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045794"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045796"></a>propSeparator</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045798"></a>propSeparator</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045800"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045802"></a>userSkillFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045804"></a>userSkillFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045806"></a>Same options</p>
+<p>
+<a id="pgfId-1045807"></a>The PIPO and XStream options are the same. In PIPO the following SKILL functions are supported:</p>
+
+<ul><li>
+<a id="pgfId-1045808"></a>piCellNameMap</li><li>
+<a id="pgfId-1045809"></a>piLayerMap</li><li>
+<a id="pgfId-1045810"></a>piTextMap</li><li>
+<a id="pgfId-1045811"></a>pipoErrShapesHandler</li><li>
+<a id="pgfId-1045812"></a>piPropMap</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1045813"></a>In XStream all the above SKILL functions are supported for Stream In except <code>pipoErrShapesHandler</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045815"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045817"></a>objectMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-1045819"></a>New option</p>
+<p>
+<a id="pgfId-1045820"></a>XStream provides an object map file to preserve non-maskable OpenAccess objects, such as boundaries and blockages. Object mapping file maps the object type and sub type to the Stream layer-datatype pair. </p>
+<p>
+<a id="pgfId-1045821"></a>This option is not applicable for PIPO.</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045823"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045825"></a>viaMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045827"></a>New option</p>
+<p>
+<a id="pgfId-1045828"></a>Vias are objects in OpenAccess. The via map file maps the Structure names from the Stream file to the corresponding viaDef names in the input technology library. The original vias can then be recreated during subsequent Stream Ins.</p>
+<p>
+<a id="pgfId-1045829"></a>This option is not applicable for PIPO.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045831"></a>checkPolygon</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045833"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045835"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045836"></a>OA does not allow coincident or colinear points and removes them during creation of paths and polygons. XStream only reports incomplete or illegal polygons in the log file.</p>
+<p>
+<a id="pgfId-1045837"></a>Therefore this option is not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045839"></a>snapToGrid</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045841"></a>snapToGrid</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045843"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045845"></a>arrayToSimMosaic</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045847"></a>arrayInstToScalar</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045849"></a>Changed option</p>
+<p>
+<a id="pgfId-1045850"></a>By default on OA, mosaics are kept as OA arrays (AREF in SKILL). when you set <code>arrayInstToScalar</code> to t, XStream converts the arrays to scalar instances (SREF in SKILL). This is a reversal in behavior from <code>arrayToSimMosaic</code> in PIPO. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045853"></a>skipUndefinedLPP</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045855"></a>skipUndefinedLPP</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045857"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045859"></a>zeroPathToLine</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045861"></a>ignoreZeroWidthPath</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045863"></a>Changed option</p>
+<p>
+<a id="pgfId-1045864"></a>This PIPO option, <code>zeroPathToLine</code> can have the values &lt;<code>lines/ignore&gt;</code>. By default, during Stream In, XStream converts zero width paths into lines and they are ignored only when <code>ignoreZeroWidthPath</code> option is set to <code>t</code>. </p>
+<p>
+<a id="pgfId-1045865"></a>Therefore the mapping is as follows:</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1045866"></a><code>&#8216;zeroPathToLine &quot;lines&quot; </code></pre>
+<p>
+<a id="pgfId-1045867"></a>maps to</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1045868"></a><code>#ignoreZeroWidthPath</code></pre>
+<p>
+<a id="pgfId-1045869"></a>while</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1045870"></a><code>&#8216;zeroPathToLine &quot;ignore&quot;</code></pre>
+<p>
+<a id="pgfId-1045871"></a>maps to</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1045872"></a><code>ignoreZeroWidthPath</code></pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045874"></a>caseSensitivity</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045876"></a>case</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045878"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045880"></a>convertNode</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045882"></a>translateNode</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045884"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045886"></a>keepPcell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045888"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045890"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045891"></a>This PIPO option preserves parameterized cells (Pcells) by reading the SKILL files already created by Stream Out in the <code>KPDIR</code> directory located in the run directory. </p>
+<p>
+<a id="pgfId-1045892"></a>PIPO can be used to some extent for database archival whereas XStream is not meant to be used as a database archival mechanism.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045894"></a>mergeUndefinedPurposeToDrawing</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045896"></a>mergeUndefPurposToDrawing</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045898"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045900"></a>reportPrecision</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045902"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045904"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045905"></a>XStream does not perform this precision check and therefore this option is not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045907"></a>ignoreBox</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045909"></a>ignoreBoxes</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045911"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045913"></a>refLib</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045915"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045917"></a>Unsupported option </p>
+<p>
+<a id="pgfId-1045918"></a>In PIPO this boolean option merely indicates whether to use reference libraries. If this flag is set to &#8216;t&#8217; then <code>refLibOrder</code> is searched for the list of reference libraries. </p>
+<p>
+<a id="pgfId-1045919"></a>XStream uses only one option <code>refLibList</code>. If <code>refLibList</code> is empty then it implies that no reference library is being used.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045921"></a>refLibOrder</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045923"></a>refLibList</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045925"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045927"></a>noWriteExistCell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045929"></a>noOverwriteCell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045931"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045933"></a>runQuiet</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045935"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045937"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045938"></a>XStream does not filter warning and information messages during translation. All error, warning, and information messages are written to the log file.</p>
+<p>
+<a id="pgfId-1045939"></a>Therefore this option is not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045941"></a>NOUnmappingLayerWarning</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045943"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045945"></a>Unsupported option</p>
+
+<p>
+<a id="pgfId-1045946"></a>XStream does not filter warning and information messages during translation. Therefore this option is not supported by XStream.</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045948"></a>hierDepth</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045950"></a>hierDepth</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045952"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045954"></a>maxVertices</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045956"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045958"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045959"></a>This option is not supported by XStream during Stream In though you can use this option during Stream Out. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045961"></a>rodDir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045963"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045965"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1045966"></a>Using PIPO you can preserve Pcells and keep ROD data though these options are not sufficient to archive the complete design information.</p>
+<p>
+<a id="pgfId-1045967"></a>XStream does not allow you to preserve Pcells and ROD data as it is not intended to be used as an archival mechanism.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045969"></a>keepStreamCells</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045971"></a>keepStreamCells</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045973"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045975"></a>attachTechfileOfLib</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045977"></a>attachTechFileOfLib</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045979"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045981"></a>comprehensiveLog</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045983"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045985"></a>Unsupported option</p>
+
+<p>
+<a id="pgfId-1045986"></a>This is a SKILL reporting mechanism which is not applicable on XStream.</p>
+<p>
+<a id="pgfId-1045987"></a>Therefore, this option is not supported by XStream.</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045989"></a>appendDB</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045991"></a>appendDB</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045993"></a>Same option</p>
+<p>
+<a id="pgfId-1046948"></a>Use the <em>Append Existing Database</em> option to append data to an existing database. If the GDS file contains duplicate shapes or instances, they will be appended to the existing database.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045995"></a>genListHier</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045997"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1045999"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046000"></a>XStream writes hierarchical information in the summary file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046002"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046004"></a>disableLocking</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046006"></a>New option</p>
+<p>
+<a id="pgfId-1046007"></a>XStream provides the <code>disableLocking</code> option to disable file locking during Stream In. The disabling of file locking reduces the run time of Stream In especially if the designs contain a large number of cellviews in their hierarchy or library.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046009"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046011"></a>summaryFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046013"></a>New option</p>
+<p>
+<a id="pgfId-1046014"></a>XStream provides two files for messages and summary information whereas in PIPO the error file contains both messages and summary information.</p>
+<p>
+<a id="pgfId-1046015"></a>Therefore the PIPO template option <code>errFile</code> is equivalent to using both the <code>logFile</code> and <code>summaryFile</code> options in XStream. </p>
+</td>
+</tr>
+</tbody></table>
+<h3>
+<a id="pgfId-1046018"></a><a id="15658"></a>Stream Out Template File Mapping</h3>
+<p>
+<a id="pgfId-1046380"></a></p>
+<table class="webflareTable" id="#id1046019">
+<caption style="text-align:left;"><p>
+</p><div class="ft-figtabl-title">
+<a id="pgfId-1046021"></a>Stream Out Template File Options</div></caption>
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1046027">
+<a id="pgfId-1046027"></a>PIPO Option</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1046029">
+<a id="pgfId-1046029"></a>XStream Option</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1046031">
+<a id="pgfId-1046031"></a>Notes</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046033"></a>runDir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046035"></a>runDir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046037"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046039"></a>libName</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046041"></a>library</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046043"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046045"></a>primaryCell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046047"></a>topCell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046049"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046051"></a>viewName</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046053"></a>view</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046055"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046057"></a>outFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046059"></a>strmFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046061"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046063"></a>scale</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046065"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046067"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046068"></a>In DFII on CDB, you could change the DBU/UU of a design at the library level. This is not permitted in OpenAccess and therefore not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046070"></a>units</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046072"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046074"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046075"></a>In DFII on CDB, you could change the DBU/UU of a design and set the units at the library level. This is not permitted in OpenAccess and therefore not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046077"></a>hierDepth</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046079"></a>hierDepth</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046081"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046083"></a>convertToGeo</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046085"></a>flattenPcells</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046087"></a>Equivalent options</p>
+<p>
+<a id="pgfId-1046088"></a>This PIPO option flattens Pcells to geometry. XStream provides the <em>Flatten Pcells</em> option to flatten the Pcell instances in the designs.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046090"></a>maxVertices</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046092"></a>maxVertices</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046094"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046096"></a>refLib</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046098"></a>refLibList</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046100"></a>Equivalent options</p>
+<p>
+<a id="pgfId-1046101"></a>In PIPO this boolean option merely indicates whether to use reference libraries. XStream uses only one option <code>refLibList</code>. If <code>refLibList</code> is empty then it implies that no reference library is being used.</p>
+<p>
+<a id="pgfId-1046102"></a>Therefore the mapping is as follows:</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046103"></a>&#8217;refLib t</pre>
+<p>
+<a id="pgfId-1046104"></a>maps to</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046105"></a>refLibList &quot;XST_CDS_LIB&quot;</pre>
+<p>
+<a id="pgfId-1046106"></a>while </p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046107"></a>&#8217;refLib nil </pre>
+<p>
+<a id="pgfId-1046108"></a>maps to</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046109"></a>refLibList &quot;&quot;</pre>
+<p>
+<a id="pgfId-1046110"></a>For more information on refLibList see the Design Translation Using XStream Translator chapter of the <em>Virtuoso Studio Design Environment Adoption Guide.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046115"></a>libVersion</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046117"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046119"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046120"></a>This PIPO option allows you to change the version number of the output GDSII Stream. Default: 5.0.</p>
+<p>
+<a id="pgfId-1046121"></a>In XStream the version number of the output GDSII Stream is always 5.0.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046123"></a>checkPolygon</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046125"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046127"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046128"></a>OA does not allow coincident or colinear points and removes them during creation of paths and polygons. XStream only reports incomplete or illegal polygons in the log file.</p>
+<p>
+<a id="pgfId-1046129"></a>Therefore this option is not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046131"></a>snapToGrid</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046133"></a>snapToGrid</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046135"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046137"></a>simMosaicToArray</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046139"></a>arrayInstToScalar</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046141"></a>Changed option</p>
+<p>
+<a id="pgfId-1046142"></a>By default on OA, mosaics are kept as OA arrays (AREF in SKILL). when you set <code>arrayInstToScalar</code> to t, XStream converts the arrays to scalar instances (SREF in SKILL). This is a reversal in behavior from <code>arrayToSimMosaic</code> in PIPO. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046145"></a>caseSensitivity</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046147"></a>case</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046149"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046151"></a>lineToZeroPath</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046153"></a>ignoreLines</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046155"></a>Changed option</p>
+<p>
+<a id="pgfId-1046156"></a>In PIPO the template option <code>lineToZeroPath</code> can have the values <code>&lt;path/ignore&gt;</code>. By default, during stream out, XStream converts lines to paths and they are ignored only when <code>ignoreLines</code> option is set to <code>t</code>. </p>
+<p>
+<a id="pgfId-1046157"></a>Therefore the mapping is as follows: </p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046158"></a><code>&#8216;lineToZeroPath &quot;path&quot;</code></pre>
+<p>
+<a id="pgfId-1046159"></a>maps to</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046160"></a><code>#ignoreLines</code></pre>
+<p>
+<a id="pgfId-1046161"></a>while </p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046162"></a>&#8216;lineToZeroPath &quot;ignore&quot; </pre>
+<p>
+<a id="pgfId-1046163"></a>maps to</p>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046164"></a>ignoreLines</pre>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046166"></a>convertDot</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046168"></a>convertDot</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046170"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046172"></a>rectToBox</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046174"></a>rectToBox</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046176"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046178"></a>convertPathToPoly</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046180"></a>pathToPolygon</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046182"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046184"></a>keepPcell</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046186"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046188"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046189"></a>XStream does not support preservation of Pcells. See the <a href="chap6.html#23870">Overview</a> section for details.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046194"></a>useParentXYforText</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046196"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046198"></a>Unsupported option</p>
+
+<p>
+<a id="pgfId-1046199"></a>XStream does not do any data manipulation or data checking and therefore this option is not supported by XStream as yet. </p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046201"></a>reportPrecision</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046203"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046205"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046206"></a>XStream does not perform this precision check and therefore this option is not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046208"></a>runQuiet</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046210"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046212"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046213"></a>XStream does not filter warning and information messages during translation. All error, warning, and information messages are written to the log file.</p>
+<p>
+<a id="pgfId-1046214"></a>Therefore this option is not supported by XStream.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046216"></a>errFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046218"></a>logFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046220"></a>Equivalent options</p>
+<p>
+<a id="pgfId-1046221"></a>In PIPO, the error file contains messages and summary information. Therefore the PIPO template option <code>errFile</code> is equivalent to using both the <code>logFile</code> and <code>summaryFile</code> options in XStream. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046223"></a>NOUnmappingLayerWarning</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046225"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046227"></a>Unsupported option</p>
+
+<p>
+<a id="pgfId-1046228"></a>XStream does not filter warning and information messages during translation. Therefore this option is not supported by XStream.</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046230"></a>techFileChoice</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046232"></a>techLib</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046234"></a>Changed option</p>
+<p>
+<a id="pgfId-1046235"></a>The XStream option <code>techLib</code> and the PIPO option <code>techFileChoice</code> are not equivalent.</p>
+<p>
+<a id="pgfId-1046236"></a>The <code>techFileChoice</code> option is to choose the technology file attached either to the input library or to each cellview that is traversed. A Virtuoso product can have any cellview attached to any technology file. </p>
+<p>
+<a id="pgfId-1046237"></a>The <code>techLib</code> option in XStream is for obtaining information about the layers and purposes used in the design.</p>
+<p>
+<a id="pgfId-1046238"></a>By default, the technology file of the source library is used to get information about the layers and purposes used in the design.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046240"></a>pcellSuffix</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046242"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046244"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046245"></a>XStream does not support preservation of Pcells. See the <a href="chap6.html#23870">Overview</a> section for details.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046250"></a>respectGDSIILimits</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046252"></a>respectGDSIINameLimit</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046254"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046256"></a>dumpPcellInfo</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046258"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046260"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046261"></a>XStream does not support preservation of Pcells. See the <a href="chap6.html#23870">Overview</a> section for details.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046266"></a>cellMapTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046268"></a>cellMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046270"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046272"></a>layerTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046274"></a>layerMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046276"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046278"></a>textFontTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046280"></a>fontMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046282"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046284"></a>convertPin</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046286"></a>convertPin</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046288"></a>Same options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046290"></a>pinInfo</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046292"></a>pinAttNum</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046294"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046296"></a>pinTextMapTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046298"></a>pinTextMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046300"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046302"></a>propMapTable</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046304"></a>propMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046306"></a>Equivalent options</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046308"></a>propSeparator</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046310"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046312"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046313"></a>By default, XStream uses a blank space as the property separator during Stream Out. You cannot specify a property separator during Stream Out though you can specify it during Stream In. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046315"></a>userSkillFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046317"></a>userSkillFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046319"></a>Equivalent options</p>
+<p>
+<a id="pgfId-1046320"></a>In PIPO the following SKILL functions are supported:</p>
+
+<ul><li>
+<a id="pgfId-1046321"></a>poCellNameMap</li><li>
+<a id="pgfId-1046322"></a>poParamCellNameMap </li><li>
+<a id="pgfId-1046323"></a>pipoErrShapesHandler</li><li>
+<a id="pgfId-1046324"></a>poLayerMap</li><li>
+<a id="pgfId-1046325"></a>textFontMap</li><li>
+<a id="pgfId-1046326"></a>poTextMap</li><li>
+<a id="pgfId-1046327"></a>poPropMap</li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1046328"></a>In XStream all the above SKILL functions are supported for Stream Out except <code>poParamCellNameMap</code> and <code>pipoErrShapesHandler</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046330"></a>rodDir</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046332"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046334"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046335"></a>This option is not supported by XStream. Using PIPO you can preserve Pcells and keep ROD data though these options are not sufficient to archive the complete design information.</p>
+<p>
+<a id="pgfId-1046336"></a>XStream does not allow you to preserve Pcells and ROD data as it is not intended to be used as an archival mechanism.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046338"></a>comprehensiveLog</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046340"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046342"></a>Unsupported option</p>
+
+<p>
+<a id="pgfId-1046343"></a>This is a SKILL reporting mechanism which is not applicable on XStream. Therefore, this option is not supported by XStream.</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046345"></a>genListHier</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046347"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046349"></a>Unsupported option</p>
+<p>
+<a id="pgfId-1046350"></a>XStream writes hierarchical information in the summary file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046352"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046354"></a>objectMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046356"></a>New option</p>
+<p>
+<a id="pgfId-1046357"></a>This option is not supported by PIPO.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046359"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046361"></a>viaMap</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046363"></a>New option</p>
+<p>
+<a id="pgfId-1046364"></a>This option is not supported by PIPO.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046366"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046368"></a>blockagePurpose</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046370"></a>New option</p>
+<p>
+<a id="pgfId-1046371"></a>In XStream, you can specify the purpose on which blockages are to be translated. By default during Stream Out, blockages in the input OpenAccess database are translated as <code>BOUNDARY</code> elements in the output Stream file.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046373"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046375"></a>summaryFile</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1046377"></a>New option</p>
+<p>
+<a id="pgfId-1046378"></a>XStream provides two files for messages and summary information whereas in PIPO the error file contains both messages and summary information.</p>
+<p>
+<a id="pgfId-1046379"></a>Therefore the PIPO template option <code>errFile</code> is equivalent to using both the <code>logFile</code> and <code>summaryFile</code> options in XStream. </p>
+</td>
+</tr>
+</tbody></table>
+<h2>
+<a id="pgfId-1046382"></a><a id="41223"></a>Using the PIPO-XStream Template Conversion Utility</h2>
+
+<p>
+<a id="pgfId-1046383"></a>If you have been using PIPO and want migrate to XStream you can convert your existing PIPO templates to XStream template file using the <code>pipo2Xstrm.pl</code> utility. This utility can be accessed from the<code> &lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>install_directory</em></span><code>&gt;/tools/dfII/bin </code>directory. This utility creates an XStream template file from an existing PIPO template file. </p>
+<p>
+<a id="pgfId-1046384"></a>The command line syntax to execute this <code>pipo2Xstrm.pl</code> is as follows:</p>
+
+<a id="pgfId-1046385"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+pipo2Xstrm.pl {-in <code><em>PIPOTemplateFileName
+</em></code>[-out <code><em>XStreamTemplateFileName</em></code>]
+[-log <code><em>TranslationLogFileName</em></code>]
+[-overwrite]
+[-help] }</pre>
+
+<p>
+<a id="pgfId-1046386"></a>If the <code>pipo2Xstrm.pl</code> utility fails to run, then copy the utility from <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>install_directory</em></span><code>&gt;/tools/dfII/bin </code>directory to you local bin directory and modify the first line of code in the script by specifying the complete path from where you can use the perl executable:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046387"></a>#!/usr/bin/perl</pre>
+
+<p>
+<a id="pgfId-1046388"></a>change to:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046389"></a>#!<code><em>&lt;you_local_path_to_perl&gt;</em></code></pre>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1046390"></a>You can exit the script using CTRL-C key combination.</div>
+
+<p>
+<a id="pgfId-1046391"></a>This utility automatically determines whether the input PIPO template file is for Stream In or Stream Out and creates the corresponding XStream template. If you specify a log file name, the log file contains:</p>
+<ul><li>
+<a id="pgfId-1046392"></a>XStream replacements for PIPO options</li><li>
+<a id="pgfId-1046393"></a>XStream inserted options for those missing from the PIPO template</li><li>
+<a id="pgfId-1046394"></a>additional options specific to XStream, and</li><li>
+<a id="pgfId-1046395"></a>PIPO options not supported in XStream on OpenAccess. </li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1046397"></a><a id="47754"></a>Using the PIPO-XStream Utility</h3>
+
+<p>
+<a id="pgfId-1046398"></a>The following section contains the sample XStream files translated from PIPO and the corresponding log files that the <code>pipo2Xstrm.pl</code> utility generates.</p>
+<p>
+<a id="pgfId-1046399"></a>Use the following commands to run the utility.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046400"></a>pipo2Xstrm.pl - in streamOut.il -out xstrmIn.templt -log xlatestrmIn.log</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046401"></a>..............</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046402"></a>WARNING: Handling of mosaics has changed - review documentation on arrayInstToScalar</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046403"></a>................................</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046404"></a>PIPO to XStream strmIn template translation complete.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046405"></a>Review template output. You may want to change file names, etc. from retained values.</pre>
+<h4>
+<a id="pgfId-1046406"></a>Following is a sample XStream stream in template file translated from PIPO</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046407"></a># XStream strmIn template translated from PIPO strmIn template. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046408"></a># Source PIPO strmIn template file: streamIn.il </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046409"></a># Destination XSTREAM strmIn template file: xstrmIn.templt </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046410"></a># Wed Jul 20 20:46:51 2005</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046411"></a>runDir&#160;&#160;    &quot;.&quot;   # Run Directory</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046412"></a>strmFile&#160;&#160;  &quot;test.gds&quot; # Input Stream File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046413"></a>topCell&#160;&#160;   &quot;&quot;    # Toplevel Cell to Translate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046414"></a>library&#160;&#160;   &quot;strmLib&quot;   # Destination Library</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046415"></a>loadTechFile&#160;&#160;    &quot;&quot;    # ASCII Tech File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046416"></a>logFile&#160;&#160;   &quot;PIPO.LOG&quot; # Output Log File Name</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046417"></a>hierDepth&#160;&#160; 32&#160;&#160;  # Hierarchical Depth to Translate to (0-32)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046418"></a>#snapToGrid&#160;&#160;     # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046419"></a>#arrayInstToScalar&#160;&#160;    # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046420"></a>case &quot;lower&quot;&#160;&#160;   # upper | lower | preserve</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046421"></a>#ignoreZeroWidthPath&#160;&#160;  # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046422"></a>translateNode&#160;&#160;   # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046423"></a>#skipUndefinedLPP&#160;&#160;     # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046424"></a>#ignoreBoxes&#160;&#160;    # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046425"></a>#keepStreamCells # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046426"></a>attachTechFileOfLib&#160;&#160;   &quot;&quot;    # Tech Lib to Attach to Target Lib</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046427"></a>#NoOverwriteCell # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046428"></a>cellMap&#160;&#160;   &quot;&quot;    # Input Cell Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046429"></a>layerMap&#160;&#160;  &quot;layerMap&quot; # Input Layer Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046430"></a>fontMap&#160;&#160;   &quot;&quot;    # Input Font Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046431"></a>pinAttNum&#160;&#160; 0&#160;&#160;   # Stream Attribute # (1-127) for Preserving Pins</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046432"></a>propMap&#160;&#160;   &quot;&quot;    # Input Property Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046433"></a>propSeparator&#160;&#160;   &quot;,&quot;   #  </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046434"></a>userSkillFile&#160;&#160;   &quot;&quot;    # Input User SKILL File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046435"></a>refLibList &quot;&quot;&#160;&#160;  # File Containing refLibList</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046436"></a>#mergeUndefPurposToDrawing&#160;&#160;  # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046437"></a>viaMap&#160;&#160;    &quot;&quot;    # Input Via Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046438"></a>view &quot;layout&quot;&#160;&#160;  # Destination View Name</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046439"></a>summaryFile&#160;&#160;     &quot;&quot;    # Output Summary File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046440"></a>#disableLocking&#160;&#160; # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046441"></a>objectMap&#160;&#160; &quot;&quot;&#160;&#160;  # Input Object Map File</pre>
+<h4>
+<a id="pgfId-1046442"></a>Following is a sample of the corresponding pipo2Xstrm stream in translation log file</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046443"></a># Source PIPO strmIn template file: streamIn.il </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046444"></a># Destination XSTREAM strmIn template file: xstrmIn.templt </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046445"></a># Wed Jul 20 20:46:51 2005</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046446"></a>runDir replaces runDir</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046447"></a>strmFile replaces inFile</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046448"></a>topCell replaces primaryCell</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046449"></a>library replaces libName</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046450"></a>loadTechFile replaces techfileName</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046451"></a>scale is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046452"></a>units is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046453"></a>logFile replaces errFile</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046454"></a>refLib is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046455"></a>hierDepth replaces hierDepth</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046456"></a>maxVertices is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046457"></a>checkPolygon is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046458"></a>snapToGrid replaces snapToGrid</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046459"></a>WARNING: Handling of mosaics has changed - review documentation on arrayInstToScalar</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046460"></a>arrayInstToScalar replaces arrayToSimMosaic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046461"></a>case replaces caseSensitivity</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046462"></a>ignoreZeroWidthPath replaces zeroPathToLine</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046463"></a>translateNode replaces convertNode</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046464"></a>keepPcell is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046465"></a>skipUndefinedLPP replaces skipUndefinedLPP</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046466"></a>ignoreBoxes replaces ignoreBox</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046467"></a>reportPrecision is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046468"></a>keepStreamCells replaces keepStreamCells</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046469"></a>attachTechFileOfLib replaces attachTechfileOfLib</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046470"></a>runQuiet is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046471"></a>saveAtTheEnd is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046472"></a>NoOverwriteCell replaces noWriteExistCell</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046473"></a>NOUnmappingLayerWarning is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046474"></a>genListHier is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046475"></a>cellMap replaces cellMapTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046476"></a>layerMap replaces layerTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046477"></a>fontMap replaces textFontTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046478"></a>pinAttNum replaces restorePin</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046479"></a>propMap replaces propMapTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046480"></a>propSeparator replaces propSeparator</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046481"></a>userSkillFile replaces userSkillFile</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046482"></a>rodDir is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046483"></a>refLibList replaces refLibOrder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046484"></a>comprehensiveLog is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046486"></a>Adding missing PIPO option equivalents with default values. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046487"></a>Inserting mergeUndefPurposToDrawing with default value &#8217;nil&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046488"></a>Adding new XStream options with default values. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046489"></a>New option &#8217;viaMap&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046490"></a>New option &#8217;view&#8217; with value &#8217;&quot;layout&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046491"></a>New option &#8217;summaryFile&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046492"></a>New option &#8217;disableLocking&#8217; with value &#8217;nil&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046493"></a>New option &#8217;objectMap&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046494"></a>PIPO to XStream strmIn template translation complete.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046495"></a>Review template output. You may want to change file names, etc. from retained values.</pre>
+<h4>
+<a id="pgfId-1046496"></a>Following is a sample XStream stream out template file translated from PIPO</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046497"></a># XStream strmOut template translated from PIPO strmOut template. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046498"></a># Source PIPO strmOut template file: streamOut.il </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046499"></a># Destination XSTREAM strmOut template file: xstrmOut.templt </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046500"></a># Wed Jul 20 21:13:45 2005</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046501"></a>runDir&#160;&#160;    &quot;.&quot;   # Run Directory</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046502"></a>library&#160;&#160;   &quot;LIB&quot;       # Input Library</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046503"></a>topCell&#160;&#160;   &quot;&quot;    # Toplevel Cell to Translate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046504"></a>view &quot;layout&quot;&#160;&#160;  # Toplevel Cell View Name</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046505"></a>strmFile&#160;&#160;  &quot;test.gds&quot; # Output Stream File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046506"></a>hierDepth&#160;&#160; 32&#160;&#160;  # Hierarchical Depth to Translate to (0-32)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046507"></a>#flattenPcells&#160;&#160;  # (t/nil) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046508"></a>maxVertices&#160;&#160;     200   # Limit of Vertices Allowed</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046509"></a>#refLibList&#160;&#160;     # Name of File Containing refLibList</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046510"></a>#snapToGrid&#160;&#160;     # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046511"></a>#arrayInstToScalar&#160;&#160;    # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046512"></a>case &quot;upper&quot;&#160;&#160;   # upper | lower | preserve</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046513"></a>#ignoreLines&#160;&#160;    # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046514"></a>convertDot &quot;node&quot;&#160;&#160;    # node | polygon | ignore</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046515"></a>#rectToBox # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046516"></a>#pathToPoly&#160;&#160;     # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046517"></a>logFile&#160;&#160;   &quot;PIPO.LOG&quot; # Output Log File Name</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046518"></a>#respectGDSIINameLimit # (t/nil)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046519"></a>cellMap&#160;&#160;   &quot;&quot;    # Input Cell Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046520"></a>layerMap&#160;&#160;  &quot;layerMap&quot; # Input Layer Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046521"></a>fontMap&#160;&#160;   &quot;&quot;    # Input Font Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046522"></a>convertPin &quot;geometry&quot; # geometry | text | geometryAndTxt | ignore</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046523"></a>pinAttNum&#160;&#160; 0&#160;&#160;   # Stream Attribute # (1-127) for Preserving Pins</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046524"></a>pinTextMap &quot;&quot;&#160;&#160;  # Input Pin Text Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046525"></a>propMap&#160;&#160;   &quot;&quot;    # Input Property Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046526"></a>userSkillFile&#160;&#160;   &quot;&quot;    # Input User SKILL File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046527"></a>viaMap&#160;&#160;    &quot;&quot;    # Input Via Map File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046528"></a>summaryFile&#160;&#160;     &quot;&quot;    # Output Summary File</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046529"></a>blockagePurpose&#160;&#160; &quot;boundary&quot; # Purpose Name for Blockages</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046530"></a>techLib&#160;&#160;   &quot;&quot;    # Technology Library</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046531"></a>objectMap&#160;&#160; &quot;&quot;&#160;&#160;  # Input Object Map File</pre>
+<h4>
+<a id="pgfId-1046532"></a>Following is a sample of the corresponding pipo2Xstrm stream in translation log file</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046533"></a># Source PIPO strmOut template file: streamOut.il </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046534"></a># Destination XSTREAM strmOut template file: xstrmOut.templt </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046535"></a># Wed Jul 20 21:13:45 2005</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046536"></a>runDir replaces runDir</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046537"></a>library replaces libName</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046538"></a>topCell replaces primaryCell</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046539"></a>view replaces viewName</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046540"></a>strmFile replaces outFile</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046541"></a>scale is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046542"></a>units is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046543"></a>hierDepth replaces hierDepth</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046544"></a>flattenPcells replaces convertToGeo</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046545"></a>maxVertices replaces maxVertices</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046546"></a>refLibList replaces refLib</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046547"></a>libVersion is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046548"></a>checkPolygon is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046549"></a>snapToGrid replaces snapToGrid</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046550"></a>WARNING: Handling of mosaics has changed - review documentation on arrayInstToScalar</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046551"></a>arrayInstToScalar replaces simMosaicToArray</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046552"></a>case replaces caseSensitivity</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046553"></a>ignoreLines replaces lineToZeroPath</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046554"></a>convertDot replaces convertDot</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046555"></a>rectToBox replaces rectToBox</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046556"></a>pathToPoly replaces convertPathToPoly</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046557"></a>keepPcell is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046558"></a>useParentXYforText is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046559"></a>reportPrecision is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046560"></a>runQuiet is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046561"></a>logFile replaces errFile</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046562"></a>NOUnmappingLayerWarning is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046563"></a>techFileChoice is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046564"></a>pcellSuffix is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046565"></a>genListHier is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046566"></a>respectGDSIINameLimit replaces respectGDSIILimits</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046567"></a>dumpPcellInfo is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046568"></a>cellMap replaces cellMapTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046569"></a>layerMap replaces layerTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046570"></a>fontMap replaces textFontTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046571"></a>convertPin replaces convertPin</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046572"></a>pinAttNum replaces pinInfo</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046573"></a>pinTextMap replaces pinTextMapTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046574"></a>propMap replaces propMapTable</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046575"></a>propSeparator is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046576"></a>userSkillFile replaces userSkillFile</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046577"></a>rodDir is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046578"></a>comprehensiveLog is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046579"></a>genListHier is unsupported in XStream. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046580"></a>Adding missing PIPO option equivalents with default values. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046581"></a>Adding new XStream options with default values. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046582"></a>New option &#8217;viaMap&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046583"></a>New option &#8217;summaryFile&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046584"></a>New option &#8217;blockagePurpose&#8217; with value &#8217;&quot;boundary&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046585"></a>New option &#8217;techLib&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046586"></a>New option &#8217;objectMap&#8217; with value &#8217;&quot;&quot;&#8217; </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046587"></a>PIPO to XStream strmOut template translation complete.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1046588"></a>Review template output. You may want to change file names, etc. from retained values.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1036097"></a></pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5.html" id="prev" title="Changes to Environment Objects and Shapes">Changes to Environment Objects ...</a></em></b><b><em><a href="appA.html" id="nex" title="prRules Conversion Messages">prRules Conversion Messages</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
