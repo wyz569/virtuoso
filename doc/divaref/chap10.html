@@ -1,0 +1,2133 @@
+
+<html><head><title>Extracting Parasitics (LPE)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027654" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Extracting Parasitics (LPE)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027654" />
+<meta name="NextFile" content="chap11.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap9.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Extracting Parasitics (LPE)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap9.html" title="Extracting Parameters (LPE)">Extracting Parameters (LPE)</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap11.html" title="Extracting Parasitic Resistance (PRE)">Extracting Parasitic Resistanc ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>10
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Extracting Parasitics (LPE)<hr />
+</h1>
+<h2>
+<a id="pgfId-1014199"></a>Introduction<a id="Introduction"></a></h2>
+
+<p>
+<a id="pgfId-1014204"></a><a id="marker-1014200"></a>During<a id="marker-1014201"></a> device<a id="marker-1014202"></a> and connectivity <a id="marker-1014203"></a>extraction, an extracted version of the circuit layout is produced. The extracted version contains instances of devices and nets in the form of a true electrical network.</p>
+<p>
+<a id="pgfId-1014205"></a>The verification system provides tools for measuring parasitics, performing calculations, and storing the results in the extracted network. Parasitic measurements are saved in the extracted network either as parameter properties on devices or as parasitic devices between nets.</p>
+<p>
+<a id="pgfId-1014206"></a>Devices in a circuit which are defined by intentional mask interactions are recognized and extracted by the <a id="marker-1014207"></a><em>extractDevice </em><a id="marker-1014208"></a>and <em>extractMOS </em><a id="marker-1014209"></a><a id="marker-1014210"></a>commands. These devices usually appear in the schematic of the circuit.</p>
+<p>
+<a id="pgfId-1014211"></a>Devices that exist only as side effects of the mask layout and do not normally appear in the schematic are referred to as parasitic devices. A good example of a parasitic device is the capacitance between two shapes on interconnect layers that cross over each other. The parasitic value involved is derived from measurements of the crossover interaction. </p>
+<p>
+<a id="pgfId-1014212"></a>The verification tools can measure a wide range of characteristics of the circuit topology and form parasitic devices from them with a range of options as to how the devices are connected in the circuit (between two nets, one net to ground). The<em> measureParasitic</em>, <em>measureFringe</em><a id="marker-1014213"></a>, and <em>multiLevelParasitic</em> command definitions give details of the capabilities.</p>
+<p>
+<a id="pgfId-1014214"></a>The commands available for manipulating parasitics are detailed in the command reference section of this chapter. The commands are as follows:</p>
+<ul><li>
+<a id="pgfId-1014216"></a><code>measureParasitic</code><a id="marker-1014215"></a><br />
+<a id="pgfId-1014217"></a>Measures the values of topological relationships that occur due to mask layer interaction.</li><li>
+<a id="pgfId-1014218"></a><code>multiLevelParasitic</code><br />
+<a id="pgfId-1014219"></a>Measures parasitic capacitances from any or all interactions between multiple layers that are ordered by their positions relative to each other.</li><li>
+<a id="pgfId-1014220"></a><code>measureFringe</code><br />
+<a id="pgfId-1014221"></a>Measures the values of topological relationships that occur when mask layers do not overlap.</li><li>
+<a id="pgfId-1020438"></a><code>complexParasitic</code><br />
+<a id="pgfId-1020441"></a>Combines the<a id="marker-1020462"></a> lateral functionality of measureFringe, and the vertical functionality of multilevelParasitic into a single rule. This combination provides greater accuracy by allowing the measurement of more environmental factors that contribute to capacitance.</li><li>
+<a id="pgfId-1014222"></a><code>calculateParasitic</code><br />
+<a id="pgfId-1014223"></a>Allows calculations to be performed on and between measured values. </li><li>
+<a id="pgfId-1014224"></a><code>saveParasitic</code><br />
+<a id="pgfId-1014225"></a>Saves measured or calculated values as parasitic devices inside the extracted network.</li><li>
+<a id="pgfId-1014226"></a>attachParasitic<br />
+<a id="pgfId-1014227"></a>Saves measured or calculated parasitic values as parameter properties on devices. The values were derived from measurements made of shapes and relationships outside the device and are associated with the device through some direct or indirect interaction.</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1014229"></a>Netlisting Parasitics<a id="Netlisting Parasitics"></a></h3>
+
+<p>
+<a id="pgfId-1014230"></a>If your<em> schematic </em>view of the circuit does not contain parasitic devices and your <em>extracted </em>view does, you might have conflicting needs for generation of the netlist of the <em>extracted </em>view. For SPICE simulation, you do want to include the parasitic devices in the netlist; for LVS checking, you do not want to include them.</p>
+<p>
+<a id="pgfId-1014232"></a><a id="marker-1014231"></a>This is achieved by having two different views for each parasitic device. One view (called the<em> spice</em> view) has the netlisting control commands built in to generate the correct information in a SPICE netlist. The other view (called the <em>lvs</em> view) has information that causes it to be ignored by the netlister.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014236"></a>For the<a id="marker-1014233"></a> <em>lvs </em>view, the<em> nlAction</em><a id="marker-1014234"></a><a id="marker-1014235"></a> property for parasitic devices must be set to <em>ignore </em>so that the devices are not netlisted. The <em>nlAction</em> property must be placed in the property list of the device&#8217;s cellview.</div>
+<p>
+<a id="pgfId-1014237"></a>Two parasitic devices exist in the system library with the <em>lvs </em>view already defined. They are as follows:</p>
+<ul><li>
+<a id="pgfId-1014238"></a>pcapacitor<br />
+<a id="pgfId-1014239"></a>Equivalent to the normal device capacitor</li><li>
+<a id="pgfId-1014240"></a>pdiode<br />
+<a id="pgfId-1014241"></a>Equivalent to the normal device diode</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014242"></a>Both have a <em>symbol</em> view so they can be seen in the <em>extracted </em>view, a <em>spice</em> view so they can be netlisted in SPICE format, and an <em>lvs</em> view so they can be ignored during netlisting for an LVS run.</p>
+
+<h3>
+<a id="pgfId-1014243"></a>Measurement</h3>
+
+<p>
+<a id="pgfId-1014246"></a>The measurement process uses the <a id="marker-1014244"></a><em>Measure</em> and <em>Calculate</em><a id="marker-1014245"></a> commands.</p>
+
+<h4>
+<a id="pgfId-1014247"></a>Measure</h4>
+
+<p>
+<a id="pgfId-1014248"></a>The measurement commands associate each measurement with one of the following:</p>
+<ul><li>
+<a id="pgfId-1014249"></a>Two electrical net numbers that form the parasitic device terminals</li><li>
+<a id="pgfId-1014250"></a>The measured shape&#8217;s number if the measurement is to be attached to a device as a parameter</li></ul>
+
+<p>
+<a id="pgfId-1014251"></a>If different measurements in the same measure command result in the same two net numbers, they are summed together into a single measurement result. </p>
+<p>
+<a id="pgfId-1014252"></a>The results from any measurement are given a name. This is a reference to those measurements which can be used in other processing commands.</p>
+<p>
+<a id="pgfId-1014257"></a><a id="marker-1014253"></a>The measurement commands are <a id="marker-1014254"></a><em>measureParasitic</em><a id="marker-1014255"></a>, <em>measureFringe</em><a id="marker-1014256"></a>, and <em>multiLevelParasitic</em>.</p>
+
+<h4>
+<a id="pgfId-1014258"></a>Calculate</h4>
+
+<p>
+<a id="pgfId-1014259"></a>A calculation can be performed on the results of a single measurement (referenced by name), between the results of multiple measurements. All the measurement names referenced in the calculation must be associated with the same object. You cannot mix device measurements with parasitic measurements. </p>
+<p>
+<a id="pgfId-1014260"></a>The command for calculation is <em>calculateParasitic</em>.</p>
+<p>
+<a id="pgfId-1014261"></a>Here is an example:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014262"></a>calculateParasitic( cap1 + cap2 )</pre>
+<p>
+<a id="pgfId-1021473"></a>In this example, the object of both measurements is a parasitic value. Every value has two net numbers associated with it. The plus sign in the calculation says that any values in the measurement of <em>cap1</em> and <em>cap2 </em>that have the same two net numbers are to be summed together to give a value result with the same two net numbers. </p>
+
+<h3>
+<a id="pgfId-1021475"></a>Measurement Operators<a id="Measurement Functions"></a></h3>
+
+<p>
+<a id="pgfId-1021476"></a>The specific measurement operators are detailed in the command reference section of this manual. Some, such as <em>area</em> and <em>perimeter</em>, are obvious and need no further explanation. Others, however, do need clarification.</p>
+
+<h4>
+<a id="pgfId-1014267"></a>Length</h4>
+
+<p>
+<a id="pgfId-1014269"></a>The term <a id="marker-1014268"></a><em>length</em> when applied to a random polygon is meaningless. For a rectangle it could mean the length of the longest axis, but for any more complex shape, no simple definition is possible.</p>
+<p>
+<a id="pgfId-1014270"></a>For the purposes of parameter and parasitic measurement, the definition of the length of a shape on a layer is defined as the length of edges of that shape relative to shapes on one or more other layers.</p>
+<p>
+<a id="pgfId-1014271"></a>A simple example of this is the length of a transistor gate. In this context it is the length of the gate shape that is totally inside the polysilicon shape, divided by two. The division by two is required because the relationship defined measures both sides of the gate.</p>
+<p>
+<a id="pgfId-1014272"></a>Several tools are provided to define the relationship. They are as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014273"></a>over not_over inside outside butting coincident</pre>
+<p>
+<a id="pgfId-1014274"></a>The relationship can include up to eight layers.</p>
+
+<h4>
+<a id="pgfId-1014275"></a>Bends</h4>
+
+<p>
+<a id="pgfId-1014283"></a>The definition of <a id="marker-1014276"></a>bends has problems similar to those of the definition of length.</p>
+
+<p>
+<a id="pgfId-1017820"></a></p>
+<div class="webflare-div-image">
+<img width="586" height="129" src="images/chap10-2.gif" /></div>
+
+<p>
+<a id="pgfId-1014284"></a>The first two figures are squares with a corner cut out. Does the first one have a bend in it? If you believe it does, consider the third figure. Does this have two bends in it?</p>
+<p>
+<a id="pgfId-1014286"></a>Consider also this figure which represents an <a id="marker-1014285"></a>MOS transistor gate with the source and drain diffusions.</p>
+
+<p>
+<a id="pgfId-1017821"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="143" src="images/chap10-3.gif" /></div>
+
+<p>
+<a id="pgfId-1014299"></a>Both gates appear to have bends in them, but one has a bend in the length of the gate and the other has a bend in the width of the gate. The bend is relative to the diffusion layer.</p>
+<p>
+<a id="pgfId-1014300"></a>As in the definition of length, the definition of bends depends upon a shape&#8217;s relationship to shapes on other layers. The measurement command enables you to define this relationship to other layers as part of the bend determination.</p>
+<p>
+<a id="pgfId-1014302"></a><a id="marker-1014301"></a>By the program&#8217;s definition, a bend is created by an inside corner (concave corner) in a shape, so a count of bends is a count of the inside corners. </p>
+<p>
+<a id="pgfId-1014303"></a>In addition to counting bends, you can also use the program for counting corners and angles. A corner is an outside corner (convex corner) in a shape, and an angle is any corner, outside or inside. Therefore, a count of angles is the same as a count of bends plus a count of corners.</p>
+
+<h3>
+<a id="pgfId-1014304"></a>NULL Measurements</h3>
+
+<p>
+<a id="pgfId-1014305"></a>The parameter and figure mode parasitic extraction measurements have these characteristics.</p>
+<ul><li>
+<a id="pgfId-1014306"></a>If a value is measured to be 0, as is the case with bend counts, the value is treated as any other value. If there are no limits specified, the value is retained. If there are limits specified, the value is checked against them and retained if it conforms to those limits.</li><li>
+<a id="pgfId-1014307"></a>If no measurement is made, as is the case of area of gate over metal when there is no metal under the gate, no measurement is created, and a value of zero is created if the limits specified request a value of zero to be retained. If the limits are not specified, or they exclude the value of zero, no measurement value will be created. </li></ul>
+
+<p>
+<a id="pgfId-1014308"></a>The difference between a value of zero and no measurement is in creation of the resultant property. A value of zero can be used to create a property with a value of zero. If no measurement is made, a property cannot be created.</p>
+
+<h3>
+<a id="pgfId-1014310"></a>Measurement Optimization<a id="Measurement Optimization"></a></h3>
+
+<p>
+<a id="pgfId-1014311"></a>The measurement capabilities of the system are designed to be very flexible for general use. As a result, the code cannot be optimized as would be the case if the measurements were made from predefined layer relationships, as in the case of MOS transistor width and length in the <em>extractMOS </em><a id="marker-1014312"></a>command.</p>
+<p>
+<a id="pgfId-1014313"></a>However, some degree of run-time optimization is achieved through other techniques. Since these techniques can be controlled by the way you write your measurement commands, an explanation is required.</p>
+
+<h4>
+<a id="pgfId-1014314"></a>Implied Logical Operations</h4>
+
+<p>
+<a id="pgfId-1014316"></a>Inside the <a id="marker-1014315"></a>measurement command, up to eight layers can be defined in a single complex relationship. For example, with five layers, you can write the following:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014317"></a>area metal over poly over cut not_over buried_cut <br />not_over tub</pre>
+<p>
+<a id="pgfId-1014318"></a>Such a relationship is processed by looking at all the layers at once. The program does not do a series of two-layer logical operations to derive the required area. This is optimal unless parts of the relationship are used multiple times in which case it would be better to extract that area separately with logical commands. In the previous example, if you had many relationships involving <em>poly over cut</em>, it would be more efficient to write the following:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014319"></a>pcut = geomAnd( poly cut )<br />area metal over pcut not over buried_cut<br />not_over tub<br />area metal2 over pcut over well</pre>
+
+<h4>
+<a id="pgfId-1014320"></a>Consolidated Measurements</h4>
+
+<p>
+<a id="pgfId-1014321"></a>Multiple measurement commands might be processed in one pass of the data. This capability is controlled by the system command optimizer which decides if such consolidation is worthwhile.</p>
+<p>
+<a id="pgfId-1014322"></a>The optimization decision is based on the number of common layers in a command. For example, if one measurement involves layers <em>a, b, c</em> and <em>d,</em> and another measurement involves layers <em>b, c, d </em>and <em>e, </em>then they are consolidated, and both measurements are made at the same time.</p>
+<p>
+<a id="pgfId-1014323"></a>The exact optimization criterion are not given here since it is not a simple heuristic. </p>
+<p>
+<a id="pgfId-1014324"></a>Any number of measurement commands can be consolidated provided the following criteria is met:</p>
+<ul><li>
+<a id="pgfId-1014325"></a>The optimizer decides that the consolidation is worthwhile.</li><li>
+<a id="pgfId-1014326"></a>The resulting number of layers does not exceed the maximum allowed.</li><li>
+<a id="pgfId-1014327"></a>The measurements are contiguous in the command stream, that is, not separated by other commands.</li></ul>
+
+
+<p>
+<a id="pgfId-1014328"></a>Separate groups of measurement commands in the command stream are optimized separately.</p>
+
+<h2>
+<a id="pgfId-1014330"></a>Parasitic Measurement Commands<a id="Parasitic Measurement Reference Commands"></a></h2>
+
+<p>
+<a id="pgfId-1017826"></a>The following section discusses the parasitic measurement commands.</p>
+
+<h3>
+<a id="pgfId-1014337"></a><a id="marker-1014333"></a><a id="39594"></a>calculateParasitic<a id="calculateParasitic"></a></h3>
+<a id="pgfId-1014339"></a><a id="marker-1014338"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outValue=calculateParasitic( expression [limit] [ground] )</pre>
+<h4>
+<a id="pgfId-1014340"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014344"></a>This is used to create new <a id="marker-1014341"></a>measurement <a id="marker-1014342"></a>values<a id="marker-1014343"></a> based on calculations with previously measured or calculated values derived from the <em>measureParasitic </em><a id="marker-1014345"></a>or <em>calculateParasitic</em> commands.</p>
+<p>
+<a id="pgfId-1014346"></a>Each<em> measureParasitic </em>command enables you to make a single measurement. This command enables you to manipulate one or more of these simple measurements to form more complex parasitic values.</p>
+
+<h4>
+<a id="pgfId-1014347"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014348"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022031"></a> <a id="marker-1020725"></a>The measurement<a id="marker-1020726"></a> results are stored in a layer that contains parasitic values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands related to parasitic manipulation can reference the layer. Specifically, these are <em>calculateParasitic</em> and <em>saveParasitic</em><a id="marker-1020728"></a>.</p>
+
+<p><strong>
+<a id="pgfId-1022036"></a><code>expression</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022039"></a> This is the calculation expression relating the results of previous <em>measureParasitic</em> or <em>calculateParasitic</em> commands with mathematical operators. Refer to <a href="chap9.html#77361">calculateParameter</a> for the definition of available operators.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014503"></a> <a id="marker-1014501"></a>The<a id="marker-1014502"></a> precedence of the calculation operators follows normal mathematics conventions; that is, multiply and divide have higher precedence than plus or minus with left to right evaluation of operators with the same precedence. You can include parentheses to override the default evaluation order. The names have to be separated from the operators by spaces to avoid conflict with names containing special characters (for example, +P).</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014504"></a> All the layer references from previous<em> measureParasitic</em> or <em>calculateParasitic </em>commands (used in a <em>calculateParasitic</em> command) must be of the same type. You cannot mix measurements made with the <em>figure</em> option of the <em>measureParasitic</em> command with node-based measurements made by any of the parasitic measurement commands.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014505"></a> Each parameter used in a <em>calculateParasitic</em> command references data stored in a file which has to be opened by the program. The number of files available when the program is running depends upon factors outside the program&#8217;s control. To reduce the risk of exceeding the number of files available, a limit of ten parameters within a single <em>calculateParasitic</em> <a id="marker-1014506"></a>command has been set (as a compile-time option). If you exceed this limit, the run does not start. If the required number of files is not available when the <em>calculateParasitic </em>command is executed, the program recognizes the fact and discontinues the run.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014507"></a> If a calculation results in an inappropriate operation, such as dividing by zero, the programs issues a warning message and aborts that particular calculation. Such situations are normally the result of a flawed calculation definition, as would be the case if a division is requested by a value that can be measured as zero or nonexistent.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014508"></a> For example</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014509"></a><code> x = area metal over poly
+y = area metal over diff
+calculate x/y</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014510"></a> If a shape/node of metal overlaps poly but not diff, there is no y measurement that results in a value of 0. This calculation then fails.</p>
+
+<p><strong>
+<a id="pgfId-1014511"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022066"></a> This optional argument provides the ability to reject calculated values because they fall outside the specified limits. It can be used to significantly reduce the amount of data being created by rejecting all values that are insignificant.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014512"></a> The format of the limits specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014513"></a> <code>low_limit op keyword op high_limit
+keyword op low_limit
+keyword op high_limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014516"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014517"></a> You can use the following operators:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014518"></a><code> &lt; 
+&lt;= 
+&gt; 
+&gt;= 
+==</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014523"></a> The keyword can be either <em>ignore </em>or <em>keep</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014524"></a> You can use the following limit specifications:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014525"></a><code> ignore &lt; .001
+keep &gt;= .3
+1 &lt; keep &lt; 5
+1.3e-4 &lt;= ignore &lt;= 2.7e-3</code></p>
+
+<p><strong>
+<a id="pgfId-1021388"></a><code>ground</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022075"></a> This optional argument provides the ability to convert the measured parasitic value into two separate measurements between the measured nets and ground. The grounding is performed if the parasitic value meets the specified limit.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1021389"></a> The format of the ground specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1021390"></a> <code>low-limit op ground op high-limit
+ground op low-limit
+ground op high-limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1021391"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1021392"></a> You can use the following operators:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1021393"></a> <code>&lt; 
+&lt;= 
+&gt; 
+&gt;= 
+== </code></p>
+
+<h4>
+<a id="pgfId-1014529"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014530"></a>The following examples illustrate various permutations of the command.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014531"></a>cap = calculateParasitic( c1 + c2 + c3 + c4 ignore &lt; 0.1 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014532"></a>cap = calculateParasitic( (log(c1) * 1.3e-6 ) + ( c2 * 0.054 ) + 1.4
+&#160;&#160;&#160;&#160; ignore &lt; 0.1 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1021540"></a>cap = calculateParasitic( c1 + c2 ground &lt; 0.0001 ignore &lt; 0.00000001 )</pre>
+
+<h3>
+<a id="pgfId-1016959"></a>complexParasitic</h3>
+<a id="pgfId-1016960"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+[outValue =] complexParasitic(
+tableName
+(layer list)
+[grounded factor]
+[lateral(layer_l1 [layer_l2])]
+[vertical(layer_v1 layer_v2)]
+[blocking(layer_b1 layer_b2 layer_b3)]
+[model terminal1 terminal2 property]
+)</pre>
+<h4>
+<a id="pgfId-1017345"></a>Description</h4>
+
+<p>
+<a id="pgfId-1017346"></a>The <code>complexParasitic</code> command provides a capability for extracting parasitic capacitance that is more accurate than the <code>multiLevelParasitic </code><a id="marker-1020463"></a>command. In addition to increasing the accuracy for total capacitance measurement in normal layouts, this command improves the accuracy for more specialized structures and for cross-coupled capacitance.</p>
+<p>
+<a id="pgfId-1017781"></a>The&#160;&#160;<code>complexParasitic</code> command is similar in its methodology to the <code>multiLevelParasitic</code> command, but it measures more layout relationships and uses a look-up table for capacitance derivation rather than equations. The <code>complexParasitic</code> command hides the details of the extraction, which make the syntax very simple, but requires the use of the Coefficient Generator to create the capacitance look-up table.</p>
+<p>
+<a id="pgfId-1017348"></a>Unlike the <code>multiLevelParasitic</code> command, the <code>complexParasitic</code>  command can be self contained. One specification of this command initiates all the required capacitance extraction for all layer combinations and relationships (lateral and vertical). In addition, it can instantiate the resultant capacitances into the extracted view of the design, hence negating the need for the generation of intermediate storage files and use of the<code> calculateParasitic</code> and <code>saveParasitic</code> commands.</p>
+<p>
+<a id="pgfId-1020678"></a>When you do provide the optional model, terminal, and property name information, no <em>outValue</em> is produced and all capacitances are instantiated into the extracted view. When you do not provide the optional model, terminal, and property name information, the <em>outValue</em> is produced and can be used in <code>calculateParasitic</code> and <code>saveParasitic</code> rules.</p>
+<p>
+<a id="pgfId-1017352"></a>The section, <a href="chap10.html#22130">Measurement Types for complexParasitic</a> details the topological relationships being measured by this command.</p>
+
+<h4>
+<a id="pgfId-1017353"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1017354"></a>Each layer defined for capacitance extraction must be a connected layer or derived from a connected layer by a command that propagates connectivity. You can include resistive layers, but they cannot be derived from a connected layer.</p>
+<p>
+<a id="pgfId-1017355"></a>The number of layers defined for this command must match the number of layers defined in the capacitance look-up table that the Coefficient Generator creates. You must make sure that the Coefficient Generator generated this capacitance look-up table for the same technology as the design being measured.</p>
+
+<h4>
+<a id="pgfId-1020566"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1020551"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022085"></a> <a id="marker-1020555"></a>The measurement<a id="marker-1020556"></a> results are stored in a layer that contains parasitic values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands such as <em>calculateParasitic</em> and <em>saveParasitic </em><a id="marker-1021316"></a>that are<em> </em>related to parasitic manipulation can reference this layer.</p>
+
+<p><strong>
+<a id="pgfId-1022090"></a><code>tableName</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022093"></a> The name, in quotes, of the capacitance look-up table for the technology of the design being processed. The Coefficient Generator must generate this capacitance table. <code></code></p>
+
+<p><strong>
+<a id="pgfId-1022098"></a><code>layer list</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022101"></a> A list, in parentheses, of layer names separated by spaces. For example</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017359"></a> (<em>substrate poly metal1 metal2 metal3</em>)</p>
+<p class="webflare-indent1">
+<a id="pgfId-1019195"></a> The layers must be ordered from the lowest (usually <em>substrate</em>) first to the highest last. The number of names must match the number of layers defined in the technology file used to create the capacitance look-up table. The names need not be the same as those in the technology file, but they must be functionally equivalent. For a resistive layer, the layer name must be the name of the layer from which resistance was extracted.</p>
+
+<p><strong>
+<a id="pgfId-1017360"></a><code>grounded</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022110"></a> Optional keyword that converts the measured parasitic values into two separate measurements between the measured nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017361"></a> Without this keyword, the tool stores each measurement between two nets as a capacitance with the two nets as its terminal connections. If you specify the <code>grounded</code> keyword, each measurement between two nets is converted into two capacitors. Each capacitor will have one of the original nets for one of its terminal connections, and ground as the other terminal connection.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017362"></a> If you specify the <code>groundNet</code> command, the ground net for each grounded capacitor is the net specified by the <code>groundNet</code> command. Otherwise, the ground net is specified as <code>0!</code>.</p>
+
+<p><strong>
+<a id="pgfId-1017363"></a><code>factor</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022122"></a>An optional floating point number used to modify the capacitor values when the grounded option is used. Each grounded capacitance value will be multiplied by this factor. If not specified, the tool uses the default of <code>1.0</code>.</p>
+
+<p><strong>
+<a id="pgfId-1022127"></a><code>lateral</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022130"></a> An option which specifies that the tool needs to do a lateral capacitance measurement. If you have specified only <em>layer_l1</em>, the tool does a same layer lateral measurement for that layer. If you have specified <em>layer_l1</em> and <em>layer_l2</em>, the tool does a two layer lateral measurement. Use of this option prevents the tool from performing the complete set of measurements that it is capable of. You can give multiple lateral and vertical options to specify the set of layers and layer pairs to be measured.</p>
+
+<p><strong>
+<a id="pgfId-1022139"></a><code>vertical</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022142"></a> An option which specifies that the tool needs to do a vertical capacitance measurement between <em>layer_v1</em> and <em>layer_v2</em>. Use of this option prevents the tool from performing the complete set of measurements that it is capable of. You can give multiple lateral and vertical options to specify the set of layer pairs to be measured.</p>
+
+<p><strong>
+<a id="pgfId-1022148"></a><code>blocking</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022151"></a> An option which specifies that the tool needs to use the shapes on <em>layer_b1</em> to prevent the recognition of vertical capacitance between shapes on <em>layer_b2</em> and <em>layer_b3</em>. The <em>layer_b1</em> may not be a layer specified in the layer list argument. You can give multiple blocking options. Each use of the option will only prevent vertical measurement when the pair of layers given is being measured. The option <code>blocking</code>(<code>foo</code> <code>m1</code> <code>m2</code>) will not prevent a vertical measurement between <code>m1</code> and <code>m3</code>. You must use a separate blocking option for each layer pair to be blocked.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1021301"></a>The lateral, vertical, and blocking options are primarily intended to be used for debugging purposes. Use of these options requires an understanding of the tool internals and can lead to erroneous results. So use the above three options with caution since technical support is not provided for these options.</div>
+
+<p><strong>
+<a id="pgfId-1017364"></a><code>model</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022159"></a> The optional parasitic capacitor model name consisting of a character string enclosed in quotes. The string must define the model name and optionally the view name and the library name. If you leave out the view name, the tool defaults to <em>symbol.</em> If you provide this optional value, the tool creates an instance of this model in the extracted view of the design for each capacitor.</p>
+
+<p><strong>
+<a id="pgfId-1022164"></a><code>terminal1</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022167"></a> The name, in quotes, of the first terminal of the parasitic capacitor model. This argument is required if the model is specified, and invalid if the model is not specified. </p>
+
+<p><strong>
+<a id="pgfId-1022172"></a><code>terminal2</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022175"></a> The name, in quotes, of the second terminal of the parasitic capacitor model. This argument is required if the model is specified, and invalid if the model is not specified.</p>
+
+<p><strong>
+<a id="pgfId-1022180"></a><code>property</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022183"></a> The name, in quotes, of the property that is created on the capacitor instance to hold the capacitor value. The value type of the property is a floating point number. This argument is required if the model is specified, and invalid if the model is not specified.</p>
+
+<h4>
+<a id="pgfId-1017368"></a>Example</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017369"></a>complexParasitic( <br />   &quot;myTable&quot; (substrate diffusion metal1 metal2 metal3) <br />   grounded  0.75<br />   &quot;capacitor&quot; &quot;plus&quot; &quot;minus&quot;  &quot;cap&quot; <br />)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1020648"></a>cp= complexParasitic( <br />   &quot;mytable&quot; (substrate diffusion metal1 metal2 metal3) <br />   grounded 0.75) <br />cp=calculateParasitic (cp * 1.0e-15) <br />   saveParasitic (cp &quot;plus&quot; &quot;minus&quot; &quot;cap&quot; &quot;capacitor&quot;)</pre>
+<h4>
+<a id="pgfId-1017371"></a><a id="22130"></a>Measurement Types for complexParasitic</h4>
+
+<p>
+<a id="pgfId-1020661"></a>There are three different basic measurement types: vertical, single layer lateral and two layer lateral. Each measures different layer relationships. The Coefficient Generator determines the combinations of layers to be measured for each measurement type.</p>
+
+<h4>
+<a id="pgfId-1020662"></a>Vertical Measurements</h4>
+
+<p>
+<a id="pgfId-1017374"></a>The following vertical measurements will be made between two layers based on the area of overlap of the two layers not including the area shielded by intervening layers. This overlap area is referred to as the <em>caparea.</em></p>
+
+<p>
+<a id="pgfId-1021139"></a></p>
+<table class="webflareTable" id="#id1017375">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017377">
+<a id="pgfId-1017377"></a>Numbers indicated in the figure</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017379">
+<a id="pgfId-1017379"></a>Corresponding description</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017381"></a>1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017383"></a>Area of the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017385"></a>2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017387"></a>Length of <em>caparea </em>edges over layer 1 (fringe up)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017389"></a>3</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017391"></a>Length of <em>caparea</em> edges over layer 2 (fringe down)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017393"></a>4</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017395"></a>Length of <em>caparea</em> edges coincident with layer 1 and layer 2 edges (coincident fringe)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017397"></a>5</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017399"></a>Length of <em>caparea edges </em>butting shielding shapes</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017401"></a>6</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017403"></a>Average un-shielded extension of layer 1 beyond the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017405"></a>7</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017407"></a>Average un-shielded extension of layer 2 beyond the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017409"></a>8</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017411"></a>Average separation of other layer 1 shapes from the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017413"></a>9</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017415"></a>Average separation of other layer 2 shapes from the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017417"></a>10</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017419"></a>Average separation of shielding shapes from the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017421"></a>11</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017423"></a>Coverage of the capacitance area by shapes on the layer below layer 1</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017425"></a>12</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017427"></a>Coverage of the capacitance area by shapes on the layer above layer 2</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>Figure 10-1
+<a id="pgfId-1017546"></a>Vertical Measurements</strong></p>
+<p>
+<a id="pgfId-1019200"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="231" src="images/chap10-4.gif" /></div>
+<h4>
+<a id="pgfId-1017547"></a>Single Layer Lateral Measurements</h4>
+
+<p>
+<a id="pgfId-1017548"></a>The following lateral measurements will be made between shapes on a single layer based on the area (<em>caparea</em>) formed by the separation between the shapes.</p>
+
+<p>
+<a id="pgfId-1021140"></a></p>
+<table class="webflareTable" id="#id1017549">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017551">
+<a id="pgfId-1017551"></a>Numbers shown in the the figure</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017553">
+<a id="pgfId-1017553"></a>Corresponding description</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017555"></a>1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017557"></a>Average lateral spacing between the shapes</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017559"></a>2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017561"></a>Length for which the spacing applies</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017563"></a>3</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017565"></a>Average width of the shape on one side of the spacing</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017567"></a>4</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017569"></a>Average width of the shape on the other side of the spacing</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017571"></a>5</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017573"></a>Coverage of the capacitance area by shapes on the layer below the measured layer</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017575"></a>6</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017577"></a>Coverage of the capacitance area by shapes on the layer above the measured layer</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>Figure 10-2
+<a id="pgfId-1017616"></a>Single Layer Lateral Measurements</strong></p>
+<p>
+<a id="pgfId-1019327"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="146" src="images/chap10-5.gif" /></div>
+<h4>
+<a id="pgfId-1017617"></a>Two Layer Lateral Measurements</h4>
+
+<p>
+<a id="pgfId-1017906"></a>The following lateral measurements will be made between shapes on two layers based on the area (<em>caparea</em>) formed by the separation between the shapes.</p>
+
+<p>
+<a id="pgfId-1021141"></a></p>
+<table class="webflareTable" id="#id1017907">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017909">
+<a id="pgfId-1017909"></a>Numbers shown in the the figure</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1017911">
+<a id="pgfId-1017911"></a>Corresponding description</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017913"></a>1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017915"></a>Average lateral spacing between shapes</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017917"></a>2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017919"></a>Length for which the spacing applies</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017921"></a>3</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017923"></a>Average width of the layer 1 shape on one side of the spacing</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017925"></a>4</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017927"></a>Average width of the layer 2 shape on the other side of the spacing</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017929"></a>5</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017931"></a>Coverage of the capacitance area by layers between the measured layers (if applicable)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017933"></a>6</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017935"></a>Average separation of shapes of layer 1 from the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017937"></a>7</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017939"></a>Average separation of shapes of layer 2 from the <em>caparea</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017941"></a>8</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017943"></a>Coverage of the capacitance area by shapes on the layer below layer 1</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017945"></a>9</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017947"></a>Coverage of the capacitance area by shapes on the layer above layer 2</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>Figure 10-3
+<a id="pgfId-1018014"></a>Two Layer Lateral Measurements</strong></p>
+<p>
+<a id="pgfId-1019380"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="257" src="images/chap10-6.gif" /></div>
+<h3>
+<a id="pgfId-1018016"></a>measureFringe<a id="measureFringe"></a></h3>
+<a id="pgfId-1014536"></a><a id="marker-1014535"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outValue = measureFringe( layer1 [layer2] calculate 
+[printls &quot;filename&quot;] [grounded] [ML Flayer] [limit] drc_command )</pre>
+<h4>
+<a id="pgfId-1014537"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014540"></a>This<a id="marker-1014538"></a> command<a id="marker-1014539"></a> measures the relationships between shapes where the relationship can be defined with a DRC command. This means relationships that do not involve layer overlap or interaction, such as fringe or sidewall capacitance, can be measured.</p>
+<p>
+<a id="pgfId-1014541"></a>The program bases its measurement on the edges of the layers that conform to the defined DRC relationship. It is limited to measuring the length and separation of those edges. Since these two parameters are available in each measurement, the <em>measureFringe</em> command must contain sufficient information to derive a single measurement result from them. To this end, the command contains its own formula definition. </p>
+<p>
+<a id="pgfId-1014542"></a>The two shapes involved in each DRC relationship, whether they be from one or two layers, provide the net numbers that are associated with the measurement for the parasitic device result. If both net numbers are the same, no measurement is made. All measurements with the same two net numbers are summed together.</p>
+<p>
+<a id="pgfId-1014543"></a>You can also use this command to pass on information about lateral shape relationships to the <em>multiLevelParasitic</em> command so you can adjust the vertical capacitance measurement based on the lateral capacitance configurations, or you can generate an additional lateral capacitor to compensate for the vertical capacitance configurations.</p>
+
+<h4>
+<a id="pgfId-1014544"></a>Prerequisite</h4>
+
+<p>
+<a id="pgfId-1014545"></a>The layers referenced must be connected layers.</p>
+
+<h4>
+<a id="pgfId-1014546"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014549"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022193"></a> <a id="marker-1020700"></a>The measurement<a id="marker-1020701"></a> results are stored in a layer that contains parasitic values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands related to parasitic manipulation can reference the layer. Specifically, these are <em>calculateParasitic</em> and <em>saveParasitic</em><a id="marker-1020703"></a>.</p>
+
+<p><strong>
+<a id="pgfId-1022198"></a><code>layer1</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022201"></a> The primary layer to be measured. This must be a connected layer. </p>
+
+<p><strong>
+<a id="pgfId-1022206"></a><code>layer2</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022209"></a> An optional second layer to be processed in the measurement. If this layer is not specified, the DRC check defined must be <em>sep </em>(separation) so as to be applicable to a single layer. With this second layer defined, the DRC check is applied to both layers.</p>
+
+<p><strong>
+<a id="pgfId-1022214"></a><code>calculate</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022217"></a> The DRC command finds pairs of edges that conform to the defined relationship. Pairs of edges are measured individually to determine their length and separation. This calculate statement derives a single measurement result from these two parameters. The statement consists of the keyword <em>calculate</em> followed by the formula in parentheses. Within the formula, the length and separation of the edges are represented by the symbols<em> l </em>and <em>s</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1018994"></a> <a id="marker-1018993"></a>The allowable procedures in the formula are the same as those allowed in the <em>calculateParameter </em>command. Refer to <a href="chap9.html#77361">calculateParameter</a> for the definition of available operators.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1019146"></a> The symbols <em>s</em> and<em> l </em>are the only names allowed in the calculation. Names generated by other <em>measureParasitic</em><a id="marker-1019147"></a> and <em>calculateParasitic</em><a id="marker-1019148"></a> commands are not allowed. Otherwise, all normal calculation capabilities are available.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014710"></a> The calculation is applied to each pair of edges before any summing of measurements having the same net numbers. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1014711"></a> Typical examples of<em> calculate</em> commands would be</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014712"></a><code> calculate( l / s )
+calculate( l / log(s) + 2.0 )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014713"></a> Normal mathematical order of precedence applies.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014714"></a> If a calculation results in an inappropriate operation, such as dividing by zero, Diva verification issues a warning message and aborts that calculation.</p>
+
+<p><strong>
+<a id="pgfId-1014715"></a><code>printls</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022244"></a> An optional keyword you use to request text file output of the measured length and spacing values. You use this keyword in conjunction with a file name.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014716"></a><code> printls &quot;filename&quot;</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1018143"></a> The text file with the name &#8220;filename&#8221; is generated in the current directory. It has the following format:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1018144"></a><code> ;Node name to number mapping.
+vdd 1
+gnd 9
+q* 13
+q  15
+;length spacing net1 net2
+5.500000 1.000000 1 13
+2.500000 0.500000 1 13
+2.500000 0.500000 1 15
+9.500000 1.000000 9 15</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1018145"></a> The file consists of two sections. Each section is introduced by a single comment line preceded by a semicolon. The first section maps the user- defined labels to the internal net numbers. The second section lists each fringe measurement in terms of its length, spacing, and the two net numbers between which the measurement was made.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1020240"></a>  This option lists the original length and spacing values measured in step 2 prior to any calculation, summation, or filtering. For any pair of net numbers, the program can create multiple entries in the file where each entry represents a different pair of edges of the shapes forming those nets.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014729"></a> If a file exists in the current directory with the same name as the &#8220;filename&#8221; specified with this option, that file is overwritten. To use this option with multiple <em>measureFringe</em> commands, you must specify a different file name for each usage; otherwise, each file generated overwrites the file generated by the previous command.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014730"></a> The program optimizer normally eliminates any command whose output is not used. If you specify this option in the <em>measureFringe</em> command, even if the <em>outValue</em> is not used elsewhere, the command executes and the text file is created.</p>
+
+<p><strong>
+<a id="pgfId-1014731"></a><code>grounded</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022255"></a> Optional keyword that converts the measured parasitic value into two separate measurements between the measured nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014732"></a> Without this keyword, each measurement between two nets is stored relative to those two nets. If you specify the keyword, each measurement between two nets is converted into two measurements, both having the same value as the original measurement. Each measurement is stored relative to one of the nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014733"></a> If you specify the <em>groundNet</em> command, the ground net is the net specified in the <em>groundNet</em> command. If you do not specify <em>groundNet</em>, the ground net is specified as <em>0!</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014734"></a> The summation of all values for any given net pair remains unaffected by this keyword. However, with the keyword, all measurements for any net for a single <em>measureFringe</em> command are summed together because the second net is always ground. You can then use the <em>calculateParasitic</em> command to sum all measurements for each net into a combined value for the net.</p>
+
+<p><strong>
+<a id="pgfId-1014738"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022264"></a> <a id="marker-1014735"></a>O<a id="marker-1014736"></a>ptional<a id="marker-1014737"></a> argument that lets you reject measured values because they fall outside the specified limits. It can be used to significantly reduce the amount of data being created by rejecting all measured values which are insignificant.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014739"></a> The check for limits is made after the measured values have been summed for the same net numbers.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014740"></a> The format of the limits specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014741"></a><code> low_limit op keyword op high_limit
+keyword op low_limit
+keyword op high_limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014742"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014743"></a> You can use the following operators:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1018585"></a><code> &lt; 
+&lt;= 
+&gt; 
+&gt;= 
+==</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1018586"></a> The keyword can be either <em>ignore </em>or <em>keep</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014750"></a> You can use the following limit specifications:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014751"></a><code> ignore &lt; .001
+keep &gt;= .3
+1 &lt; keep &lt; 5
+1.3e-4 &lt;= ignore &lt;= 2.7e-3</code></p>
+
+<p><strong>
+<a id="pgfId-1014755"></a><code>ML</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022273"></a> Keyword that introduces the name of the layer, <em>Flayer</em>, that passes on information to the <em>multiLevelParasitic</em> command. </p>
+
+<p><strong>
+<a id="pgfId-1022278"></a><code>Flayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022281"></a> Layer that passes on information to the <em>multiLevelParasitic</em> command and supplies an output layer you can use as the input in subsequent <em>multiLevelParasitic</em> commands. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1014757"></a> Whenever Diva finds a <em>measureFringe</em> layer configuration that matches the DRC specification, the relevant information on the associated edges and the spacing value are stored in the <em>Flayer</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014758"></a> For further information on the use of the <em>ML Flayer</em> option, refer to the <a href="chap10.html#69997">&#8220;multiLevelParasitic&#8221;</a>.</p>
+
+<p><strong>
+<a id="pgfId-1014762"></a><code>drc_command</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022290"></a> The DRC check that defines the relationship to be measured. It uses the standard DRC format for specifying the check, dimensional range, and options. The only valid checks are <em>sep, enc</em>, and <em>ovlp</em>. The options <em>diffNet</em> and <em>edge</em> are always in effect. Examples of the command format are as follows:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014763"></a><code> sep &lt; 2 parallel opposite
+1 &lt; sep &lt; 3 app &gt;s 4</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014766"></a> The following figure illustrates how the length and separation measurements are derived from the edges extracted through the DRC command. The following example shows the <em>sep</em> command.</p>
+
+<ffi2-fig-frame-in-2 id="#id1017827">
+<a id="pgfId-1017827"></a></ffi2-fig-frame-in-2>
+<div class="webflare-div-image">
+<img width="520" height="176" src="images/chap10-7.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014793"></a> The length<em> l</em> is the average length of the two edges and the separation<em> s</em> is the average separation between them.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014794"></a> Whether the <em>sep</em> command is used for fringe or side-wall capacitance, or <em>encl</em> and <em>ovlp</em> are used for some other relationship, the result is always the measurements between two edges.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1021448"></a> The <em>measureFringe</em> command operates in the following sequence:</p>
+
+<p>
+<a id="pgfId-1021458"></a></p>
+<table class="webflareTable" id="#id1021449">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ol><li>
+<a id="pgfId-1021451"></a>Finds the next pair of edges meeting the DRC criteria</li><li>
+<a id="pgfId-1021452"></a>Measures the length and spacing between the edges</li><li>
+<a id="pgfId-1021453"></a>Calculates the capacitance between the edges</li><li>
+<a id="pgfId-1021454"></a>Determines the net numbers of the edges</li><li>
+<a id="pgfId-1021455"></a>Adds the new calculated capacitance value to the total for the two nets</li><li>
+<a id="pgfId-1021456"></a>If there are more edges, returns to step 1</li><li>
+<a id="pgfId-1021457"></a>If there are no more edges, filters the total capacitance for each pair of nets by the values in the limits option. If you did not specify a limits option, the command is complete.</li></ol>
+
+
+
+
+
+
+
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1014795"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014796"></a>The number of permutations of this command is large. The following examples illustrate some possibilities.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014797"></a>fcap = measureFringe( metal calculate ( l / s ) sep &lt; 3<br />  parallel opposite )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014798"></a>mp = measureFringe( metal poly calculate( sqrt(l + 3) /<br />  log(s) ) ignore &lt; 0.1 1 &lt; sep &lt;= 3 parallel )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014799"></a>lap = measureFringe( poly1 poly2 calculate( l * 1e-6) <br />  ignore &lt; 1e-6 ovlp &lt;= 1 )</pre>
+
+<h3>
+<a id="pgfId-1014801"></a>measureParasitic<a id="measureParasitic"></a></h3>
+<a id="pgfId-1014803"></a><a id="marker-1014802"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outValue = measureParasitic( operator ( layer1 [operator layer2]... ) [coeff] [application] [grounded] [polarized]] [limit] )</pre>
+<h4>
+<a id="pgfId-1014804"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014805"></a>This command measures shapes or the relationships between shapes to determine <a id="marker-1014806"></a>parasitic<a id="marker-1014807"></a> characteristics.You can later store those measurements as parasitic devices using the <a id="marker-1014808"></a><em>saveParasitic </em>command, or you can use them in calculations using the <em>calculateParasitic </em><a id="marker-1014809"></a><a id="marker-1014810"></a>command to derive more complex values for subsequent parameters or parasitics. </p>
+
+<h4>
+<a id="pgfId-1014811"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1014812"></a>If the net options are used, at least the first layer referenced must have been a connected layer.</p>
+
+<h4>
+<a id="pgfId-1014813"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014814"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022307"></a> <a id="marker-1020714"></a>The measurement<a id="marker-1020715"></a> results are stored in a layer that contains parasitic values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands related to parasitic manipulation can reference the layer. Specifically, these are <em>calculateParasitic</em> and <em>saveParasitic</em><a id="marker-1020717"></a>.</p>
+
+<p><strong>
+<a id="pgfId-1022312"></a><code>operator</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022320"></a> <a id="marker-1014816"></a>This argument defines the relationship to be measured. It consists of a single operator followed by a layer reference and optional operator-layer reference pairs.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014818"></a> The possible operators are as follows:</p>
+
+<p>
+<a id="pgfId-1019166"></a></p>
+<table class="webflareTable" id="#id1018602">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018604"></a><code>area</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018606"></a>Area of the shape or combinations of shapes defined by <em>over</em> and <em>not_over </em>operators.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018608"></a><code>perimeter</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018610"></a>Perimeter of the shape or combinations of shapes defined by <em>over</em> and <em>not_over</em> operators.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018612"></a><code>length</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018614"></a>Length of edges conforming to the defined relationship.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018616"></a><code>bends_all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018618"></a>Count of all bends in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018620"></a><code>bends_full</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018622"></a>Count of full bends (&gt;45 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018624"></a><code>bends_part</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018626"></a>Count of partial bends (&lt;=45 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018628"></a><code>corners_all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018630"></a>Count of all outside (convex) corners in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018632"></a><code>corners_full</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018634"></a>Count of all outside (convex) full corners ( &gt;= 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018636"></a><code>corners_part</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018638"></a>Count of all outside (convex) partial corners ( &lt; 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018640"></a><code>angles_all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018642"></a>Count of all corners and bends in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018644"></a><code>angles_full</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018646"></a>Count of all full corners and bends ( &gt;= 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018648"></a><code>angles_part</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018650"></a>Count of all partial corners and bends ( &lt; 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018652"></a><code>figCount</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018654"></a>Count of figures (shapes) of <em>inLayer2</em> enclosed inside <em>inLayer1</em>. A shape of <em>inLayer2</em> is enclosed in <em>inLayer1</em> if it does not cross the boundary of <em>inLayer1</em>. The edges of the shape can be coincident.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018656"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018658"></a>You can only use this operator in conjunction with the <em>enclosing</em> operator.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018660"></a><code>layer1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018662"></a>The first layer reference must be a connected layer if the application is one of the net options.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018664"></a><code>operator</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018666"></a>The operators define the required relationship between the layers referenced before and after them. In these descriptions, the operators are defined relative to a relationship of <em>layerA operator layerB.</em></p>
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014835"></a> Possible operators are as follows:</p>
+
+<p>
+<a id="pgfId-1019159"></a></p>
+<table class="webflareTable" id="#id1018671">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018673"></a><code>butting</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018675"></a>Edge coincidence where the shapes of <em>layerA </em>do not overlap shapes of <em>layerB.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018677"></a><code>coincident</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018679"></a>Edge coincidence where the shapes of <em>layerA </em>do overlap shapes of <em>layerB.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018681"></a><code>over</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018683"></a>For <em>area</em> and <em>perimeter</em>, equivalent to a logical AND of <em>layerA </em>and <em>layerB</em>. For edge-based operators, equivalent to <em>inside </em>plus <em>coincident.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018685"></a><code>not_over</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018687"></a>For <em>area</em> and <em>perimeter</em>, equivalent to a logical AND_NOT of <em>layerA </em>and <em>layerB</em>. For edge-based operators, equivalent to <em>outside </em>plus <em>butting.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018689"></a><code>outside</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018691"></a>Edges of <em>layerA</em> outside but not butting shapes of<em> layerB</em>. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018693"></a><code>inside</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018695"></a>Edges of <em>layerA </em>inside but not coincident with shapes of <em>layerB.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018697"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018699"></a>The <em>area </em>and <em>perimeter</em> operators are shape based and can only measure relationships defined with the<em> over</em> and <em>not_over</em> operators. The <em>length</em> and <em>bends</em> operators are edge based and can measure relationships defined by any of the operators.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018701"></a><code>enclosing</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018703"></a>Used in conjunction with the <em>figCount</em> operator to count the number of shapes on <em>inLayer2</em> enclosed by the shape on <em>inLayer1</em>. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018705"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018707"></a>You cannot use this operator with any other operators. This operator applies only to two layers. You can use this operator only with the <em>figure</em> option.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018709"></a><code>layer2</code> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018711"></a>Subsequent layers can be derived layer references or original layer names in quotes. In some cases, dependent upon the <a id="marker-1018716"></a>node options requested, the layer must be derived and have nodal information. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018713"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018715"></a>The sequence of layers and operators is read from left to right. There is a limit of eight layers total for any single measurement.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014876"></a> The following figure illustrates the basic operator relationships.</p>
+
+<p>
+<a id="pgfId-1017828"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="247" src="images/chap10-8.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014877"></a> The operators other than <em>over</em> and <em>not_over</em> define edges rather than areas.</div>
+<p class="webflare-indent1">
+<a id="pgfId-1014879"></a> The following figure illustrates the various bend operator options. The same principles apply to the corner operator options, although the angle measurement is applied to the outside (convex) corners rather than the inside (concave) corners.</p>
+
+<p>
+<a id="pgfId-1017829"></a></p>
+<div class="webflare-div-image">
+<img width="594" height="206" src="images/chap10-9.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014898"></a> The angle of a bend is measured as the deviation of one edge of the bend from being colinear with the other edge as illustrated in this figure.</p>
+
+<p>
+<a id="pgfId-1017835"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="169" src="images/chap10-10.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014936"></a> <a id="marker-1014913"></a><a id="marker-1014914"></a>The following figure illustrates a complete multilayer relationship.</p>
+
+<p>
+<a id="pgfId-1017836"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="198" src="images/chap10-11.gif" /></div>
+<p><strong>
+<a id="pgfId-1014938"></a><code>coeff</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022348"></a> <a id="marker-1014937"></a>An optional coefficient. This is a floating-point number applied as a multiplier to the measured value to change its units. For example, it can be used to change an area measurement in square microns to a capacitance in farads. The choice of the coefficient depends upon the final destination of the data. For example, SPICE requires area measurements to be in square meters rather than square microns. The default value for this coefficient is 1.0.</p>
+
+<p><strong>
+<a id="pgfId-1022353"></a><code>application</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022356"></a> The application is used to define how the measurements are to be processed. Primarily there are two modes; one for creating parasitic devices and one for measuring general shapes, usually used for creating parameters on devices (see the <a href="chap10.html#64840">attachParasitic</a> section in this chapter). The parasitic device application has a number of alternative modes used to define how the parasitic device terminals are to be connected.</p>
+
+<p><strong>
+<a id="pgfId-1022361"></a><code>figure</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022364"></a> Merged layer shapes are being measured, regardless of devices or interconnect. The results are stored per shape and can be used by the <code>attachParasitic</code> command to add parameters to devices measured from any directly or indirectly associated shapes.</p>
+
+<p><strong>
+<a id="pgfId-1022369"></a><code>two_net</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022377"></a> <a id="marker-1014944"></a>Each parasitic measurement must be associated with two electrical nets representing the terminals of the parasitic device. The first net is derived from <em>layer1</em> (the first layer referenced in the command). The second net is derived from the next layer referenced in the command, which is preceded by a operator of <em>butting</em>, <em>coincident</em>, <em>over</em>, or <em>inside</em>.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014946"></a>If a layer is preceded by <em>not_over</em> or <em>outside</em>, it cannot provide subsequent nets because a measurement is made if the layer is not there.</div>
+<p class="webflare-indent1">
+<a id="pgfId-1014947"></a> If the second net is the same as the first net, that measurement is ignored. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1014948"></a> If you do not specify a second layer in the command, or if all subsequent layers are preceded by <em>not_over</em> or <em>outside</em>, a default second net number is allocated. The second net is the net name you specify with the <em>groundNet</em> command. If no <em>groundNet</em> is specified, the net number is <em>0!</em></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014949"></a> The net number<em> 0!</em> is used because <em>0</em> is a net number that doesn&#8217;t occur during normal extraction, so it cannot conflict with any other net number. The <em>! </em>adopts the convention used by the schematic editor to designate a global net.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014950"></a> All measurements made within a single <em>measureParasitic</em> command that have the same pair of nets allocated are summed together to form a single value for the net pair. If you use the <em>polarized</em> option, the values are only summed if the nets occur in the same order (see the <em>polarized</em> option). You can process the final results by specifying the <em>calculateParasitic</em> command or by saving them as parasitic devices using the <em>saveParasitic</em> command.</p>
+
+<p><strong>
+<a id="pgfId-1014951"></a><code>one_net</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022386"></a> This application is the same as <em>two_net</em> except the measurement is associated only with the net specified by <em>layer1</em> (the first layer referenced in the command). The second net is always defined by the <em>groundNet</em> command. If you do not specify <em>groundNet</em>, the net is named <em>0!</em>, regardless of the other layers and operators referenced.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014952"></a> All measurements made within a single <em>measureParasitic</em> command that have the same net allocation are summed together to form a total value for the net.</p>
+
+<p><strong>
+<a id="pgfId-1014954"></a><code>three_net</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022395"></a> <a id="marker-1014953"></a> The net numbers for this application are selected in the same way as the <em>two_net</em> application, with the following addition. It selects a third net number from the next layer encountered which is preceded by a operator other than <em>not_over</em> or <em>outside</em>. If the third net number is the same as the first net number, the measured value is ignored.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014955"></a> Here is an example:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014956"></a> If you want the area of layer A over layer B, but want the parasitic device to be connected between layer A and the background layer, you would write the measurement as A over background over B, and use the <em>two_net</em> application. However, if the measurement doesn&#8217;t apply when layers A and B are the same net, then a spurious measurement is made. The <em>three_net</em> application enables you to reject the measurement in this case.</p>
+
+<p>
+<a id="pgfId-1017837"></a></p>
+<div class="webflare-div-image">
+<img width="586" height="203" src="images/chap10-12.gif" /></div>
+<p><strong>
+<a id="pgfId-1014990"></a><code>grounded</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022404"></a> Optional keyword that converts the measured parasitic value into two separate measurements between the measured nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014991"></a> Without this keyword, each measurement between two nets is stored relative to those two nets. If you specify the keyword, each measurement between two nets is converted into two measurements, both having the same value as the original measurement. Each measurement is stored relative to one of the nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014992"></a> If you specify the <em>groundNet</em> command, the ground net is the net specified in the <em>groundNet</em> command. If you do not specify <em>groundNet</em>, the ground net is specified as <em>0!</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014993"></a> The summation of all values for any given net pair remains unaffected by this keyword. However, with the keyword, all measurements for any net for a single <em>measureFringe</em> command are summed together because the second net is always ground. You can then use the <em>calculateParasitic</em> command to sum all measurements for each net into a combined value for the net.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014994"></a> The <em>polarized</em> option is not meaningful if you use it with the <em>grounded</em> option. If you specify both of these options, it will be flagged as illegal.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014995"></a> The <em>one_net</em> option has the same effect as the <em>grounded</em> option, so you do not need to specify both. However, if you do specify both <em>one_net</em> and <em>grounded</em>, it will not be flagged as illegal.</p>
+
+<p><strong>
+<a id="pgfId-1014998"></a><code>polarized</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022413"></a> <a id="marker-1014996"></a>A<a id="marker-1014997"></a>dditional option valid only with the parasitic device applications of <em>one_net</em>, <em>two_net</em>, and <em>three_net</em>. Without this option, all measured values in a single <em>measureParasitic </em>command are summed if they have the same net numbers, regardless of which layers contributed to the numbers. For example, if you measure the area of layer A over layer B and have two results, one with layer A as net 1 and layer B as net 2, and the other with layer A as net 2 and layer B as net 1, the measurements are summed into a single value between nets 1 and 2.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014999"></a> With this option, the measurements are only summed if the nets are the same numbers as the same layers. In the previous example, the result is two measurements, one between nets 1 and 2 and the other between nets 2 and 1. This facilitates the creation of directional parasitic devices such as diodes. The <em>saveParasitic</em> command allows you to define which layer is to form which terminal of the parasitic device result.</p>
+
+<p><strong>
+<a id="pgfId-1015000"></a><code>limit</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022422"></a>This optional argument provides the ability to reject measured values because they fall outside the specified limits. It can be used to significantly reduce the amount of data being created by rejecting all measured values that are insignificant.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015001"></a> For the parasitic measurements, the check for limits is made after the measured values have been summed for the same net numbers.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015002"></a> The format of the limits specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015003"></a><code> low_limit op keyword op high_limit
+keyword op low_limit
+keyword op high_limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015004"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015005"></a> You can use the following operators:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015006"></a> <code>&lt;
+&lt;= 
+&gt; 
+&gt;= 
+==</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015011"></a> The keyword can be either <em>ignore </em>or <em>keep</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015012"></a> You can use the following limit specifications:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015013"></a><code> ignore &lt; .001
+keep &gt;= .3
+1 &lt; keep &lt; 5
+1.3e-4 &lt;= ignore &lt;= 2.7e-3</code></p>
+
+<h4>
+<a id="pgfId-1015017"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015018"></a>The number of permutations of this command is large. The following examples illustrate some possibilities.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015019"></a>cap = measureParasitic( area ( poly over metal )<br />  0.03 two_net )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015020"></a>diode = measureParasitic( area ( ndiff over pbase<br />  not_over ntub ) two_net polarized )</pre>
+
+<h3>
+<a id="pgfId-1015023"></a><a id="69997"></a>multiLevelParasitic<a id="measureParasitic"></a></h3>
+<a id="pgfId-1015024"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outValue = multiLevelParasitic( 
+layers( layer1 layer2 ...)
+cap( layerA layerB c1 c2 [c3[c4]]
+ [shield( layerS c5)
+ [fringe( layerAB layerF [vertical( ...s...)]]
+[grounded]
+[limit]
+)</pre>
+<h4>
+<a id="pgfId-1015025"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015027"></a><a id="marker-1015026"></a>The <em>multiLevelParasitic</em> command measures the areas and edge lengths of multilayer shape relationships in order to create parasitic capacitance. This command differs from the<em> measureParasitic </em>command because it can handle layer priority with shorted and intervening layers for any stack of layers.</p>
+<p>
+<a id="pgfId-1015029"></a>You can use the <a id="marker-1015028"></a><em>saveParasitic </em>command to store the measurements later as parasitic devices, or you can use the <em>calculateParasitic </em><a id="marker-1015030"></a>command for calculations to derive more complex values for subsequent parasitics.</p>
+
+<h4>
+<a id="pgfId-1015031"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015032"></a>Each layer that forms a terminal of a capacitor must be a connected layer or derived from a connected layer by a command that propagates connectivity.</p>
+
+<h4>
+<a id="pgfId-1015033"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015034"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022434"></a> <a id="marker-1020742"></a>The measurement<a id="marker-1020743"></a> results are stored in a layer that contains parasitic values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands related to parasitic manipulation can reference the layer. Specifically, these are <em>calculateParasitic</em> and <em>saveParasitic</em><a id="marker-1020745"></a>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015035"></a> The results of the measurement are a separate capacitance value for each pair of electrical nets encountered during the layer-to-layer measurement process. Values are not kept separate for each pair of layers involved.</p>
+
+<p><strong>
+<a id="pgfId-1015036"></a><code>layers</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022446"></a> A list of the layers to be processed. This argument has the following format:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015037"></a><code> layers( layer1 layer2 .........layerN )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015038"></a>This command can process a maximum of 16 layers at one time. This limit includes layers specified in the layers list, plus any special layers referenced in the <em>fringe</em> option.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015039"></a> The order of the layers defines the priority. The first entry is considered the lowest layer in the layout and the last entry is considered the highest layer in the layout. The list must contain the initial keyword <em>layers</em>. The list must contain at least two layers. If a layer is to be used as the terminal of a capacitor, it must be a connected layer or derived from a connected layer by a command that propagates connectivity.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015040"></a> For those layer pairs for which you provide coefficients, the program measures the capacitance providing that</p>
+
+<p>
+<a id="pgfId-1019177"></a></p>
+<table class="webflareTable" id="#id1020058">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1020060"></a>The two layers overlap.</li><li>
+<a id="pgfId-1020077"></a>The two layers are not on the same electrical net.</li><li>
+<a id="pgfId-1020075"></a>No shapes on other layers are between the two layers.</li></ul>
+
+
+
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015044"></a> The following diagram illustrates how the layers and capacitance measurements are related.</p>
+
+<ffi2-fig-frame-in-2 id="#id1017838">
+<a id="pgfId-1017838"></a></ffi2-fig-frame-in-2>
+<div class="webflare-div-image">
+<img width="468" height="210" src="images/chap10-13.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015093"></a> The area of capacitance between <em>layer1</em> and <em>layer4</em> (labelled A) is the overlap area of these two layers minus any area of the intervening <em>layer2</em> and <em>layer3</em>. This is equivalent to</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015094"></a><code> layer1 and layer4 andNot layer2 andNot layer3</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015095"></a> If <em>layer1</em> and <em>layer4</em> are on the same electrical net, the capacitance labelled A is not created. The same definition applies to all other pairs of layers.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015096"></a> Here is an example:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015097"></a> <code>layers( Diff Poly Metal1 Metal2 )</code></p>
+
+<p><strong>
+<a id="pgfId-1015098"></a><code>cap</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022461"></a> Consists of one or more definitions of the electrical coefficients between pairs of layers. There is one definition for each pair of layers for which capacitance is to be measured. This argument has the format</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015099"></a><code> cap( layerA layerB coeff1 coeff2 [coeff3 [coeff4]] [shield()] [fringe()])</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015100"></a> You must specify the initial keyword <em>cap</em>. The entries <em>layerA</em> and <em>layerB</em> must be two of the layers defined in the previous layer list. The <em>coeff</em> entries define the values to be applied as coefficients to convert area and length measurements into true capacitance values. You must provide at least one of these coefficients for the definition to be valid. You can leave unwanted coefficients blank if they trail defined coefficients; otherwise, you must set them to zero or <em>nil</em>.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015101"></a>The order of <em>layerA</em> and <em>layerB</em> in the <em>cap </em>argument is irrelevant. The layers are referenced in the order they appear in the <em>layer</em> definition. In the following definitions, <em>layer1</em> refers to the first definition in the layer list (the lower layer). To avoid confusion, keep the order of layers in the <em>cap </em>argument the same as the order in the <em>layers </em>definition.</div>
+
+<p><strong>
+<a id="pgfId-1015102"></a><code>coeff1</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022473"></a> The first coefficient <em>coeff1 </em>applies to the area formed between <em>layer1</em> and <em>layer2</em>. This coefficient applies regardless of how that area is formed, as shown in the following diagram.</p>
+
+<p>
+<a id="pgfId-1021187"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="124" src="images/chap10-14.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015161"></a> The second and third coefficients apply when an edge of one layer forming the capacitance area is directly over the other layer, as illustrated in the following diagrams.</p>
+
+<p>
+<a id="pgfId-1017840"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="158" src="images/chap10-15.gif" /></div>
+<p><strong>
+<a id="pgfId-1015203"></a><code>coeff2</code> and <code>coeff3</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022487"></a>The <em>coeff2 </em>applies to edges of <em>layer1 </em>over an area of <em>layer2. </em>The <em>coeff3 </em>applies to edges of <em>layer2</em> over an area of <em>layer1. </em>If <em>coeff3 </em>is left blank, the same value as <em>coeff2</em> is used. </p>
+
+<p><strong>
+<a id="pgfId-1022498"></a><code>coeff4</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022501"></a> The fourth coefficient applies when the edge of a capacitance area is formed by the coincidence of the edges of the two layers, as illustrated by the following diagram.</p>
+
+<p>
+<a id="pgfId-1017842"></a></p>
+<div class="webflare-div-image">
+<img width="527" height="167" src="images/chap10-16.gif" /></div>
+<p><strong>
+<a id="pgfId-1015225"></a><code>shield</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022507"></a> You can use this option to adjust the total capacitance between two layers when there are intervening (or shielding) layers forming the edge of the capacitance area, as shown in the following figures.</p>
+
+<p>
+<a id="pgfId-1017843"></a></p>
+<div class="webflare-div-image">
+<img width="634" height="219" src="images/chap10-17.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015337"></a> The area capacitance is shown as<em> c1</em> in both figures. The value of the area capacitance should be less than if it was based on the area of overlap. The intervening edges of other layers reduce the value of <em>c1</em>. You can specify a negative coefficient in the <em>shield</em> option to obtain this effect. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015338"></a> The coefficient you provide must account for the effect of the shielding layer on both the upper and lower capacitance layers. In Figure A, the coefficient must provide for the adjustment of capacitors <em>c2 </em>+<em> c4 </em>or <em>c3 + c5</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015339"></a> You can provide one shield option entry for each intervening layer. The effect of multiple shielding layers forming a single shielding edge, as shown in Figure B, is cumulative. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015340"></a> The <em>shield</em> option has the following syntax:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015341"></a><code> shield( layer coeff )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015342"></a> The following diagram illustrates a plan view of an overlap area with the appropriate coefficients applied.</p>
+
+<p>
+<a id="pgfId-1017844"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="283" src="images/chap10-18.gif" /></div>
+<p><strong>
+<a id="pgfId-1015389"></a><code>fringe</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022526"></a> The <em>fringe </em>option has the following syntax:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015390"></a><code> fringe( capLayer MLlayer vertical( ...s...) lateral( ...s...))</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1018267"></a> You can use either or both of the <em>vertical </em>sub-options and <em>lateral </em>sub-options.</p>
+
+<p>
+<a id="pgfId-1019180"></a></p>
+<table class="webflareTable" id="#id1018397">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018399"></a><code>vertical</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018401"></a>Lets you modify the vertical edge measurement coefficients to compensate for the existence of shapes lateral to the measured shapes.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018403"></a><code>lateral</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1018405"></a>Lets you generate an additional lateral capacitor to adjust the capacitor previously generated by the <em>measureFringe </em>command, to compensate for the existence of the vertical shape relationships. </p>
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018270"></a> The following diagram illustrates the possible relationships.</p>
+
+<p>
+<a id="pgfId-1018394"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="323" src="images/chap10-19.gif" /></div>
+<p><strong>
+<a id="pgfId-1015518"></a><code>capLayer</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022539"></a>Either <em>layer1</em> or <em>layer2</em> of the <em>cap</em> argument. </p>
+
+<p><strong>
+<a id="pgfId-1022544"></a><code>MLlayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022547"></a> A pseudo layer generated by a prior <em>measureFringe </em>command referencing the <em>capLayer</em>. This pseudo layer passes information between the <em>measureFringe</em> and the <em>multiLevelParasitic </em>commands.</p>
+
+<p><strong>
+<a id="pgfId-1022552"></a><code>vertical</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022555"></a> Provides a user-defined calculation based on the variable <em>s,</em> which Diva uses to calculate the change in coefficient to be applied to the vertical edge capacitance. This coefficient is added to any other vertical component coefficients before the final capacitance value for an edge is calculated.</p>
+
+<p><strong>
+<a id="pgfId-1022561"></a><code>lateral</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022564"></a> Provides a user-defined calculation based on the variable <em>s,</em> which Diva uses to calculate a coefficient used to generate a new capacitor between the lateral shapes. This capacitance represents a change (delta) from the original capacitance derived from the <em>measureFringe</em> command and should be added to that value by using the <em>calculateParasitic </em>command.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1017852"></a>The vertical adjustment due to the fringe layer is automatically added into the vertical capacitance measured by this <em>multiLevelParasitic</em> command because both measurements are available.
+However the lateral adjustment due to the fringe layer cannot be automatically added to the main fringe measurement because the main fringe values are only available in the output of the <em>measureFringe</em> command.</div>
+<p class="webflare-indent1">
+<a id="pgfId-1018718"></a> To manually add the lateral fringe adjustment to the main fringe measurement, add the output of this <em>multiLevelParasitic</em> command to the output of the <em>measureFringe</em> command. This is done with the <em>calculateParasitic</em> command.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1018719"></a> A typical sequence is:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015526"></a><code> lateralCap = measureFringe (.........
+verticalCap = multiLevelParasitic (.........
+totalCap = calculateParasitic ( lateralCap +
+           verticalCap )
+saveParasitic (totalCap .........</code></p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015530"></a>Although the capacitance is calculated between the <em>multiLevelParasitic </em>area and the lateral <em>measureFringe</em> shape, you can still use the <em>grounded</em> option to apply the value as a capacitance to ground for both nodes.</div>
+<p class="webflare-indent1">
+<a id="pgfId-1015531"></a> Diva supplies the separation value of the lateral shapes as the variable <em>s. </em>You can provide any calculation commands. The result is a positive value unless you explicitly apply a negative sign to one of the arguments. Because lateral-vertical relationships usually reduce the vertical and lateral capacitance, the calculations can result in a negative coefficient.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015532"></a> A calculation is made only when an edge of a capacitance area abutts an area that previously formed a <em>fringe</em> capacitor. The value of <em>s</em> for the calculation will be the specific spacing value used for that <em>fringe</em> calculation.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015533"></a> You can specify a separate <em>fringe</em> argument for each of the two layers in the <em>cap </em>argument.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015534"></a> If both layers in the <em>cap </em>argument have lateral relationships (and associated <em>fringe </em>sub-arguments with the <em>lateral </em>statement) and both apply to a common edge of a capacitance area, both calculations are made and both resultant coefficient values are added to the normal edge coefficient.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015535"></a>This only applies when the edges of <em>layer1</em> and <em>layer2</em> forming the capacitance area are coincident.</div>
+<p class="webflare-indent1">
+<a id="pgfId-1015536"></a> If the lateral spacing between shapes is equal to zero, no lateral or vertical adjustments are made. The following diagram illustrates the two scenarios where zero separation can occur.</p>
+
+<p>
+<a id="pgfId-1017860"></a></p>
+<div class="webflare-div-image">
+<img width="640" height="202" src="images/chap10-20.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015586"></a> In Figure A, there is no interaction between the zero separation fringe capacitor and the vertical edge capacitor. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015587"></a> In Figure B, the layer forming the zero width separation is acting as a shield layer so there is no vertical edge capacitor to be adjusted, and there is no adjustment made to the zero separation fringe capacitor.</p>
+
+<p><strong>
+<a id="pgfId-1015588"></a><code>grounded</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022585"></a> Optional keyword that converts the measured parasitic value into two separate measurements between the measured nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015589"></a> Without this keyword, each measurement between two nets is stored relative to those two nets. If you specify the keyword, each measurement between two nets is converted into two measurements, both having the same value as the original measurement. Each measurement is stored relative to one of the nets and ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015590"></a> If you specify the <em>groundNet</em> command, the ground net is the net specified in the <em>groundNet</em> command. If you do not specify <em>groundNet</em>, the ground net is specified as <em>0!</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015591"></a> The summation of all values for any given net pair remains unaffected by this keyword. However, with the keyword, all measurements for any net for a single <em>measureFringe</em> command are summed together because the second net is always ground. You can then use the <em>calculateParasitic</em> command to sum all measurements for each net into a combined value for the net.</p>
+
+<p><strong>
+<a id="pgfId-1015595"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022594"></a> <a id="marker-1015592"></a>O<a id="marker-1015593"></a>ptional<a id="marker-1015594"></a> argument that lets you reject measured values because they fall outside the specified limits. You can use it to significantly reduce the amount of data being created by rejecting all measured values that are insignificant.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015596"></a> The check for limits is made after the measured values have been summed for the same net numbers.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015597"></a> The format of the limits specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015598"></a><code> low_limit op keyword op high_limit
+keyword op low_limit
+keyword op high_limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015599"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015600"></a> You can use the following operators:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015601"></a><code> &lt; 
+&lt;=
+&gt; 
+&gt;= 
+==</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015605"></a> The keyword can be either <em>ignore </em>or <em>keep</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015606"></a> You can use the following limit specifications:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015607"></a><code> ignore &lt; .001
+keep &gt;= .3
+1 &lt; keep &lt; 5
+1.3e-4 &lt;= ignore &lt;= 2.7e-3</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015611"></a> The following is an example of the <em>cap</em> option:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015612"></a> <code>cap( metal1 diffusion 0.74 0.12 0.23 0.14 
+      shield( poly -0.05) 
+      fringe( metal1 Fmetal vertical( -0.15 / s )
+)</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015613"></a> Assuming that metal1 and diffusion are in the same order in the layers list</p>
+
+<p>
+<a id="pgfId-1019185"></a></p>
+<table class="webflareTable" id="#id1018733">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1018805"></a>The area coefficient is 0.74.</li><li>
+<a id="pgfId-1020111"></a>The coefficient for edges of metal1 over diffusion is 0.12.</li><li>
+<a id="pgfId-1020112"></a>The coefficient for edges of diffusion over metal1 is 0.23.</li><li>
+<a id="pgfId-1020113"></a>The coefficient for coincident edges of metal1 and diffusion is 0.14.</li><li>
+<a id="pgfId-1020114"></a>Layer <em>poly</em> is a shield with a coefficient of -0.005 between metal1 and diffusion.</li><li>
+<a id="pgfId-1020115"></a>Layer <em>Fmetal</em> is previously specified in a <em>measureFringe</em> command.</li><li>
+<a id="pgfId-1020116"></a>Any <em>metal1</em> edge coefficients will be adjusted by -0.15/s where <em>s</em> is the separation to the lateral layer defined in the <em>measureFringe </em>command.</li></ul>
+
+
+
+
+
+
+
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1015621"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015622"></a>The number of permutations of this command is large. The following examples illustrate some possibilities.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015623"></a>cap = multiLevelParasitic(</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015624"></a>   layers( diff poly metal )<br />   cap( diff poly 0.35 nil )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015625"></a>   cap( poly metal nil 0.13 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015626"></a>   ignore &lt; 0.1 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015627"></a>cap = multiLevelParasitic(</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015628"></a>   layers( diff poly metal )<br />   cap( diff poly 0.35 nil )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015629"></a>   cap( diff metal 0.2 nil ))</pre>
+
+<h2>
+<a id="pgfId-1015632"></a>Data Storage<a id="Data Storage"></a></h2>
+<h3>
+<a id="pgfId-1015637"></a><a id="64840"></a>attachParasitic<a id="attachParasitic"></a></h3>
+<a id="pgfId-1015639"></a><a id="marker-1015638"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+attachParasitic( measurement propname device_layer [attach_layer][shared]  )</pre>
+<h4>
+<a id="pgfId-1015640"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015642"></a>The <em>figure</em> option of the <em>measureParasitic </em>command enables you to <a id="marker-1015641"></a>measure the parasitic properties of general circuit shapes other than device recognition polygons. This command attaches these measurements to devices as properties. The association of the measurement and the device is through direct interaction between them, or indirect interaction through another layer.</p>
+<p>
+<a id="pgfId-1015645"></a>This<a id="marker-1015643"></a> command is similar to the <em>saveParameter</em><a id="marker-1015644"></a> command in that it creates properties containing measured values on device instances. In this case, however, the measurements are parasitic values derived from the <em>measureParasitic </em><a id="marker-1015646"></a>command using the <em>figure</em> option, or from the <em>calculateParasitic </em><a id="marker-1015647"></a>command for the same <em>figure</em> measurements rather than direct device measurements using the <em>measureParameter</em> command.</p>
+<p>
+<a id="pgfId-1015649"></a><a id="marker-1015648"></a>The following figure illustrates various modes of association. The device figure is D, and the measured figure is F.</p>
+
+<p>
+<a id="pgfId-1017861"></a></p>
+<div class="webflare-div-image">
+<img width="583" height="344" src="images/chap10-21.gif" /></div>
+<h4>
+<a id="pgfId-1015717"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015719"></a>Measurements must have been made by a <em>measureParasitic</em><a id="marker-1015718"></a> command with the <em>figure</em> option, or derived from them using the <em>calculateParasitic</em><a id="marker-1015720"></a> command.</p>
+
+<h4>
+<a id="pgfId-1015721"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015723"></a><code>measurement</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022604"></a> The value file reference for the <a id="marker-1015722"></a>measurement made with the <em>measureParasitic</em> or <em>calculateParasitic</em> commands.</p>
+
+<p><strong>
+<a id="pgfId-1022609"></a><code>propname</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022612"></a> <a id="marker-1015724"></a>This argument defines the property name, which is created on the device to contain the measured value. It can have one of three forms.</p>
+
+<p>
+<a id="pgfId-1019188"></a></p>
+<table class="webflareTable" id="#id1018826">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1018846"></a>A single property name enclosed in quotes. All separate measurements which are associated with a single device are summed into a single property value.<br />
+<a id="pgfId-1020152"></a>Example: <code>&quot;sdcap&quot;</code></li><li>
+<a id="pgfId-1020153"></a>A list of property names. Each separate measurement associated with a single device is allocated to the next unused property in the list. If there are more measurements than properties, the remaining values are summed into the first property. If there are more properties than measurements, the remaining properties are unused.<br />
+<a id="pgfId-1020154"></a>Example: <code>&quot;sourcecap&quot; &quot;drain_cap&quot;</code></li><li>
+<a id="pgfId-1020155"></a>A list of property name and terminal name pairs in parentheses. Each measurement is associated with the property name corresponding to the terminal having the same electrical net number as the measured figure. Multiple measurements for the same terminal are summed into the same property name.<br />
+<a id="pgfId-1020156"></a>Example: <code>( &quot;source_cap&quot; &quot;S&quot; ) ( &quot;drain_cap&quot; &quot;D&quot; )</code></li></ul>
+
+
+
+
+
+
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1015732"></a><code>device_layer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022619"></a> The layer reference for the device recognition polygon in the <em>extractMOS </em><a id="marker-1015733"></a>or <em>extractDevice</em><a id="marker-1015734"></a> command used to create the devices to which this <em>attachParasitic </em>command is to apply.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015735"></a> This entry can also be a layer that is derived from a device recognition layer by a selection command such as <em>geomInside</em> or <em>geomGetTexted</em>. For each shape on this layer, the property is attached to the original device from which the shape was derived.</p>
+
+<p><strong>
+<a id="pgfId-1015736"></a><code>attach_layer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022628"></a> An optional layer reference or list of layer references enclosed in parentheses, defining the layer to be used to associate the measured figures with the device recognition figures. A measured figure is associated with the device figure if they both have some interaction with a common <em>attach</em> figure. Association can be by touching, lapping, or nesting. If a list of <em>attach</em> layers is defined, they are merged prior to the association.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1018913"></a> If an <em>attach</em> layer is not defined, the measured figure must have a direct association with the device figure.<a id="marker-1018912"></a></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015739"></a> It is possible to have multiple associations with multiple <em>attach</em> figures, device figures, or measured figures. All such associations are broken down into single associations. If one measured figure is associated with multiple devices, its value is attached to each device. If a single measured figure is associated to a device through multiple <em>attach</em> figures, only one association is formed. If multiple measured figures are associated with a single device, each value is attached according to the property name definition of the command.</p>
+
+<p><strong>
+<a id="pgfId-1015742"></a><code>shared</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022637"></a> <a id="marker-1015740"></a>This<a id="marker-1015741"></a> optional keyword allows the value of a single measured figure to be proportioned out according to the number of devices it attaches to. The measured value is divided by the number of devices attached to it, and the value result is stored on each device.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015743"></a> Without this option, the complete measured value is stored on every device to which it attaches.</p>
+
+<h4>
+<a id="pgfId-1015744"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015745"></a>Attach the <em>source-drain</em> area to the device as a single capacitance.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015746"></a>attachParasitic( sdarea &quot;sdcap&quot; gate )</pre>
+<p>
+<a id="pgfId-1015747"></a>Attach the<em> source-drain</em> area to the device as two capacitors. Also share the value between all associated devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015748"></a>attachParasitic( sdarea &quot;scap&quot; &quot;dcap&quot; gate shared )</pre>
+<p>
+<a id="pgfId-1015749"></a>Attach the<em> source-drain </em>area to the device as two capacitors correctly ordered to correspond to two device terminals. Also share the value between all associated devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015750"></a>attachParasitic( sdarea ( &quot;scap&quot; &quot;S&quot; ) ( &quot;dcap&quot; &quot;D&quot; ) <br /> gate shared )</pre>
+<p>
+<a id="pgfId-1015751"></a>Attach a collector area as a capacitance to an npn device by association through the device tub.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015752"></a>attachParasitic( coll_area &quot;coll_cap&quot; npn tub )</pre>
+
+<h3>
+<a id="pgfId-1015754"></a>saveParasitic<a id="saveParasitic"></a></h3>
+<a id="pgfId-1015756"></a><a id="marker-1015755"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+saveParasitic( measurement terminal1 terminal2 propname model [namePrefix(string)][property(name value) ...])</pre>
+<h4>
+<a id="pgfId-1015757"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015760"></a>This command saves<a id="marker-1015758"></a> net measurements<a id="marker-1015759"></a> as parasitic device instances in the extracted cellview. The existence of a measurement between two nets causes a device to be created between those nets. The value of the measurement is stored as a property on the device.</p>
+
+<h4>
+<a id="pgfId-1015761"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015763"></a>Measurements must have been made by a <em>measureParasitic</em><a id="marker-1015762"></a> command with one of the net options, or derived from them using the <em>calculateParasitic</em><a id="marker-1015764"></a> command.</p>
+
+<h4>
+<a id="pgfId-1015765"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015766"></a><code>measurement</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022650"></a> A single value file resulting from a <em>measureParasitic</em> command or<em> calculateParasitic</em> command, or a list of these layers enclosed in parentheses. If multiple value files are defined, a single parasitic device with multiple properties is created for each pair of nets.</p>
+
+<p><strong>
+<a id="pgfId-1022655"></a><code>terminal1</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022658"></a>The name of the parasitic device first terminal, in quotes. When saving values measured with the <em>polarized</em> option, this terminal corresponds to the first net layer referenced in the <em>measureParasitic</em> command.</p>
+
+<p><strong>
+<a id="pgfId-1022663"></a><code>terminal2</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022666"></a> The<a id="marker-1015768"></a> name of the parasitic device second terminal, in quotes. When saving values measured with the <em>polarized</em> option, this terminal corresponds to the second net layer referenced in the <em>measureParasitic</em> command.</p>
+
+<p><strong>
+<a id="pgfId-1022671"></a><code>propname</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022674"></a> The name of the property, enclosed in quotes, that is created on the device and references the value of the measurement. The value type of the property is a floating-point number. If a list of measurements is being saved, this argument must be a list of property names in parentheses. This list corresponds one-to-one with the list of measurements. The first measurement is saved on the parasitic device with the first property name, the second measurement with the second property name, and so on.</p>
+
+<p><strong>
+<a id="pgfId-1015771"></a><code>model</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022680"></a> The parasitic device model name consisting of a character string enclosed in quotes. The character string must define the model name and the view name, and optionally, the library name. If the view name is omitted, the default name is <em>symbol</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015772"></a> The defined model must be a two terminal device and be available in a library accessible to the program so that the terminal configurations can be verified and instances of the device can be placed in the extracted view of the circuit. A typical model definition might be &#8220;capacitor symbol.&#8221; If you specify a library name, the library is searched, otherwise, the library that contains the layout cellview is searched. If that search fails, all available libraries are searched in arbitrary order.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015773"></a> The following example shows model definitions.</p>
+
+<p>
+<a id="pgfId-1019191"></a></p>
+<table class="webflareTable" id="#id1020165">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1020167"></a>&quot;pcap lvs mylib&quot;<br />
+<a id="pgfId-1020186"></a>Use model <em>pcap lvs</em> from library mylib.</li><li>
+<a id="pgfId-1020187"></a>&quot;pcap lvs&quot;<br />
+<a id="pgfId-1020188"></a>Search for model <em>pcap lvs</em> in the library that contains the layout cellview. If that search fails, all available libraries are searched in arbitrary order.</li><li>
+<a id="pgfId-1020189"></a>&quot;pcap&quot;<br />
+<a id="pgfId-1020190"></a>Search for <em>pcap</em> symbol in same library, as example above.</li><li>
+<a id="pgfId-1020915"></a>&quot;pcap lvs mylib&quot;</li></ul>
+
+
+
+
+
+
+
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1020929"></a><code>namePrefix(string)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022690"></a>Optional argument that allows you to specify the character string to use as the prefix for the instance name. Instance names are constructed from the prefix and an integer value to create a unique name. If not provided, the default prefix of &#8220;+&#8221; is used.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1020930"></a> The string parameter must be quoted string or an expression that evaluates to a string.</p>
+
+<p><strong>
+<a id="pgfId-1020931"></a><code>property(name value)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1022699"></a>Optional argument that allows you to specify a property to be attached to each instance generated by the <code>saveParasitic</code> rule. More than one property option can be used in a <code>saveParasitic</code> rule.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1020943"></a> The name parameter must be a quoted string or an expression that evaluates to a string.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1020949"></a> The value parameter must be a quoted string, integer constant, real constant, or an expression that evaluates to a string, integer or real.</p>
+
+<h4>
+<a id="pgfId-1015780"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015781"></a>The first two examples illustrate the creation of a single parasitic device per net pair with a single property.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015782"></a>saveParasitic( cap &quot;PLUS&quot; &quot;MINUS&quot; &quot;c&quot; &quot;pcapacitor&quot; ) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015783"></a>saveParasitic( area &quot;ANODE&quot; &quot;CATHODE&quot; &quot;a&quot; &quot;pdiode&quot; )</pre>
+<p>
+<a id="pgfId-1015784"></a>The following examples each produce a single parasitic device per net pair, but with multiple properties.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015785"></a>saveParasitic( ( length width ) &quot;PLUS&quot; &quot;MINUS&quot; <br />( &quot;W&quot; &quot;L&quot; ) &quot;pcapacitor&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015786"></a>saveParasitic( ( sourcec drainc ) &quot;PLUS&quot; &quot;MINUS&quot; <br />( &quot;sc&quot; &quot;dc&quot; ) &quot;pcapacitor&quot; )</pre>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap9.html" id="prev" title="Extracting Parameters (LPE)">Extracting Parameters (LPE)</a></em></b><b><em><a href="chap11.html" id="nex" title="Extracting Parasitic Resistance (PRE)">Extracting Parasitic Resistanc ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

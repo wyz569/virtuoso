@@ -1,0 +1,1783 @@
+
+<html><head><title>Writing Diva Verification Rules</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027673" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Writing Diva Verification Rules" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027673" />
+<meta name="NextFile" content="chap5.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap3.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Writing Diva Verification Rules" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap3.html" title="Executing Diva Verification Using SKILL Commands">Executing Diva Verification Us ...</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap5.html" title="Layer Processing Concepts">Layer Processing Concepts</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>4
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+<a id="13107"></a>Writing Diva Verification Rules<hr />
+</h1>
+<h2>
+<a id="pgfId-1014198"></a>Introduction</h2>
+
+<p>
+<a id="pgfId-1014199"></a>The verification rules files contains DRC and Extraction rules, ERC rules, and LVS rules. You write these rules into the verification rules file using the SKILL commands described in this manual. </p>
+<p>
+<a id="pgfId-1014200"></a>There are times when you might make changes for a particular verification run. You do this by using commands that apply only to that run, and you put these run-specific commands in a separate file that you call when you perform a DRC or an extraction.</p>
+<p>
+<a id="pgfId-1014201"></a>The following sections describe the rules you need for a verification rules file and also the commands you need for a run-specific file.</p>
+
+<h2>
+<a id="pgfId-1014202"></a>Creating a Verification Rules File</h2>
+
+<p>
+<a id="pgfId-1014204"></a><a id="marker-1014203"></a>To run Design Rule Checking (DRC) and Extraction on your design, you must define your DRC and extraction rules. You use a text editor to write these rules into a verification rules file using the SKILL commands defined in this manual. You can place these rules in a technology library or anywhere else in your system. When you start DRC or Extraction, the program prompts you for the location of the rules.<a id="Verification Rules File"></a></p>
+<p>
+<a id="pgfId-1014208"></a>You can create a <a id="marker-1014207"></a>verification rules file by doing the following.</p>
+<ul><li>
+<a id="pgfId-1014209"></a>Use the SKILL commands described in this manual to create your rules and control their processing. </li><li>
+<a id="pgfId-1014211"></a>Place all DRC and Extraction rules in the <a id="marker-1014210"></a><em>drcExtractRules( )</em> command, even though DRC and Extraction are unrelated processes you run separately. Diva verification uses SKILL commands to define the verification tasks it will execute. </li><li>
+<a id="pgfId-1014217"></a>Use th<a id="marker-1014216"></a>e <em>ivIf</em>  commands to control the processing of the verification rules. </li><li>
+<a id="pgfId-1014219"></a><a id="marker-1014218"></a>Store the rules file in the required location. The default file names are <em>divaDRC.rul</em> and <em>divaEXT.rul</em>, and the default location is in the technology library. However, you can store the rules anywhere with any name you choose. If you store the rules in a technology library, the rules file name must contain a dot to distinguish it from other library entries. If you use a standard convention of adding .<em>rul</em> to your file names, you can always identify the Diva verification rules files.</li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1014220"></a>Grouping Commands</h3>
+
+<p>
+<a id="pgfId-1014223"></a><a id="marker-1014221"></a>When you create a <a id="marker-1014222"></a>verification rules file, you must group the commands defining the rules under three SKILL commands that correspond to the three Diva verification programs (DRC/Extract, ERC, and LVS). For example, you must put all rules commands pertaining to extraction under the <a id="marker-1014224"></a><em>drcExtractRules()</em> command. The table shows the processes associated with each SKILL command.</p>
+<p>
+<a id="pgfId-1016550"></a></p>
+<table class="webflareTable" id="#id1014225">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014227">
+<a id="pgfId-1014227"></a>Program</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014229">
+<a id="pgfId-1014229"></a>Command</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014231">
+<a id="pgfId-1014231"></a>Process</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014233"></a>DRC/Extract</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014235"></a>drcExtractRules( )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014237"></a>Layer Processing</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014239"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014241"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014243"></a>Design Rule Checking</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014245"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014247"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014249"></a>Connectivity Extraction</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014251"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014253"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014255"></a>Device Extraction</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014257"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014259"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014261"></a>Parameter Extraction</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014263"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014265"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014267"></a>Parasitic Extraction</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014269"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014271"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014273"></a>Resistance Extraction</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014275"></a>ERC</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014277"></a>ercRules( )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014279"></a>Electrical Rule Checking</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014281"></a>LVS</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014283"></a>lvsRules( )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014285"></a>Layout Versus Schematic Comparison</p>
+</td>
+</tr>
+</tbody></table>
+
+<h3>
+<a id="pgfId-1014287"></a>Nesting Commands<a id="Nesting Commands"></a></h3>
+
+<p>
+<a id="pgfId-1014290"></a><a id="marker-1014288"></a>When creating verification rules, you can save time and effort by <a id="marker-1014289"></a>nesting commands inside other commands. Instead of creating two or three separate commands, you can combine them. You can nest commands to any depth. </p>
+<p>
+<a id="pgfId-1014292"></a>This is particularly useful when you need to specify <a id="marker-1014291"></a>derived layers. A derived layer is a symbolic name for the result of a verification command. When you create a rule that uses a derived layer, you can do it in two ways. The first is to write the command that creates the derived layer and then use the name of the derived layer in a second command. A second and easier method is to write only one command, substituting the command that generated the derived layer for the derived layer name. </p>
+<p>
+<a id="pgfId-1014294"></a><a id="marker-1014293"></a>In this example, the command <em>geomAnd(&quot;poly&quot; &quot;diff&quot;)</em> creates a derived layer and is nested within the <em>drc</em> command. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014295"></a>drc( geomSize( geomAnd( &quot;poly&quot; &quot;diff&quot;) 2.0 ) <br /> &quot;cut&quot; sep &lt; 2 )</pre>
+<p>
+<a id="pgfId-1014296"></a>Another way of nesting commands is to define multiple layers in a command. You can use the <em>geomCat</em><a id="marker-1014297"></a> command to group the layers. In this example, <em>geomCat</em> is nested within the <em>geomAnd</em> command and groups the layers <em>poly1, poly2</em>, and <em>poly3</em>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014298"></a>gate = geomAnd( geomCat( &quot;poly1&quot; &quot;poly2&quot; &quot;poly3&quot; )&quot;diff&quot; )</pre>
+<p>
+<a id="pgfId-1014300"></a>You can also substitute the value resulting from a<a id="marker-1014299"></a> layer property command anywhere a dimension is specified in a DRC. For example, instead of specifying an integer as the width dimension in the command</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014301"></a>drc( &quot;poly&#8221; width &lt;3 )</pre>
+<p>
+<a id="pgfId-1014302"></a>you can nest the layer property command <em>techGetLayerProp( techId &quot;poly&quot; &quot;minWidth&quot; </em>) within the DRC command </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015254"></a>cvId = ivGetCellView()</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015255"></a>techId = techGetTechFile(cvId)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014303"></a>drc( &quot;poly&quot; width &lt; techGetLayerProp( techId &quot;poly&quot; &quot;minWidth&quot; ))</pre>
+<p>
+<a id="pgfId-1014306"></a>For more information, see <a href="chap2.html#73067">ivGetCellView ()</a>.</p>
+
+<h3>
+<a id="pgfId-1014309"></a>Compiling and Optimizing Commands<a id="Compiling and Optimizing Commands"></a></h3>
+
+<p>
+<a id="pgfId-1014311"></a>Diva uses a compiled and optimized version of the rules you provide. Compilation and optimization is the first step in the execution of DRC or extraction. However, Diva does not have to compile and optimize the rules for every run. By saving the compiled form of a rule file time is saved in following runs in the same workbench session. Compilation and optimization is done only when you reference a new rule set for the first time, when you change the rules, when you change the switch (<em>ivIF </em>switches) settings, or if your rules use the ivGetCellView SKILL procedure.</p>
+<p>
+<a id="pgfId-1014314"></a><a id="marker-1014313"></a>Optimization reduces run time, is usually invisible to you, and has no effect on the final results of the run. In some cases, you may observe changes in the order of command execution.</p>
+<p>
+<a id="pgfId-1014315"></a>You should be aware of the following optimizations.</p>
+<ul><li>
+<a id="pgfId-1014316"></a>A rule is eliminated if its output layer is not referenced by any other rule.</li><li>
+<a id="pgfId-1014317"></a>All DRC checks to be performed on the same input layers are combined and processed in a single pass. </li><li>
+<a id="pgfId-1014318"></a>All derived layer operations to be performed on the same input layers using the same internal engine are processed in one pass.</li><li>
+<a id="pgfId-1014319"></a>All duplicate nested commands are extracted and performed only once.</li><li>
+<a id="pgfId-1014320"></a>All parameters and parasitics on the same layer are extracted in a single pass.</li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1014321"></a>Derived layers are deleted immediately after completion of the last task that references them. You can save disk space by arranging your rules to minimize the number of tasks between the task which generates a layer and the last task that uses the layer.</p>
+<p>
+<a id="pgfId-1014322"></a>Compilation and optimization are performed after you have defined the <em>ivIF</em> switch settings so Diva knows which commands are to be executed and can process them accordingly. </p>
+
+<h3>
+<a id="pgfId-1014324"></a><a id="50184"></a>Using Wildcards</h3>
+
+<p>
+<a id="pgfId-1014326"></a><a id="marker-1014325"></a>You can specify names using wildcard characters for various Diva verification commands. There are two levels of wildcards:</p>
+<ul><li>
+<a id="pgfId-1014328"></a>Simple wildcards<a id="marker-1014327"></a><br />
+<a id="pgfId-1014329"></a>You can use the character &#8220;*&#8221; as a prefix or suffix to any label. <br />
+<a id="pgfId-1014330"></a>This form of wildcards is easy to use, but does not allow the complex substitution available in regular expressions.</li><li>
+<a id="pgfId-1014332"></a><a id="marker-1014331"></a>Regular expression wildcards<br />
+<a id="pgfId-1014333"></a>This format is the same as the format used in UNIX and in the SKILL procedure <em>rexMatch</em>. This level of wildcards allows far more complex expressions than the &#8220;*&#8221; wildcards described above.</li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1016448"></a>Diva can confuse special symbols in regular expressions with simple wildcards or with special symbols normally used in network names. To distinguish between simple wildcards and regular expressions, you must prefix all regular expressions with a &#8220;?&#8221;. For example, <em>gnd*</em> uses a simple wildcard evaluation. <em>?gnd*</em> uses the general expression evaluation.</p>
+<p>
+<a id="pgfId-1016478"></a>The following table summarizes wildcard expressions:</p>
+
+<p>
+<a id="pgfId-1016482"></a></p>
+<table class="webflareTable" id="#id1016449">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016451">
+<a id="pgfId-1016451"></a>Wildcard</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016453">
+<a id="pgfId-1016453"></a>Meaning</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016455"></a>gnd*</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016457"></a>The program recognizes any characters for &#8220;*&#8221;</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016459"></a>*gnd</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016461"></a>The program recognizes any characters for &#8220;*&#8221;</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016463"></a>*gnd*</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016465"></a>The program recognizes any characters for both &#8220;*&#8221;s</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016467"></a>*</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016469"></a>Matches any string</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016471"></a>**</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016473"></a>Matches any string</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016475"></a>?gnd*</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016477"></a>Interprets <em>gnd*</em> as a regular expression</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1016479"></a>Limitations</h4>
+
+<p>
+<a id="pgfId-1014367"></a><a id="marker-1014366"></a>If you have a normal label containing the character &#8220;*&#8221; at the beginning or end of its name, Diva interprets it as a simple wildcard character. To avoid this, you must convert the references to each label in Diva&#8217;s commands into a regular expression by placing a &#8220;\&#8221; before the &#8220;*&#8221;. For example, reference <em>clk*</em> as <em>?^clk\*</em>. Diva recognizes this as a regular expression and translates it back to the original form. The &#8220;^&#8221; in this expression specifies that no other <em>clk</em> expressions match this one.</p>
+<p>
+<a id="pgfId-1014368"></a>Regular expressions take up considerable CPU time. Do not use regular expression if you can avoid them.</p>
+
+<h2>
+<a id="pgfId-1014372"></a><a id="marker-1014369"></a>Sample Verification Rules File<a id="Sample DRC/Extract Rules File"></a></h2>
+
+<p>
+<a id="pgfId-1014374"></a><a id="marker-1014373"></a>This is a sample verification rules file for a standard pwell CMOS process. This file contains both DRC and extraction rules and uses the default switches <em>drc?</em> and <em>extract?</em>.</p>
+
+<a id="pgfId-1014375"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+drcExtractRules(</pre>
+<a id="pgfId-1016050"></a><a id="marker-1014377"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>/*</code> The first section contains the <code><em>geomOr</em></code> statements that associate symbols with the physical layers to create derived layers. You can use these symbols in the rest of the rule set. You must put the <code><em>geomOr</em></code> statements before any switches so they are executed regardless of which switch you use at run time. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016070"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016053"></a>bkgnd = geomBkgnd()<br /> poly = geomOr( &quot;poly&quot; )<br /> active = geomOr( &quot;active&quot; )<br /> gate = geomOr( &quot;gate&quot; )<br /> contact = geomOr( &quot;contact&quot; )<br /> metal1 = geomOr( &quot;metal1&quot; )<br /> via = geomOr( &quot;via&quot; )<br /> metal2 = geomOr( &quot;metal2&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016079"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016080"></a>DRC RULES FOR PWELL CMOS<br />The first <code><em>ivIf</em></code> switch is the <code><em>drc?</em></code><a id="marker-1014389"></a> switch. If you use this switch, <br />the DRC part of the file automatically executes during a DRC run.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016081"></a>*/</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016055"></a>ivIf( switch( &quot;drc?&quot; ) then</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016082"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016083"></a> * POLY RULES</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016084"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016085"></a> drc( poly width &lt; 3 &quot;Poly width &lt; 3.0 &quot; ) 
+ drc( poly sep &lt; 3 &quot;Poly to Poly spacing &lt; 3.0&quot; ) 
+ drc( poly notch &lt; 3 &quot;Poly to Poly spacing &lt; 3.0&quot; ) 
+ drc( poly active sep &lt; 2 &quot;Field Poly to Active spacing &lt; 
+ &#160;&#160;&#160;&#160;2.0&quot; ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016068"></a>/* The next three lines define the gate area and its edges.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016069"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016062"></a>gate = geomAnd( poly active ) <br />gatew = geomGetEdge( gate inside poly ) <br />gatel = geomGetEdge( gate coincident poly ) </pre>
+<a id="pgfId-1016063"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The next two commands check the gate extension onto the field and the source/drain enclosure of the gate. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016067"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016066"></a>drc( poly gatew enc &lt; 3 opposite &quot;Poly gate overlap onto field &lt; 3.0&quot; ) <br />drc( active gatel enc &lt; 3 opposite &quot;Source/Drain enclosure of gate &lt; 3.0&quot; ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016056"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016071"></a> * CONTACT RULES</pre>
+<a id="pgfId-1016059"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The saveDerived statements output bad contact geometries to the error layer. The first command outputs parts of the contacts that are not covered by the poly or active shapes; the second command outputs parts of the contacts that are not covered by metal. </pre>
+<a id="pgfId-1016060"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016072"></a>saveDerived( geomAndNot( contact geomOr( active poly ) ) <br />&quot;Contact not inside Active or Poly&quot; ) <br /> saveDerived( geomAndNot( contact metal1 ) <br />&quot;Contacts not covered by Metal1&quot; ) <br /> drc( contact width &lt; 3 &quot;Contact width &lt; 3.0&quot; ) <br /> drc( contact sep &lt; 3 &quot;Contact to Contact spacing &lt; 3.0&quot; ) <br /> drc( poly contact enc &lt; 2 &quot;Contact inside Poly &lt; 2.0&quot; ) <br /> drc( metal1 contact enc &lt; 2 &quot;Contact inside Metal1 &lt; 2.0&quot; ) <br /> drc( active contact enc &lt; 2 &quot;Contact inside Active &lt; 2.0&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016073"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016074"></a> * METAL1 RULES</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016075"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016076"></a> drc( metal1 width &lt; 3 &quot;Metal1 width &lt; 3.0&quot; ) <br /> drc( metal1 sep &lt; 4 &quot;Metal1 to Metal1 spacing &lt; 4.0&quot; ) <br /> drc( metal1 notch &lt; 4 &quot;Metal1 to Metal1 spacing &lt; 4.0&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016077"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016108"></a> * VIA RULES<br /> drc( via width &lt; 3 &quot;Via width &lt; 3.0&quot; ) <br /> drc( via sep &lt; 3 &quot;Via to Via spacing &lt; 3.0&quot; ) <br /> drc( via contact sep &lt; 3 &quot;Via to Contact spacing &lt; 3.0&quot; ) </pre>
+<a id="pgfId-1016111"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* This saveDerived statement outputs vias that overlap onto contacts. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016117"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016100"></a>saveDerived( geomOverlap( via contact ) &quot;Via not allowed over contacts&quot; ) <br /> drc( via poly sep &lt; 2 &quot;Via to Poly spacing &lt; 2.0&quot; ) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016101"></a>/* This saveDerived statement outputs vias that overlap onto poly. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016104"></a> */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016105"></a>saveDerived( geomOverlap( via poly ) &quot;Via not allowed over Poly&quot; ) <br /> drc( metal1 via enc &lt; 2 &quot;Via inside Metal1 &lt; 2.0&quot; ) <br /> drc( metal2 via enc &lt; 2 &quot;Via inside Metal2 &lt; 2.0&quot; ) </pre>
+<a id="pgfId-1016112"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The next two saveDerived statements output the parts of vias that are not covered by metal1 or metal2. */ </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016115"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016116"></a>saveDerived( geomAndNot( via metal1 ) &quot;Via not inside <br />Metal1&quot; ) <br />saveDerived( geomAndNot( via metal2 ) &quot;Via not inside <br />Metal2&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016118"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016119"></a> * METAL2 RULES</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016120"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016121"></a> drc( metal2 width &lt; 5 &quot;Metal2 width &lt; 5.0&quot; ) <br /> drc( metal2 sep &lt; 5 &quot;Metal2 to Metal2 spacing &lt; 5.0&quot; ) <br /> drc( metal2 notch &lt; 5 &quot;Metal2 to Metal2 spacing &lt; 5.0&quot; )<br /> )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016122"></a>/*</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016123"></a> * EXTRACT RULES FOR PWELL CMOS</pre>
+<a id="pgfId-1016124"></a><a id="marker-1014459"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The second ivIf switch is the extract? switch. If you use this switch, the extraction part of the file automatically executes during an extract run. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016126"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016125"></a>ivIf( switch( &quot;extract?&quot; ) then</pre>
+<a id="pgfId-1016127"></a><a id="marker-1014465"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The first section of the extraction part of the rules contains the geomOr statements that change the physical layers used only for extraction to symbols that you can use in the rest of the extraction rule set. 
+You must precede special characters used in layer names with a backslash, so layer &#8220;p+&#8221; is renamed &#8220;p\+&#8221; and layer &#8220;n+&#8221; is renamed &#8220;n\+&#8221;. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016128"></a> */</pre>
+<a id="pgfId-1016129"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ well = geomOr( &quot;well&quot; )
+ ngate = geomOr( &quot;ngate&quot; )
+ pgate = geomOr( &quot;pgate&quot; )
+ psd = geomOr( &quot;psd&quot; )
+ p\+ = geomOr( &quot;p+&quot; )
+ nsd = geomOr( &quot;nsd&quot; )
+ n\+ = geomOr( &quot;n+&quot; )</pre>
+<a id="pgfId-1016130"></a><a id="marker-1014476"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* This section contains boolean commands such as geomAnd and geomAndNot that create new layers for device recognition and define interconnections between layers.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016132"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016131"></a> nwell = geomAndNot( bkgnd well ) <br /> pdiff = geomAnd( active p\+ )<br /> ndiff = geomAnd( active n\+ )<br /> pgate = geomAnd( poly pdiff ) <br /> ngate = geomAnd( poly ndiff ) <br /> psd = geomAndNot( pdiff poly ) <br /> nsd = geomAndNot( ndiff poly )<br /> ptap = geomAnd( well psd ) <br /> ntap = geomAnd( nwell nsd )<br /> ptie = geomOr( ptap )<br /> ntie = geomOr( ntap )</pre>
+<a id="pgfId-1016137"></a><a id="marker-1014491"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The geomConnect statement defines the connections between the layers and establishes the network to be extracted. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016139"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016138"></a> geomConnect(<br /> via( via metal1 metal2 )<br /> via( contact psd nsd poly metal1 )<br /> via( ntie nsd ntap )<br /> via( ptie psd ptap )<br /> )</pre>
+<a id="pgfId-1016140"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The geomStamp statement transfers connectivity information from one layer to another. The following example transfers the well tie connectivity to the well itself. This prevents the well from acting as a connection layer forming soft connects.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016142"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016141"></a> nwell = geomStamp( nwell ntap error )<br /> well = geomStamp( well ptap error )</pre>
+<a id="pgfId-1016143"></a><a id="marker-1014503"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The extractDevice statements define the devices used in the circuit. </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016144"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016145"></a> extractDevice( pgate (poly &quot;G&quot;)(psd &quot;S&quot; &quot;D&quot;) (nwell &quot;B&quot;)<br /> &quot;pfet ivpcell&quot; )<br /> extractDevice( ngate (poly &quot;G&quot;) (nsd &quot;S&quot; &quot;D&quot;) (well &quot;B&quot;)<br /> &quot;nfet ivpcell&quot; ) </pre>
+<a id="pgfId-1016146"></a><a id="marker-1014509"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The measureParameter commands extract device parameters. These parameters can then be checked when you run an LVS.  
+
+Use the coefficient 0.5 to measure the gate width and gate length parameters because the measureParameter command measures the length of all edges defined in the rule and you only want the length of one edge. For example, to measure the length of a gate, measure the length of the gate edges that are inside and not coincident with poly. Two edges satisfy that requirement. If you do not multiply by 0.5, you are counting the gate length twice.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016151"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016150"></a> pgateWidth = measureParameter( length ( pgate coincident poly ) 0.5 )<br /> pgateLength = measureParameter( length ( pgate inside poly ) 0.5 )</pre>
+<a id="pgfId-1016156"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Add the parameters to the devices by using the saveParameter command. The parameter names must be the same as the names that are used in the LVS rules.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016159"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016160"></a> saveParameter( pgateWidth &quot;w&quot; )<br /> saveParameter( pgateLength &quot;l&quot; )<br /> ngateWidth = measureParameter( length ( ngate coincident poly ) 0.5 )<br /> ngateLength = measureParameter( length ( ngate inside poly ) 0.5 )<br /> saveParameter( ngateWidth &quot;w&quot; )<br /> saveParameter( ngateLength &quot;l&quot; )</pre>
+<a id="pgfId-1016169"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The saveInterconnect command writes layers to the extracted cellview. Save the layers defined in the geomConnect command so that you can cross-probe your nets after running LVS.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016170"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016171"></a> saveInterconnect( nsd psd poly contact metal1 via metal2 )</pre>
+<a id="pgfId-1016176"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The saveRecognition command creates the device recognition polygons in the extracted cellview. It is used in conjunction with the Model view name ivpcell in the extractDevice or extractMOS command.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016178"></a> */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016177"></a> saveRecognition( ngate &quot;ngate&quot; ) <br /> saveRecognition( pgate &quot;pgate&quot; ) <br /> )<br />)</pre>
+<h2>
+<a id="pgfId-1014539"></a>ERC and LVS Verification Rules<a id="ERC and LVS Verification Rules"></a></h2>
+
+<p>
+<a id="pgfId-1014541"></a><a id="marker-1014540"></a>To run Electrical Rules Check (ERC) or Layout Versus Schematic (LVS) on your design, you must define your ERC and LVS rules. You write these rules into a text format verification rules file using the SKILL commands defined in this manual. You can place these rules files in a technology library or anywhere else in your system. When you start ERC or LVS, the program prompts you for the location of the rules.</p>
+<p>
+<a id="pgfId-1014543"></a>To create <a id="marker-1014542"></a>verification rules files, you do the following:</p>
+<ul><li>
+<a id="pgfId-1014544"></a>Use the SKILL commands described in the ERC and LVS chapter to create a separate text rules file for each program.</li><li>
+<a id="pgfId-1014546"></a>Put all ERC rules in the <a id="marker-1014545"></a><em>ercRules( )</em> command. Diva verification uses SKILL commands  to define the verification tasks it will execute.</li><li>
+<a id="pgfId-1014548"></a>Put all LVS rules in the <a id="marker-1014547"></a><em>lvsRules( )</em> command. </li><li>
+<a id="pgfId-1014549"></a>Enter the commands in the correct order, because this porduct processes the commands as it encounters them.</li><li>
+<a id="pgfId-1014550"></a>Enter SKILL commands for parameter reduction and comparison before the ERC and LVS verification commands.</li><li>
+<a id="pgfId-1014551"></a>Store the rules files in the required location. There are no default names for these files, and you can store them in the technology library or anywhere else with any name. If you store the rules in a technology library, the rules file name must contain a dot to distinguish it from other library entries. If you use a standard convention of adding .<em>rul</em> to your file names, you can always identify the Diva verification rules files.</li></ul>
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014553"></a>Unlike DRC/Extract, there is no <a id="marker-1014552"></a><em>if-then-else capability</em> for ERC and LVS. In addition, ERC and LVS verification commands are not optimized or rearranged.</div>
+<p>
+<a id="pgfId-1014554"></a>During ERC and LVS processing, the rules are copied to the run directory you define and are stored with the pre-set names <em>divaLVS.rul</em> and <em>divaERC.rul</em>.</p>
+
+<h2>
+<a id="pgfId-1014557"></a>Sample ERC Rules File<a id="Sample ERC Rules File"></a></h2>
+
+<p>
+<a id="pgfId-1014560"></a><a id="marker-1014558"></a>This section contains a sample ERC <a id="marker-1014559"></a>verification rules file.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014561"></a>ercRules(<br />setPower( &quot;vdd!&quot; ) <br />setGround( &quot;gnd!&quot; ) </pre>
+<a id="pgfId-1016232"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Identifies <code><em>vdd!</em></code> nets as power nets and <code><em>gnd!</em></code> nets as ground nets. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016246"></a>twoWayPath( &quot;pfet&quot; &quot;S&quot; &quot;D&quot; )  <br />twoWayPath( &quot;nfet&quot; &quot;S&quot; &quot;D&quot; )</pre>
+<a id="pgfId-1016233"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Defines all <code><em>pfets</em></code> as having bidirectional current paths from Source to Drain and all <code><em>nfets</em></code> as having bidirectional current paths from Source to Drain. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016223"></a>checkPullUp( ) <br />checkPullDown( )</pre>
+<a id="pgfId-1016234"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Checks all nets for a path from the net through devices to nets identified as power nets. Then checks all nets for a path from the net through devices to nets identified as ground nets. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016224"></a>checkFloatingDevices( )<br />checkOneNetDevices( )</pre>
+<a id="pgfId-1016235"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Flags all devices with no connection to any part of the circuit. Then flags all devices with only one connection to any part of the circuit. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016225"></a>checkFloatingNets( )<br />checkOneTerminalNets( )</pre>
+<a id="pgfId-1016236"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Flags all nets with no connection to any part of the circuit. Then flags all nets with only one connection to any terminal of a device. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016226"></a>checkNotConnected( &quot;pfet&quot; &quot;B&quot; &quot;vdd!&quot; )<br />checkConnected( &quot;nfet&quot; &quot;S&quot; &quot;vdd!&quot; )</pre>
+<a id="pgfId-1016237"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Flags all devices with the specified terminal not connected to the named net. Then flags all devices when the specified terminal is connected to the named net. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016227"></a>reduceDevice( MOS &quot;pfet&quot; )</pre>
+<a id="pgfId-1016238"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Reduces the specified device to a logically equivalent gate-level circuit. (You must use <code><em>setPower</em></code> and <code><em>setGround</em></code> to identify supplies.) */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016228"></a>reduceDevice( MOS &quot;nfet&quot; logic )</pre>
+<a id="pgfId-1016239"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Reduces the specified device to a logically equivalent gate-level circuit. Uses keyword logic to signal device types used to form the logic portion of gates. (You must use <code><em>setPower</em></code> and <code><em>setGround </em></code>to identify supplies.) */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016229"></a>)</pre>
+<a id="pgfId-1016240"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The right parenthesis terminates the ercRules. */</pre>
+<h2>
+<a id="pgfId-1014588"></a>Sample LVS Rules Files<a id="Sample LVS Rules Files"></a></h2>
+
+<p>
+<a id="pgfId-1014591"></a><a id="marker-1014589"></a>This section contains two sample LVS <a id="marker-1014590"></a>verification rules files.</p>
+
+<h3>
+<a id="pgfId-1014594"></a>Sample CMOS Rules File<a id="Sample CMOS Rules File"></a><a id="marker-1014593"></a></h3>
+
+<p>
+<a id="pgfId-1014595"></a>The following is a sample LVS verification rules file for CMOS devices.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014596"></a>lvsRules(<br />procedure( compareFet( layPlist, schPlist )</pre>
+<a id="pgfId-1016272"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The first SKILL procedure, <code><em>compareFet</em></code>, compares the width and length of active devices. The <code><em>compareFet</em></code> procedure uses two variables,<code><em> layPlist</em></code>, which contains the parameter list from the layout device being checked, and <code><em>schPlist</em></code>, which contains the parameter list for the schematic device being checked. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016281"></a>prog( ( )<br />    if( layPlist-&gt;w != nil &amp;&amp; schPlist-&gt;w != nil then<br />     if( layPlist-&gt;w != schPlist-&gt;w then<br />       sprintf( errorW,<br />        &quot;Gate width mismatch: %gu layout to %gu schematic&quot;,<br />          float( layPlist-&gt;w ), float( schPlist-&gt;w ) )<br />       return( errorW )<br />     )<br />    )</pre>
+<a id="pgfId-1016273"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* First, <code><em>compareFet</em></code> checks that both lists contain the property<code><em> w</em></code> and, if they do, compares the values of the properties. If the values are not the same, <code><em>compareFet</em></code> returns an error. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016282"></a>   if( layPlist-&gt;l != nil &amp;&amp; schPlist-&gt;l != nil then<br />     if( layPlist-&gt;l != schPlist-&gt;l then<br />       sprintf( errorL,<br />        &quot;Gate length mismatch: %gu layout to %gu schematic&quot;,<br />          float( layPlist-&gt;l ), float( schPlist-&gt;l ) )<br />       return( errorL )<br />     )<br />    )<br /> return( nil )<br /> ) ; prog<br />) ; compareFet</pre>
+<a id="pgfId-1016293"></a><a id="marker-1014620"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Next, <code><em>compareFet</em></code> checks that both lists contain the property <code><em>l</em></code> and, if they do, compares the values of the properties. If the values are not the same, <code><em>compareFet</em></code> returns an error. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016283"></a> procedure( parallelMOS( m1Plist, m2Plist )</pre>
+<a id="pgfId-1016274"></a><a id="marker-1014623"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The next SKILL procedure, <code><em>parallelMOS</em></code>, combines the parameters of parallel MOS transistors in the netlist for the parameter comparison done by the preceding procedure. <code><em>parallelMOS</em></code> uses two variables, <code><em>m1Plist</em></code>, which contains the parameter list from the first device of the pair of devices to be consolidated, and <code><em>m2Plist</em></code>, which contains the parameter list for the second device of the pair of devices to be consolidated. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016284"></a>prog( ( parMos )<br /> parMos = ncons( nil )<br />    if( m1Plist-&gt;l != nil &amp;&amp; m2Plist-&gt;l != nil then<br />     parMos-&gt;l = ( m1Plist-&gt;l + m2Plist-&gt; l ) / 2.0<br />    )</pre>
+<a id="pgfId-1016275"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* First, <code><em>parallelMOS</em></code> checks that both lists contain the property <code><em>l</em></code> and, if they do, adds the values of the two properties together and divides them by 2. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016285"></a>   if( m1Plist-&gt;w != nil &amp;&amp; m2Plist-&gt;w != nil then<br />     parMos-&gt;w = m1Plist-&gt;w + m2Plist-&gt;w<br />    )</pre>
+<a id="pgfId-1016301"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Next, <code><em>parallelMOS</em></code> checks that both lists contain the property <code><em>w</em></code> and, if they do, adds the values of the two properties together. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016286"></a>return( parMos )<br /> ) ; prog<br /> ) ; parallelMOS</pre>
+<a id="pgfId-1016276"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The new device created by parallel consolidation contains the properties <code><em>l</em></code> and <code><em>w</em></code>, set to the values calculated by the procedure. If the properties <code><em>l</em></code> or <code><em>w</em></code> do not exist, or have no value for the devices being consolidated, the new device does not have the <code><em>l</em></code> or <code><em>w</em></code> properties. */</pre>
+<a id="pgfId-1016287"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ /* The third part of this file contains the actual LVS rules for device permutation and parameter comparison. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016288"></a>permuteDevice( parallel &quot;pfet&quot; parallelMOS )<br />permuteDevice( parallel &quot;nfet&quot; parallelMOS )<br />permuteDevice( MOS &quot;pfet&quot; )<br />permuteDevice( MOS &quot;nfet&quot; )</pre>
+<a id="pgfId-1016277"></a><a id="marker-1014644"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The <code><em>permute parallel</em></code> statements reference the procedure <code><em>parallelMOS</em></code> to consolidate the parameters of devices being permuted. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016289"></a>compareDeviceProperty( &quot;pfet&quot; compareFet )<br />compareDeviceProperty( &quot;nfet&quot; compareFet )<br />) ; lvsRules</pre>
+<a id="pgfId-1016278"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The <code><em>compare</em></code> statements reference the <code><em>compareFet</em></code> procedure and cause parameter comparison to take place. */</pre>
+<h3>
+<a id="pgfId-1014652"></a>Sample Bipolar Rules File<a id="Sample BIPOLAR Rules File"></a><a id="marker-1014651"></a></h3>
+
+<p>
+<a id="pgfId-1014654"></a>The following is a sample LVS <a id="marker-1014653"></a>verification rules file for bipolar devices.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014655"></a>lvsRules( <br /> procedure( parallelRes( r1Plist, r2Plist )</pre>
+<a id="pgfId-1016313"></a><a id="marker-1014657"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The SKILL procedure <code><em>parallelRes</em></code> combines the resistance values of parallel resistors. First, the procedure reads the list of properties from the first resistor in the parallel reduction (<code><em>r1Plist</em></code>) and compares that list to the list of properties from the second resistor in the parallel reduction (<code><em>r2Plist</em></code>). */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016324"></a>    prog( ( parPlist myPort )<br />    parPlist = ncons( nil )<br />    myPort = outfile( &quot;/user/project/LVS/Resistors.val&quot;    <br />      &quot;a&quot;)<br />    if( r1Plist-&gt;r != nil &amp;&amp; r2Plist-&gt;r != nil then<br />    parPlist-&gt;r = <br />      ( r1Plist-&gt;r * r2Plist-&gt;r ) / ( r1Plist-&gt;r + r2Plist-&gt;r )</pre>
+<a id="pgfId-1016314"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* If <code><em>parallelRes</em></code> finds the property <code><em>r</em></code> in both lists, it divides the product of <code><em>r1Plist x r2Plist</em></code> by the sum of <code><em>r1Plist + r2Plist</em></code>. The result of the calculation is returned to the new parallel-resistor device as the value of its property <code><em>r</em></code>. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016325"></a>   if( myPort == nil then<br />     printf( &quot;Can&#8217;t open parallelRes IO port - myPort&quot;) else<br />     fprintf( myPort,<br />       &quot;Parallel Resistor value is %g \n&quot;, float( <br />      parPlist-&gt;r) )<br />     close( myPort )<br />    )<br />    return( parPlist )<br /> )<br /> )<br /> procedure( seriesRes( r1Plist, r2Plist )</pre>
+<a id="pgfId-1016315"></a><a id="marker-1014676"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The <code><em>seriesRes</em></code> procedure combines the resistance values of series resistors. First, the procedure reads the list of properties from the first resistor in the series reduction (<code><em>r1Plist</em></code>) and compares that list to the list of properties from the second resistor in the series reduction (<code><em>r2Plist</em></code>). */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016326"></a>prog( ( serPlist myPort )<br />    serPlist = ncons( nil )<br />    myPort = outfile( &quot;/user/project/LVS/Resistors.val&quot; &quot;a&quot; )<br />    if( r1Plist-&gt;r != nil &amp;&amp; r2Plist-&gt;r != nil then<br />     serPlist-&gt;r = ( r1Plist-&gt;r + r2Plist-&gt;r )<br />    ) </pre>
+<a id="pgfId-1016316"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* If <code><em>seriesRes</em></code> finds the property <code><em>r</em></code> in both lists, it then adds (+) the values of the two properties. The result of the calculation is returned to the new series-resistor device as the value of its property <code><em>r</em></code>. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016327"></a>   if( myPort == nil then<br />     printf( &quot;Can&#8217;t open seriesRes IO port - myPort&quot;) else<br />     fprintf( myPort, <br />       &quot;Series Resistor value = %g \n&quot;, float( serPlist-&gt;r ) )<br />     close( myPort )<br />    )<br /> return( serPlist )<br /> )<br /> )<br /> procedure( compareRes( layRes, schRes )</pre>
+<a id="pgfId-1016317"></a><a id="marker-1014695"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The <code><em>compareRes</em></code> procedure compares the resistance values calculated during the parallel and series consolidation of resistors. First, the procedure reads the list of parameters from the [consolidated] resistor in the layout (<code><em>layRes</em></code>) and compares it to the list of parameters from the [consolidated] resistor in the schematic (<code><em>schRes</em></code>). */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016328"></a>prog( ( )<br />    if( layRes-&gt;r != nil &amp;&amp; schRes-&gt;r != nil then<br />     if( abs( layRes-&gt;r - schRes-&gt;r ) &gt; 0.02 * schRes-&gt;r then<br />       sprintf( error, <br />        &quot;Value mismatch: %g ohms (layout) vs %g ohms<br />       (schematic)&quot;,<br />     float( layRes-&gt;r ), float( schRes-&gt;r ) )<br />       return( error )</pre>
+<a id="pgfId-1016318"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* If <code><em>compareRes</em></code> finds the property <code><em>r</em></code> in both lists, it subtracts the value of <code><em>r</em></code> in <code><em>layRes</em></code> from the value of <code><em>r</em></code> in <code><em>schRes</em></code>. If the difference between the values is greater than 2%, <code><em>compareRes</em></code> returns an error; if not, the resistor values are considered matched. */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016329"></a>    ) <br />    return( nil )<br />    )<br /> )<br /> )</pre>
+<a id="pgfId-1016319"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Parallel and Series Permutation and Parameter Consolidation */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016330"></a> permuteDevice( parallel &quot;npn&quot; )<br /> permuteDevice( parallel &quot;pnp&quot; )<br /> permuteDevice( parallel &quot;resistor&quot; parallelRes )<br /> permuteDevice( series &quot;resistor&quot; seriesRes )</pre>
+<a id="pgfId-1016320"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* Parameter Comparison */</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016331"></a> compareDeviceProperty( &quot;resistor&quot; compareRes )<br />)</pre>
+<h2>
+<a id="pgfId-1014720"></a><a id="36739"></a>Creating a Run-Specific File<a id="Run-Specific File"></a></h2>
+
+<p>
+<a id="pgfId-1016486"></a>You use a run-specific file when you want to specify commands that apply only for a particular verification run. You put these run-specific commands in a separate file that you call when you perform a DRC or an extraction.</p>
+<p>
+<a id="pgfId-1016533"></a>You can use the SKILL commands to create a run-specific file:</p>
+
+<p>
+<a id="pgfId-1016540"></a></p>
+<table class="webflareTable" id="#id1016487">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016489">
+<a id="pgfId-1016489"></a>To...</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1016491">
+<a id="pgfId-1016491"></a>Use...</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016493"></a>Add text labels to the verification run without adding them to the original graphics data.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016496"></a>layerText<a id="marker-1016495"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016498"></a>Define an area of the circuit to be processed by DRC. </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016501"></a>verifyArea<a id="marker-1016500"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016503"></a>Treat all nets having the same name as a single net. </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016506"></a>joinableNet<a id="marker-1016505"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016508"></a>Change the name of one label to another for this verification run only. </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016511"></a>changeLabel<a id="marker-1016510"></a></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016513"></a>Treat labels from lower-level cells as if they were on the top level.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016516"></a><a id="marker-1016515"></a>globalLabel</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016518"></a>List all marker shapes created during the current or previous Diva verification run.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016520"></a>drcLogFile</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016522"></a>Force the area checking halo to be set to zero.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016524"></a>drcZeroHalo</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016526"></a>Define the name of the ground net.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016528"></a>groundNet</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016530"></a>Define a file of cell names for macro cell extraction.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016532"></a>macroCellFile</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016573"></a>Define a SKILL procedure to return the type of a cell instance.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016575"></a>macroCellFunc</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016577"></a>Define a SKILL procedure to return the include value of a cell instance.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016579"></a>includeValueFunc</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1016534"></a>You can put the run-specific file in any directory that is accessible through normal UNIX file conventions. You then specify the name of this file when you use the menu to set the DRC or extraction options or when you use the <a id="marker-1016535"></a>?<em>rsf </em>option in the <em>ivDRC</em><a id="marker-1016536"></a> and <a id="marker-1016537"></a><em>ivExtract</em> commands. </p>
+<p>
+<a id="pgfId-1014773"></a>The following sections describe the SKILL commands listed in the table above.</p>
+
+<h3>
+<a id="pgfId-1014776"></a>changeLabel<a id="changeLabel"></a></h3>
+<a id="pgfId-1014778"></a><a id="marker-1014777"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+changeLabel( ( oldLabel newLabel ) ...)</pre>
+<h4>
+<a id="pgfId-1014779"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014780"></a>Temporarily changes the name of a label without affecting the database. You can use <em>changeLabel</em> as: </p>
+<ul><li>
+<a id="pgfId-1014781"></a>An entry in the run specific file. </li><li>
+<a id="pgfId-1014782"></a>A property on the cell being verified. </li><li>
+<a id="pgfId-1014783"></a>An entry in the verification rules file. </li></ul>
+
+
+<p>
+<a id="pgfId-1014784"></a>The name change applies only to original labels. If label &#8220;a&#8221; is changed to &#8220;b&#8221; and label &#8220;b&#8221; is changed to &#8220;c,&#8221; label &#8220;a&#8221; is never changed to &#8220;c.&#8221;</p>
+<p>
+<a id="pgfId-1014786"></a><a id="marker-1014785"></a>The name change applies to labels recognized through the label command and <a id="marker-1014787"></a>pin names in the <em>geomConnect</em> command in the technology file. For labels, the command changes the name of the net to which it is applied. For pin names, the command generates the pin in the extracted and excell cellviews with the new name.<a id="marker-1014788"></a></p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014789"></a>The label changes every time you run DRC or extraction with those rules if you use <em>changeLabel</em> in the verification rules file. When you use <em>changeLabel</em> in the verification rules file, you must place it before any <em>geomConnect </em>commands.</div>
+
+<h4>
+<a id="pgfId-1014790"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014791"></a><code>oldLabel newLabel</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018004"></a> Specify two text names, each enclosed in quotation marks, defining the old (existing) label name and its new (replacement) name. </p>
+<p>
+<a id="pgfId-1014792"></a>Use the new name in place of the old name (except for the <em>geomGetTexted</em> and <em>geomGetUntexted</em> commands). The name change is global, affecting all cells in the circuit.</p>
+<p>
+<a id="pgfId-1014793"></a>You can specify as many name pairs in one <em>changeLabel</em> command as you want.</p>
+<p>
+<a id="pgfId-1014794"></a>You can use wildcards only for <em>oldLabel</em> following the Diva verification conventions for wildcards. (See <a href="chap4.html#50184">Using Wildcards</a>.) The command <em>changeLabel</em>( <em>&quot;gnd*&quot; &quot;gnd&quot; </em>) means that both <em>gnd1</em> and <em>gnd2</em> are changed to <em>gnd</em>. You cannot change the name of a label to a name that contains wildcards.</p>
+
+<h4>
+<a id="pgfId-1014798"></a>Property</h4>
+
+<p>
+<a id="pgfId-1014799"></a>You can also use <em>changeLabel</em> as a property of the cell. Only one <em>changeLabel</em> <a id="marker-1014800"></a>property is allowed per cell. For flat extraction, place the property on the top-level cell. Diva verification ignores any <em>changeLabel</em> property on lower-level cells. For hierarchical extraction, all cells can have this property, and the label affects only the cell where it was placed.</p>
+<p>
+<a id="pgfId-1016347"></a>The property uses this format:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016348"></a>changeLabel = &quot;oldLabel newLabel [ oldLabel newLabel ] ...&quot;</pre>
+<p>
+<a id="pgfId-1016349"></a>This example illustrates the <em>changeLabel</em> property.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014804"></a>changeLabel = VDD vdd! GND gnd!</pre>
+
+<h4>
+<a id="pgfId-1014805"></a>Example</h4>
+
+<p>
+<a id="pgfId-1014806"></a>This example illustrates the <em>changeLabel</em> command.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014807"></a>changeLabel( ( &quot;VDD&quot; &quot;vdd!&quot; ) ( &quot;GND&quot; &quot;gnd!&quot; ))</pre>
+<p>
+<a id="pgfId-1014808"></a>In this case, the original names of <em>VDD</em> and <em>GND</em> are changed to conform to the local conventions of <em>vdd!</em> and <em>gnd!</em>.</p>
+
+<h3>
+<a id="pgfId-1014811"></a>drcLogFile<a id="marker-1014809"></a><a id="marker-1014810"></a></h3>
+<a id="pgfId-1014812"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+drcLogFile( file_name [precision [page_width [page_length [line_limit]]]])</pre>
+<h4>
+<a id="pgfId-1014813"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014816"></a><a id="marker-1014814"></a><a id="marker-1014815"></a>Produces a DRC log file that lists all marker shapes created during the current or previous Diva verification run. The log file is created only in DRC and extraction modes. To generate this file, you must add the <code>drcLogFile</code> command to your run-specific file.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014817"></a>While running Diva verification DRC, if you get an error message stating that the the <code>drcLogFile</code> command is only allowed in the run-specific rules (and Diva generates this error message even if you run the command directly in the CIW),  it is because you have put the<code> drcLogFile </code>command in the rule file (<code>divaDRC.rul</code>). The run-specific file is different from the rule file. So create a file with the following in it:</div>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014818"></a>drcLogFile( &lt;<em>filename</em>&gt;.log)</pre>
+<p>
+<a id="pgfId-1014819"></a>where <code>&lt;</code><em>filename</em><code>&gt;.log</code> is the name of the file and can have any name.</p>
+<p>
+<a id="pgfId-1014820"></a>Then run Diva verification DRC and in the DRC form turn on the <em>Run-Specific Command File</em> field and enter the name of the above file. Depending on the location of the file, you may have to enter the path along with the file name. Now when you run DRC, the <code>&lt;</code><em>filename</em><code>&gt;.log</code> is created in the directory you started the tool from. This is true for both the 4.3.4 and 4.4.x releases.</p>
+
+<h4>
+<a id="pgfId-1014821"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014822"></a><code>file_name</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018011"></a> Name of the log file. This file is deleted before any text is written to it, so that existing data in the file is overwritten.</p>
+
+<p><strong>
+<a id="pgfId-1018016"></a><code>precision</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018019"></a><change />
+Number of digits to the right of the decimal point to be used when the numbers are printed. For example, a value of 2 might cause coordinates to be printed such as 5.25, while a value of 3 might produce 5.252. The default value is 2. </p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014824"></a>In order to conserve disk space, a number such as 5.000 is always printed as 5, no matter what the precision.</div>
+
+<p><strong>
+<a id="pgfId-1014825"></a><code>page_width</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018025"></a><change />
+Page width. The default is 80 characters. Lines that exceed 80 characters are broken into multiple lines.</p>
+
+<p><strong>
+<a id="pgfId-1018030"></a><code>page_length</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018033"></a><change />
+Page length. The default is 0, which disables this feature. If you use this argument, the system inserts a page header at the top of each page.</p>
+
+<p><strong>
+<a id="pgfId-1018038"></a><code>line_limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018042"></a><change />
+Specifies the limit at which the program stops printing to the log file. The default is no limit.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014828"></a>If this command is used without arguments, the <code>drcLogFile</code> log is written to the CIW.</div>
+
+<h4>
+<a id="pgfId-1014829"></a>Example</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014830"></a>drcLogFile( &quot;DRC.log&quot; )</pre>
+<h3>
+<a id="pgfId-1014832"></a>drcZeroHalo<a id="marker-1014831"></a></h3>
+<a id="pgfId-1014833"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+drcZeroHalo( status )</pre>
+<h4>
+<a id="pgfId-1017080"></a>Description</h4>
+
+<p>
+<a id="pgfId-1017082"></a><a id="marker-1017081"></a>Sets (or resets) the halo to be used in area processing to zero. This halo is the distance added around the checking area to ensure all interactions and relationships that could affect the data in the area are included. </p>
+<p>
+<a id="pgfId-1014837"></a>The halo distance normally used depends on the dimensions in the rules file. For some rule sets, the halo can be very large and can have a serious impact on run time.</p>
+
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1014838"></a>
+This command can miss true violations, so use it carefully.</div>
+
+<p>
+<a id="pgfId-1014839"></a>This command is disabled when running in hierarchical or incremental modes. This command overrides the <em>ivVerify</em> command <em>-z</em> option for this run.</p>
+<p>
+<a id="pgfId-1014840"></a>Placing the <em>drcZeroHalo</em> command in the <em>.cdsinit</em> file sets the mode for the duration of the interactive session. Used in a run-specific file, this command sets the mode for a single Diva verification invocation.</p>
+
+<h4>
+<a id="pgfId-1014841"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014842"></a><code>status</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018049"></a><code>&#160;&#160;&#160;&#160;</code>Options used for status. </p>
+
+<p><strong>
+<a id="pgfId-1018054"></a><code>t</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018057"></a> Sets the status to true and turns on the zero halo option, which sets the halo to a value of zero.</p>
+
+<p><strong>
+<a id="pgfId-1018062"></a><code>nil</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018065"></a>Sets the status to false and turns off the zero halo option, which leaves the halo value at its automatic calculated value.</p>
+
+<h4>
+<a id="pgfId-1014845"></a>Examples</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014846"></a>drcZeroHalo( t )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014847"></a>drcZeroHalo( nil )</pre>
+
+<h3>
+<a id="pgfId-1014848"></a>globalLabel</h3>
+<a id="pgfId-1014850"></a><a id="marker-1014849"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+globalLabel( layer label [label] )</pre>
+<h4>
+<a id="pgfId-1014851"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014853"></a><a id="marker-1014852"></a>Treats labels as if they are on a top-level cell even though they actually come from lower level cells. For example, you can use power and ground labels inside subcells for <a id="marker-1014854"></a>net labeling.</p>
+<p>
+<a id="pgfId-1014855"></a>The default purpose for the layer is <em>drawing</em>. To specify other purposes, you can use this command.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014856"></a>globalLabel( (layer purpose) label )</pre>
+<p>
+<a id="pgfId-1014857"></a>The label is always considered to be the <em>drawing</em> purpose, regardless of the original purpose of the text. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014858"></a><change />
+You can also use this command in the verification rules file. When you use it in a verification rules file, you must place it before any <em>geomConnect</em> command. Other commands that process text, such as <em>geomGetTexted</em>, are also affected by this command.</div>
+
+<h4>
+<a id="pgfId-1014859"></a>Prerequisite</h4>
+
+<p>
+<a id="pgfId-1014860"></a>The <em>globalLabel</em> command must precede the command that uses the labels.</p>
+<p>
+<a id="pgfId-1014861"></a>Note: Other commands that process text, such as <em>geomGetTexted</em>, are also affected by this command.</p>
+
+<h4>
+<a id="pgfId-1014862"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1016387"></a><code>layer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018083"></a><change />
+Original graphics layer containing the label you want treated as if it is on a top-level cell. You can define the <em>textLayer</em> in two formats:</p>
+
+<p>
+<a id="pgfId-1016438"></a></p>
+<table class="webflareTable" id="#id1016388">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016390"></a><code>&quot;layer&quot;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016392"></a>The label is accessed from the drawing purpose and remains on the drawing purpose.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016394"></a><code>(&quot;layer&quot; &quot;purpose&quot;)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016396"></a>If you specify a purpose, such as pin or text, the labels are accessed only from that purpose and remain on that purpose. If you specify the purpose all, the labels are accessed from all purposes and remain on their original purposes.</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1016397"></a><code>label</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018090"></a><change />
+Label you want treated as if it is on a top-level cell.</p>
+<p>
+<a id="pgfId-1016398"></a>You can use wildcard characters following the Diva verification conventions for wildcards. (See the &#8220;<a href="chap4.html#50184">Using Wildcards</a>&#8221; section.)</p>
+
+<h4>
+<a id="pgfId-1014871"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1017100"></a>In this example, power and ground are properly labeled even though there are no <em>vdd!</em> or <em>gnd!</em> labels at the top-level cell. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017101"></a>globalLabel( &quot;met1_lab&quot;<change />
+&quot;vdd!&quot;<change />
+&quot;gnd!&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017102"></a>geomConnect(</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014875"></a> via( via metal1 metal2 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017109"></a> via( cus diff poly metal1 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017110"></a> label( &quot;met1_lab&quot; metal1 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017111"></a>)</pre>
+<p>
+<a id="pgfId-1017112"></a>If two <em>globalLabel</em> commands apply to the same layer, you can combine them into a single command. For example,</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014880"></a>globalLabel( &#8220;l1&#8221; &#8220;a&#8221; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014881"></a>globalLabel( &#8220;l1&#8221; &#8220;b&#8221; )</pre>
+<p>
+<a id="pgfId-1014882"></a>is the same as</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014883"></a>globalLabel( &#8220;l1&#8221; &#8220;a&#8221; &#8220;b&#8221; )</pre>
+
+<h3>
+<a id="pgfId-1014886"></a><change />
+<a id="globalLabel"></a>groundNet<a id="marker-1014885"></a></h3>
+<a id="pgfId-1014887"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+groundNet( &quot;net_name&quot; )</pre>
+<h4>
+<a id="pgfId-1014888"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014890"></a><a id="marker-1014889"></a>Defines a specific net name to be used by programs that make connections to the circuit ground net. If you specify this command, the net name it defines is used instead of the default global ground net, which has the name &#8220;0!&#8221;.</p>
+<p>
+<a id="pgfId-1014891"></a>This command creates the defined net in the extracted circuit regardless of whether the net name exists in the original layout. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014892"></a>The net is defined as a global net, and all nets with the same name are assumed to be joined (as if you defined a <em>joinableNet</em> command). This means any open circuits in the net are not seen in LVS processing.</div>
+<p>
+<a id="pgfId-1014893"></a>You can also use this command in the verification rules file. When you use it in a verification rules file, you must place it before any <em>geomConnect</em> command. </p>
+<p>
+<a id="pgfId-1014894"></a>If you specify this command more than once, the first command is accepted. Diva verification ignores the remaining occurrences of the command. If you use this command in the RSF, it takes precedence over this same command in the rules file.</p>
+<p>
+<a id="pgfId-1014895"></a>When you use this command, a property called <em>ivGroundNetName</em> is added to the extracted and abstract cellviews. The content of the property is a string whose value is the defined net name.</p>
+
+<h4>
+<a id="pgfId-1014896"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014897"></a><code>&quot;net_name&quot;</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018097"></a> The name of the ground net. Enclose the net name in double quotation marks.</p>
+
+<h4>
+<a id="pgfId-1014898"></a>Example </h4>
+
+<p>
+<a id="pgfId-1014899"></a>You can define a ground net as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014900"></a>groundNet( &quot;gnd&quot; )</pre>
+<p>
+<a id="pgfId-1014901"></a>The following example shows parasitic measurement:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014902"></a>x = measureParasitic( area metal one_net )<br />saveParasitic( x &quot;PLUS&quot; &quot;MINUS&quot; &quot;c&quot; &quot;capacitor&quot; )</pre>
+<p>
+<a id="pgfId-1014903"></a>If you do not specify the <em>groundNet</em> command, a parasitic capacitor is created for each area of metal, with one terminal of the capacitor connected to the net to which the metal belongs, and the other terminal connected to &#8220;0!&#8221;. If you specify the <em>groundNet</em> command, the second terminal of the capacitor is connected to the net specified in the command (in this case, <em>gnd</em>).</p>
+
+<h3>
+<a id="pgfId-1014906"></a>joinableNet<a id="joinableNet"></a></h3>
+<a id="pgfId-1014908"></a><a id="marker-1014907"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+joinableNet( [net ...] )</pre>
+<h4>
+<a id="pgfId-1014909"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014911"></a>Specifies that selected <a id="marker-1014910"></a>nets with the same name are to be considered as a single net, not an error. You can use <em>joinableNet</em> as: </p>
+<ul><li>
+<a id="pgfId-1014912"></a>An entry in the run specific file.</li><li>
+<a id="pgfId-1014913"></a>A property on the cell being verified.</li><li>
+<a id="pgfId-1014914"></a>An entry in the verification rules file. </li></ul>
+
+
+<p>
+<a id="pgfId-1014915"></a>Any two or more nets with the same label that are not specified as joined with a <em>joinableNet</em> command are flagged by a warning.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014916"></a>The nets you selected will be joined every time you run DRC or extraction with those rules if you use <em>joinableNet </em>in the verification rules file. When you use <em>joinableNet</em> in the verification rules file, you must place it before any <em>geomConnect </em>commands.</div>
+
+<h4>
+<a id="pgfId-1014917"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014919"></a><code>net</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018104"></a><code>&#160;&#160;&#160;&#160;</code>Any number of net names enclosed in quotation marks. For each name, all separate nets with that name are considered part of a single net. If you do not specify a list, DRC joins all nets.<a id="marker-1014918"></a></p>
+<p>
+<a id="pgfId-1014920"></a>You can use wildcard characters following Diva verification conventions for using wildcards. (See the section, <a href="chap4.html#50184">Using Wildcards</a>.) Only nets with the same name are joined. For example, if you use wildcards to specify <em>gnd*</em>, all nets labeled <em>gnd1</em> are joined together, and all nets labeled <em>gnd2</em> are joined together. Nets labeled <em>gnd1</em> are not joined to nets labeled <em>gnd2</em>.</p>
+
+<h4>
+<a id="pgfId-1014924"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014925"></a>This example illustrates the <em>joinableNet</em> command.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014926"></a>joinableNet( &quot;vdd!&quot; &quot;gnd!&quot; &quot;clock1&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014927"></a>joinableNet( )</pre>
+<p>
+<a id="pgfId-1014928"></a>This example uses the <em>joinableNet </em>command with the <em>changeLabel</em> command to join nets with different names.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014929"></a>changeLabel(( &quot;vdd1&quot; &quot;vdd&quot; ) ( &quot;vdd2&quot; &quot;vdd&quot; ))</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014930"></a>joinableNet( &quot;vdd&quot; )</pre>
+<p>
+<a id="pgfId-1014931"></a>The separate nets <em>vdd1</em> and <em>vdd2</em> are both renamed to <em>vdd</em> with the <em>changeLabel</em> command, and then all nets with the name <em>vdd</em> are specified to be the same net with the <em>joinableNet</em> command.</p>
+
+<h4>
+<a id="pgfId-1014932"></a>Property</h4>
+
+<p>
+<a id="pgfId-1014933"></a>You can also add <em>joinableNet </em>as a property of the cell. Only one <em>joinableNet</em> property is allowed per cell. For flat extraction, place the property on the top-level cell. Any <em>joinableNet</em> property on lower level cells is ignored. For hierarchical extraction, all cells can have this property, and the property affects only the cells on which it was placed.</p>
+<p>
+<a id="pgfId-1014934"></a>The property uses this format:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014935"></a>joinableNet = &quot;net_name1 [ net_name2 ] ...&quot;</pre>
+<p>
+<a id="pgfId-1014936"></a>This example illustrates the <em>joinableNet </em>property.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014937"></a>joinableNet = vdd! gnd! clock1</pre>
+
+<h3>
+<a id="pgfId-1014940"></a>layerText<a id="layerText"></a></h3>
+<a id="pgfId-1014942"></a><a id="marker-1014941"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+layerText( textLayer xy text [cell] ...)</pre>
+<h4>
+<a id="pgfId-1014943"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014947"></a><a id="marker-1014944"></a>Temporarily adds <a id="marker-1014945"></a>text labels to a <a id="marker-1014946"></a>text layer. The labels appear on the <em>drawing</em> purpose at one user unit in length and in standard orientation.</p>
+
+<h4>
+<a id="pgfId-1014948"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014949"></a><code>textLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018111"></a> Layer on which you want to place the label. The labels appear on the <em>drawing </em>purpose at one user unit in height and in standard orientation.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1018116"></a> You can define the <em>textLayer</em> in two formats:</p>
+
+<p>
+<a id="pgfId-1016407"></a></p>
+<table class="webflareTable" id="#id1015603">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015605"></a><code>&quot;layer&quot;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015607"></a>Places text on the <em>drawing</em> purpose.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015609"></a><code>(&quot;layer&quot; &quot;purpose&quot;)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015611"></a>Places text on the purpose you specify. You cannot specify the purpose <em>all</em> for this layer.</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1014953"></a><code>xy</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018126"></a> x and y coordinates where you want to place the label, expressed in user units, such as microns. You can use floating point numbers or integers, separated by a colon. </p>
+
+<p><strong>
+<a id="pgfId-1018131"></a><code>text </code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018134"></a>Label you want to place. Use a character string enclosed in quotation marks. </p>
+
+<p><strong>
+<a id="pgfId-1018139"></a><code>cell</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018142"></a>Optional cell name defining the name of the cell in which the text is placed. It can have the form </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015570"></a><code> [cellName [viewName [libName ]]]</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014957"></a> You must place the names in quotation marks in the following format:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015578"></a> <code>&quot;cell&quot;<br />&quot;cell  view&quot;<br />&quot;cell&#160;&#160;view&#160;&#160;lib&quot;</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014959"></a> If you do not use the <em>cell </em>option, the label is placed in the top-level cell. The default view and library are those of the top-level cell.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014960"></a> If you specify a cellview combination that does not exist, the program ignores the <em>layerText</em> command and issues a warning message. A run generates a maximum of 100 warning messages.</p>
+
+<h4>
+<a id="pgfId-1014961"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014962"></a>This example places the label <em>clock_1</em> on the text layer at coordinates 34:25.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014963"></a>layerText( &quot;text&quot; 34:25 &quot;clock_1&quot;)</pre>
+<p>
+<a id="pgfId-1014964"></a>This example uses a SKILL procedure to loop through the generation of 32 names for a bus. The resultant names become <em>bit_0</em> to <em>bit_31</em> in a vertical column at x = 100, with y varying from 200 to 386 in 6 unit steps.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014965"></a>prog( ( i y label )<br />   for( i 0 31<br />      y = 200 + 6 * i<br />      sprintf( label &quot;bit_%d&quot; i )<br />      layerText( &quot;metalText&quot; 100:y label )<br />   )<br />)</pre>
+
+<h3>
+<a id="pgfId-1014988"></a><a id="marker-1014987"></a>macroCellFile</h3>
+<a id="pgfId-1014989"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+macroCellFile( &quot;filename&quot; )</pre>
+<h4>
+<a id="pgfId-1014990"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014992"></a><a id="marker-1014991"></a>Provides a file of cell names that controls whether a cell becomes a macro cell or not.</p>
+<p>
+<a id="pgfId-1014993"></a>You can use this file in addition to the <em>ivCellType</em> property on a cell. However, the values you define for each cell using the <em>macroCellFile</em> command override the <em>ivCellType</em> property on the cell.</p>
+
+<h4>
+<a id="pgfId-1014994"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014995"></a><code>&quot;filename&quot;</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018158"></a> The name or path, in quotation marks, of a text file containing one line per cell with the following format:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015739"></a><code> # libName cellName viewName value</code></p>
+
+<p>
+<a id="pgfId-1016439"></a><code></code></p>
+<table class="webflareTable" id="#id1016410">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016412"></a><code>#</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016414"></a>Indicates a comment. If you do not specify<em> # </em>on a line, the line is active. If you specify # on a line, that line is ignored. Blank lines are also ignored.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016416"></a><code>libName</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016418"></a>Name of the library from which the cell is accessed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016420"></a><code>cellName</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016422"></a>Name of the cell.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016424"></a><code>viewName</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016426"></a>Cellview name.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015001"></a> You can define any of the names using wildcard characters following Diva&#8217;s conventions for using wildcards. See the &#8220;<a href="chap4.html#50184">Using Wildcards</a>&#8221; section for more information about wildcards.</p>
+
+<p><strong>
+<a id="pgfId-1018170"></a><code>Value</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018173"></a> This argument can have the following values:</p>
+
+<p><strong>
+<a id="pgfId-1018178"></a><code>macro</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018181"></a> Forces the cell to become a macro cell.</p>
+
+<p><strong>
+<a id="pgfId-1018186"></a><code>graphic</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018189"></a> Forces the cell not to become a macro cell.</p>
+
+<p><strong>
+<a id="pgfId-1018194"></a><code>none</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018197"></a> Ignores the <em>ivCellType</em> property and lets the cell become a macro or not based on its <em>prCellType</em> property.</p>
+
+<h4>
+<a id="pgfId-1015009"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015010"></a>macroCellFile( &quot;macrocells&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015011"></a>macroCellFile( &quot;/tmp/mydata/cells&quot; )</pre>
+
+<p>
+<a id="pgfId-1015012"></a>The following examples illustrate possible file contents:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015013"></a> myLib myMacro   layout macro<br /> myLib nonMacro* routed graphic<br /># &#160;&#160;&#160;&#160;myLib anyCell&#160;&#160; * none</pre>
+
+<h3>
+<a id="pgfId-1016583"></a>macroCellFunc</h3>
+<a id="pgfId-1016584"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+macroCellFunc( procedure )</pre>
+<h4>
+<a id="pgfId-1016585"></a>Description</h4>
+
+<p>
+<a id="pgfId-1016587"></a><a id="marker-1016586"></a>Defines a SKILL procedure that controls whether a cell becomes a macro cell or not.</p>
+<p>
+<a id="pgfId-1016588"></a>You can use this command in addition to the <em>ivCellType</em> property on a cell. However, the values the procedure returns for each cell override the <em>ivCellType</em> property on the cell.</p>
+
+<h4>
+<a id="pgfId-1016589"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1016590"></a><code>procedure</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018204"></a> The name of the SKILL lambda procedure you specify.</p>
+<p>
+<a id="pgfId-1016610"></a> The tool passes a list to the procedure. This list contains a database identifier for the instance being tested, or a list containing the database identifier and the number of row and columns if a mosaic instance is being tested.</p>
+<p>
+<a id="pgfId-1016706"></a>The procedure return value value can be:</p>
+<table class="webflareTable" id="#id1016693">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016695"></a><em>macro</em> </p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016697"></a>Forces the cell to be a macro cell providing the cell has pins.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016699"></a><em>graphic</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016701"></a>Forces the cell not to be a macro cell.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016703"></a><em>none</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016705"></a>Ignores the <em>procedure</em> and lets the cell become a macro or not based on its pins and <em>prCellType</em> property.</p>
+</td>
+</tr>
+</tbody></table>
+
+<h4>
+<a id="pgfId-1016657"></a>Examples</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016670"></a>; procedure to emulate the ivCellType instance<br />; property using the user defined property myCellType<br />macroCellFunc( lambda( ( instPath )<br />   let( ( instId result )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016671"></a>  ; get the leaf instance from the path<br />   instId = car( instPath )<br />
+&#160;&#160; ; check for a mosaic stored as ( instId row column )<br />   when( listp( instId ) instId = car( instId ) )<br />
+&#160;&#160; ; check if we know what the value should be <br />   result = cond(<br />      ( instId-&gt;myCellType instId &gt;myCellType )<br />      ( t &quot;&quot; )     ;indicate that we don&#8217;t know the value</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016776"></a>      ); cond<br />
+&#160;&#160; ; send the answer back<br />   result<br />   )<br />))</pre>
+
+<h3>
+<a id="pgfId-1016751"></a>includeValueFunc</h3>
+<a id="pgfId-1016715"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+includeValueFunc( procedure )</pre>
+<h4>
+<a id="pgfId-1016716"></a>Description</h4>
+
+<p>
+<a id="pgfId-1016718"></a><a id="marker-1016717"></a>Defines a SKILL procedure that can specify the value to use in place of the ivIncludeValue property on the instance or master.</p>
+<p>
+<a id="pgfId-1016719"></a>You can use this command in addition to the <em>ivIncludeValue</em> property on a cell. However, the value the procedure returns for each cell override the <em>ivIncludeValue</em> property on the cell.</p>
+
+<h4>
+<a id="pgfId-1016720"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1016721"></a>procedure</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018211"></a> The name of the SKILL lambda procedure you specify.</p>
+<p>
+<a id="pgfId-1016722"></a> The tool passes a list to the procedure. This list contains a database identifier for the instance being tested, or a list containing the database identifier and the number of row and columns if a mosaic instance is being tested.</p>
+<p>
+<a id="pgfId-1016736"></a>The procedure return value value can be nil or an empty string to indicate that the procedure is not providing a value, a string representing a number, an integer, or a real number which is rounded to an integer. If a number is returned, it is used instead of an instance or master ivIncludeValue property.</p>
+
+<h4>
+<a id="pgfId-1016737"></a>Examples</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016738"></a>; procedure to emulate the ivIncludeValue instance<br />; property using the user defined property myIncludeValue<br />includeValueFunc( lambda( ( instPath )<br />   let( ( instId result )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016739"></a>  ; get the leaf instance from the path<br />   instId = car( instPath )<br />
+&#160;&#160; ; check for a mosaic stored as ( instId row column )<br />   when( listp( instId ) instId = car( instId ) )<br />
+&#160;&#160; ; check if we know what the value should be <br />   result = cond(<br />      ( instId-&gt;myIncludeValue instId &gt;myIncludeValue )<br />      ( t &quot;&quot; )     ;indicate that we don&#8217;t know the value</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016661"></a>      ); cond<br />
+&#160;&#160; ; send the answer back<br />   result<br />   )<br />))</pre>
+
+<h3>
+<a id="pgfId-1016664"></a>verifyArea<a id="verifyArea"></a></h3>
+<a id="pgfId-1015018"></a><a id="marker-1015017"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+verifyArea( ( box [ hole ] ...) ...)</pre>
+<h4>
+<a id="pgfId-1015019"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015020"></a>Defines those areas of the circuit you want checked by DRC. You can define the area as one or more <a id="marker-1015021"></a>rectangles. You can optionally specify that each rectangle has one or more <a id="marker-1015022"></a>holes in it. The area processed by the DRC program is the area of each rectangle minus the area of the holes.</p>
+<p>
+<a id="pgfId-1016571"></a>This command is only available for DRC, it may not be used for Extraction.</p>
+
+<h4>
+<a id="pgfId-1015024"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015025"></a><code>box</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018218"></a> Two pairs of coordinates enclosed in parentheses, defining the bottom left and top right of a rectangular area to be checked. Separate the two pairs by at least one space. Each coordinate pair consists of an x and y value in user units, separated by a colon. For example,</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015764"></a><code> ( 10:100 5000:2500 )</code></p>
+
+<p><strong>
+<a id="pgfId-1018229"></a><code>hole</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018232"></a> Pairs of coordinates defining holes in the rectangle. You place the hole coordinate pairs after the <em>box</em> pair but within the same set of parentheses. The format for each hole coordinate pair is the same as for the original <em>box.</em> For example,</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015769"></a><code> ( 10:100 5000:2500 50:500 1000:1250 )</code></p>
+
+<h4>
+<a id="pgfId-1015029"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015030"></a>This example illustrates a simple rectangular verification area.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015031"></a>verifyArea( ( 0:0 1000:1400 ) )</pre>
+<p>
+<a id="pgfId-1015032"></a>This example illustrates a simple rectangular verification area with a single cutout.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015033"></a>verifyArea( ( 0:0 1000:1400 50:100 356:420 ) )</pre>
+<p>
+<a id="pgfId-1015034"></a>This example illustrates two simple rectangular verification areas.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015035"></a>verifyArea( ( 0:0 1000:1400 ) ( 2000: 2300 4000: 5000 ) )</pre>
+<p>
+<a id="pgfId-1015036"></a>This example illustrates a combination of areas and holes.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015037"></a>verifyArea((20:100 900:850 30:150 100:600) (1000:950 2000:2110 ))</pre>
+
+<h2>
+<a id="pgfId-1015039"></a>Sample Run-Specific File<a id="Sample Run-Specific File"></a></h2>
+
+<p>
+<a id="pgfId-1016434"></a>This is a sample <a id="marker-1016433"></a>run-specific file.</p>
+
+<a id="pgfId-1016435"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The first command checks a rectangular area with a lower left coordinate of (10:100) and an upper right coordinate of (500:250). The next two coordinate pairs establish a (200:120) by (220:150) hole in the rectangle that is not checked. */</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015043"></a>verifyArea( ( 10:100 500:250 200:120 220:150 ) )</pre>
+
+<a id="pgfId-1015044"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* This command places the string <code><em>out1</em></code>on the <code><em>text</em></code> layer at the xy location (30:50). It also specifies the cell <code><em>sreg</em></code> in which the text label is to be placed. */ </pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015045"></a>layerText( &quot;text&quot; 30:50 &quot;out1&quot; &quot;sreg&quot; )</pre>
+
+<a id="pgfId-1015046"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* This command changes all <code><em>VDD</em></code> and <code><em>VCC</em></code> labels to <code><em>vdd!</em></code> for the current run only. */</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015047"></a>changeLabel( (&quot;VDD &quot;vdd!&quot; ) ( &quot;VCC&quot; &quot;vdd!&quot; ) )</pre>
+
+<a id="pgfId-1015048"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* This command joins all disjoint nets of the same name. */</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015049"></a>joinableNet( ) </pre>
+
+<a id="pgfId-1017118"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* This command brings all labels to the top-level of the current 
+design. */</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017119"></a>globalLabel( &quot;text&quot; &quot;vdd!&quot;<change />
+&quot;gnd!&quot; ) </pre>
+
+<a id="pgfId-1017120"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+/* The last command lists all marker shapes created during the current or previous Diva run. */</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015053"></a>drcLogFile( &quot;DRC.log&quot; )</pre>
+
+<h2>
+<a id="pgfId-1017132"></a>Writing Rules for use by Diva and Assura</h2>
+
+<p>
+<a id="pgfId-1017236"></a>This is a sample rule file<a id="marker-1017256"></a> that implements macros which allow one rule deck to support both the Diva and Assura products.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017135"></a>procedure( myLayerDefs(@rest list) let( (cmd layer)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017136"></a>    if( ivCompilingFor(&quot;diva&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017137"></a>    then</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017138"></a>        foreach( layer list</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017139"></a>            cmd = sprintf(nil &quot;%s = geomOr(\&quot;%s\&quot;)&quot; layer layer)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017140"></a>            evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017141"></a>        )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017142"></a>    else</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017143"></a>        cmd = &quot;layerDefs(\&quot;dfII\&quot;&quot;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017144"></a>        foreach( layer list</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017145"></a>            cmd = sprintf(nil &quot;%s %s = layer(\&quot;%s\&quot;)&quot; cmd layer layer)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017146"></a>        )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017147"></a>        cmd = sprintf(nil &quot;%s )&quot; cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017148"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017149"></a>    )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017150"></a>)) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017244"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017160"></a>procedure( myLatchupCheck(tie tub gate dist err) let( (cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017161"></a>    if(ivCompilingFor(&quot;diva&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017162"></a>    then</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017163"></a>        cmd = sprintf(nil &quot;tmp = geomSizeInTub(%s %s %d 16 edge)&quot; tie tub</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017164"></a>dist)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017165"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017166"></a>        cmd = sprintf(nil &quot;tmp = geomAndNot(%s %s)&quot; gate tmp)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017167"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017168"></a>        cmd = sprintf(nil &quot;saveDerived(%s \&quot;%s\&quot;)&quot; tmp err)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017169"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017170"></a>    else</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017171"></a>        cmd = sprintf(nil &quot;tmp = geomSepInside(%s %d %s %s anyOutside)&quot; gate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017172"></a>dist tie tub)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017173"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017174"></a>        cmd = sprintf(nil &quot;keepLayer(%s \&quot;%s\&quot;)&quot; tmp err)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017175"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017176"></a>    )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017177"></a>))</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017245"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017188"></a> drcExtractRules(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017189"></a>    ; collect graphic data</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017190"></a>    myLayerDefs(&quot;well&quot; &quot;diff&quot; &quot;poly&quot; &quot;cont&quot; &quot;met1&quot; &quot;via1&quot; &quot;met2&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017191"></a>    sub = geomEmpty()</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017192"></a>    foreach( layer list( &quot;well&quot; &quot;diff&quot; &quot;poly&quot; &quot;cont&quot; &quot;met1&quot; &quot;via1&quot; &quot;met2&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017193"></a>        sprintf(cmd &quot;sub = geomOr(sub geomExtent(%s))&quot; layer)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017194"></a>        evalstring(cmd)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017195"></a>    )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017196"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017197"></a>    ; generate substrate as a bounding box around the data</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017198"></a>    sub = geomExtent(sub)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017199"></a>    sub = geomSize(sub 10)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017200"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017201"></a>    ; remove well from substrate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017202"></a>    sub = geomAndNot(sub well)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017203"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017204"></a>    ; derive gate, diff and tap</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017205"></a>    gate = geomAnd(diff poly)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017206"></a>    diff = geomAndNot(diff poly)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017207"></a>    tap = geomAvoiding(diff gate)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017208"></a>    diff = geomAndNot(diff tap)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017209"></a>    ctap = geomOr(tap)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017214"></a>  </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017215"></a>    ; connect it all up</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017216"></a>    geomConnect(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017217"></a>        via(cont met1 poly diff tap)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017218"></a>        via(via1 met2 met1)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017219"></a>        via(ctap tap well sub)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017220"></a>        soft(well sub)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017221"></a>    )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017222"></a> </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017223"></a>    ; do latchup checks</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017224"></a>    myLatchupCheck(tap well gate 50 &quot;no tie within 50 of gate&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017225"></a>    myLatchupCheck(tap sub gate 50 &quot;no tie within 50 of gate&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017226"></a>)</pre>
+
+<p>
+<a id="pgfId-1017495"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3.html" id="prev" title="Executing Diva Verification Using SKILL Commands">Executing Diva Verification Us ...</a></em></b><b><em><a href="chap5.html" id="nex" title="Layer Processing Concepts">Layer Processing Concepts</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

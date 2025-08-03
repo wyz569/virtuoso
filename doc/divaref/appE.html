@@ -1,0 +1,317 @@
+
+<html><head><title>Application Techniques</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027647" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Application Techniques" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027647" />
+<meta name="NextFile" content="divarefIX.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="appD.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Application Techniques" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="appD.html" title="Simulation and Environment Control">Simulation and Environment Con ...</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="divarefIX.html" title="Index">Index</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>E
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Application Techniques<hr />
+</h1>
+<h2>
+<a id="pgfId-1014199"></a>Bipolar Processing<a id="Bipolar Processing"></a></h2>
+
+<p>
+<a id="pgfId-1014200"></a>The Diva verification&#160;&#160;LPE program is technology independent. Most of the examples used in this manual are MOS because this is the easiest technology to understand and apply. <a id="marker-1014201"></a>This section introduces you to bipolar technologies which are more complex and require a slightly different application technique. The version of bipolar used in the example, though it might not exist, provides an easy-to-understand illustration that can be extrapolated to real technologies.</p>
+
+<h3>
+<a id="pgfId-1014203"></a>General Technique<a id="General Technique"></a></h3>
+
+<p>
+<a id="pgfId-1014204"></a>The first step in the encoding of a bipolar technology is to determine all the devices you need to recognize. Within a single bipolar process, using a single set of mask or design layers, many different types of devices can be formed (for example, transistors, different kinds of diodes, resistors, and capacitors) as well as special contacts and ties. If you consider only a subset of these devices, the extraction fails because the layout includes devices not yet handled. To recognize those extra devices might require a complete redefinition of the original device recognition. For each device in the process, you need a &#8220;plan&#8221; view illustrating the topology relationships and a section showing the vertical layer relationships and current paths.</p>
+<p>
+<a id="pgfId-1014205"></a>Minor topological variations change the type of device being represented. A Pbase region is performed as a single diode in one case, but the addition of an Ndiffusion (Ndiff) transforms it into a transistor. A contact in the Pbase is just a base contact until it overlaps into the Ntub, where it becomes a Schottky diode.</p>
+<p>
+<a id="pgfId-1014206"></a>The major obstacle in bipolar recognition is the misinterpretation of which topological (layer/mask) relationships perform what functions. The first example shows the plan view of an <a id="marker-1014207"></a><em>npn</em> transistor which is commonly misinterpreted. It appears obvious which is the emitter, base, and collector of this device, but in fact it is not. </p>
+<p>
+<a id="pgfId-1014208"></a>The shapes in the diagram labeled E, B, and C are not terminals but contacts to interconnect layers that lead to the device terminals. The <em>npn</em> transistor is really two N-P diodes back to back. The terminal labeled &#8220;base&#8221; is a contact to the Pbase region which forms the P region of the N-P-N configuration between the two diodes. It also acts as the conductor to the &#8220;outside world&#8221; from that device region. The terminal labeled &#8220;emitter&#8221; is in fact a contact to the Ndiff, which acts as a conductor down to the P region where the N-P interface forms one of the diodes.</p>
+<p>
+<a id="pgfId-1014209"></a>The &#8220;collector&#8221; is a contact to another Ndiff, which, in turn, acts as a conductor and a contact to the Ntub of the device which also acts as a conductor to the interface between itself and the P region, forming the other P-N diode. The critical parts for recognizing the device are the N-P interfaces. The remainder of the structure just serves to interconnect those parts. This can be best seen from the sectional view, in which the diodes and contacts are highlighted, and from the extracted circuit diagram.</p>
+
+<h4>
+<a id="pgfId-1014210"></a>Device Recognition Shape Determination</h4>
+
+<p>
+<a id="pgfId-1014211"></a>Diva&#8217;s LPE program requires a recognition polygon to represent the device. Since it is created vertically, there are three possible shapes that can be used. The Ntub seems to be the obvious choice until you consider that more than one transistor can be created within a single tub. Such devices have a common collector net, which is an example of how the tub needs to be considered as an interconnect layer to the collector rather than as the device itself. </p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014329"></a>What Makes an npn Transistor </div>
+<p>
+<a id="pgfId-1015117"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="626" src="images/appE-2.gif" /></div>
+
+<p>
+<a id="pgfId-1014330"></a>If you choose the Pbase region as the device recognition polygon, the existence of multiple Ndiff regions within the base region gives rise to a multiple emitter device. This can in fact be what you want, but remember that each device recognized must be available in the system device library for it to be placed in the extracted cellview. The Ndiff inside the Pbase is the simplest polygon to use for device recognition. Each individual shape of diffusion creates a single three-terminal transistor.</p>
+<p>
+<a id="pgfId-1014331"></a>If two or more diffusions are within the same P region, that region acts as an interconnect, giving them a common base region, and the tub acts as a common collector region. There is no difference between a multi-emitter device and multiple three-terminal devices with connected bases and connected collectors.</p>
+
+<h4>
+<a id="pgfId-1014332"></a>Device Recognition Process</h4>
+
+<p>
+<a id="pgfId-1014333"></a>After you have identified the functional parts of all the devices, encode the devices. The simplest approach here is one of elimination. Again, this is best illustrated by example.</p>
+<p>
+<a id="pgfId-1014334"></a>Consider a Pbase region used in the definition of a number of different devices such as a diode, transistor, resistor, and so forth. Choose one of these having a unique set of layers. Maybe the only device in which Ndiff sits inside the Pbase is a transistor. Create the commands to recognize that device, and then &#8220;and-not&#8221; that specific Pbase with the whole to produce a subset of the layer. The transistor is eliminated and can be forgotten. </p>
+<p>
+<a id="pgfId-1014335"></a>Now start afresh with the remaining devices. Most device topologies are unique in some manner or other. One by one, choose whatever is unique about the device and use that fact to recognize it, or a part of it. You can then eliminate the recognized features from the remainder. The word &#8220;device&#8221; in this case includes all structures, including contacts.</p>
+<p>
+<a id="pgfId-1014336"></a>Some devices can appear to have no unique features. The terminals of a base resistor look exactly like vertical <em>pnp</em> transistors. Though the topology is identical, the terminals of the resistor form vertical <em>pnp</em> transistors, but they are parasitics and are usually ignored. Another common example is the distinction between the emitter and the collector of a lateral <em>pnp</em> transistor. Which is which depends on the external connections, not on the internal topology. You can distinguish between them, but the computer cannot. </p>
+<p>
+<a id="pgfId-1014337"></a>To prevent confusion, add extra information to the layout that enables these devices to be recognized. You can use shapes on some &#8220;marking&#8221; layer, or you can use text information. In the former case, if the marking layer totally encloses the device, use the <em>geomAnd</em> command to pick out that device. If the marking layer is just some symbol which interacts with the device, use the <em>geomStraddle</em> command. In the latter case using text information, use the <em>geomGetTexted</em> command.</p>
+<p>
+<a id="pgfId-1014338"></a>The elimination of recognized shapes from the remainder of the data to be processed applies only to structure recognition. The Pbase region referenced is used to define many device types, but it remains a single interconnect layer throughout. Try not to split connectivity layers into pieces. It must be done when a device such as a resistor breaks what is a contiguous net, but it need not be done anywhere else. In this example, the Ndiff is used to both recognize connections from the metal contact to the Ntub, and from the emitter contact to the N-P interface of the transistor. In both cases it remains the same interconnect layer.</p>
+
+<h3>
+<a id="pgfId-1014340"></a>npn Transistor<a id="npn Transistor"></a></h3>
+
+<p>
+<a id="pgfId-1014341"></a>The introduction uses the <em>npn</em> transistor as an example, so the detailed explanation of its extraction can be omitted from this section. All that remains is the command syntax necessary to accomplish the recognition.<a id="marker-1014342"></a></p>
+<p>
+<a id="pgfId-1014343"></a>The simplest set of commands you need to recognize a single transistor is as follows (the line numbers are added for annotation purposes and must not appear in the final command input stream).</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014344"></a>1   npn = geomInside( Ndiff Pbase )<br />2   contc = geomAndNot( Ndiff Pbase )<br />3   contb = geomAndNot( Contact Ndiff )<br />4   contn = geomAnd( Contact Ndiff )<br />5   geomConnect(via( contn metal ndiff )<br />      via( contc ndiff buried )<br />      via( contb metal Pbase )<br />6   extractDevice( npn Ndiff (&quot;E&quot;) Pbase (&quot;B&quot;) buried<br />      (&quot;C&quot;) &quot;npn&quot; )</pre>
+<p>
+<a id="pgfId-1014345"></a>Lines 1 and 2 split the Ndiff into two layers, one forming devices and one forming collector contacts. The contacts are similarly split (lines 3 and 4) into those connecting to the base and those connecting to the Ndiff. The <em>geomConnect</em> statement (line 5) ensures that all layers through which current flows are correctly connected. Note that the &#8220;buried&#8221; layer was used as the interconnect to the collector instead of to the Ntub. In terms of connectivity (parametric characteristics aside), they perform the same function. Usually, both must be present underneath the device; either can be used. There are occasions, when separate tubs are connected by a single buried layer, in which case the buried layer must be considered as interconnect.</p>
+<p>
+<a id="pgfId-1014346"></a>In some technologies, a good path from the collector contact to the buried layer is ensured by a separate deep diffusion, in addition to the Ndiff, under the contact. In these cases, no change needs to be made to the commands other than to add a line which checks that every <em>contc</em> has a related deep diffusion.</p>
+<p>
+<a id="pgfId-1014347"></a>Line 6 defines the transistor itself. In this example, the command is written in full, but it can be shortened by accepting the defaults for the terminal counts and the model name. The three layers referenced as terminal connections must have been previously referenced in a <em>geomConnect</em> statement. The model name <em>npn</em> must exist in a system device library, and the terminal names referenced must match those in that library device.</p>
+<p>
+<a id="pgfId-1014348"></a>To simplify the example, and because only one device type is considered, no attempt has been made to validate the layers used. For example, the Pbase must be inside the Ntub for it to form a transistor, and the Ntub must have a buried layer underneath it. No check has been made for contacts connecting directly to the Ntub without the interposition of Ndiff. If they existed in the technology, these do not form Schottky diodes; they must be flagged as errors.</p>
+
+<h3>
+<a id="pgfId-1014350"></a>pnp Transistor<a id="pnp Transistor"></a></h3>
+
+<p>
+<a id="pgfId-1014351"></a>The <em>pnp</em> transistor recognition uses exactly the same techniques as described in the general technique for the <em>npn</em> transistor, except that the example used cannot be applied literally. The example illustrates the construction of the <em>pnp</em> transistor in the same way that the previous example illustrated an <em>npn</em> transistor.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014493"></a>pnp Bipolar Device</div>
+<p>
+<a id="pgfId-1015245"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="564" src="images/appE-3.gif" /></div>
+
+<p>
+<a id="pgfId-1014494"></a>The <em>pnp</em> transistor is different from the <em>npn</em> transistor in two major respects. The first difference is the distinction between the emitter and the collector. Although, in most cases, the human eye can differentiate between these two terminals, the computer cannot. The differences are one of pattern recognition rather than topological relationship. When both terminals are the same size and shape, they can only be differentiated by tracing the circuit and determining their relative potential, which the computer cannot do.</p>
+<p>
+<a id="pgfId-1014495"></a>To distinguish one terminal from the other, you must supply additional information on the layout. You can add a polygon on a special layer to mark one or other of the terminals. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014496"></a>emitter = geomAnd( Pbase masklayer )<br />collector = geomAndNot( Pbase masklayer )</pre>
+<p>
+<a id="pgfId-1014497"></a>or you can add text </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014498"></a>emitter = geomGetTexted( Pbase &quot;textlayer&quot; &quot;emit&quot; )<br />collector = geomAndNot( Pbase emitter )</pre>
+<p>
+<a id="pgfId-1014499"></a>Because it is usual to create standard bipolar devices in a library, it is only necessary to mark each device master once, rather than marking each instance of the device in the layout. </p>
+<p>
+<a id="pgfId-1014500"></a>The second difference between the two transistors is that the<em> pnp </em>terminals have a lateral relationship, and the <em>npn</em> terminals have a vertical relationship. This can best be seen in the previous example.</p>
+<p>
+<a id="pgfId-1014501"></a>In this example, the buried layer can be used to represent the device, in which case the result is a two-collector <em>pnp</em> transistor. Regardless of the number of collectors, a single transistor is recognized. Each permutation of collectors must be represented in the system device library for the extraction to be performed successfully. Problems arise when multiple transistors are created in a single tub. The designer considers such transistors as separate devices having a common base, whereas the program device recognition using the buried layer generates a single device having multiple emitters, and collectors which also appear in the library.</p>
+<p>
+<a id="pgfId-1014502"></a>To overcome this problem, use one of two solutions:</p>
+<ul><li>
+<a id="pgfId-1014503"></a>Create another layer for device recognition so that multiple transistors inside a single tub are recognized as such. Each transistor can have multiple collectors. </li><li>
+<a id="pgfId-1014504"></a>Use the collector layer for device recognition resulting in multiple single-collector transistors. </li></ul>
+
+<p>
+<a id="pgfId-1014505"></a>In the first solution, you need a layer that currently does not exist. In the second solution, you need a way to relate the collectors laterally to the emitter.</p>
+<p>
+<a id="pgfId-1014506"></a>The same basic technique is used for both solutions. Create a layer which is the oversize of the emitter. Use enough sizing to ensure that the resultant shape interacts with the collectors. The sequences of operations for both solutions are</p>
+<p>
+<a id="pgfId-1014507"></a>For the first solution</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014508"></a>1   emit = geomGetTexted( Pbase &quot;text&quot; &quot;emit&quot; ) <br />2   Pbasei = geomAndNot( Pbase emit )<br />3   pnp = geomSize(emit 3 )<br />4   contb = geomAndNot( Ndiff Pbase )<br />5   contn = geomAnd( contact Ndiff )<br />6   contp = geomAnd( contact Pbasei )<br />7   conte = geomAnd( contact emit )<br />8   geomConnect(via ( contn metal ndiff )<br />      via ( contb ndiff buried )<br />      via ( contp metal Pbasei )<br />      via ( conte metal emit )<br />9   extractDevice( pnp emit (&quot;E&quot;) Pbasei ( &quot;C&quot; &quot;C&quot; )<br />      buried (&quot;B&quot;) &quot;pnp-2&quot; )</pre>
+<p>
+<a id="pgfId-1014509"></a>In this example, the oversized emitter is used directly as the device recognition polygon. It interacts, forming collector terminals, with all Pbase that is within the sizing distance of the emitter. In this case, the distance chosen was 3 units. Any Pbase region beyond that distance is not considered as a collector of that device.</p>
+<p>
+<a id="pgfId-1014510"></a>Lines 1 to 3 identify the emitter, remove it from the <em>Pbase </em>interconnect, and size it to produce the device recognition polygon. Lines 4 and 5 recognize the two contacts to the buried layer in the same way as for <em>npn</em>. But in this case, the connection is to the base rather than to the collector. Line 6 recognizes the contact to the general Pbase interconnect <em>Pbasei</em>, which in this example represents only the collectors, though it can be used as general interconnect. Line 7 recognizes the contact to the emitter. The <em>geomConnect</em> statement in line 8 ensures the correct connections from metal to all the other interconnect layers. The device statement in line 9 is structured in exactly the same way as the <em>npn</em> device except that one terminal (the collector) has two terminals. </p>
+<p>
+<a id="pgfId-1014511"></a>The model name references a device which has two collectors. If other <em>pnp</em> transistors in the circuit have other numbers of collectors, then a separate device statement needs to be used for each to identify the correct library model. There is no processing penalty for having multiple definitions of a single device since all devices with the same recognition layer are processed in a single pass of the data.</p>
+<p>
+<a id="pgfId-1014512"></a>For the second solution</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014513"></a>1    emit = geomGetTexted( Pbase &quot;text&quot; &quot;emit&quot; ) <br />2    Pbasei = geomAndNot( Pbase emit )<br />3    bridge = geomSize( emit 3 )<br />4    pnp = geomStraddle( Pbasei bridge )<br />5    contb = geomAndNot( ndiff Pbase )<br />6    contn = geomAnd( contact ndiff )<br />7    contp = geomAnd( contact Pbasei )<br />8    conte = geomAnd( contact emit )<br />9    geomConnect( via ( contn metal ndiff )<br />       via ( contb ndiff buried )<br />       via ( contp metal Pbasei )<br />       via ( conte metal bridge )<br />10   extractDevice( pnp bridge (&quot;E&quot;) Pbasei (&quot;C&quot;) buried<br />       (&quot;B&quot;) &quot;pnp&quot; )</pre>
+<p>
+<a id="pgfId-1014514"></a>In this example, the oversized emitter polygon is used as the emitter terminal of the transistor and as a connectivity bridge from the emitter terminal to the emitter Pbase, which defines the connectivity to the metal.</p>
+<p>
+<a id="pgfId-1014515"></a>Lines 1 to 3 identify the emitter, remove it from the Pbase interconnect, and size it to produce the emitter terminal. Lines 4 to 9 are similar to the previous example and define the contacts and connectivity. Line 10 defines the device, differs from the previous example, and requires one collector terminal. The library model referenced is the &#8220;standard&#8221; three-terminal<em> pnp</em> transistor. Since all <em>pnp</em> devices recognized by this definition has a single collector, this is the only model required in the library. This differs from many models (two collector, three collector) required by the previous example.</p>
+
+<h2>
+<a id="pgfId-1014518"></a>Resistor Terminal Recognition<a id="Resistor Terminal Recognition"></a></h2>
+
+<p>
+<a id="pgfId-1014519"></a>Normally, the specification of device terminals in the <em>extractDevice</em> statement is simple. The layer forming the terminal is defined, and the program automatically forms a terminal from any relationship between the device recognition polygon and that layer.</p>
+<p>
+<a id="pgfId-1014521"></a>The specification of <a id="marker-1014520"></a>resistors and some other devices is not as simple. The two problems are as follows:</p>
+<ul><li>
+<a id="pgfId-1014522"></a>The two ends of a resistor can be terminated in different ways which need different terminal layers. Any single resistor can have any combination of those terminal types. </li><li>
+<a id="pgfId-1014523"></a>A resistor can be terminated by a contact to an interconnect layer. </li></ul>
+
+<p>
+<a id="pgfId-1014524"></a>The first problem occurs because a resistor can be terminated in several ways, such as butting an interconnect layer of the same material as the resistor, contacting interconnect metal with a normal metal contact cut, and in the case of a polysilicon resistor, contacting diffusion with a buried contact. Any resistor can have any combination of these terminations, so specifying a &#8220;poly interconnect&#8221; terminal does not find both terminals of a resistor with one end contacted to metal.</p>
+<p>
+<a id="pgfId-1014525"></a>The next example illustrates three ways of terminating a resistor.</p>
+<p>
+<a id="pgfId-1014526"></a>The second problem involves the operation of the <em>geomConnect</em> statement. A terminal of a device must be an interconnect layer. This means it must have been defined in a <em>geomConnect</em> statement, which relates a series of interconnect layers by a contact layer, or by a command which propagates that connectivity. If a resistor is formed from the polysilicon layer, the shape forming that device must be removed from that layer to create the interconnecting polysilicon.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014543"></a>Resistor Terminations</div>
+<p>
+<a id="pgfId-1015393"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="279" src="images/appE-4.gif" /></div>
+
+<p>
+<a id="pgfId-1014544"></a>All resistors are shorted out by the layer that forms them. In this case, the contact has no polysilicon interconnect to connect to and is badly formed. In addition, there is no interconnect layer to form the terminal. If the metal was used, all metal crossing resistors is connected to the resistor.</p>
+<p>
+<a id="pgfId-1014545"></a>The solution offered here is not necessarily the only one, but it does solve both problems at the same time.</p>
+<p>
+<a id="pgfId-1014546"></a>The contact structures are separated from the resistor structure, where a dummy shape is generated on the interconnect layer to act as the resistor terminal. This is best described by an example. Consider the case of a resistor which can have its ends terminated by a metal contact or by butting polysilicon interconnect. The resistor is differentiated from the interconnect by a text string of <em>res</em> on the layer <em>textlayer</em>. This example does not consider &#8220;buried contacts.&#8221; The line numbers in the following commands are for reference only and are not part of the file. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014547"></a>1   resistor = geomGetTexted( polysilicon &quot;textlayer&quot;<br />               &quot;res&quot; ) <br />2   polyr = geomAndNot( polysilicon resistor )<br />3   stubs =geomAnd( resistor contact ) <br />4   polyi = geomOr( polyr stubs ) <br />5   geomConnect( via( contact polyi metal ) )<br />6   extractDevice( resistor polyi ( &quot;PLUS&quot; &quot;MINUS&quot; )<br />      &quot;resistor&quot; )</pre>
+<p>
+<a id="pgfId-1014548"></a>Line 1 identifies the resistor from among the polysilicon shapes and line 2 removes it from that layer, leaving polyr. Line 3 copies all contacts that are over the resistor onto layer <em>stubs</em>. Line 4 merges these stubs with the main polysilicon, polyr, to form the final polysilicon interconnect layer, polyi.</p>
+<p>
+<a id="pgfId-1014549"></a>The <em>geomConnect</em> statement in line 5 can now successfully make a connection through the contact that was over the resistor. The connection is from one part of the polyi, which was polyr to the other part of polyi which was stubs. The connectivity is now complete without involving the resistor. Both types of terminal on the resistor now relate to the polysilicon interconnect layer polyi, one through direct butting and one through overlap with the part of the interconnect that was derived from the contact. </p>
+<p>
+<a id="pgfId-1014550"></a>Line 6 recognizes the device with just a single terminal type. If &#8220;buried contacts&#8221; had been involved also, additional lines can be added to treat that contact in exactly the same way as the metal contact, leaving the device statement exactly as shown.</p>
+<p>
+<a id="pgfId-1014551"></a>The next example illustrates the layer relationships involved for the metal contact to the resistor.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014584"></a>Contacting a Resistor</div>
+<p>
+<a id="pgfId-1015417"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="351" src="images/appE-5.gif" /></div>
+<h2>
+<a id="pgfId-1014587"></a>Extraction Device Library Entries<a id="Extraction Device Library Entries"></a></h2>
+
+<p>
+<a id="pgfId-1014588"></a>The device recognition facility in Diva&#8217;s LPE program requires the definition of a device model. For each device recognized, an instance of that device is placed in the extracted cellview. The cellview type of the device instance is <em>symbol</em> by default. If that extracted cellview is going to be used within LVS, a cellview must be available for that device to correctly netlist. The choice of which cellviews to use for the netlist is achieved through the SI switching and stopping specifications. You might be able to use the SPICE cellviews for this purpose. In many cases, they netlist correctly for LVS; in some cases, they do not. In the case of schematics that contain the device &#8220;cap,&#8221; the switching is incorrect for LVS because a cap has a SPICE cellview but contains an instance of a <em>capacitor</em>, which also has a SPICE cellview.</p>
+<p>
+<a id="pgfId-1014589"></a>The safest cellview type for LVS is <em>lvs</em>. Each of the low-level devices in the system device library has an <em>lvs</em> cellview. The netlisting properties of these cellviews are compatible with the LVS nlpglobals cellview (called <em>lvs</em>) and netlist correctly. The SI switching and stopping lists for the following cellviews needs to be defined.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014590"></a>simNlpGlobalLibName = &quot;basic&quot;</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014591"></a>lvsLayoutViewList = list( &quot;lvs&quot; &quot;schematic&quot; &quot;symbolic&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014592"></a>lvsSchmaticViewList = list( &quot;lvs&quot; &quot;schematic&quot; &quot;gate.sch&quot; <br />                            &quot;cmos.sch&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014593"></a>lvsLayoutStopList = list( &quot;lvs&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014594"></a>lvsSchematicStopList = list( &quot;lvs&quot; )</pre>
+<p>
+<a id="pgfId-1014595"></a>The next example illustrates the symbol representations for the devices having <em>lvs</em> cellviews. The <em>pmos</em> and <em>nmos</em> devices are schematics that reference the <em>nfet</em> and <em>pfet</em> devices, are shown here for clarity, and are considered low level. Note that they have their back-gate connected to ground and power respectively. They must not be used when their back-gate is connected to any other signal.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014768"></a>Device Library Entries</div>
+<p>
+<a id="pgfId-1015456"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="465" src="images/appE-6.gif" /></div>
+<p>
+<a id="pgfId-1015635"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="289" src="images/appE-7.gif" /></div>
+<h2>
+<a id="pgfId-1014884"></a>Substrate, Background, and Ground<a id="Substrate, Background, and Ground"></a></h2>
+
+<p>
+<a id="pgfId-1014885"></a>This section clarifies the concepts of substrate, background, and ground with regard to the connectivity of a circuit being extracted.</p>
+
+<h3>
+<a id="pgfId-1014887"></a>Concepts<a id="Concepts"></a></h3>
+
+<p>
+<a id="pgfId-1016745"></a>The graphics editor has a layer called <em>bkgnd</em> that identifies the complete area of the circuit. The layer color forms the background to the layout, and, when active, the layer can be used to select shapes on all layers. Diva&#8217;s LPE program uses the same name, <em>bkgnd</em>, to represent a single polygon whose size encompasses all other shapes in the layout. The background layer can be manipulated as any other graphics layer, but does not have to be created by you.</p>
+<p>
+<a id="pgfId-1014889"></a>Substrate is used to represent the physical material underlying the circuitry of the chip. Generally, the substrate is considered to completely encompass the physical circuit and pass beneath all structures. In some technologies, the substrate is subdivided into different areas to represent different electrical functions. For example, in CMOS, the substrate can be divided into well and substrate.</p>
+<p>
+<a id="pgfId-1014890"></a>Ground is a name applied to those parts of the circuit which conduct current at ground potential (which can be whatever potential you declare it to be).</p>
+
+<h3>
+<a id="pgfId-1014892"></a>Relationships<a id="Relationships"></a></h3>
+
+<p>
+<a id="pgfId-1014893"></a>The main purpose of Diva&#8217;s LPE <em>bkgnd</em> layer is to represent the substrate of the circuit in cases where the substrate takes part in the electrical connectivity. It can be subdivided, as in the CMOS example, by the normal layer manipulation commands <em>geomAnd, geomAndNot</em>, and so forth. In some cases, the substrate can be connected to ground, so the <em>bkgnd</em> becomes part of the ground net. In this case, <em>bkgnd, </em>substrate, and ground are synonymous. Substrate can be connected instead to any other net or potential of the circuit. Except in those cases where commands are used to subdivide the <em>bkgnd</em> into separate pieces, any nets of the circuit connected to it (via a <em>geomConnect</em> statement) are shorted together.</p>
+<p>
+<a id="pgfId-1014894"></a>A <em>measureParasitic</em> statement, generating parasitic devices can use <em>bkgnd</em> as a terminal for the parasitics. This is accomplished by using the layer <em>bkgnd</em> in this way. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014895"></a>cap = measureParasitic( area( polysilicon over bkgnd over <br />                       aluminum) two_net )</pre>
+<p>
+<a id="pgfId-1014896"></a>The <em>bkgnd</em> must be connected. Although both polysilicon and aluminum are interconnect layers, the polysilicon and the <em>bkgnd</em> are used as the device terminals because they are the first two interconnect layers from left to right in the statement. If the <em>bkgnd</em> is connected to the circuit by a contact (such as a substrate contact), then one terminal of the parasitic devices is connected to that net. If there is no real connection to <em>bkgnd</em>, then all the parasitics are connected together to a common net. This net has no connection to the remainder of the circuit and is totally independent of any net in the circuit.</p>
+<p>
+<a id="pgfId-1014897"></a>This<em> measureParasitic</em> statement has a different result. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014898"></a>cap = measureParasitic( area (polysilicon) two_net )</pre>
+<p>
+<a id="pgfId-1014899"></a>In this example, there is no second interconnect layer to which the parasitic device can be connected, so the program generates a new, unique net to connect to one of the parasitic terminals. One terminal is connected to the polysilicon net and the other to a single net, which is common to all parasitic devices generated this way. This unique net is not, and cannot be, connected to the remainder of the circuit. It is independent of any net in the circuit.</p>
+<p>
+<a id="pgfId-1014140"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="appD.html" id="prev" title="Simulation and Environment Control">Simulation and Environment Con ...</a></em></b><b><em><a href="divarefIX.html" id="nex" title="Index">Index</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

@@ -1,0 +1,1510 @@
+
+<html><head><title>Checking Electrical Rules (ERC)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027660" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Checking Electrical Rules (ERC)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027660" />
+<meta name="NextFile" content="chap13.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap11.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Checking Electrical Rules (ERC)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap11.html" title="Extracting Parasitic Resistance (PRE)">Extracting Parasitic Resistanc ...</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap13.html" title="Comparing Layout to Schematic (LVS)">Comparing Layout to Schematic  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>12
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Checking Electrical Rules (ERC)<hr />
+</h1>
+<h2>
+<a id="pgfId-1014197"></a>Introduction<a id="Introduction"></a></h2>
+
+<p>
+<a id="pgfId-1014199"></a>The <a id="marker-1014198"></a>Electrical Rules Check (ERC) program verifies the structure and integrity of a network without doing a full Layout Versus Schematic (LVS) comparison. Because its primary processing is based on the <a id="marker-1014200"></a>circuit netlist, you can use it on extracted views or schematics.</p>
+<p>
+<a id="pgfId-1014201"></a>ERC does not provide the accuracy that the LVS does, but it does provide valuable information that helps you to remove many errors from your circuit prior to LVS checking.</p>
+<p>
+<a id="pgfId-1014202"></a>ERC works as follows:</p>
+<ul><li>
+<a id="pgfId-1014204"></a>G<a id="marker-1014203"></a>enerates a netlist for the circuit</li><li>
+<a id="pgfId-1014205"></a>Verifies the circuit using the verification rules in your ERC rules file and the run options you specify in the ERC form when you select the ERC command from the Verify menu</li><li>
+<a id="pgfId-1014207"></a><a id="marker-1014206"></a>Verifies device parameters using an internal feature that combines parameters during series and parallel reduction</li><li>
+<a id="pgfId-1014208"></a>Outputs error files that can be used to view and probe errors</li><li>
+<a id="pgfId-1014209"></a>Displays and explains the errors it found</li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1014210"></a>The ERC program is controlled by the system simulation environment (<em>se</em>). &#160;&#160;&#160;&#160;The simulation environment is normally set up by your system administrator. See <h-hot><a href="appD.html#29125">Appendix D, &#8220;Simulation and Environment Control&#8221;</a><hot /></h-hot> for more information. </p>
+<p>
+<a id="pgfId-1014214"></a>You can run ERC using the <em>ERC </em>command from the Verify menu or using the <em>ivERC</em> SKILL command.</p>
+<p>
+<a id="pgfId-1014215"></a>You control ERC processing by entering verification rules in the ERC rules file and by choosing options in the ERC form. The verification rules commands define the type of verification checks you want to run. The form options define requirements for a specific run. </p>
+
+<h3>
+<a id="pgfId-1014217"></a>Prerequisites<a id="Prerequisites"></a></h3>
+
+<p>
+<a id="pgfId-1014218"></a>The prerequisites for ERC are</p>
+<ul><li>
+<a id="pgfId-1014219"></a>You must define ERC verification rules in a text file.</li><li>
+<a id="pgfId-1014220"></a>You must extract a network so that ERC can generate the netlist it needs. <br />
+<a id="pgfId-1014221"></a>To create the layout network, run an extraction on the layout using the <em>Extract</em> command from the Verify menu to get an extracted view.<br />
+<a id="pgfId-1014222"></a>To create the schematic network, run a check on the schematic using <em>Edit &#8211; Check &#8211; Current Cellview</em>.</li><li>
+<a id="pgfId-1014223"></a>You must initiate ERC from a window containing either a <em>schematic</em> cellview or an extracted layout cellview.</li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1014225"></a>Program Functionality<a id="Program Functionality"></a></h3>
+
+<p>
+<a id="pgfId-1014226"></a>These sections describe the verification rules commands available in ERC and their overall function.</p>
+
+<h4>
+<a id="pgfId-1014227"></a>Defining External Connections</h4>
+
+<p>
+<a id="pgfId-1014228"></a>The following commands define the circuit connections. Many other commands use this information. In some <a id="marker-1014229"></a>cases, the circuit connection definition is essential to the functioning of the command and in other cases, it eliminates spurious errors. For example, the pull-up and pull-down commands cannot function without power and ground definition. The commands can produce spurious errors if inputs are not defined. The commands are as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014231"></a><a id="marker-1014230"></a>setPower</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014233"></a><a id="marker-1014232"></a>setGround</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014235"></a><a id="marker-1014234"></a>setInput</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014237"></a><a id="marker-1014236"></a>setOutput</pre>
+
+<h4>
+<a id="pgfId-1014238"></a>Tracing Paths </h4>
+
+<p>
+<a id="pgfId-1014239"></a>The following commands define the flow characteristics of devices. The pull-up and pull-down commands use these characteristics to determine how the tracing of the circuit proceeds through devices. For example, a MOS transistor has its source and drain defined in a <em>twoWayPath</em> command so that the pull-up and pull-down processing can trace every net through the source and drain to power and ground.<a id="marker-1014240"></a></p>
+<p>
+<a id="pgfId-1014242"></a><a id="marker-1014241"></a>By selectively defining which nets are power and ground, and what the device paths are, you can use these commands for generalized path tracing.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014244"></a><a id="marker-1014243"></a>oneWayPath</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014246"></a><a id="marker-1014245"></a>twoWayPath</pre>
+
+<h4>
+<a id="pgfId-1014247"></a>Pull-Up and Pull-Down Tracing</h4>
+
+<p>
+<a id="pgfId-1014248"></a>Pull-up and pull-down tracing starts at every net and goes through each device path looking for <a id="marker-1014249"></a>power and ground. By selectively defining which nets are power and ground, you can use these commands for generalized path tracing instead of conventional pull-up and pull-down tracing.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014251"></a><a id="marker-1014250"></a>checkPullUp</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014253"></a><a id="marker-1014252"></a>checkPullDown</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014255"></a><a id="marker-1014254"></a>checkPullUpAndDown</pre>
+
+<h4>
+<a id="pgfId-1014256"></a>Counting Connectivity </h4>
+
+<p>
+<a id="pgfId-1014257"></a>The following commands select devices and nets based on the number of <a id="marker-1014258"></a>connections to them. The first commands check for nonfunctional devices and nets because they have one or no connections. The other commands look for specific counts of connections.</p>
+<p>
+<a id="pgfId-1014259"></a>Because input and output nets connect externally to the circuit, those nets are treated as if they have at least one connection to a device terminal.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014261"></a><a id="marker-1014260"></a>checkFloatingDevices</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014263"></a><a id="marker-1014262"></a>checkFloatingNets</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014265"></a><a id="marker-1014264"></a>checkOneNetDevices</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014267"></a><a id="marker-1014266"></a>checkOneTerminalNets</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014269"></a><a id="marker-1014268"></a>checkDeviceNetCount</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014271"></a><a id="marker-1014270"></a>checkFanOut</pre>
+
+<h4>
+<a id="pgfId-1014272"></a>Checking Connectivity</h4>
+
+<p>
+<a id="pgfId-1014274"></a>The following commands select devices by their direct <a id="marker-1014273"></a>connections, or lack of direct connections, to specific nets.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014276"></a><a id="marker-1014275"></a>checkConnected</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014278"></a><a id="marker-1014277"></a>checkNotConnected</pre>
+
+<h4>
+<a id="pgfId-1014279"></a>Forming Gates </h4>
+
+<p>
+<a id="pgfId-1014281"></a>The following commands let you combine MOS transistors into <a id="marker-1014280"></a>gates and test the circuit result for feedback loops. In addition, a simple gate-level netlist is created. The program recognizes a preset number of gate configurations. Any devices not forming gates can be seen as <a id="marker-1014282"></a><em>gate errors</em>.</p>
+<p>
+<a id="pgfId-1014283"></a>During the formation of gates, the program can consolidate individual device parameters into <a id="marker-1014284"></a>gate parameters using procedures you define.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014286"></a><a id="marker-1014285"></a>reduceDevice</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014288"></a><a id="marker-1014287"></a>displayGateErrors</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014290"></a><a id="marker-1014289"></a>displayFeedBackLoops</pre>
+
+<h4>
+<a id="pgfId-1014291"></a>Testing Properties </h4>
+
+<p>
+<a id="pgfId-1014292"></a>The following commands let you test the parameters of individual devices and gates:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014293"></a>testDeviceProperty</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014294"></a>testGateProperty</pre>
+
+<h3>
+<a id="pgfId-1014296"></a>Program Output<a id="Program Output"></a></h3>
+
+<p>
+<a id="pgfId-1014298"></a><a id="marker-1014297"></a>All the errors found by the ERC check are placed in error output files, which the program uses to display and explain errors. </p>
+<p>
+<a id="pgfId-1014299"></a>The output files are stored in subdirectories of the run directory. When you use the ERC form, you must specify the run directory where you want to put your results. The program then creates the run directory (if one does not already exist). When you run an ERC check, the resulting error output files are put in the appropriate directories. </p>
+<p>
+<a id="pgfId-1014300"></a>The outputs from ERC fit into these categories:</p>
+<ul><li>
+<a id="pgfId-1014301"></a>The <em>probe.err</em> error file that you can read to find the name of the net or device causing an error</li><li>
+<a id="pgfId-1014302"></a>Working and information files that you can display by using menu commands</li><li>
+<a id="pgfId-1015892"></a>Control and cross-reference files that you cannot access</li><li>
+<a id="pgfId-1015893"></a>A copy of the rules file under the name <em>divaERC.rul</em></li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1015894"></a>probe.err Files</h4>
+
+<p>
+<a id="pgfId-1014306"></a>This text file contains the error output of the ERC program. It is stored in the layout or schematic subdirectories of the run directory. Diva highlights the nets and devices referenced in this file when you select <em>Display Errors </em>in the ERC form.</p>
+<p>
+<a id="pgfId-1014307"></a>You can also display the contents of this file by selecting<em> Show Run Info</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1014308"></a>Working and Information Files</h4>
+
+<p>
+<a id="pgfId-1014309"></a>The following files contain information that you can display using the Show Run Info form, which you access from the ERC form.</p>
+
+<p><strong>
+<a id="pgfId-1014312"></a><code>netlist</code><a id="marker-1014310"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017182"></a> Text file containing the <a id="marker-1014311"></a>netlist of the circuit. You can view this file by selecting the<em> Netlist</em> option in the Show Run Info form.</p>
+
+<p><strong>
+<a id="pgfId-1017187"></a><code>si.out</code><a id="marker-1014313"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017190"></a> Text file containing all messages and warnings <a id="marker-1014314"></a>output from the program. You can view this file by selecting the <em>Output </em>option in the Show Run Info form.</p>
+
+<p><strong>
+<a id="pgfId-1017195"></a><code>si.log</code><a id="marker-1014316"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017198"></a> Text file containing information pertaining to the program execution and its environment. It also includes summary information of the results of the operations you requested. You can view it by selecting the <em>Log</em> option in the Show Run Info form.</p>
+
+<h2>
+<a id="pgfId-1014320"></a>ERC Functions<a id="ERC Functions"></a></h2>
+
+<p>
+<a id="pgfId-1014321"></a>To make its checking process easier, ERC lets you simplify your circuit by reducing devices and forming gates. It also combines the parameters of the reduced devices so that you can compare them. This section gives a detailed explanation of network reduction and parameter consolidation.</p>
+
+<h3>
+<a id="pgfId-1014323"></a>Reducing Networks<a id="Reducing Networks"></a></h3>
+
+<p>
+<a id="pgfId-1014324"></a>ERC gives you three options for reducing (simplifying) your network:</p>
+<ul><li>
+<a id="pgfId-1014326"></a><a id="marker-1014325"></a>Series<br />
+<a id="pgfId-1014328"></a><a id="marker-1014327"></a>Reduces all series devices of the same type to a single device. It takes into account the polarity of devices where this is appropriate. Consolidates parameters if requested.</li><li>
+<a id="pgfId-1014330"></a><a id="marker-1014329"></a>Parallel<br />
+<a id="pgfId-1014331"></a>Reduces all parallel devices of the same type to a single device. It considers the polarity of devices where this is appropriate. Consolidates parameters if requested.</li><li>
+<a id="pgfId-1014332"></a>MOS<br />
+<a id="pgfId-1014334"></a><a id="marker-1014333"></a>Recognizes and builds logic gates from groups of MOS transistors. It builds the logic by iteratively combining transistors in logical AND and OR configurations, followed by the combining of pull-up and pull-down logic functions. Consolidates parameters if requested. Any devices not consolidated into logic gates are left as discrete devices.</li></ul>
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1014335"></a>Reducing Series Devices</h4>
+
+<p>
+<a id="pgfId-1014336"></a>You can combine devices of the same type that are connected in series by &#8220;<a id="marker-1014337"></a>series <a id="marker-1014338"></a>reduction.&#8221;</p>
+<p>
+<a id="pgfId-1014339"></a>To be combined in series, the device type must have two terminals. Two devices must be connected by a single net. That net must not be connected to any other device and must connect one of the terminals from each of the <a id="marker-1014340"></a>devices being combined. If the two terminals of the device type are permutable, it doesn&#8217;t matter which two are connected. If the two terminals of the device type are not permutable, then the connection must be between unlike terminals.</p>
+<p>
+<a id="pgfId-1014399"></a>The following figure illustrates typical series configurations.</p>
+
+<p>
+<a id="pgfId-1015858"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="170" src="images/chap12-2.gif" /></div>
+<h4>
+<a id="pgfId-1014400"></a>Reducing Parallel Devices</h4>
+
+<p>
+<a id="pgfId-1014401"></a>You can combine devices of the same type that are connected in parallel by using &#8220;<a id="marker-1014402"></a>parallel reduction.&#8221;</p>
+<p>
+<a id="pgfId-1014403"></a>You can connect devices in parallel regardless of the number of terminals they have. However, you must connect each terminal of each device directly to a terminal of the same type on another device of the same type. Terminals are of the same type if they are defined as permutable. The nets connecting the terminals can have other connections.</p>
+<p>
+<a id="pgfId-1014449"></a>The following figure illustrates typical parallel configurations.</p>
+
+<p>
+<a id="pgfId-1015859"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="125" src="images/chap12-3.gif" /></div>
+
+<p>
+<a id="pgfId-1014451"></a>If you use for one device <em>permuteDevice</em><a id="marker-1014450"></a> commands specifying both <em>series</em> and <em>parallel</em> options, both options are applied iteratively until no more reduction is possible.</p>
+<p>
+<a id="pgfId-1014452"></a>The following figure illustrates complex configurations that reduce to single devices when both series and parallel options are applied.</p>
+
+<p>
+<a id="pgfId-1015860"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="102" src="images/chap12-4.gif" /></div>
+<h4>
+<a id="pgfId-1014516"></a><a id="marker-1014515"></a>Reducing MOS Devices</h4>
+
+<p>
+<a id="pgfId-1014517"></a>You can group together MOS transistors if they are of the same type and form a logical function. Such groups form the logic section of NMOS gates and the load and logic sections of CMOS gates. </p>
+<p>
+<a id="pgfId-1014519"></a><a id="marker-1014518"></a>In normal MOS layout, the gate structures do not have to match the schematic exactly for the circuit to function. Most gates have alternative forms. Take for example a <em>three-input AND</em> structure as shown in this figure.</p>
+
+<p>
+<a id="pgfId-1015861"></a></p>
+<div class="webflare-div-image">
+<img width="586" height="216" src="images/chap12-5.gif" /></div>
+
+<p>
+<a id="pgfId-1014571"></a>If the schematic has the original transistors in the order A-B-C and the layout has them in the order B-C-A, the comparison of the circuits fails. The MOS grouping process combines the three separate transistors into a single device with three permutable terminals. With this single device, the terminal ordering doesn&#8217;t matter and the layout device matches the schematic device, which causes the original devices to match.</p>
+<p>
+<a id="pgfId-1014573"></a>Diva group<a id="marker-1014572"></a>s MOS devices using device pairs in exactly the same way as in <em>series</em> and <em>parallel</em> reduction. In this case, however, there are two separate criteria controlling the grouping. </p>
+<p>
+<a id="pgfId-1014574"></a>The first grouping criteria is an <em>AND</em> configuration as used in the previous example. If a transistor source/drain connects to the source/drain of another transistor of the same type, and that connecting net has no other connections, then the devices are grouped.</p>
+<p>
+<a id="pgfId-1014575"></a>The second grouping criteria is an <em>OR</em> configuration. In this configuration, two transistors have a common net for both their source and drain.</p>
+<p>
+<a id="pgfId-1014606"></a>The following figure illustrates <em>AND</em> and <em>OR</em> configurations.</p>
+
+<p>
+<a id="pgfId-1015862"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="166" src="images/chap12-6.gif" /></div>
+
+<p>
+<a id="pgfId-1014607"></a>The following figures illustrate how the logic of a complex gate is permutable and how the grouped result is the same for either.</p>
+
+<p>
+<a id="pgfId-1015863"></a></p>
+<div class="webflare-div-image">
+<img width="586" height="348" src="images/chap12-7.gif" /></div>
+
+<p>
+<a id="pgfId-1014761"></a>During the MOS grouping, certain transistor configurations can be encountered that function electrically as if they are in parallel but that do not conform to the conventional concepts of parallel. These transistors are merged together as if they are parallel. They are referred to as pseudoparallel.</p>
+<p>
+<a id="pgfId-1014842"></a>The following figure illustrates two of these configurations.</p>
+
+<p>
+<a id="pgfId-1015864"></a></p>
+<div class="webflare-div-image">
+<img width="602" height="195" src="images/chap12-8.gif" /></div>
+
+<p>
+<a id="pgfId-1014843"></a>If you specify both series and parallel consolidation, Diva applies these two functions iteratively until no further reduction is possible. If you request MOS reduction, series and parallel reduction for those devices is implied.</p>
+
+<h4>
+<a id="pgfId-1014844"></a>Defining Device Pin Permutability</h4>
+
+<p>
+<a id="pgfId-1014846"></a>To correctly perform reduction, ERC needs to know the permutability of <a id="marker-1014845"></a>device terminals (whether they can be interchanged). For example, source and drains of an MOS transistor are permutable. This means they can be interchanged. This concept extends to larger, more complex devices, where the permutations can be more complex and less obvious. </p>
+<p>
+<a id="pgfId-1014847"></a>You define the pins of a device as permutable or fixed by attaching a property to its cell. This property defines whether the pin can be reduced or whether its relationship must stay unchanged. The system netlister adds this information to the netlist so the ERC program can use it.</p>
+<p>
+<a id="pgfId-1014849"></a>The <a id="marker-1014848"></a>property name is</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014850"></a> permuteRule</pre>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014851"></a>In some cases, the property name might need to be permutability. This depends upon which property name is used in the NLP expressions that are associated to the cell.</div>
+<p>
+<a id="pgfId-1016428"></a>The recognized keywords in the property are <em>p</em> for permutable and <em>f </em>for fixed. An example of the property contents is</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014852"></a> ( p 1 2 )</pre>
+<p>
+<a id="pgfId-1014853"></a>This specifies that terminals <em>1 </em>and <em>2</em> on this device are interchangeable. </p>
+<p>
+<a id="pgfId-1014855"></a>This is a more <a id="marker-1014854"></a>complex example.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014856"></a> (p ( p 1 2 ) ( p 3 4 ) )</pre>
+<p>
+<a id="pgfId-1014857"></a>This specifies that terminals 1 and 2 are permutable, as are terminals 3 and 4. Also, the pair of 1 and 2 are permutable with the pair of 3 and 4. </p>
+<p>
+<a id="pgfId-1014875"></a>The following figure illustrates more complex permutability.</p>
+
+<p>
+<a id="pgfId-1015865"></a></p>
+<div class="webflare-div-image">
+<img width="582" height="259" src="images/chap12-9.gif" /></div>
+
+<p>
+<a id="pgfId-1014876"></a>This specifies that terminals 1 and 2 are interchangeable but fixed relative to 3. Terminals 4 and 5 are interchangeable but fixed relative to 6. Group 1, 2, 3 is permutable with group 4, 5, 6. </p>
+
+<h3>
+<a id="pgfId-1014878"></a>Consolidating and Testing Parameters<a id="Consolidating and Testing Parameters"></a></h3>
+
+<p>
+<a id="pgfId-1014879"></a>When you reduce a group of devices to one device or form a gate, you must also combine the parameters (properties) of the devices involved. For ERC to correctly consolidate the parameters, you must tell it what to do by supplying a parameter consolidation SKILL routine. </p>
+<p>
+<a id="pgfId-1014880"></a>You also can test the parameters (such as width, length, or area) of the reduced devices and gates to ensure they meet your design standards. For ERC to correctly test these parameters, you must supply a test SKILL routine.</p>
+
+<h4>
+<a id="pgfId-1014881"></a>Combining Series/Parallel Parameters</h4>
+
+<p>
+<a id="pgfId-1014883"></a>You can use the <a id="marker-1014882"></a><em>reduceDevice </em>command to reduce groups of serial and parallel devices of the same type to a single device. Each time you reduce a pair of devices to a single device, the device parameters must be consolidated into a single parameter. This results in a final correct parameter for each device generated for a group of series/parallel devices. </p>
+<p>
+<a id="pgfId-1014884"></a>How this consolidation is done depends upon the technology, the application, the type of reduction, the device type, and any other factors you want to introduce. The only way the program can correctly consolidate parameters is for you to tell it what you want it to do. You do this by supplying a routine, written in SKILL, for each type of reduction and device type you require.</p>
+<p>
+<a id="pgfId-1015846"></a>The <a id="marker-1015845"></a>SKILL routine you write must accept as input two lists of parameters, one list for each device. Each list is in the netlist and contains all the parameters for that device. The routine determines if the parameters you want consolidated are actually present in the list and then does the necessary processing to combine them. Diva passes the resulting new list of parameters back to the ERC program. </p>
+<p>
+<a id="pgfId-1014887"></a>The result can be the resultant parameters only, or a combination of the new ones plus uncombined originals. For example, if ERC is consolidating two resistors in series, it passes the SKILL routine the string of parameters attached to each of them. The SKILL routine, in this case, selects the <em>R</em> parameter and sets <em>Rnew</em> = R1 + R2. It then returns <em>Rnew</em> as the new value of <em>R</em> to be attached to the consolidated device.</p>
+<p>
+<a id="pgfId-1014888"></a>You must place the SKILL routines that perform parameter reduction before any of the other <em>ERC </em>commands in the <em>ercRules( ) </em>section of the verification rules file.</p>
+
+<h4>
+<a id="pgfId-1014889"></a>Series/Parallel Example</h4>
+
+<p>
+<a id="pgfId-1014890"></a>In the following example, the comments clarify the application and do not describe the basic SKILL structure or syntax. For information on SKILL, refer to the <h-hot><a actuate="user" class="URL" href="../skdfref/skdfrefTOC.html#firstpage" show="replace" xml:link="simple">Design Framework II SKILL Functions Reference</a></h-hot>.</p>
+<p>
+<a id="pgfId-1014892"></a><a id="marker-1014891"></a>The contents of the procedures (routines) can be as complex as you want, and you can use any of the parameters found in the property strings associated with the devices. For example, you can calculate the width and length resulting from combining two transistors by using their original widths and lengths plus parameters such as bend counts, as well as any constants or factors.</p>
+<p>
+<a id="pgfId-1014893"></a>The example shows procedure for combining parameters during a parallel reduction. The numbers at the beginning of the line are for reference in the comments below only and do not appear in the final code.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014894"></a>1&#160;&#160;&#160;&#160;procedure( parallelMOS( m1, m2 ) 
+2&#160;&#160;&#160;&#160; prog( ( mt ) <br />3&#160;&#160;&#160;&#160;  mt = ncons( nil ) <br />4&#160;&#160;&#160;&#160;  if( ( m1-&gt;L &amp;&amp; m2-&gt;L ) <br />5&#160;&#160;&#160;&#160;   mt-&gt;L = ( m1-&gt;L + m2-&gt;L ) / 2.0 <br />6&#160;&#160;&#160;&#160;  ) <br />7&#160;&#160;&#160;&#160;  if( ( m1-&gt;W &amp;&amp; m2-&gt;W ) <br />8&#160;&#160;&#160;&#160;   mt-&gt;W = m1-&gt;W + m2-&gt;W <br />9&#160;&#160;&#160;&#160;  ) <br />10&#160;&#160;&#160;&#160;  return( mt ) <br />11&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;) 
+12&#160;&#160;&#160;&#160;) </pre>
+<p><strong>
+<a id="pgfId-1014895"></a><code>Line 1</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017214"></a> Defines the procedure name <em>parallelMOS</em> for a parameter consolidation routine in a <em>reduceDevice</em> statement. It also defines two arguments, <em>m1</em> and <em>m2</em>, which the routine expects to receive. These two arguments are each lists of all the parameter properties on the devices being combined.</p>
+
+<p><strong>
+<a id="pgfId-1017219"></a><code>Lines 2 and 3</code>  </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017222"></a>Sets up a local variable as a list (initially a null) that contains your resulting parameter list for the combined device.</p>
+
+<p><strong>
+<a id="pgfId-1017227"></a><code>Line 4</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017230"></a>Checks to see if both the <em>m1</em> and <em>m2 </em>lists contain a reference to a parameter called <em>L</em>. If they do, line 5 calculates a resulting value as (L1+L2)/2 and stores it in the new list <em>mt</em> with the parameter name of <em>L</em>.</p>
+
+<p><strong>
+<a id="pgfId-1017235"></a><code>Line 7</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017238"></a> Checks to see if both the <em>m1</em> and <em>m2</em> lists contain a reference to a parameter called <em>W</em>. If they do, line 8 calculates a resulting value as W1+W2 and stores it in the new list <em>mt</em> with the parameter name of &#8220;<em>W</em>.&#8221;</p>
+
+<p><strong>
+<a id="pgfId-1017243"></a><code>Line 10</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017246"></a> Returns the resulting list <em>mt</em> back to calling program, where it is associated with the combined device.</p>
+
+<h4>
+<a id="pgfId-1014901"></a><a id="marker-1014900"></a>Combining MOS Parameters</h4>
+
+<p>
+<a id="pgfId-1014903"></a>During generation of the gate-level netlist, two forms of reduction take <a id="marker-1014902"></a>place: AND and OR. This serves to combine device parameters to form pull-up and pull-down parameters. All devices of the same type and previously reduced structures forming an AND logic configuration are combined into higher level structures. The same is true for the OR configuration. By iterating these processes, the pull-up and pull-down portions of a gate can be reduced to single structures. Later these are combined to form the complete gate. </p>
+<p>
+<a id="pgfId-1014978"></a>The following figure illustrates the logic of the AND/OR invert gate.</p>
+
+<p>
+<a id="pgfId-1015866"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="210" src="images/chap12-10.gif" /></div>
+
+<p>
+<a id="pgfId-1014979"></a>The figure shows the steps for converting the device-level logic into the gate pull-down structure. At each step, ERC reduces two components configured in either an AND or OR configuration to one. At each reduction, the appropriate routine combines the parameters of the two components into one set of parameters. The form of this combination depends on the routine you provide. If width and length are being combined, you might want to calculate an overall average. For beta ratios, you might select the worst- or best-case combination.</p>
+
+<h4>
+<a id="pgfId-1014980"></a>MOS Example</h4>
+
+<p>
+<a id="pgfId-1014982"></a><a id="marker-1014981"></a>The following example illustrates both <em>orMOS</em> and <em>andMOS</em> routines for combining parameters.</p>
+<p>
+<a id="pgfId-1014983"></a>The numbers at the beginning of the line are for reference in the comments below only and do not appear in the final code.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014984"></a>1 &#160;&#160;&#160;&#160;procedure( orMOS( m1, m2 ) 
+2 &#160;&#160;&#160;&#160; prog( ( mt ) <br />3 &#160;&#160;&#160;&#160;  mt = ncons( nil ) <br />4&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; if( ( m1-&gt;l &amp;&amp; m2-&gt;l &amp;&amp; m1-&gt;w &amp;&amp; m2-&gt;w ) <br />5&#160;&#160;&#160;&#160;   if( ((float( m1-&gt;w ) / float( m1-&gt;l )) &gt; <br />       (float( m2-&gt;w ) / float( m2-&gt;l )))<br />       then <br />6 &#160;&#160;&#160;&#160;     ( mt-&gt;w = m1-&gt;w ) <br />7&#160;&#160;&#160;&#160;     ( mt-&gt;l = m1-&gt;l ) <br />8&#160;&#160;&#160;&#160;   else <br />9&#160;&#160;&#160;&#160;     ( mt-&gt;w = m2-&gt;w ) <br />10&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;    ( mt-&gt;l = m2-&gt;l ) <br />11&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;  ) <br />12&#160;&#160;&#160;&#160;  ) <br />13&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; return( mt ) <br />14&#160;&#160;&#160;&#160; ) <br />15&#160;&#160;&#160;&#160;) 
+16 &#160;&#160;&#160;&#160;procedure( andMOS( m1, m2 ) 
+17 &#160;&#160;&#160;&#160; prog( ( mt ) <br />18&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; mt = ncons( nil ) <br />19&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; if( ( m1-&gt;l &amp;&amp; m2-&gt;l &amp;&amp; m1-&gt;w &amp;&amp; m2-&gt;w ) then <br />20&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;   ( mt-&gt;w = ( float( m1-&gt;w ) + float( m2-&gt;w )) <br />             / 2.0) 
+21&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;   ( mt-&gt;l = m1-&gt;l + m2-&gt;l ) <br />22&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; ) <br />23&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; return( mt ) <br />24 &#160;&#160;&#160;&#160; ) <br />25 &#160;&#160;&#160;&#160;)</pre>
+
+<p>
+<a id="pgfId-1014985"></a>The basic structure is the same as the previous series/parallel example. In the first procedure, <em>orMOS</em> (line 1), the routine checks for parameters <em>w</em> and <em>l</em> in both lists (line 4). If all exist, it checks the <em>w/l</em> ratio of one to the <em>w/l</em> of the other (line 5). The returned list (line 13) has its parameters set to those of the input list having the highest ratio. The concept here is that the final structure contains the parameters for the path (one or the other) that has the highest <em>w/l</em> ratio.</p>
+<p>
+<a id="pgfId-1014986"></a>In the second procedure, <em>andMOS</em> (line 16), after checking the existence of all parameters (line 19), the routine sets the resultant <em>w</em> to the average of the two input &#8220;w&#8221; values (line 20), and the resultant <em>l</em> to the sum of the input <em>l</em> values (line 21). This simulates a structure that has one device in series (AND) with the other.</p>
+
+<h4>
+<a id="pgfId-1014987"></a>Combining Gate Parameters</h4>
+
+<p>
+<a id="pgfId-1014989"></a>When you combine <a id="marker-1014988"></a>gate parameters, the order of the input parameters is critical. The first input is always the load structure (<a id="marker-1014990"></a>pull-up) parameter list, and the second is always the logic structure (pull-down) parameter list.</p>
+<p>
+<a id="pgfId-1014991"></a>The other consolidations normally create a parameter list containing exactly the same parameter names as their input. For gate parameter consolidation, however, you can create a completely different parameter list from the input. </p>
+
+<h4>
+<a id="pgfId-1014993"></a><a id="marker-1014992"></a>Gate Example</h4>
+
+<p>
+<a id="pgfId-1014994"></a>This example follows the structure of those given previously, but creates the parameter <em>betaRatio</em> from the input <em>w</em> and <em>l</em> parameters.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014995"></a>1 &#160;&#160;&#160;&#160;procedure( gateMOS( m1, m2 ) 
+2 &#160;&#160;&#160;&#160; prog( ( mt ) <br />3&#160;&#160;&#160;&#160;   mt = ncons( nil ) <br />4&#160;&#160;&#160;&#160;   if( ( m1-&gt;l &amp;&amp; m2-&gt;l &amp;&amp; m1-&gt;w &amp;&amp; m2-&gt;w )<br />       then <br />5&#160;&#160;&#160;&#160;  mt-&gt;betaRatio = ( float(m1-&gt;w) / float(m1-&gt;l ) /<br />      &#160;&#160;     ( float(m2-&gt;w) / float(m2-&gt;l ) )) </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014996"></a>6&#160;&#160;&#160;&#160;  ) <br />7&#160;&#160;&#160;&#160;  return( mt ) <br />8&#160;&#160;&#160;&#160; ) <br />9&#160;&#160;&#160;&#160;) </pre>
+
+<p>
+<a id="pgfId-1014997"></a>After testing for the existence of the required parameters in the pull-up and pull-down inputs (line 4), the routine calculates a new parameter, called <em>betaRatio</em>, from the ratio of the pull-up (input 1) <em>w/l</em> over the pull-down (input 2) <em>w/l</em> (line 5). </p>
+
+<h4>
+<a id="pgfId-1014998"></a>Testing Gate and Device Properties </h4>
+
+<p>
+<a id="pgfId-1014999"></a>The testing procedures are simpler than the reduction consolidation procedures in that they only have to process the parameters of a single device or gate; they do not have to generate a parameter list.</p>
+<p>
+<a id="pgfId-1015002"></a><a id="marker-1015000"></a>For each device whose type is specified in a <a id="marker-1015001"></a><em>testDeviceProperty</em> or <em>testGateProperty</em><a id="marker-1015003"></a> command, th<a id="marker-1015004"></a>e SKILL routine you specify uses a single argument, which is the parameter list of the device. If the parameter list does not exist, your routine can either treat this as an error condition or not. Inside the routine you can do whatever processing you wish on any or all parameters in the list. You can test their values, combinations of values, or the existence of the parameters.</p>
+<p>
+<a id="pgfId-1015005"></a>By testing, you can decide whether the parameters are acceptable or not. If the parameters fail your test, you must return <em>t </em>(for true), or a text string which is appended to the error message associated with that device. If the parameters pass your tests, you must return<em> nil.</em> The error text string automatically contains the relevant information of the device being tested, so the appended message can best be used to define the value against which the test failed.</p>
+<p>
+<a id="pgfId-1015007"></a><a id="marker-1015006"></a>The following example illustrates a simple test in which the parameters <em>w</em> and<em> l</em> are tested against a predefined ratio.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015008"></a>1&#160;&#160;&#160;&#160;procedure( testMOS( m1 ) 
+2&#160;&#160;&#160;&#160; prog( ( ) <br />3&#160;&#160;&#160;&#160;  if( ( m1-&gt;L &amp;&amp; m1-&gt;W ) then <br />4&#160;&#160;&#160;&#160;   if( ( m1-&gt;W / m1-&gt;L ) != 3 <br />5&#160;&#160;&#160;&#160;    return( &#8220;Wanted 3.&#8221; ) <br />6&#160;&#160;&#160;&#160;   ) <br />7&#160;&#160;&#160;&#160;  else return ( t ) <br />8&#160;&#160;&#160;&#160;  ) <br />9&#160;&#160;&#160;&#160;  return( nil ) <br />10&#160;&#160;&#160;&#160; ) <br />11&#160;&#160;&#160;&#160;) </pre>
+<p><strong>
+<a id="pgfId-1015009"></a><code>Line 1</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017253"></a> Defines the procedure name <em>testMOS</em>, which is the name used for the procedure in the <em>testDeviceProperty</em> command. It also defines the single argument <em>m1</em>, which is a list of parameter properties. This list contains all the properties available on the device being tested.</p>
+
+<p><strong>
+<a id="pgfId-1017258"></a><code>Line 3</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017262"></a> Checks to see if the parameter list contains both <em>L</em> and <em>W</em> before continuing. If it does not, line 7 returns the value <em>t</em> (TRUE). The error message associated with this return automatically tells you if no parameter list exists. If you want to be more precise and specify that a particular parameter does not exist, then you must define a separate <em>if </em>test for each parameter name and provide a separate return text for each case.</p>
+
+<p><strong>
+<a id="pgfId-1017267"></a><code>Line 4</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017270"></a> Tests the ratio of <em>W</em> divided by <em>L</em> against the constant <em>3</em>.</p>
+<p>
+<a id="pgfId-1015012"></a>If the comparison fails, line 5 returns the text string &#8220;Wanted 3.&#8221; If the comparison succeeds, line 9 returns the value <em>nil</em> (FALSE).</p>
+<p>
+<a id="pgfId-1015013"></a>The following example illustrates a simple gate property test.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015014"></a>1 &#160;&#160;&#160;&#160;procedure( testGate( m1 ) 
+2 &#160;&#160;&#160;&#160; prog( ( ) <br />3&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; if( ( m1-&gt;betaRatio ) <br />4&#160;&#160;&#160;&#160;   if( m1-&gt;betaRatio &gt; 1.3 <br />5&#160;&#160;&#160;&#160;     return( t ) <br />6&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;  ) <br />7&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160; ) <br />8&#160;&#160;&#160;&#160;  return( nil ) <br />9 &#160;&#160;&#160;&#160; ) <br />10 &#160;&#160;&#160;&#160;)</pre>
+
+<p>
+<a id="pgfId-1015015"></a>In this example, line 3 checks for the existence of the parameter <em>betaRatio</em>. Line 4 checks the parameter against the constant <em>1.3</em>. If it is greater, an error is generated by returning <em>t</em> in line 5; otherwise, it is accepted by returning <em>nil</em> in line 8. <a id="marker-1015016"></a></p>
+
+<h2>
+<a id="pgfId-1015019"></a>ERC Commands<a id="ERC Commands"></a></h2>
+
+<p>
+<a id="pgfId-1015020"></a>This section describes the syntax for the commands used to define circuit connections and trace paths.</p>
+
+<h3>
+<a id="pgfId-1015023"></a>oneWayPath<a id="oneWayPath"></a></h3>
+<a id="pgfId-1015025"></a><a id="marker-1015024"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+oneWayPath( device terminal1 terminal2 )</pre>
+<h4>
+<a id="pgfId-1015026"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015028"></a>Specifies that during <a id="marker-1015027"></a>path tracing for pull-up and pull-down detection, this device is to be traced only from the net connected to <em>terminal1</em> to the net connected to <em>terminal2</em>.</p>
+
+<h4>
+<a id="pgfId-1015029"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015030"></a>device</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017278"></a> Name of the device to which this path definition applies. The name is a text string enclosed in quotation marks.</p>
+
+<p><strong>
+<a id="pgfId-1017283"></a>terminal1 </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017286"></a>Device terminal name from which the path tracing can start. The name is a text string enclosed in quotation marks.</p>
+
+<p><strong>
+<a id="pgfId-1017291"></a>terminal2</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017294"></a> The device terminal name to which the path tracing goes. The name is a text string enclosed in quotation marks.</p>
+
+<h4>
+<a id="pgfId-1015033"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015034"></a>The following example illustrates a diode in which the path tracing can go from anode to cathode but not from cathode to anode:</p>
+
+<a id="pgfId-1015035"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+oneWayPath( &quot;diode&quot; &quot;anode&quot; &quot;cathode&quot; )</pre>
+<h3>
+<a id="pgfId-1015038"></a>setGround<a id="setGround"></a></h3>
+<a id="pgfId-1015040"></a><a id="marker-1015039"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+setGround( netName ...)</pre>
+<h4>
+<a id="pgfId-1015041"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015043"></a>Defines a list of nets that represent the ground <a id="marker-1015042"></a>connections to the circuit. These nets are used in the pull-down path tracing and are required for the recognition of gates during <em>reduceDevice</em> command processing.</p>
+
+<h4>
+<a id="pgfId-1015044"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015045"></a>netName</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017301"></a> Name of a net that represents a ground connection to the circuit. You can define any number of nets. Each net is a character string enclosed in quotation marks.</p>
+
+<h4>
+<a id="pgfId-1015046"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015047"></a>The following example declares <em>VSS</em> and <em>gnd! </em>as ground supplies for the ERC and device reduction programs:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015048"></a>setGround( &quot;VSS&quot; &quot;gnd!&quot; )</pre>
+
+<h3>
+<a id="pgfId-1015050"></a>setInput<a id="setInput"></a></h3>
+<a id="pgfId-1015052"></a><a id="marker-1015051"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+setInput( netName ...)</pre>
+<h4>
+<a id="pgfId-1015053"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015055"></a>Defines a list of nets that represent the input <a id="marker-1015054"></a>connections to the circuit. These nets are used to eliminate false errors in the pull-up and pull-down <a id="marker-1015056"></a>path tracing. In addition, they are used to count single connections when looking for nets and devices that have one or zero connections.</p>
+
+<h4>
+<a id="pgfId-1015057"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015058"></a>netName</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017308"></a> The name of a net that represents an input connection to the circuit. You can define any number of nets. Each net is a character string enclosed in quotation marks.</p>
+
+<h4>
+<a id="pgfId-1015059"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015060"></a>The following example declares all specified net names as input nets:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015061"></a>setInput( &quot;ph1&quot; &quot;ph2&quot; &quot;clock&quot; &quot;in1&quot; &quot;in2&quot; )</pre>
+
+<h3>
+<a id="pgfId-1015066"></a>setOutput<a id="setOutput"></a></h3>
+<a id="pgfId-1015068"></a><a id="marker-1015067"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+setOutput( netName ...)</pre>
+<h4>
+<a id="pgfId-1015069"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015071"></a>Defines a list of nets that represent the output <a id="marker-1015070"></a>connections to the circuit. </p>
+<p>
+<a id="pgfId-1015072"></a>You use these nets to count a single connection when looking for nets and devices that have one or zero connections.</p>
+
+<h4>
+<a id="pgfId-1015073"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015074"></a>netName</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017315"></a> Name of a net that represents an output connection to the circuit. You can define any number of nets. Each net is a character string enclosed in quotation marks.</p>
+
+<h4>
+<a id="pgfId-1015075"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015076"></a>The following example declares all specified net names as output nets:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015077"></a>setOutput( &quot;out1&quot; &quot;out2&quot; &quot;trigger&quot; &quot;clock&quot; )</pre>
+
+<h3>
+<a id="pgfId-1015079"></a>setPower<a id="setPower"></a></h3>
+<a id="pgfId-1015081"></a><a id="marker-1015080"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+setPower( netName ...)</pre>
+<h4>
+<a id="pgfId-1015082"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015084"></a>Defines a list of nets that represent the power <a id="marker-1015083"></a>connections to the circuit. These nets are used in the pull-up path tracing and are required for the recognition of gates during <em>reduceDevice</em> command processing. </p>
+
+<h4>
+<a id="pgfId-1015085"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015086"></a>netName</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017322"></a> Name of a net that represents a power connection to the circuit. You can define any number of nets. Each net is a character string enclosed in quotation marks.</p>
+
+<h4>
+<a id="pgfId-1015087"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015088"></a>The following example declares <em>VDD</em> and <em>vdd!</em> as power supplies for the ERC and device reduction programs.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015089"></a>setPower( &quot;VDD&quot; &quot;vdd!&quot; )</pre>
+
+<h3>
+<a id="pgfId-1015092"></a>twoWayPath<a id="twoWayPath"></a></h3>
+<a id="pgfId-1015094"></a><a id="marker-1015093"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+twoWayPath( device terminal1 terminal2 )</pre>
+<h4>
+<a id="pgfId-1015095"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015097"></a>Specifies that during <a id="marker-1015096"></a>path tracing for pull-up and pull-down detection, this device can be traced from the net connected to <em>terminal1</em> to the net connected to <em>terminal2 </em>and in the opposite direction from the net connected to<em> terminal2</em> to the net connected to <em>terminal1</em>.</p>
+
+<h4>
+<a id="pgfId-1015098"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015099"></a>device</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017329"></a> Name of the device to which this path definition applies. The name is a text string enclosed in quotation marks.</p>
+
+<p><strong>
+<a id="pgfId-1017334"></a>terminal1 </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017337"></a>Name of the device terminal name at which the path tracing can start or end when passing through the device. The name is a text string enclosed in quotation marks.</p>
+
+<p><strong>
+<a id="pgfId-1017342"></a>terminal2</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017345"></a> Name of the device terminal where the path tracing goes when passing through the device. The name is a text string enclosed in quotation marks.</p>
+
+<h4>
+<a id="pgfId-1015102"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015103"></a>The following examples illustrate typical devices that have two-way trace paths:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015104"></a>twoWayPath( &quot;nfet&quot; &quot;S&quot; &quot;D&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015105"></a>twoWayPath( &quot;resistor&quot; &quot;PLUS&quot; &quot;MINUS&quot; )</pre>
+
+<h2>
+<a id="pgfId-1015108"></a>Tracing and Connectivity Commands <a id="Tracing and Connectivity Commands"></a></h2>
+
+<p>
+<a id="pgfId-1015109"></a>This section describes the syntax for the commands used to trace pull-ups and pull-downs and check connectivity.</p>
+
+<h3>
+<a id="pgfId-1015112"></a>checkConnected<a id="checkConnected"></a></h3>
+<a id="pgfId-1015114"></a><a id="marker-1015113"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkConnected( device terminal net )</pre>
+<h4>
+<a id="pgfId-1015115"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015116"></a>Finds devices based on the connection of specific device terminals to defined nets. ERC selects each device of the type specified if any of the specified terminals connect to any of the specified nets.</p>
+<p>
+<a id="pgfId-1015117"></a>All selected devices are referenced in the error file with a message. You can display these devices by selecting <em>Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015118"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015119"></a>device</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017352"></a> Name of a device, consisting of a text string enclosed in quotation marks. Only connections to this device are considered.</p>
+
+<p><strong>
+<a id="pgfId-1017357"></a>terminal</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017360"></a> Name of a device terminal, consisting of a text string enclosed in quotation marks or a list of device terminals surrounded by parentheses. The terminals must belong to the device previously defined. Only connections to these device terminals are considered.</p>
+
+<p><strong>
+<a id="pgfId-1017379"></a>net</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017382"></a> A single net name enclosed in quotation marks or a list of net names surrounded by parentheses. If any of the device terminals connect to any of these nets, the device is selected.</p>
+
+<h4>
+<a id="pgfId-1015122"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015123"></a>The following example flags all <em>nfet</em> devices whose gates are connected to <em>vdd</em>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015124"></a>checkConnected( &quot;nfet&quot; &quot;G&quot; &quot;vdd&quot;)</pre>
+<p>
+<a id="pgfId-1015125"></a>The following example flags all <em>nfet </em>devices whose sources or drains are connected to <em>vdd</em> or <em>VDD</em>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015126"></a>checkConnected( &quot;nfet&quot; ( &quot;S&quot; &quot;D&quot;) (&quot;vdd&quot; &quot;VDD&quot;) )</pre>
+<p>
+<a id="pgfId-1015127"></a>The following example flags all <em>pfet </em>devices whose source, drain, or gate terminals are connected to <em>vss</em> or <em>gnd</em>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015128"></a>checkConnected( &quot;pfet&quot; ( &quot;S&quot; &quot;D&quot; &quot;G&quot;) ( &quot;vss&quot; &quot;gnd&quot;) )</pre>
+
+<h3>
+<a id="pgfId-1015130"></a>checkDeviceNetCount<a id="checkDeviceNetCount"></a></h3>
+<a id="pgfId-1015133"></a><a id="marker-1015131"></a><a id="marker-1015132"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkDeviceNetCount( device terminal limit )</pre>
+<h4>
+<a id="pgfId-1015134"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015136"></a>Finds <a id="marker-1015135"></a>devices based on the number of distinct nets connected to them through specific terminals. The <em>limit</em> argument defines the number of nets. If the number of nets meets these limits, the device is selected. </p>
+<p>
+<a id="pgfId-1015137"></a>A single net connected to more than one of the terminals of a device is counted only once. A net is counted only if it connects to more than one device terminal, or if it connects a device terminal to an I/O of the circuit. If a terminal of a device is floating (it does not connect to another device terminal or an I/O of the circuit), it is considered unconnected.</p>
+<p>
+<a id="pgfId-1015138"></a>All selected devices are referenced in the error file with a message. To display these devices, select<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015139"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015140"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017389"></a> Name of the device to which this command applies. The name is a text string enclosed in quotation marks.</p>
+
+<p><strong>
+<a id="pgfId-1017394"></a><code>terminal</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017397"></a> Name of a device terminal. The name is a text string enclosed in quotation marks. The terminal must belong to the device previously defined. Only nets connected to this device terminal are counted. This can also be a list of terminal names surrounded by parentheses.</p>
+
+<p><strong>
+<a id="pgfId-1017402"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017405"></a> Limit specification. The options are as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015143"></a><code>lower_limit operator keyword operator upper_limit</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015144"></a><code>keyword operator upper_limit</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015145"></a><code>keyword operator lower_limit</code></pre>
+<p>
+<a id="pgfId-1015146"></a>You can use the following keywords:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015147"></a><code>keep </code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015148"></a><code>ignore</code></pre>
+<p>
+<a id="pgfId-1015149"></a>You can use the following operators:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015150"></a><code>&lt;</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015151"></a><code>&lt;=</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015152"></a><code>&gt;</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015153"></a><code>&gt;=</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015154"></a><code>==</code></pre>
+<p>
+<a id="pgfId-1015155"></a>You can use the following limit specifications:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015156"></a><code>keep &lt; 3</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015157"></a><code>2 &lt; ignore &lt; 5</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015158"></a><code>ignore &gt; 5</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015159"></a><code>keep == 3</code></pre>
+
+<h4>
+<a id="pgfId-1015160"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015161"></a>checkDeviceNetCount( &quot;npn&quot; &quot;e&quot; keep &lt; 3 )</pre>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015162"></a>checkDeviceNetCount( &quot;npn&quot; ( &quot;e&quot; &quot;c&quot; ) 2 &lt; ignore &lt; 5 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015163"></a>checkDeviceNetCount( &quot;npn&quot; ( &quot;e&quot; &quot;b&quot; &quot;c&quot; ) keep &gt; 5 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015164"></a>checkDeviceNetCount( &quot;nfet&quot; ( &quot;S&quot; &quot;D&quot; ) keep == 1 )</pre>
+
+<h3>
+<a id="pgfId-1015167"></a>checkFanOut<a id="checkFanOut"></a></h3>
+<a id="pgfId-1015169"></a><a id="marker-1015168"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkFanOut( device terminal limit [usage net] )</pre>
+<h4>
+<a id="pgfId-1015170"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015171"></a>Finds nets based on the number of device terminals of a specific type connected to them. You define the number of terminals with the limit definition in the command. If the count of terminals meets these limits, the net is selected. </p>
+<p>
+<a id="pgfId-1015172"></a>You can extend the command to specify exactly which nets are to be checked or which nets are not to be checked.</p>
+<p>
+<a id="pgfId-1015173"></a>All selected nets are referenced in the error file with a message. You can display these nets by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015174"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015175"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017412"></a> Name of a device, consisting of a text string enclosed in quotation marks. Only connections to this device are counted for any net.</p>
+
+<p><strong>
+<a id="pgfId-1017417"></a><code>terminal</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017420"></a> Name of a device terminal, consisting of a text string enclosed in quotation marks. The terminal must belong to the device previously defined. Only connections to this device terminal are counted for any net. This can also be a list of terminal names surrounded by one set of parentheses.</p>
+
+<p><strong>
+<a id="pgfId-1017425"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017428"></a> Limit specification. The options are as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015178"></a><code>lower_limit operator keyword operator upper_limit</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015179"></a><code>keyword operator upper_limit</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015180"></a><code>keyword operator1 lower_limit</code></pre>
+<p>
+<a id="pgfId-1015181"></a>You can use the following keywords:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015182"></a><code>keep </code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015183"></a><code>ignore</code></pre>
+<p>
+<a id="pgfId-1015184"></a>You can use the following operators:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015185"></a><code>&lt;</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015186"></a><code>&lt;=</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015187"></a><code>&gt;</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015188"></a><code>&gt;=</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015189"></a><code>==</code></pre>
+<p>
+<a id="pgfId-1015190"></a>You can use the following limit specifications:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015191"></a><code>keep &lt; 10</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015192"></a><code>2 &lt; ignore &lt; 8</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015193"></a><code>ignore &gt; 5</code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015194"></a><code>keep == 3</code></pre>
+
+<p><strong>
+<a id="pgfId-1015195"></a><code>usage</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017435"></a> Optional keyword that precedes a net name or list of net names. The options are as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015196"></a><code>for </code></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015197"></a><code>except</code></pre>
+<p>
+<a id="pgfId-1015198"></a>The <em>for </em>keyword precedes a list of nets that are to be checked. The<em> except</em> keyword precedes a list of nets that are not to be checked. Without the<em> usage</em> keyword, all nets are checked.</p>
+
+<p><strong>
+<a id="pgfId-1015199"></a><code>net</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017441"></a> A single net name enclosed in quotation marks or a group of net names surrounded by parentheses. This list is applied according to the preceding keyword <em>for </em>or <em>except</em>.</p>
+
+<h4>
+<a id="pgfId-1015200"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015201"></a>The following example flags all nets that connect to more than three gate terminals (terminals named <em>G</em>) of<em> n </em>channels (devices whose model name is <em>nfet</em>).</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015202"></a>checkFanOut( &quot;nfet&quot; &quot;G&quot; keep &gt; 3 )</pre>
+<p>
+<a id="pgfId-1016351"></a>The following example flags only nets named <em>ph1</em> and <em>ph2</em> that connect to more than ten gates of <em>nfet </em>devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016352"></a>checkFanOut( &quot;nfet&quot; &quot;G&quot; keep &gt; 10 for (&quot;ph1&quot; &quot;ph2&quot;) )</pre>
+<p>
+<a id="pgfId-1016353"></a>The following example flags all nets that connect to more than one <em>pfet</em> source or drain.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015206"></a>checkFanOut( &quot;pfet&quot; ( &quot;S&quot; &quot;D&quot;) keep &gt; 1 )</pre>
+<p>
+<a id="pgfId-1015207"></a>The following example flags all nets except <em>vdd </em>and <em>gnd </em>that connect to more than five gates of<em> nfet </em>devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015208"></a>checkFanOut( &quot;nfet&quot; &quot;G&quot; keep &gt; 5 except (&quot;vdd&quot; &quot;gnd&quot;) )</pre>
+<p>
+<a id="pgfId-1015209"></a>The following example flags all nets, except <em>a1</em>,<em> a2,</em> and <em>a3</em>, that connect to more than two but less than five <em>e </em>or <em>c</em> terminals on <em>npn</em> transistors.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015210"></a>checkFanOut( &quot;npn&quot; (&quot;e&quot; &quot;c&quot;) 2 &lt; ignore &lt; 5 <br />except (&quot;a1&quot; &quot;a2&quot; &quot;a3&quot;) )</pre>
+
+<h3>
+<a id="pgfId-1015213"></a>checkFloatingDevices<a id="checkFloatingDevices"></a></h3>
+<a id="pgfId-1015216"></a><a id="marker-1015214"></a><a id="marker-1015215"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkFloatingDevices( )</pre>
+<h4>
+<a id="pgfId-1015217"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015219"></a>Finds all <a id="marker-1015218"></a>devices that have no connections to the remainder of the circuit. Although each of the device&#8217;s terminals connects to a net, none of those nets connect to terminals of other devices.</p>
+<p>
+<a id="pgfId-1015220"></a>All floating devices are referenced in the error file with a message. You can display floating devices by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015221"></a>Example</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015222"></a>checkFloatingDevices( )</pre>
+
+<h3>
+<a id="pgfId-1015225"></a>checkFloatingNets<a id="checkFloatingNets"></a></h3>
+<a id="pgfId-1015227"></a><a id="marker-1015226"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkFloatingNets( )</pre>
+<h4>
+<a id="pgfId-1015228"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015230"></a>Finds all <a id="marker-1015229"></a>nets with no connections to device terminals in the circuit. A reference to a net in a<em> setInput </em>or <em>setOutput</em> command is considered a single connection to the net.</p>
+<p>
+<a id="pgfId-1015231"></a>All floating nets are referenced in the error file with a message. You can display floating nets by selecting <em>Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015232"></a>Example</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015233"></a>checkFloatingNets( )</pre>
+
+<h3>
+<a id="pgfId-1015236"></a>checkNotConnected<a id="checkNotConnected"></a></h3>
+<a id="pgfId-1015238"></a><a id="marker-1015237"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkNotConnected( device terminal net )</pre>
+<h4>
+<a id="pgfId-1015239"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015241"></a>Finds <a id="marker-1015240"></a>devices based on the absence of connection of specific device terminals to defined nets. If none of the specified terminals connect to any of the specified nets, ERC selects each device of the type specified.</p>
+<p>
+<a id="pgfId-1015242"></a>All selected devices are referenced in the error file with a message. You can display these devices by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015243"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015244"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017448"></a> Name of a device, consisting of a text string enclosed in quotation marks. Only connections to this device are considered.</p>
+
+<p><strong>
+<a id="pgfId-1017453"></a><code>terminal</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017456"></a>Name of a device terminal, consisting of a text string enclosed in quotation marks or a group of device terminals surrounded by parentheses. </p>
+<p>
+<a id="pgfId-1015246"></a>The terminals must belong to the device previously defined. Only connections to these device terminals are considered.</p>
+
+<p><strong>
+<a id="pgfId-1015247"></a><code>net</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017462"></a> A single net name enclosed in quotation marks or a list of net names surrounded by parentheses. If none of the device terminals connect to any of these nets, the device is selected.</p>
+
+<h4>
+<a id="pgfId-1015248"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015249"></a>The following example flags all <em>pfet </em>devices whose source or drain terminals are not connected to <em>vdd</em>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015250"></a>checkNotConnected( &quot;pfet&quot; ( &quot;S&quot; &quot;D&quot;) &quot;vdd&quot; )</pre>
+<p>
+<a id="pgfId-1015251"></a>The following example flags all <em>cap </em>devices that have neither terminal connected to <em>vdd</em> or <em>gnd</em>.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015252"></a>checkNotConnected( &quot;cap&quot; ( &quot;PLUS&quot; &quot;MINUS&quot;) ( &quot;vdd&quot; &quot;gnd&quot;))</pre>
+
+<h3>
+<a id="pgfId-1015255"></a>checkOneNetDevices<a id="checkOneNetDevices"></a></h3>
+<a id="pgfId-1015258"></a><a id="marker-1015256"></a><a id="marker-1015257"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkOneNetDevices( )</pre>
+<h4>
+<a id="pgfId-1015259"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015260"></a>Finds all devices that have only one connection to the remainder of the circuit. Although each of the device&#8217;s terminals connects to a net, only one of those nets connects to a terminal of another device.</p>
+<p>
+<a id="pgfId-1015261"></a>All single net devices are referenced in the error file with a message. You can display these nets by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015262"></a>Example</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015263"></a>checkOneNetDevices( )</pre>
+
+<h3>
+<a id="pgfId-1015266"></a>checkOneTerminalNets<a id="checkOneTerminalNets"></a></h3>
+<a id="pgfId-1015269"></a><a id="marker-1015267"></a><a id="marker-1015268"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkOneTerminalNets( )</pre>
+<h4>
+<a id="pgfId-1015270"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015273"></a>Finds all <a id="marker-1015271"></a>nets that have only one <a id="marker-1015272"></a>connection to a device terminal in the circuit. A reference to a net in a<em> setInput </em>or <em>setOutput</em> command is considered a single connection to the net.</p>
+<p>
+<a id="pgfId-1015274"></a>All single terminal nets are referenced in the error file with a message. You can display these nets by selecting <em>Display Errors</em> in the ERC form. </p>
+
+<h4>
+<a id="pgfId-1015275"></a>Example</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015276"></a>checkOneTerminalNets( )</pre>
+
+<h3>
+<a id="pgfId-1015278"></a>checkPullDown<a id="checkPullDown"></a></h3>
+<a id="pgfId-1015280"></a><a id="marker-1015279"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkPullDown( )</pre>
+<h4>
+<a id="pgfId-1015281"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015282"></a>Starts a trace at every net in the circuit other than the power nets and determines whether that trace can reach the nets defined as <a id="marker-1015283"></a>ground. It traces through devices as defined by the <em>oneWayPath</em> and <em>twoWayPath </em>definitions. The command has no arguments.</p>
+<p>
+<a id="pgfId-1015284"></a>If you use the usual definitions of ground, with the source and drain of MOS transistors defined in a <em>twoWayPath</em> definition, this command performs the conventional pull-down checking.</p>
+<p>
+<a id="pgfId-1015285"></a>All nets that cannot be traced (pulled down) are referenced in the error file with a message. You can display these nets by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015286"></a>Prerequisite</h4>
+
+<p>
+<a id="pgfId-1015287"></a>You must first define ground connections and device paths.</p>
+
+<h4>
+<a id="pgfId-1015288"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015289"></a>The following example checks all nets, except those declared as inputs by <em>setInput</em>, for a path to a declared ground supply.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015290"></a>checkPullDown( )</pre>
+
+<h3>
+<a id="pgfId-1015293"></a>checkPullUp<a id="checkPullUp"></a></h3>
+<a id="pgfId-1015295"></a><a id="marker-1015294"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkPullUp( )</pre>
+<h4>
+<a id="pgfId-1015296"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015297"></a>Starts a trace at every net in the circuit other than the ground nets and determines whether that trace can reach the nets defined as power. It <a id="marker-1015298"></a>traces through devices as defined by the <em>oneWayPath</em> and <em>twoWayPath </em>definitions. The command has no arguments.</p>
+<p>
+<a id="pgfId-1015299"></a>If you use the usual definitions of power, with the source and drain of MOS transistors defined in a <em>twoWayPath</em> definition, this command performs conventional pull-up checking.<a id="marker-1015300"></a></p>
+<p>
+<a id="pgfId-1015301"></a>All nets that cannot be traced (pulled up) are referenced in the error file with a message. You can display these nets by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015302"></a>Prerequisite</h4>
+
+<p>
+<a id="pgfId-1015303"></a>You must first define power connections and device paths.</p>
+
+<h4>
+<a id="pgfId-1015304"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015305"></a>The following example checks all nets, except those declared as inputs by <em>setInput</em>, for a path to a declared power supply.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015306"></a>checkPullUp( )</pre>
+
+<h3>
+<a id="pgfId-1015310"></a>checkPullUpAndDown<a id="checkPullUpAndDown"></a></h3>
+<a id="pgfId-1015313"></a><a id="marker-1015311"></a><a id="marker-1015312"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+checkPullUpAndDown( )</pre>
+<h4>
+<a id="pgfId-1015314"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015316"></a>Starts a trace at every net in the circuit other than the power <a id="marker-1015315"></a>and ground nets and determines whether or not that trace can reach the nets defined as power and ground. It traces through devices as defined by the <em>oneWayPath</em> and <em>twoWayPath </em>definitions. The command has no arguments.</p>
+<p>
+<a id="pgfId-1015317"></a>If you use usual definitions of power and ground, with the source and drain of MOS transistors defined in a <em>twoWayPath</em> definition, this command performs conventional pull-up and pull-down checking.<a id="marker-1015318"></a></p>
+<p>
+<a id="pgfId-1015319"></a>All nets that cannot be traced to power or to ground (pulled up or down) are referenced in the error file with a message. You can display these nets by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015320"></a>Prerequisite</h4>
+
+<p>
+<a id="pgfId-1015321"></a>You must first define power connections and device paths.</p>
+
+<h4>
+<a id="pgfId-1015322"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015323"></a>The following example checks all nets, except those declared as inputs by <em>setInput</em>, for a path to declared power and ground supplies.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015324"></a>checkPullUpAndDown( )</pre>
+
+<h2>
+<a id="pgfId-1015327"></a>Gates and Parameters Commands<a id="Gates and Parameters Commands"></a></h2>
+
+<p>
+<a id="pgfId-1015328"></a>This section describes the syntax for the commands used to form gates and test parameters.</p>
+
+<h3>
+<a id="pgfId-1015330"></a>displayFeedBackLoops<a id="displayFeedBackLoops"></a></h3>
+<a id="pgfId-1015333"></a><a id="marker-1015331"></a><a id="marker-1015332"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+displayFeedBackLoops( )</pre>
+<h4>
+<a id="pgfId-1015334"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015335"></a>Requests display of all loops in the circuit after the circuit has been reduced to the gate level using the <em>reduceDevice</em> command with the<em> MOS </em>keyword.</p>
+<p>
+<a id="pgfId-1015337"></a><a id="marker-1015336"></a>A loop is formed when the output of a gate can be traced, through inputs of other gates, back to the input of the original gate. ERC detects all loops, whether they are isolated, nested or crossing. Each loop is given a loop number and a subloop number. The subloop number is used when a single loop has multiple paths within it.</p>
+<p>
+<a id="pgfId-1015338"></a>All nets forming loops are referenced in the error file with a message. You can display nets forming loops by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015339"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015340"></a>This command is applicable only after using a <em>reduceDevice</em> command with the <em>MOS </em>keyword.</p>
+<p>
+<a id="pgfId-1015389"></a>The following figure illustrates the formation of loops and subloops.</p>
+
+<p>
+<a id="pgfId-1015867"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="165" src="images/chap12-11.gif" /></div>
+<h4>
+<a id="pgfId-1015390"></a>Example</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015391"></a>displayFeedBackLoops( )</pre>
+<h3>
+<a id="pgfId-1015393"></a>displayGateErrors<a id="displayGateErrors"></a></h3>
+<a id="pgfId-1015395"></a><a id="marker-1015394"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+displayGateErrors( )</pre>
+<h4>
+<a id="pgfId-1015396"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015398"></a>Requests <a id="marker-1015397"></a>display of all transistors that have failed to become part of a gate during device reduction initiated with the <em>reduceDevice</em> command with the<em> MOS </em>keyword.</p>
+<p>
+<a id="pgfId-1015399"></a>If individual transistors do not form part of any of the recognized gates, they are left in the circuit and form part of the netlist. This command simplifies the isolation of those devices in cases where you assumed the devices formed gates. It is probable that gates have not been formed because the transistors are not correctly connected, or they form a gate type not recognized by the program.</p>
+<p>
+<a id="pgfId-1015400"></a>All selected devices are referenced in the error file with a message. You can display these devices by selecting <em>Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015401"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015402"></a>This command is applicable only after a <em>reduceDevice</em> command with the <em>MOS</em> keyword.</p>
+
+<h4>
+<a id="pgfId-1015403"></a>Example</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015404"></a>displayGateErrors( )</pre>
+
+<h3>
+<a id="pgfId-1015407"></a>reduceDevice<a id="reduceDevice"></a></h3>
+<a id="pgfId-1015409"></a><a id="marker-1015408"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+reduceDevice( type device [key] [spFunction] [andFunction orFunction])</pre>
+<h4>
+<a id="pgfId-1015410"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015412"></a>Requests that the circuit netlist be simplified (reduced) by combining <a id="marker-1015411"></a>series and parallel devices, creating logic gates from MOS transistors, or both.</p>
+<p>
+<a id="pgfId-1015415"></a><a id="marker-1015413"></a>During <a id="marker-1015414"></a>reduction, you can consolidate the original parameters defined as properties of the devices into new parameters by using SKILL functions you write. To create logic <a id="marker-1015416"></a>gates, you can define SKILL functions that calculate the gate-level parameters from the parameters of the load and logic portions of the gate.</p>
+<p>
+<a id="pgfId-1015417"></a>If this command produces a reduced logic gate network, it writes out the network in text format in a form that can be directly used or translated for use by other programs.</p>
+
+<h4>
+<a id="pgfId-1015418"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015419"></a>For full reduction, you must specify the permutability of device terminals in the device definitions in the netlist. To help this command create logic gates, use the <em>setPower</em> and <em>setGround</em> commands.</p>
+
+<h4>
+<a id="pgfId-1015420"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015421"></a><code>type</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017469"></a> Defines the type of reduction to be performed. The options are as follows:</p>
+
+<p><strong>
+<a id="pgfId-1017474"></a><code>series</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017477"></a> Merges devices of the same type connected in series into a single device. You can specify two-terminal or MOS devices. If the two device terminals are permutable, this command merges the devices regardless of the way they are connected. If the two terminals are not permutable, the command merges the devices only if unlike terminal types are connected.</p>
+
+<p><strong>
+<a id="pgfId-1017482"></a><code>parallel</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017485"></a> Merges into one all the terminals of two devices of the same type that have common nets.</p>
+
+<p><strong>
+<a id="pgfId-1017490"></a>MOS</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017493"></a> Creates logic gates out of groups of transistors by recognition of pairs of devices in <em>AND </em>and <em>OR</em> configurations. It can handle NMOS or CMOS technologies and is limited to creating gates of these types. These definitions show the terminal ordering of the resultant gate. The<em> nand</em>, <em>nor</em>, and <em>complex </em>gates are illustrated by single examples, but the full range of configurations is available. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015425"></a><code>inverter</code>      <code>out in<br />nmos xfer gatedrain in source<br />cmos xfer gatedrain nin pin source<br />tristate</code>      <code>out common nin pin<br />nand3</code>            <code>out in1 in2 in3<br />nor3</code>              <code>out in1 in2 in3<br />aoi321</code>          <code>out in3a in3b in3c in2a in2b in1a<br />oai321</code>         <code>out in3a in3b in3c in2a in2b in1a</code></pre>
+<p>
+<a id="pgfId-1015426"></a>For a MOS device to be reduced correctly, its terminal ordering in the netlist must conform to SPICE conventions of (S G D B), and in the device definition, it must have the correct source and drain permutation statement (p S D).</p>
+<p>
+<a id="pgfId-1015427"></a>The keyword also triggers the creation of a netlist of the reduced circuit in the <em>si.out</em> file.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015428"></a>The MOS reduction significantly reduces the number of devices and the output netlist size accordingly.</div>
+<p>
+<a id="pgfId-1015429"></a>If you specify multiple reductions for the same device, all are applied iteratively. For example, if you request series and parallel reduction for resistors, both are applied to resistor networks, reducing them as far as possible.</p>
+<p>
+<a id="pgfId-1015471"></a>The following figure illustrates normal series and parallel reduction.</p>
+
+<p>
+<a id="pgfId-1015868"></a>.</p>
+<div class="webflare-div-image">
+<img width="577" height="194" src="images/chap12-12.gif" /></div>
+
+<p>
+<a id="pgfId-1015472"></a>MOS reduction also implies parallel reduction plus reduction of pseudoparallel device combinations. In these cases, the devices are not truly connected in parallel but behave electrically as if they were. </p>
+<p>
+<a id="pgfId-1015517"></a>The following figure illustrates pseudoparallel reduction during MOS reduction.</p>
+
+<p>
+<a id="pgfId-1015869"></a></p>
+<div class="webflare-div-image">
+<img width="594" height="165" src="images/chap12-13.gif" /></div>
+<p><strong>
+<a id="pgfId-1015518"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017500"></a> Name of a device consisting of a text string enclosed in quotation marks. The reduction process requested is applied to all devices of this type.</p>
+
+<p><strong>
+<a id="pgfId-1017505"></a><code>key</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017514"></a>The options are as follows:</p>
+
+<p><strong>
+<a id="pgfId-1017519"></a><code>logic</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017522"></a>Used only during MOS reduction to specify that the type of the device in this command forms the logic part of the gate. In MOS, this is usually the <em>nfet</em> or its equivalent.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015521"></a> ERC recognizes gates in two parts. The load, which is normally the pull-up-to-power section, and the logic, which is normally the pull-down-to-ground section. During reduction, both sections are formed separately and then paired together with the output of the gate being the common net between the sections.</p>
+
+<p><strong>
+<a id="pgfId-1015522"></a><code>netlist</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017528"></a> Used for series and parallel reduction. The key &#8220;netlist&#8221; is added to one of the <em>reduceDevice</em> commands. This keyword triggers the creation of a netlist of the reduced circuit in the <em>si.out</em> file. Used if the MOS reduction has not been applied but a netlist is wanted after series and parallel reduction only.</p>
+
+<p><strong>
+<a id="pgfId-1017533"></a><code>spFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017536"></a> Optional name of a user-defined SKILL routine used to consolidate the device parameters (stored as properties on the devices) during series and parallel reduction. </p>
+<p>
+<a id="pgfId-1015524"></a>This function is usually not used for MOS processing. The only exception is for pseudoparallel configurations.</p>
+<p>
+<a id="pgfId-1015525"></a>The first function name encountered after the <em>series </em>or <em>parallel</em> keyword is assumed to be the <em>sp_function</em>.</p>
+
+<p><strong>
+<a id="pgfId-1015526"></a><code>andFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017543"></a> Optional name of a user-defined SKILL routine used to consolidate the parameters (stored as properties on the devices) during MOS <em>AND</em> reduction. </p>
+<p>
+<a id="pgfId-1015527"></a>This function cannot be used for <em>series </em>and <em>parallel</em> processing. </p>
+<p>
+<a id="pgfId-1015528"></a>The first function name encountered after the MOS keyword is assumed to be the <em>andFunction.</em></p>
+<p>
+<a id="pgfId-1015529"></a>During MOS reduction, ERC combines devices by recognizing either an<em> AND</em> or an <em>OR</em> configuration. An <em>AND</em> configuration occurs when two devices of the same type have a common source/drain net with no other connection to that common net, and their other source/drain connections do not have common nets.</p>
+
+<p><strong>
+<a id="pgfId-1015530"></a><code>orFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017550"></a> Optional name of a user-defined SKILL routine used to consolidate the parameters (stored as properties on the devices) during MOS <em>OR</em> reduction. </p>
+<p>
+<a id="pgfId-1015531"></a>This function cannot be used for <em>series </em>and <em>parallel</em> processing. This is the second function after the <em>MOS</em> keyword. </p>
+<p>
+<a id="pgfId-1015532"></a>The first function after the <em>MOS</em> keyword is considered to be the <em>andFunction.</em></p>
+<p>
+<a id="pgfId-1015533"></a>During MOS reduction, ERC combines devices by recognizing either an <em>AND</em> or an <em>OR</em> configuration. An <em>OR</em> configuration occurs when two devices of the same type have both their source and drain terminals connected to common nets, but not their gate terminals.</p>
+
+<h4>
+<a id="pgfId-1015534"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015535"></a>The following example reduces all resistor devices in series.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015536"></a>reduceDevice( series &quot;resistor&quot; )</pre>
+<p>
+<a id="pgfId-1015537"></a>The following example reduces all <em>capacitor </em>devices in parallel and calls a SKILL function to combine their parameters.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015538"></a>reduceDevice( parallel &quot;capacitor&quot; series_cap )</pre>
+<p>
+<a id="pgfId-1015539"></a>The following example reduces all <em>nfet</em> devices and references them as logic forming.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015540"></a>reduceDevice( MOS &quot;nfet&quot; logic )</pre>
+<p>
+<a id="pgfId-1015541"></a>The following example reduces all <em>pfet</em> devices and calls SKILL functions to consolidate parameters during reduction of AND and OR configurations.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015542"></a>reduceDevice( MOS &quot;pfet&quot; mos_and mos_or )</pre>
+
+<h3>
+<a id="pgfId-1015547"></a>testDeviceProperty<a id="testDeviceProperty"></a></h3>
+<a id="pgfId-1015549"></a><a id="marker-1015548"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+testDeviceProperty( device testFunction )</pre>
+<h4>
+<a id="pgfId-1015550"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015552"></a>Lets you check the values of parameters stored on the <a id="marker-1015551"></a>devices as properties. ERC does this checking after doing any reduction. This means that for series and parallel reduction, ERC checks the parameters after they have been processed by the series and parallel consolidation functions.</p>
+<p>
+<a id="pgfId-1015553"></a>For MOS reduction, the original parameters are maintained and checked on the original devices except in those cases where pseudoparallel reduction invoked the parallel consolidation function. ERC uses the <em>AND</em> and <em>OR</em> consolidation functions to create parameters for the resultant logic and load structures. This command does not check these parameters.</p>
+<p>
+<a id="pgfId-1015554"></a>If you want to do checking prior to a reduction, you must make a separate run with the reduction commands omitted.</p>
+<p>
+<a id="pgfId-1015555"></a>All devices failing the parameter test are referenced in the error file with a message. You can display these devices by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015556"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015557"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017557"></a> Name of a device, consisting of a text string enclosed in quotation marks. ERC applies the requested parameter testing to all devices of this type.</p>
+
+<p><strong>
+<a id="pgfId-1017562"></a><code>testFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017565"></a> Name of a user-defined SKILL routine used to perform the parameter testing. All devices of the specified type are processed when you specify this function. </p>
+
+<h4>
+<a id="pgfId-1015559"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015560"></a>The following example flags all <em>nfet </em>devices whose properties fail the user-defined SKILL evaluation.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015561"></a>testDeviceProperty( &quot;nfet&quot; testNfetParams )</pre>
+<p>
+<a id="pgfId-1015562"></a>The following example flags all resistor devices whose properties fail the user-defined SKILL evaluation.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015563"></a>testDeviceProperty( &quot;resistor&quot; resistor_WL_check )</pre>
+
+<h3>
+<a id="pgfId-1015566"></a>testGateProperty<a id="testGateProperty"></a></h3>
+<a id="pgfId-1015568"></a><a id="marker-1015567"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+testGateProperty( createFunction [testFunction] )</pre>
+<h4>
+<a id="pgfId-1015569"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015570"></a>Provides data for the following processes: </p>
+<ul><li>
+<a id="pgfId-1015572"></a>Defines the SKILL routine you used to create gate parameters <a id="marker-1015571"></a>after the gate level reduction has been performed. During gate level <a id="marker-1015573"></a>reduction, ERC creates load and logic sections, each gathering parameters from the <em>AND</em> and <em>OR</em> functions provided by the <em>reduceDevice</em> command. ERC passes these parameters to the SKILL routine, which then creates a set of parameters to be associated with the final gates created from the load and logic sections.</li><li>
+<a id="pgfId-1015574"></a>Defines the SKILL routine to be used to test the values of the resultant gate parameters created by this routine.</li></ul>
+
+<p>
+<a id="pgfId-1015575"></a>All devices failing the parameter test are referenced in the error file with a message. You can display these devices by selecting<em> Display Errors</em> in the ERC form.</p>
+
+<h4>
+<a id="pgfId-1015576"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015577"></a><code>createFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017572"></a> Name of a user-defined SKILL routine used to create the gate parameters.</p>
+
+<p><strong>
+<a id="pgfId-1017577"></a><code>testFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017580"></a> Name of an optional user-defined SKILL routine used to perform the gate parameter testing. All gates are processed if you specify this routine.</p>
+
+<h4>
+<a id="pgfId-1015579"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015580"></a>The following example calls a user-defined SKILL function (<em>create_gate_prop</em>) that creates gate-level parameters associated with the previously combined parameters that resulted from the device reduction. The second function (<em>test_gate_prop</em>) begins a user-defined check on the final parameters.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015581"></a>testGateProperty( create_gate_prop test_gate_prop )</pre>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap11.html" id="prev" title="Extracting Parasitic Resistance (PRE)">Extracting Parasitic Resistanc ...</a></em></b><b><em><a href="chap13.html" id="nex" title="Comparing Layout to Schematic (LVS)">Comparing Layout to Schematic  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

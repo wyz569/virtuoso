@@ -1,0 +1,604 @@
+
+<html><head><title>Connectivity Extraction Concepts</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027691" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Connectivity Extraction Concepts" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027691" />
+<meta name="NextFile" content="chap7.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap5.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Connectivity Extraction Concepts" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap5.html" title="Layer Processing Concepts">Layer Processing Concepts</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap7.html" title="DRC Overview">DRC Overview</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>6
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Connectivity Extraction Concepts<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014196"></a>In the Diva verification system, you must establish the connectivity of the circuit for connectivity-related rules in DRC and for device, parameter, and parasitic extraction. You can establish connectivity with the <em>geomConnect</em> command, which is described in the command reference part of this chapter. If you use the <em>geomConnect</em><a id="marker-1014197"></a> command, you can specify how the different layers in the circuit are to be labeled and connected.</p>
+
+<h3>
+<a id="pgfId-1014199"></a>How Connections Are Formed<a id="How Connections Are Formed"></a></h3>
+
+<p>
+<a id="pgfId-1014201"></a>A connection<a id="marker-1014200"></a> is formed when a single shape on a <em>via</em> layer overlaps shapes on at least two interconnect layers. The connection is based on the <em>via</em><a id="marker-1014202"></a> layer. If there is no <em>via</em> for a connection, Diva does not recognize a connection. However, if there is a <em>via</em>, but the connection is badly formed because there is no interconnect layer, Diva recognizes this and flags the error on the marker layer in the layout.</p>
+<p>
+<a id="pgfId-1014203"></a>External butting between a shape on one layer with a shape on another layer is not considered overlap. There must be a common overlap area between the <em>via</em> and all the interconnect shapes before a connection is formed. It is not sufficient for each of the interconnect shapes to overlap the <em>via</em><a id="marker-1014204"></a>, but in different areas. </p>
+<p>
+<a id="pgfId-1014205"></a>If a <em>via</em> overlaps multiple interconnect layers, Diva connects all of them and they become the same electrical net. To connect a single <em>via</em> with only two layers, regardless of how many overlap it, you must split the <em>via</em> layer using the appropriate layer derivation commands. You can then define multiple <em>via</em><a id="marker-1014206"></a> clauses with the <a id="marker-1014207"></a><em>geomConnect</em> command. An alternative is to use a <em>svia</em>.</p>
+<p>
+<a id="pgfId-1015758"></a>An <em>svia</em><a id="marker-1015819"></a> forms a connection when a single shape on a <em>svia</em> layer overlaps a shape on the first interconnect layer and a shape on one or more of the remaining interconnect layers. The shape on the first interconnect layer is is connected to the shape on the first of the remaining interconnect layers. The shapes on later interconnect layers are not connected.</p>
+<p>
+<a id="pgfId-1014208"></a>If a single <em>via</em> or <em>svia</em> forms more than one connection because of multiple overlapping interconnect <a id="marker-1014209"></a>layers, each set forms an independent connection. Diva allocates the<em> via</em> or <em>svia</em> itself to only one of the resulting nets.</p>
+
+<h3>
+<a id="pgfId-1014211"></a>Methodology<a id="Methodology"></a></h3>
+
+<p>
+<a id="pgfId-1014213"></a>Diva verification processes all <a id="marker-1014212"></a>connections on interconnect layers and groups all of the interconnect <a id="marker-1014214"></a>shapes into nets. Each net is a unique electrical entity. <a id="marker-1014215"></a>Each shape is marked with the number of the net to which it belongs. DRC uses these numbers for the <em>sameNet</em> and <em>diffNet</em> options.</p>
+<p>
+<a id="pgfId-1014216"></a>You extract connectivity during both DRC and Extraction. You can use connectivity in DRC independent of other extraction processing. You also extract connectivity during Extract. When you run Extract, the program creates an <em>extracted</em> cellview that contains the connectivity and device information.</p>
+
+<h3>
+<a id="pgfId-1014218"></a><a id="56974"></a>Limitations<a id="Limitations"></a></h3>
+
+<p>
+<a id="pgfId-1014220"></a>Some of the limitations <a id="marker-1014219"></a>for extracting connectivity are as follows:</p>
+<ul><li>
+<a id="pgfId-1014224"></a>In DRC, connectivity information not entirely correct unless you run in full flat mode. The connectivity is always meaningful in an <em>extraction</em> run.</li><li>
+<a id="pgfId-1014225"></a>The <em>via</em> must be on a different layer from the interconnect. For each <em>via</em> layer, you can specify multiple <em>via</em> clauses. All via clauses with the same via layer will be combined by the compiler into a single via clause for processing. After combining via clauses, there may be no more than 15 interconnect layers per via layer.</li><li>
+<a id="pgfId-1014226"></a>If a <em>via</em> does not connect to two layers, Diva flags the error on the marker layer (<em>marker error). </em>The <em>via</em> forming the bad connection is allocated a dummy net number of zero and is therefore not connected to any real net in the circuit. When the vias from badly formed contacts are used in commands requiring nodal information like the <em>sameNet</em> and <em>diffNet</em> options of DRC Parasitic Measurement, they can create false errors or hide actual errors.</li><li>
+<a id="pgfId-1014875"></a>The via and interconnect layers must be derived layers.</li><li>
+<a id="pgfId-1015522"></a>Any <em>globalLabel</em>, <em>changeLabel</em>, <em>joinableNet</em> and <em>groundNet</em> commands must precede the first <em>geomConnect</em> command in the rule deck. Only one <em>geomConnect </em>command can follow a <em>measureResistance</em> command. No <em>geomConnect</em> command can follow the <em>saveInterconnect</em>, <em>extractDevice</em> (and its variants), <em>measureFringe</em>, <em>complexParasitic</em>, <em>measureParasitic</em> and <em>multiLevelParasitic</em> commands.</li><li>
+<a id="pgfId-1015548"></a>Layers assigned connectivity by a <em>geomConnect</em> or <em>geomStamp</em> command, or derived from a connected layer by a command that propagates connectivity, will become unconnected following a later <em>geomConnect</em> command in the rule deck.</li><li>
+<a id="pgfId-1015660"></a>The geomConnect command uses shape serial numbers to keep track of which shapes are in each net. For this reason, serial numbers must be unique among the connected layers. The rule compiler willdetect this happening and cause geomConnect to use temporary serial numbers for the analysis. This will increase runtime due to the extra processing required. It is recommended that rule writers make every effort to avoid having layers with common serial numbers in their geomConnect commands.</li></ul>
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1015518"></a><a id="43677"></a>Labeling<a id="Labeling"></a></h3>
+
+<p>
+<a id="pgfId-1014230"></a>Diva verification assigns <a id="marker-1014229"></a>arbitrary net numbers to each electrical net it generates. To label the nets, you can use one or more of these options.</p>
+<ul><li>
+<a id="pgfId-1014231"></a>Graphics text string labels</li><li>
+<a id="pgfId-1014232"></a>Supplemental text labels</li><li>
+<a id="pgfId-1014233"></a>Pin names</li></ul>
+
+
+<p>
+<a id="pgfId-1014234"></a>Pins are taken from the layers used by the <em>geomConnect</em> statement. Since the input to <em>geomConnect</em> must be derived layers, Diva determines which original layers these derived layers are based on and extracts the pins from those original layers wherever possible.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014235"></a>metal = geomAndNot( &quot;aluminum&quot; &quot;logo_metal&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014236"></a>geomConnect( via( cut metal poly ) )</pre>
+<p>
+<a id="pgfId-1014237"></a>In this example, the program automatically uses the pins from aluminum in order to label the metal during connectivity analysis.</p>
+<p>
+<a id="pgfId-1014238"></a>For associating the original layer pins to derived layers, these rules apply for logical commands.</p>
+
+<p>
+<a id="pgfId-1014499"></a></p>
+<table class="webflareTable" id="#id1014239">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014241">
+<a id="pgfId-1014241"></a></span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014243">
+<a id="pgfId-1014243"></a>Pins from Layer A</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014245">
+<a id="pgfId-1014245"></a>Pins from Layer B</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014247"></a>geomOr( A B )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014249"></a>yes</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014251"></a>yes</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014253"></a>geomAnd( A B )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014255"></a>yes</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014257"></a>yes</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014259"></a>geomAndNot( A B )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014261"></a>yes</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014263"></a>no</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1015220"></a>The association is also made through any command that selects polygons without modifying them (for example, <em>geomOverlap</em>).</p>
+<p>
+<a id="pgfId-1015221"></a>The automatic association of original layer pins to derived layers is disabled if the <em>pin</em> clause in <em>geomConnect</em> is used.</p>
+
+<h4>
+<a id="pgfId-1014265"></a>Graphics Text String Labels</h4>
+
+<p>
+<a id="pgfId-1014266"></a>You can name a net with a text string from the graphics database. If you place the origin of a text string over an interconnect shape in the layout, you can use the <em>label</em> clause of the <em>geomConnect</em> <a id="marker-1014267"></a>command to apply that label during connectivity processing. </p>
+<p>
+<a id="pgfId-1014268"></a>You can apply one label name any number of times to a single net. If a single net has two or more different names, Diva selects the first one it encounters, and the others are flagged with warning messages. If two or more nets have the same name, Diva labels only one with that name and generates a warning message.</p>
+<p>
+<a id="pgfId-1014269"></a>If two or more shapes lie under the same label origin, the label is applied to the shape of the first layer you define in the <em>label</em> clause of the <em>geomConnect</em> command. A warning message is generated for the additional layers.</p>
+<p>
+<a id="pgfId-1014270"></a>Labels are only collected from the top level of the circuit hierarchy. This avoids the problem of multiple placements of cells causing duplicate label names.</p>
+
+<h4>
+<a id="pgfId-1014271"></a>Supplemental Text Labels</h4>
+
+<p>
+<a id="pgfId-1014273"></a>The <a id="marker-1014272"></a><em>layerText</em> command lets you temporarily add text labels to the graphics database on a run time basis. You can add these labels at the beginning of the run. During the run, they behave exactly as normal graphics labels. The system deletes them from the database at the end of the run.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014274"></a>You must reference these labels in the label section of the <em>geomConnect</em> command, exactly as normal graphics labels.</div>
+
+<h4>
+<a id="pgfId-1014275"></a>Pin Names</h4>
+
+<p>
+<a id="pgfId-1014277"></a>Pins <a id="marker-1014276"></a>define connections external to a circuit or cell, and must have a name. Diva automatically gives a net the name of any pin (terminal) on it. During extraction, Diva copies pins, along with their names, to the <em>extracted</em> version, so the pin name is used for both the pin and the net.</p>
+
+<h4>
+<a id="pgfId-1014278"></a>Modifying Labels</h4>
+
+<p>
+<a id="pgfId-1014280"></a>There are four commands you can use to <a id="marker-1014279"></a>modify and manipulate labels. You can use them in the Run Specific File (RSF) or in the DRC or Extraction rules files. When used, these command must appear before the first <em>geomConnect</em> command in the rule deck. Below is a summary of their functions. See <a href="chap4.html#13107">Chapter 4, &#8220;Writing Diva Verification Rules&#8221;</a> for more details about these commands. </p>
+
+<p><strong>
+<a id="pgfId-1014285"></a><code>changeLabel</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016422"></a>Use the<em> changeLabel </em><a id="marker-1014284"></a>command or property during run time to change the name of a net without changing the text that defines that name. You can use this command to force names into a particular convention, such as<em> VDD</em><a id="marker-1014286"></a> to <em>vdd!</em>, or to force different nets to have the same name, so you can use the <em>joinableNet</em> command.</p>
+
+<p><strong>
+<a id="pgfId-1016427"></a><code>joinableNet</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016430"></a> Use the <a id="marker-1014287"></a><em>joinableNet </em>command during run time to direct Diva to extract disjoint nets having the same names as a single net.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014289"></a> Some cells can have multiple power or ground nets that are connected together at some higher level in the circuit hierarchy. When verifying at the cell level, you must use the <em>joinableNet</em> command to tell the program that the disjoint pieces of these global nets should be the same net.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014290"></a> To join multiple nets that have different names, use the <em>changeLabel </em>command to make all the names the same before using the <em>joinableNet</em> command.</p>
+
+<p><strong>
+<a id="pgfId-1016439"></a><code>globalLabel</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016442"></a> <a id="marker-1014291"></a>Use the <em>globalLabel </em>command to treat labels as if they were from the top level cells even though they actually come from lower-level cells. The <em>globalLabel</em> command must precede the command that uses the labels.</p>
+
+<p><strong>
+<a id="pgfId-1016447"></a><code>groundNet</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016450"></a> <a id="marker-1014293"></a>Use the <em>groundNet</em> command to provide a meaningful net name to be used by commands that generate connections to ground.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014295"></a> If the specified net name does not need to exist in the circuit. Diva creates the net name in the extracted view.</p>
+
+<h2>
+<a id="pgfId-1014298"></a>Connectivity Commands</h2>
+
+<p>
+<a id="pgfId-1014490"></a><a id="Connectivity Commands"></a>The following sections discuss the connectivity commands.</p>
+
+<h3>
+<a id="pgfId-1014301"></a><a id="18797"></a>geomConnec<a id="geomConnect"></a>t</h3>
+<a id="pgfId-1015849"></a><a id="marker-1015847"></a><a id="marker-1015848"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+geomConnect(
+[ incremental ]
+[ via( viaLayer conLayer1 conlayer2 ... ) ... ]
+[ svia( sviaLayer conLayer1 conlayer2 ... ) ... ]
+[ overlap( conLayer1 conLayer2 ) ... ]
+[ buttOrOver( conLayer1 conLayer2) ... ]
+[ label( labelLayer conLayer ... ) ... ]
+[ soft( conLayer ... ) ... ]
+[ pin( pinLayer conLayer ... ) ... ]
+)</pre>
+<h4>
+<a id="pgfId-1014305"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014307"></a>The <em>geomConnect</em> command defines circuit connectivity by specifying how the various layers interact. All shapes on conducting layers, plus vias, are assigned to electrical nets for use by subsequent Diva verification programs. <a id="marker-1014306"></a><a id="marker-1014308"></a></p>
+<p>
+<a id="pgfId-1015663"></a>This command preserves serial numbers. All connectivity defined previous to the current <em>geomConnect</em> is removed.</p>
+
+<h4>
+<a id="pgfId-1014309"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1014311"></a>All the via and interconnect <a id="marker-1014310"></a>layers you use with this command must have been derived through some previous command. If you want to use graphic layers as input, they must be processed through the<em> geomCat</em> or <em>geomOr</em> commands. Only the label and pin layers are entered as original graphics layers.</p>
+<p>
+<a id="pgfId-1015582"></a>The geomConnect command may appear multiple time in the rule deck, subject to the <a href="chap6.html#56974">Limitations</a> discussed in the connectivity overview earlier in this chapter.</p>
+
+<h4>
+<a id="pgfId-1014317"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015739"></a><code>incremental</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016467"></a> An optional keyword which causes the <em>via</em>, <em>label</em>, <em>pin</em> and <em>soft</em> clauses of the previous <em>geomConnect</em> command to be copied into the current <em>geomConnect</em> command. The keyword is ignored if there is no previous <em>geomConnect</em> command.</p>
+
+<p><strong>
+<a id="pgfId-1016472"></a><code>via( viaLayer conLayer1 conLayer2 ... )</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016475"></a>A clause introduced by the<em> via</em> keyword<em> </em>defining the via layer <em>(viaLayer</em>) and at least two conducting layers that it interconnects <em>(conLayer1 conlayer2 </em>...<em>)</em>. Shapes on the <em>viaLayer</em> are checked against shapes on the conducting layers to determine if they form electrical connections.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014319"></a> To be connected, two or more <em>conLayers</em> must have an area in common with the <em>viaLayer</em>. External butting of <em>conLayers</em> does not form a connection. If a shape on the <em>viaLayer</em><a id="marker-1014320"></a> has more than one disjoint set of common areas with conducting layers, each area forms an independent connection. The <em>viaLayer</em> itself is assigned to only one of the resulting electrical nets.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014322"></a> At most, 15 layers can be connected with a single <em>viaLayer</em>. All layers sharing a common area with a <em>via</em><a id="marker-1014321"></a> are interconnected. An overlap of a <em>viaLayer </em>with less than two conducting layers results in a warning message in the system log and a copy of the <em>via</em> placed in the layout on the marker error layer.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014323"></a> Any number of <em>via</em> clauses can be used. If multiple<em> via</em> clauses use the same <em>viaLayer</em>, they are merged and processed as a single <em>via </em>clause.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014324"></a> The <em>viaLayer</em> cannot be the same as one of the conducting layers. The <em>viaLayer</em> cannot be a <em>sviaLayer</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014325"></a> Some rule decks artificially divide layers, such as diffusion, into multiple layers for analysis. These layers are then used in a via statement to extract the connectivity information required by subsequent rules. If rule decks make too many artificial divisions, however, the layers per via limit can be exceeded. A better solution is to divide the layer after the <em>geomConnect</em> command. The rules normally used to divide layers are <em>geomAnd</em> and <em>geomAndNot</em>. For these rules, the output layer will contain nodal information from the first input layer.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014328"></a><code> ndiff = geomAnd(diff well)<br />pdiff = geomAndNot(diff well)<br />geomConnect(via(cont metal poly ndiff pdiff))</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014329"></a> can be rewritten as</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014330"></a><code> geomConnect(via(cont metal poly diff))<br />ndiff = geomAnd(diff well)<br />pdiff = geomAndNot(diff well)</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014331"></a> This arrangement produces the same connectivity in both cases, unless a <em>diff</em> geometry is not entirely inside or outside a <em>well</em> geometry. This one exception is normally a DRC error and should not be of concern.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014724"></a> An added benefit is that the <em>geomConnect</em> rule runs faster because it is processing fewer layers in the <em>vialayer</em>. The <em>geomAnd</em> and <em>geomAndNot</em> rules run in the same amount of time when propagating nodal information after <em>geomConnect</em> as they would when used before <em>geomConnect</em>.</p>
+
+<p><strong>
+<a id="pgfId-1015771"></a><code>svia( sviaLayer conLayer1 conLayer2 ... )</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016495"></a>A clause introduced by the<em> svia</em> keyword<em> </em>defining the sequenced via layer <em>(sviaLayer</em>) and at least two conducting layers that it interconnects <em>(conLayer1 conlayer2 </em>...<em>)</em>. Shapes on the s<em>viaLayer</em> are checked against shapes on the conducting layers to determine if they form electrical connections. The <em>conLayers</em> must be in manufacturing order with upper layers before lower layers.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015772"></a> To be connected, two or more <em>conLayers</em> must have an area in common with the <em>viaLayer</em>. One of the <em>conLayers</em> must be <em>conLayer1</em>. External butting of <em>conLayers</em> does not form a connection. If a shape on the s<em>viaLayer</em><a id="marker-1015773"></a> has more than one disjoint set of common areas with conducting layers, each area forms an independent connection. The s<em>viaLayer</em> itself is assigned to only one of the resulting electrical nets.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015774"></a> At most, 15 layers can be connected with a single s<em>viaLayer</em>. Only the first layer sharing a common area with a s<em>via</em> and a <em>conLayer1</em> shape are interconnected. An overlap of a s<em>viaLayer </em>with less than two conducting layers results in a warning message in the system log and a copy of the s<em>via</em> placed in the layout on the marker error layer.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015776"></a> Any number of s<em>via</em> clauses can be used, but an <em>sviaLayer</em> may not be used in more than one <em>svia</em> clause.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015777"></a> The s<em>viaLayer</em> cannot be the same as one of the conducting layers. The <em>sviaLayer</em> cannot be a <em>viaLayer</em>.</p>
+
+<p><strong>
+<a id="pgfId-1015853"></a><code>overlap( conLayer1 conLayer2 )</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016504"></a>A clause introduced by the<em> overlap</em> keyword<em> </em>defining two conducting layers that interconnect. Shapes on <em>conLayer1</em> are checked for overlap with shapes on <em>conLayer2</em> to determine if they form electrical connections.</p>
+
+<p><strong>
+<a id="pgfId-1016509"></a><code>buttOrOver( conLayer1 conLayer2 )</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016512"></a>A clause introduced by the<em> buttOrOver</em> keyword<em> </em>defining two conducting layers that interconnect. Shapes on <em>conLayer1</em> are checked for abutment or overlap with shapes on <em>conLayer2</em> to determine if they form electrical connections.</p>
+
+<p><strong>
+<a id="pgfId-1016517"></a><code>label( labelLayer conLayer... )</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016520"></a>A clause introduced by the keyword <em>label </em>defines a <em>labelLayer</em>, and the conducting layers to which the <a id="marker-1014333"></a>label applies <em>(conLayer ...)</em>. All text labels on the label layer are checked against shapes on the conducting layers. If the origin of a label is inside a shape, it names the electrical net of which that shape is a part. Any electrical net not named through a label is given a default name. Default net names are a number without alphabetic prefix or suffix.<a id="marker-1014334"></a><a id="marker-1014335"></a></p>
+<p>
+<a id="pgfId-1014337"></a>The following rules apply to labels<a id="marker-1014336"></a>:</p>
+<ul><li>
+<a id="pgfId-1014659"></a>The label layer must be an original graphics layer. It can take one of two forms:<br />
+<a id="pgfId-1014673"></a><table class="webflareTable" id="#id1014660">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014662"></a><code>&quot;layer&quot;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014664"></a>The labels are accessed from this layer with purpose drawing.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014666"></a><code>(&quot;layer&quot; &quot;purpose&quot;)</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014668"></a>If you define a specific purpose, such as pin or text, the labels are accessed from that layer purpose. If you define the purpose as all, the labels are accessed from all purposes of the layer.</p>
+</td>
+</tr>
+</tbody></table></li><li>
+<a id="pgfId-1014670"></a>A label positioned over multiple conducting layers applies to the first layer in the label list and a warning is issued. Layers are selected by their precedence in the label list, where the first layer takes highest precedence and the last layer takes lowest precedence.</li><li>
+<a id="pgfId-1014343"></a>Labels are taken only from the top-level of the circuit hierarchy being processed. Any labels you place in lower level cells are ignored by the program.</li><li>
+<a id="pgfId-1014345"></a>Duplicate <a id="marker-1014344"></a>labels can be placed on a single electrical net.</li><li>
+<a id="pgfId-1014346"></a>If multiple labels with different names are associated with the same electrical net, that net is given the name of the first label found by Diva, and a warning message is generated for the other labels.</li><li>
+<a id="pgfId-1014347"></a>If multiple electrical nets are associated with labels of the same name, the first net found is given that name, and a warning message is generated unless the <em>joinNet</em> option is specified at run time.</li></ul>
+
+
+
+
+
+
+
+
+
+
+<p><strong>
+<a id="pgfId-1015157"></a><code>pin( pinLayer conLayer...)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016527"></a>A clause introduced by the keyword <em>pin</em>, defines an original graphics layer and the derived layers to which the pins on the original graphic layer are to be applied.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015158"></a> The use of this clause disables the automatic associations described in the <a href="chap6.html#43677">Labeling</a> section of this chapter</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015162"></a> The <code>pinLayer</code> must be an original graphics layer. It can take two forms:
+&#160;&#160;&#160;&#160;</p>
+<table class="webflareTable" id="#id1015163">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015621"></a>&#8220;layer&#8221;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015623"></a>The pins with any purpose on the layer are associated to the derived layers</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015625"></a>( &#8220;layer&#8221; &#8220;purpose&#8221; )</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015627"></a>If you define a specific purpose, such as &#8220;pin&#8221; or &#8220;drawing&#8221;, the pins from only that purpose on the layer are associated to the derived layers.</p>
+</td>
+</tr>
+</tbody></table>
+<p class="webflare-indent1">
+<a id="pgfId-1015155"></a> Pins are taken only from the top-level of the circuit hierarchy being processed. Any pins placed in lower level cells are ignored.</p>
+
+<p><strong>
+<a id="pgfId-1015612"></a><code>soft( conLayer ... )</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016545"></a>A clause introduced by the keyword <em>soft</em>, identifies one or more layers as forming &#8220;soft&#8221; connections.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015614"></a> A soft layer <a id="marker-1015613"></a>is electrically connected, but should not be used to provide connections between shapes. An example being the substrate or well layers. These layers must be connected to a power supply but they are too resistive to be used to carry power to other shapes.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015615"></a> When a soft layer shape is found to be connected to more than one shape, which would not be connected if the soft layer were not present, the soft layer shape is considered to be in error and a marker is produced for the soft layer shape and each via shape which is not in the net selected for the soft shape. The net selected will be the one with the largest number of via connections to the soft shape.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015616"></a> Soft layers must be interconnect layers mentioned in a via statement. Soft layers may not be the via layers themselves. There must be at least one non-soft layer in the <em>via</em>, <em>svia</em>, <em>overlap</em> and <em>buttOrOver</em> clauses.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015617"></a> Use of the soft clause should be used in place of geomStamp for making connections to soft shapes and detecting multiple connections. By using soft in the geomConnect rule, macro cell pins on the soft layer can be connected. This is not possible when using geomStamp.</p>
+
+<h4>
+<a id="pgfId-1014348"></a>Example</h4>
+
+<p>
+<a id="pgfId-1014349"></a>The following example illustrates the <em>geomConnect</em> command and the preprocessing of original graphics layers to generate derived layers. In this example, the name <em>via</em> is used as a keyword, an original layer, and a derived layer.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014815"></a>well = geomOr( &quot;well&quot; )
+diff = geomOr( &quot;diffusion&quot; )
+poly = geomOr( &quot;poly&quot; )
+ties = geomAvoiding( diff poly )
+diff = geomAvoiding( diff poly unselected )
+cont = geomOr( &quot;cont&quot; )
+met1 = geomOr( &quot;met1&quot; )
+via = geomOr( &quot;via&quot; )
+meta = geomAnd( &quot;met2&quot; &quot;analog&quot; )
+metd = geomAndNot( &quot;met2&quot; &quot;analog&quot; )
+geomConnect(
+&#160;&#160;&#160;&#160;buttOrOver( meta metd )
+&#160;&#160;&#160;&#160;via( via meta metd met1 )
+&#160;&#160;&#160;&#160;svia( cont met1 poly diff ties)
+&#160;&#160;&#160;&#160;overlap( ties well )
+&#160;&#160;&#160;&#160;label( &quot;m1text&quot; met1 )
+&#160;&#160;&#160;&#160;soft( well )
+&#160;&#160;&#160;&#160;)</pre>
+
+<h3>
+<a id="pgfId-1014353"></a><a id="97285"></a>geomStamp<a id="geomStamp"></a></h3>
+<a id="pgfId-1014355"></a><a id="marker-1014354"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outLayer = geomStamp( inLayer stampLayer [floatMultiStamp] [error [mesg]] [multStamp [layer]] [floating [layer]] [multConnect [layer]] [limit])</pre>
+<h4>
+<a id="pgfId-1014356"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014357"></a>The <em>geomStamp</em> command lets you transfer electrical connectivity information (net number) from a previously connected layer to a copy of another layer.<a id="marker-1014358"></a></p>
+<p>
+<a id="pgfId-1014359"></a>Each shape on the <em>inLayer</em> is copied to the <em>outLayer </em>with the net number of the shape on the <em>stampLayer</em> it overlaps. If an <em>inLayer</em> shape is not overlapped by any <em>stampLayer</em> shapes, the output shape is given a new, unique net number. </p>
+<p>
+<a id="pgfId-1014360"></a>For shapes that are overlapped by multiple stamping shapes having different net numbers, the number of stamping shapes is counted for each different net and the input shape is given the net number having the most stamping shapes. The other stamping shapes are ignored.</p>
+<p>
+<a id="pgfId-1014361"></a>For the unstamped and multiply stamped shapes, the output layer shape and the ignored stamping shapes can optionally be echoed on the <em>marker error</em> layer. When error shapes are generated, an optional message prefix can be specified.</p>
+<p>
+<a id="pgfId-1014940"></a>It is not possible to connect macro cell pins on the <em>inLayer</em> using <em>geomStamp</em> since all macro cell connectivity is determined by the <em>geomConnect</em> command. Use the <em>soft</em> clause of the <em>geomConnect</em> rule instead of <em>geomStamp</em>.</p>
+<p>
+<a id="pgfId-1015664"></a>This command preserves serial numbers when copying shapes from <code>inLayer</code> to <code>outLayer</code>.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015838"></a>When a <a href="chap5.html#56694">layerDefs</a> command is present in the rule deck, this command has a modified syntax. Instead of copying the <em>inLayer</em> to the <em>outLayer</em> and adding nodal information, the <em>inLayer</em> is directly modified with nodal information and no <em>outLayer</em> is produced.</div>
+
+<h4>
+<a id="pgfId-1014364"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014365"></a><code>outLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016562"></a><code>&#160;&#160;&#160;&#160;</code>The optional name for the merged polygon output. This layer is a copy of <em>inputLayer</em> with connectivity information added. If you specify the same name for the <em>outLayer</em> and <em>inputLayer</em>, the <em>outLayer</em> replaces the <em>InputLayer.</em></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014366"></a> If you do not specify <em>outLayer</em>, no connectivity information is added. If you do not specify <em>outLayer</em> and do not use the <em>error</em> option, the rules compiler does not use this command.<a id="marker-1014367"></a></p>
+
+<p><strong>
+<a id="pgfId-1016570"></a><code>inputLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016574"></a> The input layer name. The name can be either a derived layer name or a graphics layer name enclosed in quotes. Diva copies shapes from the input layer to the output layer. The input layer may not be an edge layer.</p>
+
+<p><strong>
+<a id="pgfId-1016579"></a><code>stampLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016582"></a> The layer from which the net information is to be taken. This must be a connected layer.</p>
+
+<p><strong>
+<a id="pgfId-1016587"></a><code>floatMultiStamp</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016590"></a>Optional keyword that causes all input shapes that are overlapped by multiple stamping shapes with different net numbers to be assigned a new, unique, net number. This results in the shape being floating instead of connected to the majority net as described above.</p>
+
+<p><strong>
+<a id="pgfId-1016595"></a><code>error</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016598"></a> Use this keyword to request that all error shapes be written to the marker error layer. Error shapes are as follows:</p>
+
+<ffi2-fig-frame-in-2 id="#id1015292">
+<a id="pgfId-1015292"></a></ffi2-fig-frame-in-2>
+<table class="webflareTable" id="#id1015287">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1015289"></a>All input shapes overlapped by multiple stamping shapes with different net numbers. (multStamp)</li><li>
+<a id="pgfId-1015290"></a>All input shapes without any overlapping stamping shapes. (floating)</li><li>
+<a id="pgfId-1015291"></a>All stamping shapes which contribute to multiple stamping but were not selected as the majority net number. (multConnect)</li></ul>
+
+
+
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1015293"></a><code>mesg</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016605"></a>Provide this optional text string to control the error messages attached to the error shapes. The resulting error messages are:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014946"></a> mesg: No stamped Connections.<br />mesg: Causes Multiple Stamped Connections.<br />mesg: Has Multiple Stamped Connections.</p>
+
+<p><strong>
+<a id="pgfId-1015346"></a><code>multStamp</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016614"></a>Optional keyword that causes all input shapes that are overlapped by multiple stamping shapes with different net numbers to be output as error markers. If followed by a derived layer name in quotes, the shapes will be written to that layer instead of as error markers. The derived layer name may not be the same as used with <code>floating</code> or <code>multConnect</code>.</p>
+
+<p><strong>
+<a id="pgfId-1016619"></a><code>floating</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016622"></a> Optional keyword that causes all input shapes that are not overlapped by any stamping shapes to be output as error markers. If followed by a derived layer name in quotes, the shapes will be written to that layer instead of as error markers. The derived layer name may not be the same as used with <code>multStamp</code> or <code>multConnect</code>.</p>
+
+<p><strong>
+<a id="pgfId-1016627"></a><code>multConnect</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016630"></a> Optional keyword that causes all stamping shapes which contribute to multiple stamping, but were not selected as the majority net number, to be output as error markers. If followed by a derived layer name in quotes, the shapes will be written to that layer instead of as error markers. The derived layer name may not be the same as used with <code>multStamp </code>or<code> floating</code>.</p>
+
+<p><strong>
+<a id="pgfId-1016635"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016638"></a> The optional modifer <em>errorLimit</em> allows the specification of a limit to the number of error markers which the command will produce. The keyword <em>abort</em> can be used to cause early termination of the entire run if the limit is reached. See <a href="chap7.html#54053">errorLimit</a> in the drc command for details.</p>
+
+<h4>
+<a id="pgfId-1014945"></a>Example</h4>
+
+<p>
+<a id="pgfId-1014375"></a>The following example illustrates the <em>geomStamp</em> command. The <em>tubtie</em> is used in a <em>geomConnect</em> statement without connecting it to the tub. This command not only gives the tub the appropriate net numbers, but also flags all tubs that are not connected or that have multiple connections.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014376"></a>geomConnect( via ( cut tubtie diff ) )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014377"></a>tubnet = geomStamp( tub tubtie error &quot;tub/tubtie&quot; )</pre>
+<p>
+<a id="pgfId-1015370"></a>If the floating shapes are not to be errors:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015367"></a>tubnet = geomStamp( tub tubtie multStamp multConnect )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015368"></a></pre>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap5.html" id="prev" title="Layer Processing Concepts">Layer Processing Concepts</a></em></b><b><em><a href="chap7.html" id="nex" title="DRC Overview">DRC Overview</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

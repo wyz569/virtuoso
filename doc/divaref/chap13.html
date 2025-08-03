@@ -1,0 +1,1519 @@
+
+<html><head><title>Comparing Layout to Schematic (LVS)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027662" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Comparing Layout to Schematic (LVS)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027662" />
+<meta name="NextFile" content="chap14.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap12.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Comparing Layout to Schematic (LVS)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap12.html" title="Checking Electrical Rules (ERC)">Checking Electrical Rules (ERC ...</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap14.html" title="Verify Menu Commands">Verify Menu Commands</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>13
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+<a id="21932"></a>Comparing Layout to Schematic (LVS)<hr />
+</h1>
+<h2>
+<a id="pgfId-1014197"></a>Introduction<a id="Introduction"></a></h2>
+
+<p>
+<a id="pgfId-1014199"></a><a id="marker-1014198"></a>The Layout Versus Schematic (LVS) program compares two versions of a circuit and isolates any differences. You can use it to compare two <a id="marker-1014200"></a>layouts, two schematics, or a layout and a schematic.</p>
+<p>
+<a id="pgfId-1014201"></a>LVS works as follows:</p>
+<ul><li>
+<a id="pgfId-1014203"></a><a id="marker-1014202"></a>Generates a netlist for each representation of the circuit.</li><li>
+<a id="pgfId-1014204"></a>Compares the circuit versions using the verification rules commands you enter in the LVS rules file and the run options you specify from the menu.</li><li>
+<a id="pgfId-1014206"></a><a id="marker-1014205"></a>Compares device parameters using an internal feature that combines parameters during series and parallel reduction. </li><li>
+<a id="pgfId-1014207"></a>Lets you provide correspondence points to improve error isolation. Correspondence points<a id="marker-1014208"></a> identify equivalent devices or nets in each representation of the circuit. </li></ul>
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014209"></a>The LVS program normally does not need correspondence points and gives good results in most circuits without them.</div>
+<ul><li>
+<a id="pgfId-1014210"></a>Outputs error files that can be used to view and probe errors. </li><li>
+<a id="pgfId-1014211"></a>Displays and explains the errors it found.</li></ul>
+
+<p>
+<a id="pgfId-1014212"></a>The LVS program is controlled by the system simulation environment (<em>se</em>). The simulation environment is set up by your system administrator and normally you do not need to know about it. However, to compare symbolic cellviews or macro cells, you must alter the environment defaults. See <h-hot><a href="appD.html#29125">Appendix D, &#8220;Simulation and Environment Control,&#8221;</a><hot /></h-hot> for more information. </p>
+<p>
+<a id="pgfId-1014216"></a>You can run LVS using the <em>LVS</em> command from the Verify menu or using the <em>ivLVS </em>SKILL function. You can also run LVS in the UNIX environment.</p>
+<p>
+<a id="pgfId-1014218"></a><a id="marker-1014217"></a>The LVS comparison algorithm uses a combination of &#8220;signature analysis&#8221; and &#8220;circuit tracing&#8221; algorithms to provide the best possible matching of the two circuits with minimum additional input from users. However, there are situations where the circuits are ambiguous and the normal processing cannot clearly identify the matching. In these situations, users can introduce the device parameters into the algorithm to act as a &#8220;tie-breaker.&#8221; For more information, see the <a href="chap13.html#10171">&#8220;Parameter Analysis&#8221; section</a> and the <a href="chap13.html#69070">parameterMatchDegree</a> function description in this chapter.</p>
+
+<h3>
+<a id="pgfId-1014223"></a>Prerequisites<a id="Prerequisites"></a></h3>
+
+<p>
+<a id="pgfId-1014224"></a>The prerequisites for LVS are as follows:</p>
+<ul><li>
+<a id="pgfId-1014225"></a>You must define LVS verification rules in a text file.</li><li>
+<a id="pgfId-1014226"></a>You must extract networks for both cellviews so that LVS can generate the netlists it needs. <br />
+<a id="pgfId-1014227"></a>To create the layout network, run an extraction on the layout using the <em>Extract </em>command from the Verify menu to get an extracted view.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014229"></a>Sometimes the <a id="marker-1014228"></a>extracted view contains devices, such as parasitic devices, that you do not want to include in the netlist for LVS checking. For any devices that you do not want to include in the netlist, you must set the <em>lvs</em> view property <em>nlAction </em>to <em>ignore.</em> The <em>nlAction</em><a id="marker-1014230"></a> property must be placed in the property list of the device&#8217;s cellview.</div>
+<a id="pgfId-1014231"></a>To create the schematic network, run a check on the schematic using <em>Edit &#8211; Check &#8211; Current Cellview</em>.</li><li>
+<a id="pgfId-1014232"></a>You must initiate LVS from a window containing either a <em>schematic</em> cellview or an extracted layout cellview.</li></ul>
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1014234"></a>Capabilities<a id="Prerequisites"></a></h3>
+
+<p>
+<a id="pgfId-1014235"></a>You control LVS processing by entering verification rules commands in LVS rule file and by choosing options in the LVS form, which you access by selecting the <em>LVS </em>command from the Verify menu. The verification rules commands define the type of verification checks you want to run. The LVS form options define requirements for a specific run. </p>
+<p>
+<a id="pgfId-1014236"></a>The verification rules commands can do the following:</p>
+<ul><li>
+<a id="pgfId-1014237"></a>Permute (interchange or combine) devices</li><li>
+<a id="pgfId-1014239"></a><a id="marker-1014238"></a>Ignore device terminals</li><li>
+<a id="pgfId-1014241"></a><a id="marker-1014240"></a>Ignore extraneous devices</li><li>
+<a id="pgfId-1014243"></a><a id="marker-1014242"></a>Analyze parameters</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014244"></a>The LVS form offers the following options:</p>
+<ul><li>
+<a id="pgfId-1014246"></a><a id="marker-1014245"></a>Device fixing</li><li>
+<a id="pgfId-1014248"></a><a id="marker-1014247"></a>Correspondence points</li></ul>
+
+<p>
+<a id="pgfId-1014249"></a>Additional capabilities are as follows:</p>
+<ul><li>
+<a id="pgfId-1014251"></a><a id="marker-1014250"></a>Network terminal processing</li><li>
+<a id="pgfId-1014252"></a>Macro cell processing</li></ul>
+
+
+<h3>
+<a id="pgfId-1014254"></a>Backannotation<a id="marker-1014253"></a></h3>
+
+<p>
+<a id="pgfId-1014255"></a>You can backannotate the names of the nets and instances in the schematic view of a circuit to the extracted view of the circuit after LVS runs.</p>
+<p>
+<a id="pgfId-1014256"></a>You can perform backannotation by executing the Diva verification&#160;&#160;<code>lvsbx </code>stand-alone in the UNIX environment. This function is described in some detail at the end of this chapter.</p>
+
+<h2>
+<a id="pgfId-1014257"></a>Verification Rules Functions</h2>
+
+<p>
+<a id="pgfId-1014258"></a>This section discusses the functions performed by the LVS verification rules commands. You can find the syntax for these commands at the end of this chapter.</p>
+
+<h3>
+<a id="pgfId-1014260"></a>Permutating Devices<a id="Permutating Devices"></a></h3>
+
+<p>
+<a id="pgfId-1014262"></a>The <em>permuteDevice </em><a id="marker-1014261"></a>command lets you reduce (combine) all devices of the same type to a single device. This command lets you reduce series, parallel, and MOS devices, and define functions which combine the device parameters during this reduction process.</p>
+<p>
+<a id="pgfId-1014263"></a>Permutation eliminates physical differences where the physical differences have no effect on the functional equivalence of the circuits. Simple examples of this are the reduction of series and parallel devices into single devices, and the pin permutability of MOS transistor sources and drains.</p>
+<p>
+<a id="pgfId-1014264"></a>If a terminal name exists in both cellviews, devices cannot be permutated across that terminal. No series, parallel, or MOS permutation absorbs a terminal.</p>
+
+<h4>
+<a id="pgfId-1014265"></a>Series Reduction</h4>
+
+<p>
+<a id="pgfId-1014266"></a>You can combine devices of the same type that are connected in series by using &#8220;<a id="marker-1014267"></a>series <a id="marker-1014268"></a>reduction.&#8221; To combine in series, your device type must have two terminals, be a MOS device, or have a three-terminal resistor configuration.</p>
+<p>
+<a id="pgfId-1014269"></a>For two terminal devices the two devices must be connected by a single net. That net must not be connected to any other device and must connect one of the terminals from each of the <a id="marker-1014270"></a>devices being combined. If the two terminals of the device type are permutable, it doesn&#8217;t matter which two are connected. If the two terminals of the device type are not permutable, then the connection must be between unlike terminals.</p>
+<p>
+<a id="pgfId-1014330"></a>The following figure illustrates typical series configurations.</p>
+
+<p>
+<a id="pgfId-1015899"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="160" src="images/chap13-2.gif" /></div>
+
+<p>
+<a id="pgfId-1014331"></a>For MOS devices to be combined in series, they must share a common gate and a common source or drain region.</p>
+
+<p>
+<a id="pgfId-1015900"></a></p>
+<div class="webflare-div-image">
+<img width="495" height="151" src="images/chap13-3.gif" /></div>
+
+<p>
+<a id="pgfId-1014344"></a>You can specify three terminal resistors and capacitors to be reduced in series. They must be connected in this manner.</p>
+
+<p>
+<a id="pgfId-1015901"></a></p>
+<div class="webflare-div-image">
+<img width="487" height="82" src="images/chap13-4.gif" /></div>
+
+<p>
+<a id="pgfId-1014359"></a>Diva has no way of knowing from device names which devices are correctly configured for this form of permuting. To detect this configuration, it therefore applies some basic device structure and connectivity checks.</p>
+<p>
+<a id="pgfId-1014360"></a>This form of series reduction is only applied if</p>
+<ul><li>
+<a id="pgfId-1014361"></a>The device has three terminals</li><li>
+<a id="pgfId-1014362"></a>The first and second terminals are defined as permutable<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1014363">
+<a id="pgfId-1014363"></a>d res3 t1 t2 t3 ( p t1 t2 )</pre></li><li>
+<a id="pgfId-1014364"></a>The two devices connected in series have a common net on their third terminal</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1014365"></a>Parallel Reduction</h4>
+
+<p>
+<a id="pgfId-1014366"></a>Devices of the same type that are connected in parallel can be combined by &#8220;<a id="marker-1014367"></a>parallel reduction.&#8221;</p>
+<p>
+<a id="pgfId-1014368"></a>Devices can be connected in parallel regardless of the number of terminals they have. Each terminal of each device must be connected directly to a terminal of the same type on another device of the same type. Terminals must be of the same type if they are defined as permutable. The nets connecting the terminals can have other connections.</p>
+<p>
+<a id="pgfId-1014413"></a>The following figure illustrates typical parallel configurations.</p>
+
+<p>
+<a id="pgfId-1015902"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="125" src="images/chap13-5.gif" /></div>
+
+<p>
+<a id="pgfId-1014415"></a>If the same device has <em>permuteDevice</em><a id="marker-1014414"></a> commands specifying both <em>series</em> and <em>parallel</em> options, both are applied iteratively until no more reduction is possible.</p>
+<p>
+<a id="pgfId-1014416"></a>The following figure illustrates complex configurations that reduce to single devices when both series and parallel options are applied.</p>
+
+<p>
+<a id="pgfId-1015903"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="102" src="images/chap13-6.gif" /></div>
+<h4>
+<a id="pgfId-1014480"></a><a id="marker-1014479"></a>MOS Reduction</h4>
+
+<p>
+<a id="pgfId-1014481"></a>MOS reduction is limited to MOS transistors that can be grouped together if they are of the same type and form a logical function. Such groups form the logic section of NMOS gates and the load and logic sections of CMOS gates. </p>
+<p>
+<a id="pgfId-1014483"></a><a id="marker-1014482"></a>In normal MOS layout, the gate structures do not have to match the schematic exactly for the circuit to function. All gates have alternative forms. Take for example a <em>three-input AND</em> structure as shown in this figure.</p>
+
+<p>
+<a id="pgfId-1015904"></a></p>
+<div class="webflare-div-image">
+<img width="586" height="225" src="images/chap13-7.gif" /></div>
+
+<p>
+<a id="pgfId-1014535"></a>If the schematic has the original transistors in the order A-B-C and the layout has them in the order B-C-A, without MOS grouping the comparison of the circuits fails. The MOS grouping process combines the three separate transistors into a single device with three permutable terminals. With this single device, the terminal ordering doesn&#8217;t matter and the layout device matches the schematic device, which causes the original devices to match.</p>
+<p>
+<a id="pgfId-1014537"></a>The <a id="marker-1014536"></a>MOS grouping is done with device pairs in exactly the same way as <em>series</em> and <em>parallel</em> reduction. In this case, however, there are two separate criteria controlling the grouping. </p>
+<p>
+<a id="pgfId-1014538"></a>The first grouping criteria is an <em>AND</em> configuration as used in the previous example. If a transistor source/drain connects to the source/drain of another transistor of the same type, and that connecting net has no other connections, then the devices are grouped.</p>
+<p>
+<a id="pgfId-1014539"></a>The second grouping criteria is an <em>OR</em> configuration. In this configuration, two transistors have a common net for both their source and drain.</p>
+<p>
+<a id="pgfId-1014570"></a>The following figure illustrates <em>AND</em> and <em>OR</em> configurations.</p>
+
+<p>
+<a id="pgfId-1015905"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="166" src="images/chap13-8.gif" /></div>
+
+<p>
+<a id="pgfId-1014571"></a>The following figures illustrates how the logic of a complex gate is permutable and how the grouped result is the same for either.</p>
+
+<p>
+<a id="pgfId-1015906"></a></p>
+<div class="webflare-div-image">
+<img width="631" height="357" src="images/chap13-9.gif" /></div>
+<h4>
+<a id="pgfId-1017359"></a><a id="95478"></a>MOS Pseudo-parellel Reduction</h4>
+
+<p>
+<a id="pgfId-1014719"></a>During the MOS grouping, Diva LVS can encounter certain transistor configurations that function electrically as if they were in parallel but that do not conform to the conventional concepts of parallel. They are referred to as pseudo-parallel. Diva merges these transistors together as if they were parallel. This merging requires that MOS grouping of the separate AND configurations has been done. Both permuteDevice(MOS) and permuteDevice(parallel) commands must be present in the rule deck for the device being grouped. The following figure illustrates two of these configurations.</p>
+
+<p>
+<a id="pgfId-1015907"></a></p>
+<div class="webflare-div-image">
+<img width="602" height="195" src="images/chap13-10.gif" /></div>
+<h4>
+<a id="pgfId-1014794"></a>Device Pin Permutability</h4>
+
+<p>
+<a id="pgfId-1014796"></a>The concept of <a id="marker-1014795"></a>pin permutability within a device is used throughout the LVS program. For example, source and drain of an MOS transistor are permutable. This means they can be interchanged. This concept extends to larger, more complex devices, where the permutations can be more complex and less obvious. </p>
+<p>
+<a id="pgfId-1014797"></a>You define the pins of a device as permutable or fixed by attaching a property to its cell. This property defines whether the pin can be reduced or whether its relationship must stay unchanged. The system netlister adds this information to the netlist so the LVS program can use it.</p>
+<p>
+<a id="pgfId-1014799"></a>The <a id="marker-1014798"></a>property name is</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016531"></a> <a id="marker-1016530"></a>permuteRule</pre>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1016532"></a>In some cases, the property name might need to be permutability. This depends upon which property name is used in the NLP expressions that are associated to the cell.</div>
+<p>
+<a id="pgfId-1016515"></a>The recognized keywords in the property are <em>p</em> for permutable and <em>f</em> for fixed. An example of the property contents is</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014803"></a> ( p 1 2 ) </pre>
+<p>
+<a id="pgfId-1014804"></a>and specifies that terminals 1 and 2 on this device are interchangeable. </p>
+<p>
+<a id="pgfId-1014806"></a>A more <a id="marker-1014805"></a>complex example is</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014807"></a> (p ( p 1 2 ) ( p 3 4 ) )</pre>
+<p>
+<a id="pgfId-1014808"></a>which specifies that terminals 1 and 2 are permutable, as are terminals 3 and 4. Also, the pair of 1 and 2 are permutable with the pair of 3 and 4. </p>
+<p>
+<a id="pgfId-1014827"></a>The following figure illustrates more complex permutability.</p>
+
+<p>
+<a id="pgfId-1015908"></a></p>
+<div class="webflare-div-image">
+<img width="582" height="259" src="images/chap13-11.gif" /></div>
+
+<p>
+<a id="pgfId-1014828"></a>This specifies that terminals 1 and 2 are interchangeable but fixed relative to 3. Terminals 4 and 5 are interchangeable but fixed relative to 6. Group 1, 2, 3 is permutable with group 4, 5, 6. </p>
+
+<h3>
+<a id="pgfId-1014830"></a>Ignoring Device Terminals<a id="Ignoring Device Terminals"></a></h3>
+
+<p>
+<a id="pgfId-1014832"></a>The <a id="marker-1014831"></a><em>ignoreTerminal </em>command forces the program to do its comparison without considering specific device terminals.</p>
+<p>
+<a id="pgfId-1014834"></a><a id="marker-1014833"></a>During comparison of two networks, it is sometimes useful to be able to ignore specific device terminal types and continue processing as if they did not exist. For example, <a id="marker-1014835"></a>MOS transistors can be represented with either three or four terminals. The schematic can show the fourth terminal connected to either power or ground. In CMOS this is the substrate or Pwell which, in turn, has contacts to power and ground. </p>
+<p>
+<a id="pgfId-1014836"></a>During layout of small areas of the circuit, the Pwell is included, but a connection of power to that Pwell might not be included. A four-terminal verification would show a mismatch with the schematic that has the back-gate of the N-channel transistors connected to power. Larger areas of the layout might include the Pwell contact, but not include a contact to substrate, so the &#8220;ground&#8221; connection is not made to the back-gates of P-channel transistors. Only in the full layout are all back-gate connections correctly. </p>
+<p>
+<a id="pgfId-1014837"></a>It is difficult to modify the schematic each time such a situation occurs. The easiest solution is to reference four terminal devices in the schematic and to tell the LVS program to ignore the back-gates during verification of the smaller circuit areas. On the full circuit verification, the back-gate can be included. </p>
+
+<h3>
+<a id="pgfId-1014839"></a>Ignoring Extraneous Devices<a id="Ignoring Extraneous Devices"></a></h3>
+
+<p>
+<a id="pgfId-1014841"></a>The <a id="marker-1014840"></a><em>pruneDevice</em> command tells the program to ignore devices in the circuit that are electrically nonfunctional.</p>
+<p>
+<a id="pgfId-1014843"></a>Certain technologies and layout techniques create extraneous <a id="marker-1014842"></a>devices that are not functional in the final circuit. Examples of this are unused gate-array devices and unused options. These devices are not normally defined in the circuit schematic and appear as unmatched in an LVS run.</p>
+<p>
+<a id="pgfId-1014844"></a>For a small number of such devices, the results might be acceptable; but for any significant number, the true matching of the networks is masked. To allow the LVS program to work correctly, you must remove the unmatched devices before performing the comparison.</p>
+<p>
+<a id="pgfId-1014846"></a><a id="marker-1014845"></a>You can remove (prune) these devices by requesting specific modes of cleanup for specific device types. The program locates all the conditions you specify and removes the devices from further processing.</p>
+<p>
+<a id="pgfId-1014847"></a>There are two forms of pruning. One eliminates any device if it is connected only to a single net. The other is more complex and is designed for MOS transistors. If the devices have terminal connections that do not contribute to the circuit flow, such as MOS back gates and other bulk connections, you can optionally ignore these during device pruning.</p>
+<p>
+<a id="pgfId-1014848"></a>The following figure illustrates various devices that are pruned because they are connected to a single net. The open net ends represent unconnected terminals or nets with no other connection.</p>
+
+<p>
+<a id="pgfId-1015909"></a></p>
+<div class="webflare-div-image">
+<img width="594" height="111" src="images/chap13-12.gif" /></div>
+
+<p>
+<a id="pgfId-1014875"></a>The following figure illustrates various transistor configurations that can be pruned. Some devices appear to be connected in such a way that they are not pruned, but the iterative processing removes some devices in the first pass, leaving the remaining devices badly connected. In subsequent passes these devices get pruned.</p>
+
+<p>
+<a id="pgfId-1015910"></a></p>
+<div class="webflare-div-image">
+<img width="593" height="173" src="images/chap13-13.gif" /></div>
+
+<p>
+<a id="pgfId-1014908"></a>If you specify parallel reduction, parallel devices are reduced prior to extraneous device removal.</p>
+
+<h4>
+<a id="pgfId-1014909"></a>Examples</h4>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014910"></a>pruneDevice( MOS &quot;nfet&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014911"></a>pruneDevice( general &quot;capacitor&quot; )</pre>
+
+<h3>
+<a id="pgfId-1014912"></a>Removing Unwanted Devices</h3>
+
+<p>
+<a id="pgfId-1014915"></a><a id="marker-1014913"></a>The<a id="marker-1014914"></a> <em>removeDevice</em> command lets you remove devices from the network during an LVS run prior to the circuit matching. This command lets you control the removal through a SKILL function that can operate on the device parameters. It also lets you define which terminals of the device to short together and which to leave open.</p>
+<p>
+<a id="pgfId-1014916"></a>For capacitors, this device removal exists to some degree by using netlisting control to determine whether a device should be generated in the netlist or not. However, for series devices such as resistors, netlist control cannot merge the remaining nets together. Removing a resistor implies shorting together the original resistor terminals to form a single net from the two original nets. Other devices require a combination of both shorting and opening of nets. For example, a three-terminal resistor has the source and drain shorted but the back-gate left open.</p>
+<p>
+<a id="pgfId-1014917"></a>The devices removed by the <em>removeDevice</em> command are treated as if they had been removed by a prune request, and you can see them by highlighting the pruned devices.</p>
+<p>
+<a id="pgfId-1014918"></a>Device removal does not affect cross probing. If a removed device is cross probed, there is no matching device. If a net is cross probed, Diva determines whether the net was merged with others due to device removal and highlights all affected nets in both the schematic and layout. </p>
+
+<h3>
+<a id="pgfId-1014921"></a><a id="10171"></a>Parameter Analysis<a id="Parameter Analysis"></a></h3>
+
+<p>
+<a id="pgfId-1014924"></a>The <a id="marker-1014922"></a><em>compareDeviceProperty</em><a id="marker-1014923"></a> command lets you request comparison of device properties (parameters) after the devices have been matched. </p>
+<p>
+<a id="pgfId-1014926"></a>LVS can compare device <a id="marker-1014925"></a>parameters defined in the schematic with those extracted from the layout. The schematic parameters are either those specified on the schematic itself for each device instance, or those specified via the netlister as being default values for each device type. The extracted parameters are those derived from the layout by measurement in the <em>extraction</em> program and represent the true values.</p>
+<p>
+<a id="pgfId-1014928"></a>The <a id="marker-1014927"></a>parameters are extracted by the program from the circuit netlist. You can generate them directly in the netlist or via the simulation environment netlisting process, which is driven by the device parameters and the <em>nlpglobals</em> control file. The format of these parameters is defined in the netlist format section of the &#8220;Simulation and Environmental Control&#8221; appendix.<a id="marker-1014929"></a></p>
+<p>
+<a id="pgfId-1014930"></a>There are two parts to the parameter processing in the LVS program: the consolidation of parameter values for series and parallel devices, and the comparison of parameters. You can control both parts completely on a device-type basis.</p>
+
+<h4>
+<a id="pgfId-1014931"></a>Combining Parameters</h4>
+
+<p>
+<a id="pgfId-1014932"></a>To help with a comparison, the <em>permuteDevice</em> command reduces groups of devices of the same type to a single device. For example, to compare three resistors in series on the layout with two resistors in parallel on the schematic, both are reduced to single devices that can be compared by their type and connections. The program does this by reducing devices two at a time iteratively, and alternatively series and parallel, until all series and parallel relationships have been reduced.<a id="marker-1014933"></a></p>
+<p>
+<a id="pgfId-1014934"></a>Every time LVS reduces a group of devices to a single device, you must combine the <a id="marker-1014935"></a>parameters for each device to produce a single set of parameters. This enables the parameters to be correctly compared after device matching. The consolidation process is device-, configuration-, technology-, and application-dependent, so you must specify it directly on a device and configuration basis. You cannot combine devices processed by the <em>MOS</em> option of the <em>permuteDevice</em> command.</p>
+
+<h4>
+<a id="pgfId-1014936"></a><em>combineFunction</em> Option</h4>
+
+<p>
+<a id="pgfId-1014939"></a>To consolidate, you can use the <em>combineFunction</em> option of the <em>permuteDevice </em><a id="marker-1014937"></a><a id="marker-1014938"></a>command. This option specifies the name of a SKILL routine that combines the <a id="marker-1014940"></a>parameters of reduced devices. The routine uses two lists of parameters, one for each device. Each list contains all the parameters for that device. The routine extracts the parameters required for consolidation and combines them. The result, a new list of parameters, is passed back to the LVS program. </p>
+<p>
+<a id="pgfId-1014941"></a>The list of parameters you pass back can be the resultant parameters only or a combination of the new ones plus uncombined originals. For example, if the program is consolidating two resistors in series, it uses a SKILL function that has the list of parameters for each resistor. The SKILL function might, in this case, select the R parameter and set <em>Rnew</em> = R1 + R2. It then returns <em>Rnew</em> to the program as the new value of<em> R </em>to be attached to the consolidated device.</p>
+<p>
+<a id="pgfId-1014942"></a>The following shows example input:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014943"></a>permuteDevice( parallel resistor resParCombine )<br />permuteDevice( series resistor resSerCombine )<br />permuteDevice( parallel nfet nfetParCombine )</pre>
+<p>
+<a id="pgfId-1014944"></a>Details of the <em>permuteDevice </em>command format can be found in the <a href="chap13.html#92918">&#8220;permuteDevice&#8221; section</a>.</p>
+
+<h4>
+<a id="pgfId-1014948"></a>Example </h4>
+
+<p>
+<a id="pgfId-1014949"></a>Just as devices are combined two at a time, their parameters can be combined two at a time. The following example illustrates the process.</p>
+
+<p>
+<a id="pgfId-1015911"></a></p>
+<div class="webflare-div-image">
+<img width="512" height="76" src="images/chap13-14.gif" /></div>
+
+<p>
+<a id="pgfId-1014983"></a>If you have three devices A, B, and C in series, A and B are combined to form X, and then X is combined with C to produce Y. The parameters of A and B (Pa and Pb) are passed to the series device parameter consolidation function, which can do whatever it wants with them, returning a set of parameters that are stored with X. The parameters of X and C (Pc) are then passed to the function which generates the parameters of Y.</p>
+<p>
+<a id="pgfId-1014984"></a>This accumulation of parameters works only if the function returns parameters as properties with the same names that were passed to it. For example, if the properties on a device are W and L, the result of the function should generate W and L. To obtain consistent results, the function should also be designed to be independent of the order in which the devices are combined.</p>
+
+<h4>
+<a id="pgfId-1014985"></a>Parameter Comparison</h4>
+
+<p>
+<a id="pgfId-1014986"></a>After devices on the schematic are matched with devices on the layout, you can compare their parameters<a id="marker-1014987"></a>. LVS compares the parameters of the actual devices matched. If these are the result of series or parallel consolidation, then LVS compares the combined parameter. However, when you want to display devices with mismatched parameters, Diva highlights the original devices.</p>
+<p>
+<a id="pgfId-1014989"></a><a id="marker-1014988"></a>To compare the parameters, LVS uses a SKILL routine that you provide. You must give a separate routine for each device type you want to compare. </p>
+<p>
+<a id="pgfId-1014992"></a>Use the LVS command <a id="marker-1014990"></a><em>compareDeviceProperty</em><a id="marker-1014991"></a> to define which devices you want to compare and what comparison routine you want to use. Refer to the <a href="chap13.html#73218">&#8220;compareDeviceProperty&#8221; section</a> for more information on this command. The <em>compareDeviceProperty</em> command works as follows:</p>
+<ul><li>
+<a id="pgfId-1014996"></a>Identifies the devices to be compared.</li><li>
+<a id="pgfId-1014997"></a>Identifies the comparison routine to use.</li><li>
+<a id="pgfId-1014998"></a>Passes a parameter string from each device to the comparison routine. Each list contains all the parameters for that device. <br />
+<a id="pgfId-1014999"></a>If a device does not have parameters, LVS passes a null string. In the case of the schematic, LVS passes the default string associated with the device type (see netlist format in <a href="appD.html#29125">Appendix D, &#8220;Simulation and Environment Control,&#8221;</a><hot>
+
+) if it exists; otherwise, LVS passes a null string.</hot></li><li>
+<a id="pgfId-1016336"></a>The routine compares the lists and returns a true or false value, where <em>t</em> (true) indicates that the comparison has failed. You can replace the true switch with a message string that can be used by<em> Explain Error</em> in the LVS form.<br />
+<a id="pgfId-1016348"></a>When the routine returns a message string, you must limit the length of the string to less than 32,000 characters.</li><li>
+<a id="pgfId-1016356"></a>If the comparison fails, LVS stores the devices in error in the <em>audit.out </em>error file.<em> Display Errors</em><a id="marker-1016350"></a> in the LVS form uses this file to highlight errors on the schematic and layout.<br />
+<a id="pgfId-1015006"></a>If LVS is comparing combined devices, it compares the combined parameters, and updates the error file with references to all the original devices forming the consolidation.</li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1015007"></a>You can view the devices in error graphically by selecting the Display Errors<em> UnMatched parameters </em>option in the LVS Error Display form. This option highlights those devices. You can determine the corresponding device in the alternate cellview (schematic or extracted) by using the cross-probing capability.<a id="marker-1015008"></a></p>
+
+<h4>
+<a id="pgfId-1015009"></a>Parameters for Ambiguity Resolution</h4>
+
+<p>
+<a id="pgfId-1015010"></a>Normally, LVS matches circuitry using only the device types and their interconnections. When an ambiguous area of circuitry is encountered, the program has a choice in what can be matched. This approach might be acceptable for the connectivity, but it can result in mismatched device parameters where the ambiguous branches of the circuit actually contain different device parameters.</p>
+<p>
+<a id="pgfId-1015011"></a>The ideal situation is for LVS to take into account the device parameters in its matching algorithm when ambiguous circuits are encountered. However, the parameters should not be used when matching straight connectivity.</p>
+<p>
+<a id="pgfId-1015012"></a>Since the program has no way of knowing which device parameters to use to aid the verification, users must provide feedback to the program in terms of the parameters to be considered and their effect. For example, users must specify whether parameters should be within a certain percentage of each other or whether they should be identical to form a match.</p>
+<p>
+<a id="pgfId-1015013"></a>To resolve this issue, LVS lets you define a command that instructs it to use parameters as part of the LVS signature process. The form of the command is</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015014"></a>parameterMatchType( &quot;device&quot; function )</pre>
+
+<h4><em>
+<a id="pgfId-1015015"></a>Explanation</em></h4>
+
+<p>
+<a id="pgfId-1015016"></a>The device is the name of the device type whose parameters are to be used. The function is the name of a SKILL function that provides feedback to Diva on parameter information.</p>
+<p>
+<a id="pgfId-1015017"></a>The main matching capability in LVS is based on signature analysis. For ambiguous areas of a circuit, the program needs to add the device parameters into its signature. However, the program does not know which devices to process and which parameters from all the possible parameters on a device to use. Also, the program cannot reasonably handle floating point parameter values, which is a critical situation. If one device parameter is 1.0 and another is 1.00000001, and the program takes these numbers literally, it would consider them to be mismatched. This can also be extended if you consider &#8220;close enough&#8221; to be correct. For example, if one parameter is 100 and the other parameter is 99, this might be considered a match.</p>
+<p>
+<a id="pgfId-1015018"></a>The above command tells the program which devices it should look at and gives you control of the parameter selection and value interpretation.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015019"></a>Do not confuse this command with the <em>compareDeviceProperty</em> command, which is used to compare device parameters after the devices are matched. </div>
+<p>
+<a id="pgfId-1015020"></a>The program passes the parameter list from the device to your function. Your function must return a single integer value. This integer value can be derived any way that you want and normally represents the value of the key parameter or parameters being considered as critical to the matching. The returned value can be considered as a classification of the device into a subtype. Only devices of the same type and subtype are matched.</p>
+
+<h4><em>
+<a id="pgfId-1015021"></a>Warning</em></h4>
+
+<p>
+<a id="pgfId-1015022"></a>The program goes through two stages as follows:</p>
+<ol><li>
+<a id="pgfId-1015023"></a>It tries to match without considering parameters.</li><li>
+<a id="pgfId-1015024"></a>If it finds ambiguity and parameter matching is requested, the program adds the value returned from your function into each device signature. The program then tries to match again.</li></ol>
+
+<p>
+<a id="pgfId-1015025"></a>If the second matching is unsuccessful, the program does not return to the original mode for the ambiguous devices. The program does not assume that all ambiguous devices are equivalent and does not make a random matching. If this occurs, the ambiguous part of the circuit remains unmatched.</p>
+<p>
+<a id="pgfId-1015026"></a>Be careful with the value returned from the function. If you are only considering device lengths of 2, 3 or 4, you can just use the length as the returned value. However, if you are considering parasitic capacitance values as the matching criteria, you must be sure that the function returns the same integer value for all capacitance values that you want matched. If you want a tolerance on the matching of parasitic values, you should consider rounding, truncating, or even multiplying the parasitic value by a factor before these operations.</p>
+<p>
+<a id="pgfId-1015027"></a>The returned value should be considered a device subtype and not a value. Devices with the same subtype are matched. The user&#8217;s function creates a subtype from the device parameter list.</p>
+
+<h4><em>
+<a id="pgfId-1015028"></a>Limitations</em></h4>
+
+<p>
+<a id="pgfId-1015029"></a>Using the parameters to aid matching only works where the parameters are known. This is true for individual basic devices and for results of series and parallel reduction where the user&#39;s parameter reduction function has been called.</p>
+<p>
+<a id="pgfId-1015030"></a>It is not true for permutable MOS devices in AND and OR configurations. The program reduces these groups of devices to higher-level structures and matches these. At this stage, the individual parameters of the component devices are not available for controlling the matching.</p>
+
+<h4>
+<a id="pgfId-1015031"></a>SKILL Routines Format</h4>
+
+<p>
+<a id="pgfId-1015033"></a>You must place the <a id="marker-1015032"></a>SKILL routines that perform parameter reduction and comparison in the <a id="marker-1015034"></a><em>lvsRules</em> function, before the various LVS control commands (<em>permuteDevice, ignoreTerminal, pruneDevice</em>).</p>
+<p>
+<a id="pgfId-1015035"></a>In the following examples, the comments clarify the application of the LVS program but do not describe the basic SKILL structure or syntax. For information on SKILL refer to the <em><a actuate="user" class="URL" href="../wincfg/wincfgTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Design Environment User Guide</a></em></p>
+<p>
+<a id="pgfId-1015038"></a>Both the <em>permuteDevice</em> and <em>compareDeviceProperty </em>SKILL routines process two parameter lists. The first parameter list in <em>compareDeviceProperty</em> is always from the layout representation, and the second list is from the schematic. The order is important in comparisons where some check other than equality is required.</p>
+<p>
+<a id="pgfId-1015039"></a>The contents of the routines can be as complex as you want, and can use any of the parameters in the property strings associated with the devices. For example, you can calculate the width and length resulting from combining two transistors using their original widths and lengths plus parameters such as bend counts, plus any constants or factors you want.</p>
+<p>
+<a id="pgfId-1015040"></a>You can also use the <em>permuteDevice</em> function to determine whether series or parallel reduction should take place for the two devices being processed. This is achieved by the function returning a flag that tells the program not to perform the reduction.</p>
+
+<h4>
+<a id="pgfId-1015041"></a>Example 1</h4>
+
+<p>
+<a id="pgfId-1015042"></a>The following is an example of an SKILL function that performs a parameter combination in the <em>permuteDevice</em> command. The numbers at the beginning of the line are for reference in the comments only and do not appear in the final code.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015043"></a>1&#160;&#160;&#160;&#160;procedure( parallelMOS( m1, m2 )
+2&#160;&#160;&#160;&#160; prog( ( mt )<br />3&#160;&#160;&#160;&#160;  mt = ncons( nil )<br />4&#160;&#160;&#160;&#160;  if( ( m1-&gt;L &amp;&amp; m2-&gt;L )<br />5&#160;&#160;&#160;&#160;   mt-&gt;L = ( m1-&gt;L + m2-&gt;L ) / 2.0<br />6&#160;&#160;&#160;&#160;  )<br />7&#160;&#160;&#160;&#160;  if( ( m1-&gt;W &amp;&amp; m2-&gt;W )<br />8&#160;&#160;&#160;&#160;   mt-&gt;W = m1-&gt;W + m2-&gt;W <br />9&#160;&#160;&#160;&#160;  )<br />10&#160;&#160;&#160;&#160;  return( mt )<br />11&#160;&#160;&#160;&#160; )<br />12&#160;&#160;&#160;&#160;) </pre>
+<p><strong>
+<a id="pgfId-1015044"></a><code>Line 1</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017940"></a> Defines the procedure name <em>parallelMOS</em> which is the name used for the function in the <em>permuteDevice</em> statement. It also defines two arguments,<em> m1</em> and<em> m2</em>, which it expects to receive when the LVS program calls the function. These two arguments are each lists of parameter properties and contain all the properties available on the devices being combined.</p>
+
+<p><strong>
+<a id="pgfId-1017945"></a><code>Lines 2</code> <code>and 3</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017948"></a> Set up a local variable as a list (initially a null), which contains your resulting parameter list for the combined device.</p>
+
+<p><strong>
+<a id="pgfId-1017953"></a><code>Line 4</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017956"></a> Checks to see if both the <em>m1</em> and <em>m2 </em>lists contain a reference to a parameter called &#8220;L.&#8221; If they do, line 5 calculates a resulting value as (L1+L2)/2 and stores it in the new list &#8220;mt&#8221; with the parameter name of &#8220;L.&#8221;</p>
+
+<p><strong>
+<a id="pgfId-1017961"></a><code>Line 7</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017964"></a> Checks to see if both the <em>m1</em> and <em>m2</em> lists contain a reference to a parameter called <em>W</em>. If they do, line 8 calculates a resulting value as W1+W2 and stores it in the new list <em>mt</em> with the parameter name of <em>W</em>.</p>
+
+<p><strong>
+<a id="pgfId-1017970"></a><code>Line 10</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017973"></a> Returns the resulting list &#8220;<em>mt</em>&#8221; back to the LVS program, where it is associated with the combined device.</p>
+
+<h4>
+<a id="pgfId-1015049"></a>Example 2</h4>
+
+<p>
+<a id="pgfId-1015050"></a>The following is an example of a <em>compareDevice</em> SKILL routine which compares two parameters and returns an error status if the parameters do not conform to the required limits.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015051"></a>1&#160;&#160;&#160;&#160;procedure( compareCap( m1, m2 )
+2&#160;&#160;&#160;&#160; prog( ( )<br />3&#160;&#160;&#160;&#160;  if( ( m1-&gt;C &amp;&amp; m2-&gt;C )<br />4&#160;&#160;&#160;&#160;    if( abs( m1-&gt;C - m2-&gt;C ) &gt; 0.01 * m2-&gt;C<br />5&#160;&#160;&#160;&#160;     return( t )<br />6&#160;&#160;&#160;&#160;    )<br />7&#160;&#160;&#160;&#160;  )<br />8 &#160;&#160;&#160;&#160;  return( nil )<br />9 &#160;&#160;&#160;&#160; )<br />10&#160;&#160;&#160;&#160;) </pre>
+<p><strong>
+<a id="pgfId-1015052"></a><code>Line 1</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017981"></a><code>&#160;&#160;&#160;&#160;</code>Defines the procedure name <em>compareCap</em> which is the name used for the function in the <em>compareDeviceProperty</em> statement. It also defines two arguments,<em> m1</em> and <em>m2</em>, which it expects to receive when the LVS program calls the function. These two arguments are each lists of parameter properties and contain all the properties available on the devices being compared. The first (<em>m1</em>) contains the properties for the layout (extracted) device, and the second (<em>m2</em>) contains the properties for the schematic device.</p>
+
+<p><strong>
+<a id="pgfId-1017986"></a><code>Line 3</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017989"></a> Checks to ensure that both lists contain the parameter to be compared, in this case <em>C</em>.</p>
+
+<p><strong>
+<a id="pgfId-1017995"></a><code>Line 4</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1017998"></a> Compares the parameters and, in this case, tests to see if the extracted <em>C</em> is within 1% of the schematic <em>C</em>. If it is not, the function returns <em>t </em>(true) which indicates to the LVS program that an error must be generated. If it is, within 1% the function returns <em>nil </em>(false) which indicates that no error has occurred, in which case the LVS program takes no further action.</p>
+
+<p><strong>
+<a id="pgfId-1018004"></a><code>Line 8</code><a id="marker-1015055"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018007"></a> Returns the result, in this case, the value <em>nil</em>. To indicate an error, it might return the value <em>t </em>or a text string. This text string is associated with the error in the database and displayed when you select <em>Explain Error </em>on the Error Display form, which you access from the LVS form. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015057"></a> Two ways of creating a text string are as follows:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015058"></a> <code>return ( &quot;Parameter mismatch on MOS devices&quot; )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015059"></a> This text string is fixed for the compare routine and does not contain parameter values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015060"></a> <code>sprintf( x , &quot;Param mismatch: %g to %g&quot;, 
+float( m1-&gt;C ), float( m2-&gt;C ) ) 
+return( x )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016370"></a> This text string contains the values of the parameters compared. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1016380"></a>These constructed messages should not exceed more than 32,000 characters in length.</div>
+
+<h3>
+<a id="pgfId-1016382"></a>Device Fixing<a id="Device Fixing"></a></h3>
+
+<p>
+<a id="pgfId-1015066"></a><a id="marker-1015064"></a>The <a id="marker-1015065"></a><em>Apply</em> <em>Device Fixing</em> option in the LVS form lets you control the permutability of devices on an instance-by-instance basis. Permutability normally applies to all individual devices of the type you specify. There are times, however, when you might not want global permutability. You can have the majority of your circuit obey the global permutability requests but force selected individual devices to be compared without permutability.</p>
+<p>
+<a id="pgfId-1015067"></a>Some specific gates within a circuit are valid only if they are formed on the layout with exactly the individual transistor relationships defined in the schematic. Alternatively, some gates might function correctly only if specific devices in them maintain positions relative to others. For example, the clocking device in an NMOS <em>NAND</em> gate might need to be directly connected to ground while the other devices might be interchangeable. </p>
+<p>
+<a id="pgfId-1016972"></a>You can fix series, parallel, and MOS permutability, and you can specify two types of fixing, fixing device and order fixing device.</p>
+<ul><li>
+<a id="pgfId-1016973"></a>fixing device<br />
+<a id="pgfId-1016974"></a>A fixed device does not take part in device permutability processing and must, therefore, have direct correspondence between the layout and schematic.</li><li>
+<a id="pgfId-1016975"></a>order fixed device<br />
+<a id="pgfId-1016976"></a>An order fixed device does not allow the fixeddevice terminals to be switched, but it can take part in device permutability processing.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1015069"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015071"></a>Device <a id="marker-1015070"></a>fixing has the following requirements:</p>
+<ul><li>
+<a id="pgfId-1015072"></a>You must define the devices to be fixed in the schematics cellview.</li><li>
+<a id="pgfId-1015073"></a>You must set a global switch to turn device fixing on. <br />
+<a id="pgfId-1015074"></a>Only one of the circuit representations (schematic or layout) has to be fixed since the other must conform to it; fixing both might lead to unresolved conflicts. We choose the schematic as the representation to be fixed since LVS considers it the master to which the layout must conform.</li><li>
+<a id="pgfId-1015075"></a>You must manually add control information to the netlist if you run LVS on a netlist generated in some way other than through the netlister. The netlisting program translates any fixing information provided on the schematic into specific control lines in the netlist. If the netlist is not generated by the system netlister, it does not have these lines.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1015076"></a>The fix Property</h4>
+
+<p>
+<a id="pgfId-1015078"></a>You can fix devices in the <a id="marker-1015077"></a>schematic by adding a property to device instances. The property has the following form:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1016984"></a>fix = &quot; terminalName [order] terminalName [order] ... .... &quot;</pre>
+<p>
+<a id="pgfId-1016985"></a><em>fix</em> is the name of the property. It must be of type <em>nlpExpr</em>.</p>
+<p>
+<a id="pgfId-1016986"></a><em>terminalName </em>contains the names of one or more terminals of the device instance to which you want to attach the property.</p>
+<p>
+<a id="pgfId-1016987"></a><em>order </em>determines the type of fixing. If this keyword is specified, &#8220;order fixing device&#8221; will be performed. Otherwise, &#8220;fixing device&#8221; will be performed.</p>
+<p>
+<a id="pgfId-1015083"></a>The device instance to which you attached the <a id="marker-1015082"></a>property can be a single low-level device such as a transistor, a higher level device such as a gate, or a high-level structure such as a counter. You cannot attach the property to the complete circuit.</p>
+<p>
+<a id="pgfId-1015084"></a>All of the lowest level devices within the instance that are connected to the named terminal are considered fixed. For example, if in a CMOS <em>NAND</em> gate, you reference the terminal &#8220;<em>in1</em>&#8221; in a <em>fix</em> property, both the <em>n</em> and <em>p</em> devices gated by <em>in1</em> are fixed.</p>
+<p>
+<a id="pgfId-1015085"></a>For a higher level device, such as a counter stage containing gates, which in turn contain transistors, the fixing applies to all transistors connecting to the named terminals, throughout the hierarchy. If the fixed instance is contained within another level of hierarchy, all placements of that higher level instance contain fixed lower level instances.</p>
+
+<h3>
+<a id="pgfId-1015087"></a>Correspondence Points<a id="Correspondence Points"></a></h3>
+
+<p>
+<a id="pgfId-1015090"></a><a id="marker-1015088"></a>The <a id="marker-1015089"></a>Correspondence Points field lets you define correspondence points to aid the LVS processing. You can <a id="marker-1015091"></a>use terminals as correspondence points and/or provide a correspondence point file.</p>
+<p>
+<a id="pgfId-1015092"></a>A correspondence point is a predefined matching of a single location in the layout and schematic that you supply and that is available to the program to help in its comparison. Normally in the LVS program correspondence points are not required; but in some cases of unresolved ambiguity, they help the program make a decision.</p>
+<p>
+<a id="pgfId-1015093"></a>If you supply a correspondence point between two items that do not actually match, the program might immediately recognize the discrepancy and ignore the point; or it might initially accept the point and propagate errors to the surrounding circuit. The latter occurs if the incorrectly labeled nets have the same number of connections.</p>
+<p>
+<a id="pgfId-1015096"></a><a id="marker-1015094"></a>You can define correspondence points<a id="marker-1015095"></a> in two ways. Both can be applied at the same time.</p>
+<ul><li>
+<a id="pgfId-1015097"></a>By using terminal names<br />
+<a id="pgfId-1015098"></a>The program can use any terminal (pin) names on the schematic and extracted layout as correspondence points. It automatically transfers the names from the schematic or extracted representation to the netlist as <em>t</em> statements.<br />
+<a id="pgfId-1015099"></a>If you choose the <em>terminals</em> option in the LVS form, these statements are used as correspondence points. If a terminal name on the layout corresponds to a terminal name on the schematic, then LVS assumes they refer to the same net. This feature does not apply to net names.</li><li>
+<a id="pgfId-1015100"></a>By creating a correspondence point file<br />
+<a id="pgfId-1015101"></a>You can specify your own correspondence points by creating correspondence point files using the LVS Correspondence Points form.</li></ul>
+
+
+
+
+<p>
+<a id="pgfId-1015102"></a>Because the application of incorrect correspondence points can mislead the program, first try running the program with none defined. If ambiguity causes the comparison to fail, you can apply circuit terminal names. If the run without terminal correspondence compares correctly, check your labeling by probing your terminals to confirm that the names used correspond to the names of the nets that the LVS program has matched.</p>
+
+<h4>
+<a id="pgfId-1015103"></a>Creating a Correspondence Points File Using a Form</h4>
+
+<p>
+<a id="pgfId-1015105"></a>You can create correspondence points<a id="marker-1015104"></a> using the Correspondence Points form, which you access by selecting <em>Create </em>in the LVS form. You select pairs of items, one each from the extracted and schematic cellviews, to be stored in a correspondence points file. It is a standard text file containing net and device names. You can create any number of files with different names and then specify which one you want in the LVS form.</p>
+<p>
+<a id="pgfId-1015106"></a>When using the Correspondence Points form, you must use the extracted and schematic cellviews you defined in the LVS form. Each cellview must be open in a window. You can be at any level of hierarchy within the cell.</p>
+<p>
+<a id="pgfId-1015108"></a>Correspondence point <a id="marker-1015107"></a>files are a normal part of your computer file system and are not changed or deleted by running LVS. A temporary <em>lvs.cpoint</em> file is left in your run directory after the run. This contains the correspondence point file data, with net and device numbers instead of names.</p>
+<p>
+<a id="pgfId-1015109"></a>The name <em>lvs.cpoint</em> is a reserved name and should not be designated as a user-defined correspondence file name.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015110"></a>If you do not put the correspondence points file in the current working directory, you need to provide either a full path to the correspondence points file, or put the LVS run directory in your SKILL search path list.</div>
+
+<h4>
+<a id="pgfId-1015111"></a>Creating a Correspondence Points File Manually</h4>
+
+<p>
+<a id="pgfId-1015112"></a>You can also create correspondence point files by manually editing a file. You must know the names of the devices and nets you want matched. To edit the correspondence file manually, you need to understand that:</p>
+<ul><li>
+<a id="pgfId-1015113"></a>Each line of the file describes a single correspondence point</li><li>
+<a id="pgfId-1015114"></a>Each line has one of the following formats:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1015115">
+<a id="pgfId-1015115"></a>( #net_path_name ) ( #net_path_name )
+( $device_path_name ) ( $device_path_name )</pre></li></ul>
+
+
+<p>
+<a id="pgfId-1015116"></a>The left-hand name refers to the layout, and the right-hand name refers to the schematic.</p>
+<p>
+<a id="pgfId-1015117"></a>The &#8220;#&#8221; and &#8220;$&#8221; define nets and devices, respectively. There must be no space between the character and the name.</p>
+<p>
+<a id="pgfId-1015118"></a>There must be one or more spaces between the opening and closing parenthesis and the names, and one or more spaces between the layout and schematic definitions. The number of spaces before the layout definition is not significant.<a id="marker-1015119"></a></p>
+
+<h3>
+<a id="pgfId-1015120"></a>Network Terminal Processing</h3>
+
+<p>
+<a id="pgfId-1015742"></a>LVS uses network <a id="marker-1015741"></a>terminals (as distinct from device terminals) in Network Terminal Processing<a id="Network Terminal Processing"></a> in several ways.</p>
+<ul><li>
+<a id="pgfId-1017420"></a>Terminals are created by placing pins - not labels - in your layout view. During the extraction process, Diva attaches the pin name information to the net in the resulting extracted view. This pin name information from the extracted view is used as terminals during an LVS comparison.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015757"></a>Dracula makes use of labels as terminals, not pins. If you trying to verify a design in Diva that was previously verified in Dracula, you must also place pins on the nets in the layout where you originally used labels.</div></li><li>
+<a id="pgfId-1015124"></a>Terminal names automatically give additional information. The program generates error messages for terminals that do not match. See the <a href="chap13.html#75904">&#8220;Unmatched Terminals&#8221; section</a> for more information.</li><li>
+<a id="pgfId-1015128"></a>If a terminal name exists in both cellviews, devices cannot be permutated across that terminal. No series, parallel, or MOS permutation absorbs a terminal.</li><li>
+<a id="pgfId-1015130"></a>If you select the<em> terminals</em> option in the LVS form, LVS treats all terminals with the same name in both cellviews as correspondence points. This forced matching of the terminals does not force the nets to which they are attached to be matched if they do not actually match. However, forced matching does help to resolve ambiguities.<a id="marker-1015129"></a></li></ul>
+
+
+
+
+
+<h3>
+<a id="pgfId-1015132"></a>Comparing Macro Cell<a id="Comparing Macro Cell"></a></h3>
+
+<p>
+<a id="pgfId-1015134"></a>The <a id="marker-1015133"></a>LVS program works on all device types, regardless of whether they are low-level transistors or high-level <a id="marker-1015135"></a>macro blocks. The comparison works from two <a id="marker-1015136"></a>netlists, each derived from a different representation of the circuit. In the normal case, one is from the extracted layout and one from the extracted schematic. It is the control of the netlister that is special for macro cells.</p>
+<p>
+<a id="pgfId-1015138"></a>The <a id="marker-1015137"></a>netlister normally defaults to the <em>spice</em> or <em>schematic</em> representation when encountering a device to translate. For macro cells, the default has to be overridden by use of the simulator control commands for the switching lists and stopping lists in the <a id="marker-1015139"></a>file <em>.simrc</em> in your home directory. (Refer to <h-hot><a href="appD.html#29125">Appendix D, &#8220;Simulation and Environment Control,&#8221;</a><hot /></h-hot> for information on the <em>.simrc</em> file.) These commands must reference the <em>layout</em> or <em>abstract</em> cellviews. The <em>spice</em> and <em>schematic</em> cellviews for the higher level cells do not normally contain connections to power and ground, whereas the <em>layout</em> and <em>abstract</em> cellviews do.</p>
+<p>
+<a id="pgfId-1015143"></a>In addition, the cellview being referenced must contain the <em>NLPModelPreamble</em> and <em>NLPElementPostamble</em><a id="marker-1015144"></a> properties<a id="marker-1015145"></a> that control the netlister output. If you put these on the <em>layout</em> cellview, you can automatically propagate them to the <em>abstract</em> cellview by using the <em>abgen</em> program.</p>
+<p>
+<a id="pgfId-1015146"></a>When processing the schematic, the netlister follows its normal procedure and assumes global signals of the same name are connected. For the extracted cellview, however, this function is disabled so that true breaks in the global signals are not hidden.</p>
+<p>
+<a id="pgfId-1015147"></a>With these changes in place, the processing of LVS remains unchanged. All its normal features and facilities are available.</p>
+
+<h2>
+<a id="pgfId-1015150"></a>Output Files<a id="Output Files"></a></h2>
+
+<p>
+<a id="pgfId-1015151"></a>Diva puts all the errors it finds in error output files which it uses to display and explain errors.</p>
+<p>
+<a id="pgfId-1015152"></a>The output files are stored in subdirectories of the run directory. When you use the LVS form, you must specify the run directory where you want to put your results. The program then creates the run directory (if one does not already exist) and the <em>layout</em> and <em>schematic </em>subdirectories. When you run an LVS comparison, the resulting error output files are put in the appropriate subdirectories.</p>
+<p>
+<a id="pgfId-1015153"></a>The outputs from LVS fit into the following categories:</p>
+<ul><li>
+<a id="pgfId-1015154"></a>Error files that you can read to find the name of the net, device, or terminal causing an error.</li><li>
+<a id="pgfId-1015155"></a>Working and information files that you can display by using menu commands.</li><li>
+<a id="pgfId-1015156"></a>Control and cross-reference files that you cannot access.</li><li>
+<a id="pgfId-1015157"></a>A copy of the rules file under the name <em>divaLVS.rul</em></li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1015159"></a>Err<a id="marker-1016905"></a>or Files<a id="Error Files"></a></h3>
+
+<p>
+<a id="pgfId-1015160"></a>A series of text files containing the error output of the LVS program is stored in the layout and schematic subdirectories of the run directory.</p>
+<p>
+<a id="pgfId-1015161"></a>Diva highlights the nets and devices referenced in these error files when you select the appropriate entry in the LVS Error Display form. However, with a complex design you might want to display only one net or device at a time. You can do this by using the<em> Probe </em>command and entering the net or device name.</p>
+<p>
+<a id="pgfId-1015162"></a>One way of finding the net or device names is to look them up in the error files. Each file entry consists of two lines. The first gives the name of the object in error and indicates if it is a net (N), device (I), or terminal (T). The second line is a comment line explaining the error.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015163"></a>N &lt;netName&gt; [comment]<br />&lt;explanation&gt;</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015164"></a>I &lt;deviceName&gt; [comment]<br />&lt;explanation&gt;</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015165"></a>T &lt;terminalName&gt; [comment]<br />&lt;explanation&gt;</pre>
+<p>
+<a id="pgfId-1015166"></a>The error file names and their contents are as follows:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015167"></a>netbad.out&#160;&#160;&#160;&#160;    Lists all unmatched nets<br />devbad.out&#160;&#160;&#160;&#160;    Lists all unmatched devices<br /><a id="marker-1015168"></a>prunenet.out&#160;&#160;&#160;&#160;    Lists all ignored nets<br />prunedev.out&#160;&#160;&#160;&#160;    Lists all ignored devices<br />mergenet.out&#160;&#160;&#160;&#160;    Lists all merged nets<br />termbad.out&#160;&#160;&#160;&#160;    Lists all unmatched terminals<br />audit.out&#160;&#160;&#160;&#160;    Lists all unmatched parameters</pre>
+
+<h3>
+<a id="pgfId-1015169"></a>Working and <a id="marker-1016901"></a>Information Files</h3>
+
+<p>
+<a id="pgfId-1015170"></a>The following files contain information that you can display using the Show Run Info form, which you access from the LVS form.</p>
+
+<p><strong>
+<a id="pgfId-1015173"></a>schematic/<a id="marker-1015171"></a>netlist</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018023"></a> Text file containing the <a id="marker-1015172"></a>netlist of the schematic circuit. You can view this file by selecting the Schematic Netlist option in the Show Run Info form.</p>
+
+<p><strong>
+<a id="pgfId-1018028"></a>layout/netlist</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018031"></a> Text file containing the netlist of the extracted circuit. You view this file by selecting the <em>Layout </em>Netlist option in the Show Run Info form.</p>
+
+<p><strong>
+<a id="pgfId-1018037"></a><a id="marker-1015175"></a><a id="marker-1015176"></a>si.out</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018040"></a> Text file containing all messages and warning<a id="marker-1015177"></a>s output from the program. You can view this file by selecting the O<em>utput</em> option in the Show Run Info form.</p>
+
+<p><strong>
+<a id="pgfId-1018046"></a><a id="marker-1015179"></a>si.log</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018049"></a> Text file containing information on the program execution and its environment. It also includes summary information of the results of the functions you requested. You can view it by selecting the<em> Log </em>option in the Show Run Info form.</p>
+
+<h3>
+<a id="pgfId-1016877"></a>LVS Ambiguity <a id="marker-1016902"></a>File</h3>
+
+<p>
+<a id="pgfId-1016878"></a>The ambiguity file shows the choices that Diva LVS makes when unable to proceed with normal matching due to ambiguity in the netlists. Each entry indicates the type of match: device or net, followed by the list of layout and schematic device or net numbers which could be matched. The pair, or pairs, that are chosen are indicated with arrows.</p>
+<p>
+<a id="pgfId-1016879"></a>When all else fails during debugging, you can examine the choices that Diva LVS made to resolve ambiguity and over-ride those choices by adding correspondence points.</p>
+<b>Note:</b><br />
+<a id="pgfId-1016880"></a>
+<ul><li>
+<a id="pgfId-1016881"></a>When you add correspondence points the sequence of matches made will change and the content and order of the information in the ambiguity file may change.</li><li>
+<a id="pgfId-1016891"></a>The format of the ambiguity file is not fixed and is subject to change without notice. The ambiguity file may be removed or replaced in a future release.</li></ul>
+
+
+<h2>
+<a id="pgfId-1015182"></a>Displayin<a id="marker-1016906"></a>g Errors<a id="Displaying Errors"></a></h2>
+
+<p>
+<a id="pgfId-1015184"></a>When <a id="marker-1015183"></a>LVS has completed running, you can display the errors or cross reference the matching nets and devices. All error display is in the form of probes (highlighting).</p>
+<p>
+<a id="pgfId-1015186"></a>You can <a id="marker-1015185"></a>display errors by selecting <em>Error Display</em> in the LVS form. You also can manipulate displayed errors using the <em>Probe </em>command from the Verify menu. By using the LVS output error files, you can identify specific nets or devices that you want to probe. You can find a description of the output error files in the Output Files section. You can probe nets and devices using the<em> Probe </em>command from the Verify menu.</p>
+<p>
+<a id="pgfId-1015187"></a>The following sections discuss the display options available in the LVS Error Display form.</p>
+
+<h3>
+<a id="pgfId-1015188"></a>Unmatched Nets</h3>
+
+<p>
+<a id="pgfId-1015190"></a>The <em>nets</em> option under the<em> Unmatched</em><a id="marker-1015189"></a> heading highlights all nets that failed to match in LVS. The number of connections made to the net is displayed when you use select <em>Display Errors</em>. Unmatched nets do not include merged nets.</p>
+
+<h3>
+<a id="pgfId-1015191"></a>Merged Nets</h3>
+
+<p>
+<a id="pgfId-1015193"></a>A second class of unmatched nets is the <a id="marker-1015192"></a>merged nets. In some cases, LVS recognizes that two nets need to be &#8220;shorted&#8221; together to improve the comparison. This occurs when many of the instances attached to the nets have already been matched. <em>Explain Error</em> in the LVS Error Display form lists the names of the two merged nets. LVS highlights not only the error net, but also the net with which it was merged.</p>
+<p>
+<a id="pgfId-1015194"></a>When two nets need to be merged in the extracted representation, it indicates the possibility of an <em>open</em>. When two nets are merged in the schematic representation, it indicates the possibility of a short in the layout.</p>
+
+<h3>
+<a id="pgfId-1015195"></a>Unmatched Instances</h3>
+
+<p>
+<a id="pgfId-1015196"></a>For the selected window, LVS highlights all instances (devices) that appear in that network <a id="marker-1015197"></a>and could not be matched with instances in the alternate network. For schematic device instances where the device displayed is not the lowest level in the hierarchy (for example, a transistor is in error, but the display shows the logic gate that contains it), the complete higher level device is highlighted. You can use the <em>Push View</em> command in the Hierarchy menu to display the individual devices. The mismatched devices are highlighted and those that match are not.</p>
+
+<h3>
+<a id="pgfId-1015198"></a>Unmatched Parameters</h3>
+
+<p>
+<a id="pgfId-1015199"></a>For the selected window, LVS highlights all instances (devices) that appear in that network <a id="marker-1015200"></a>and whose parameters violated the requested comparison with instances in the alternate network.</p>
+<p>
+<a id="pgfId-1015201"></a>LVS compares parameters only when the instances match in the two representations. Therefore, you can find the corresponding instance for any parameter mismatch in the alternate representation by using the <em>Probe</em> command.</p>
+<p>
+<a id="pgfId-1015202"></a>Any instances that did not match and appear in the <em>unmatched instances</em> display have not had their parameters compared.</p>
+<p>
+<a id="pgfId-1015203"></a>For devices that have been combined in series or parallel and whose parameters have been combined by the function supplied to the <em>permuteDevice</em> command, the parameter comparison is made on the resulting values. When there is a mismatch, LVS highlights all the devices involved.</p>
+
+<h3>
+<a id="pgfId-1015205"></a><a id="75904"></a>Unmatched Terminals</h3>
+
+<p>
+<a id="pgfId-1015206"></a>The <em>Unmatched terminals</em> option in the LVS Error Display form under the LVS form highlights terminals that failed to match. There are two kinds of mismatched terminals in this display.<a id="marker-1015207"></a></p>
+<p>
+<a id="pgfId-1015208"></a>The first are terminals at the top level of the design hierarchy. These terminals correspond to pins used to make connections to the rest of the design. Terminal checking is done after all matching has completed. Those terminals that are in both designs are checked to make sure they match each other. This is very important in Place and Route applications where connections are made to the pins. If a nonglobal terminal exists in one netlist, but not in the other netlist, an error is flagged unless the terminal is not connected to any devices. If a global terminal&#8217;s name in one netlist does not match to another global terminal&#8217;s name in the other netlist, an error is flagged.</p>
+<p>
+<a id="pgfId-1015209"></a>The second kind of terminal mismatch is internal to the design. Under certain special circumstances, LVS recognizes that a better match can be made by switching the terminal connection of an instance from one net to another. This is referred to as a <em>rewired </em>terminal. For this to occur, many of the instances and nets in the local region must have already matched. This kind of error occurs when two nets are cross-wired. The LVS program interchanges the connection and continues processing.</p>
+<p>
+<a id="pgfId-1015210"></a>LVS does terminal rewiring only in the extracted database. The schematic database is taken as the master.</p>
+<p>
+<a id="pgfId-1015211"></a>The error message produced by a rewired terminal is very explicit. For example, it might say, &#8220;Terminal <em>&#8216;gate&#8217;</em> of /<em>m25 </em>should be connected to<em> /clock2</em> instead of /<em>clock1</em>.&#8221; In this case, LVS connects /<em>clock2</em> to the <em>gate</em> and continues running. This makes cross probing nets somewhat confusing. If you try to cross probe the gate of<em> /m25</em>, it selects net<em> /clock1</em> and cross probes it. However, because LVS rewired the <em>gate</em> internally, it believes /<em>clock2</em> is the <em>gate</em> net. Therefore, to cross probe the <em>gate</em>, first probe /<em>clock2</em> by name to highlight it and then cross probe it.</p>
+<p>
+<a id="pgfId-1015212"></a>Rewired terminals often occur in pairs. By inspecting the pairs, you can see which nets have been cross wired.</p>
+<p>
+<a id="pgfId-1015213"></a>There is usually more than one way to repair a cross-wired situation. For example, even in the simple example of a crossed pair, you can correct the error at either end of the nets. LVS might not find the terminal switching that is most appropriate for the your design. You must decide on the best way to correct the design.</p>
+
+<h3>
+<a id="pgfId-1015214"></a>Pruned Nets</h3>
+
+<p>
+<a id="pgfId-1015216"></a>This is a display of all the nets that were removed from the LVS <a id="marker-1015215"></a>processing with the command <em>pruneDevice</em>.</p>
+
+<h3>
+<a id="pgfId-1015217"></a>Pruned Instances</h3>
+
+<p>
+<a id="pgfId-1015219"></a>This is a display of all devices that were removed from LVS <a id="marker-1015218"></a>processing with the <em>pruneDevice </em>command. This file also contains the devices removed by the <em>removeDevice</em> command. The removed devices are differentiated from the pruned devices by the associated message that displays when you query the device highlight.</p>
+
+<h2>
+<a id="pgfId-1015222"></a>LVS Verification Rules Commands<a id="LVS Verification Rules Commands"></a></h2>
+<h3>
+<a id="pgfId-1015226"></a><a id="73218"></a>compareDeviceProperty<a id="compareDeviceProperty"></a></h3>
+<a id="pgfId-1015229"></a><a id="marker-1015227"></a><a id="marker-1015228"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+compareDeviceProperty( device compareFunction )</pre>
+<h4>
+<a id="pgfId-1015230"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015232"></a>Defines the name of the SKILL function used to compare <a id="marker-1015231"></a>properties of devices matched in the layout and the schematic. It applies to the device type specified.</p>
+
+<h4>
+<a id="pgfId-1015233"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015234"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018059"></a><em>&#160;&#160;&#160;&#160;</em>Name of the device type to be compared. It consists of a character string enclosed in quotes.</p>
+
+<p><strong>
+<a id="pgfId-1018064"></a><code>compareFunction</code><em> </em></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018067"></a>SKILL function name. This function compares the parameters of pairs of devices that are matched in the layout and schematic. Parameter values are stored on devices as properties.</p>
+<p>
+<a id="pgfId-1015236"></a>The function can return the following values:</p>
+<ul><li>
+<a id="pgfId-1015237"></a>The value <em>nil</em> indicates the parameters match.</li><li>
+<a id="pgfId-1015238"></a>The value <em>t</em> indicates the parameters do not match.</li><li>
+<a id="pgfId-1015239"></a>A text string indicates the parameters do not match. The string is used as a label for the mismatched flag.</li></ul>
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1016385"></a>The string must not exceed 32,000 characters in length.</div>
+
+<h4>
+<a id="pgfId-1015240"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015241"></a>The following example calls a SKILL function that compares parameters of all <em>nfet </em>devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015242"></a>compareDeviceProperty( &quot;nfet&quot; nfetCompare )</pre>
+<p>
+<a id="pgfId-1015243"></a>The following example calls a SKILL function that compares parameters of all <em>capacitor </em>devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015244"></a>compareDeviceProperty( &quot;capacitor&quot; capacCompare )</pre>
+
+<h3>
+<a id="pgfId-1015247"></a>ignoreTerminal<a id="ignoreTerminal"></a></h3>
+<a id="pgfId-1015249"></a><a id="marker-1015248"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ignoreTerminal( device terminal )</pre>
+<h4>
+<a id="pgfId-1015250"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015251"></a>Specifies which terminal types on which device types to ignore during the comparison.</p>
+<p>
+<a id="pgfId-1015253"></a>Some comparisons might need to totally ignore a device <a id="marker-1015252"></a>terminal. A good example of this is a back-gate in CMOS that is correctly connected in the schematic. In the layout, however, whether it is connected or not can depend upon the size of the cell being processed. A small cell might not contain the layer to which the back-gate should be connected. A larger layout might have the layer but not have it connected to the correct net. Only on the final composite is everything in place to correctly connect the back-gate. A layout to schematic comparison always fails in the first two cases unless the back-gate is ignored.</p>
+<p>
+<a id="pgfId-1015254"></a>You must specify a separate <em>ignoreTerminal </em>command for each terminal you want to ignore.</p>
+
+<h4>
+<a id="pgfId-1015255"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015256"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018074"></a><em>&#160;&#160;&#160;&#160;</em>Name of the device type whose terminal is to be ignored. It consists of a character string enclosed in quotes.</p>
+
+<p><strong>
+<a id="pgfId-1018079"></a><code>terminal</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018082"></a><em>&#160;&#160;&#160;&#160;</em>Name of the terminal type to be ignored. It consists of a character string enclosed in quotes.</p>
+
+<h4>
+<a id="pgfId-1015258"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015259"></a>The following example ignores all bulk terminals of <em>nfet</em> devices during comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015260"></a>ignoreTerminal( &quot;nfet&quot; &quot;B&quot; )</pre>
+<p>
+<a id="pgfId-1015261"></a>The following example ignores all bulk terminals of <em>pfet</em> devices during comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015262"></a>ignoreTerminal( &quot;pfet&quot; &quot;B&quot; )</pre>
+
+<h3>
+<a id="pgfId-1016996"></a><a id="88470"></a>lvsOption<a id="lvsOption"></a></h3>
+<a id="pgfId-1016998"></a><a id="marker-1016997"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+lvsOption (keyword value)</pre>
+<h4>
+<a id="pgfId-1016999"></a>Description</h4>
+
+<p>
+<a id="pgfId-1017001"></a>lvsOption lets you control specific options that affect basic LVS algorithms.</p>
+
+<h4>
+<a id="pgfId-1017002"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1017003"></a>This function must only be used within <em>lvsRules().</em></p>
+
+<h4>
+<a id="pgfId-1017004"></a>Arguments</h4>
+<p><strong>
+<a id="pgfId-1017005"></a><code>REDUCE_PSEUDO_PARALLEL</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018089"></a>Controls the reduction of pseudoparallel devices During MOS reduction.<br /><code>TRUE </code>Runs pseudoparallel reduction in this LVS run.<br /><code>FALSE </code>Does not run pseudoparallel reduction in this LVS run.</p>
+<p>
+<a id="pgfId-1017008"></a>The default value for REDUCE_PSEUDO_PARALLEL is TRUE. Only one value for REDUCE_PSEUDO_PARALLEL may be specified for the entire run. For example you cannot turn pseudoparallel reduction on, execute several LVS commands, and then turn pseudoparallel reduction off. The value for REDUCE_PSEUDO_PARALLEL in the final <em>lvsOption</em> command will be applied to the entire <em>lvsRules() </em>run.</p>
+<p>
+<a id="pgfId-1017009"></a>See the <a href="chap13.html#95478">MOS Pseudo-parellel Reduction</a> section earlier in this chapter for a discussion of pseudo-parallel configurations and how Diva LVS treats them.</p>
+
+<p><strong>
+<a id="pgfId-1017010"></a><code>TERMINAL_DIRECTION_CHECK</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018318"></a>Controls checking for terminals that match but have different direction modifiers.<br /><code>TRUE </code>Enables the check for different terminal direction modifiers. This is the default value.<br /><code>FALSE</code> Disables the check for different terminal direction modifiers.</p>
+
+<p><strong>
+<a id="pgfId-1017013"></a><code>UNKNOWN_DEVICE_REPORT </code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018328"></a>Controls the reporting of devices that are mentioned in the rules but do not exist in the netlist.</p>
+
+<p><strong>
+<a id="pgfId-1018342"></a><code>NONE </code>Prevents the reporting of unknown devices.</strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018336"></a><code>BRIEF </code>Reports unknown devices in a minimum number of lines by listing several devices per line of output. This is the default setting.<br /><code>FULL </code>Reports unknown devices as one line per device.</p>
+
+<p><strong>
+<a id="pgfId-1017237"></a><code>ORDER_FIXING</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018348"></a><code>&#160;&#160;&#160;&#160;</code>Controls the order fixing for device in MOS reduction.<br />
+<code>TRUE </code>Specifies all devices in the fixing property as order fixing devices.<br /><code>FALSE </code>Uses the fixing property already specified.</p>
+
+<p><strong>
+<a id="pgfId-1017028"></a><code>EXTRA_TERMINAL_REPORT</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018357"></a>Controls the checking and reporting of unmatched terminals.<br /><code>NONE </code>Does not report any unmatched terminals in layout or schematic. This is the default.<br /><code>LAYOUT </code>Reports unmatched terminals in layout (first netlist).<br /><code>SCHEMATIC </code>Reports unmatched terminals in schematic (second netlist).<br /><code>BOTH </code>Reports unmatched terminals of both layout and schematic.</p>
+
+<h4>
+<a id="pgfId-1017031"></a>Example</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017032"></a>lvsRules(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017033"></a>....<br />lvsOption(REDUCE_PSEUDO_PARALLEL FALSE)<br />permuteDevice(MOS nmos)<br />permuteDevice(parallel nmos someFunc)<br />lvsOption(ORDER_FIXING TRUE)<br />lvsOption(EXTRA_TERMINAL_REPORT BOTH)<br />...</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1017034"></a>)</pre>
+<h3>
+<a id="pgfId-1017039"></a><a id="69070"></a>parameterMatchDegree<a id="parameterMatchDegree"></a></h3>
+<a id="pgfId-1017041"></a><a id="marker-1017040"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+parameterMatchDegree ( device procedure )</pre>
+<h4>
+<a id="pgfId-1017042"></a>Description</h4>
+
+<p>
+<a id="pgfId-1017255"></a>Defines the name of the SKILL procedure used to compute the degree of parameter mismatch between a device in the layout and a device in the schematic. It applies to the device type specified.</p>
+<p>
+<a id="pgfId-1017277"></a>This command is intended to be used to help resolve ambiguity during the matching process. After the matching process has found all the matches it can find based only on the circuit topology, groups of devices which are topologically the same are considered. Every possible pairing of schematic and layout devices in each group are passed to the SKILL procedure for evaluation of how well the device properties match. The pair with the least amount of mismatch is then matched.</p>
+
+<h4>
+<a id="pgfId-1017044"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1017263"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018367"></a><em>&#160;&#160;&#160;&#160;</em>The name of the device type for which the function applies. It consists of a character string enclosed in quotes.</p>
+
+<p><strong>
+<a id="pgfId-1018372"></a><code>procedure</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018375"></a><em>&#160;&#160;&#160;&#160;</em>The name of a SKILL procedure. This procedure computes the degree of parameter mismatch for pairs of devices in the layout and schematic. Parameter values are stored on devices as disembodied property lists. <br />
+The procedure can return the following values:
+
+The value nil indicates an infinite parameter mismatch; the pair of devices in the layout and schematic are never matched.
+
+A positive float or integer value which is the degree of parameter mismatch for the pair of devices. The smaller the value, the better the match for the pair of devices being considered.</p>
+
+<h4>
+<a id="pgfId-1017047"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1017048"></a>The following example calls a SKILL function to compute parameter matching degrees of all res resistances.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017049"></a>parameterMatchDegree( &quot;res&quot; resDegreeComp )</pre>
+<p>
+<a id="pgfId-1017050"></a>The following is an example of a rule file that includes a parameterMatchDegree rule. It calculates a percentage difference between the resistance values of the layout and schematic devices.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017051"></a>lvsRules(</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017052"></a>; ** Match degree Procedures **</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017053"></a> procedure( resDegreeComp( layRes schRes )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017054"></a>  prog(( nearZero degree value1 value2 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017055"></a>   nearZero = 0.0000000000001<br />   if( layRes-&gt;R then<br />    value1 =  layRes-&gt;R<br />   else<br />    return( nil ) ; ** if no value, return nil. **<br />   ) </pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017056"></a>   if( schRes-&gt;R then<br />    value2 =  schRes-&gt;R<br />   else<br />    return( nil ) ; ** if no value, return nil. **<br />   )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017057"></a>   if( abs( value2 ) &lt; nearZero then  ; ** value2 is close to 0 **<br />    degree = abs(value1 - value2)<br />   else<br />    degree = abs((value1 - value2)/value2)<br />   )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017058"></a>   ;; return value<br />   return( degree&#160;&#160;)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017059"></a>  ) ; ** prog **<br /> ) ; ** procedure resDegreeComp **</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017060"></a> parameterMatchDegree( &quot;res&quot;&#160;&#160;resDegreeComp )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1017061"></a>)</pre>
+
+<h3>
+<a id="pgfId-1015265"></a>parameterMatchType<a id="parameterMatchType"></a></h3>
+<a id="pgfId-1015267"></a><a id="marker-1015266"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+parameterMatchType ( device Function )</pre>
+<h4>
+<a id="pgfId-1015268"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015269"></a>Defines the name of a SKILL function to be used to process parameters for a device when the program encounters ambiguous circuits. The program uses the result of the function to resolve matching of the ambiguous circuits.</p>
+
+<h4>
+<a id="pgfId-1015270"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015271"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018382"></a><em>&#160;&#160;&#160;&#160;</em>The name of the device for which parameter matching is to be used during ambiguous circuit matching.</p>
+
+<p><strong>
+<a id="pgfId-1018387"></a><code>compareFunction</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018390"></a><em>&#160;&#160;&#160;&#160;</em>The name of a SKILL function. The SKILL function is passed two arguments: the name of a device and a disembodied property list containing the parameters on the device. The function must return a fixed point integer. The integer is used to match devices with the same parameters. To return an integer, use the <em>fix() </em>function to return an integer so that there is no ambiguity from floating-point round-off.<br />
+If you are trying to match on MOS Width, for instance, multiply width by 1,000 before converting to integer in order to use three decimal places of accuracy. For instance, if you had 0.0012 and 0.0017, multiply by each by 1,000 to give you 1.2 and 1.7. When you convert to integer, both numbers become one.
+
+Do not multiply by a very large number since that effectively asks for infinite accuracy and will have exactly the same problem as a floating-point number does. </p>
+
+<h4>
+<a id="pgfId-1015273"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015274"></a>The following example shows the definition of the SKILL function followed by the use of that function in the <em>parameterMatchType</em> command.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015275"></a> procedure( fetWidthDiff( deviceName dpl )<br />  if( dpl-&gt;w then<br />  fix( 1000 * dpl-&gt;w )<br />  else<br />  0<br />)<br />)<br />....<br />parameterMatchType( &quot;nfet&quot; fetWidthDiff )<br />parameterMatchType( &quot;pfet&quot; fetWidthDiff )</pre>
+
+<h3>
+<a id="pgfId-1015279"></a><a id="92918"></a>permuteDevice<a id="permuteDevice"></a></h3>
+<a id="pgfId-1015280"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+permuteDevice( type &quot;device&quot; [term1] [term2] [combineFunction] )</pre>
+<a id="pgfId-1015282"></a><a id="marker-1015281"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+permuteDevice( MOS &quot;device&quot; )</pre>
+<h4>
+<a id="pgfId-1015283"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015284"></a>This command specifies which form of circuit simplification to perform for a specific device type. The <a id="marker-1015285"></a>simplification is based on the permutability characteristic of the device as derived from the device definition in the netlist.</p>
+<p>
+<a id="pgfId-1015286"></a>You can specify multiple options for a single device by defining multiple <em>permuteDevice</em> commands. When you specify multiple options, the system applies all options iteratively as reduction takes place.</p>
+
+<h4>
+<a id="pgfId-1015369"></a>Arguments</h4>
+<table class="webflareTable" id="#id1015287">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015289"></a><code>type</code></p>
+</td>
+<td class="webflareTd" colspan="3" rowspan="1">
+<p>
+<a id="pgfId-1015291"></a>Defines the type of simplification that can be performed. The options are as follows:</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015297"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015299"></a><code>series</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015301"></a>Merges two or three terminal devices connected in series into a single device. Applies to all two-terminal devices. If the terminals are permutable, the reduction occurs regardless of the order of terminal connections. If the terminals are not permutable, the device is considered polarized and unlike terminals must be connected for series reduction to be performed.</p>
+<p>
+<a id="pgfId-1015302"></a>Applies to 3 terminal devices only if the first two terminals are permutable and the third terminal of each device is connected to a common net.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015306"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015308"></a><code>seriesN</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015310"></a>Merges multiple terminal devices connected in series into a single device. The terminals to be connected in series are defined by the terminal name parameters term1 and term2. For series reduction to take place, all other terminals on each device must be connected to the same terminal on the other device.</p>
+<p>
+<a id="pgfId-1015311"></a>If the specified terminals are permutable, the reduction occurs regardless of the order of terminal connections. If the terminals are not permutable, the device is considered polarized and unlike terminals must be connected for series reduction to be performed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015316"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015318"></a><code>parallel</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015320"></a>Merges devices connected in parallel into a single device. You can specify all kinds of devices.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015324"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015326"></a><code>MOS</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015328"></a>Combines MOS multiple-transistor configurations into single gate-function devices with permutable inputs. You can specify only MOS devices.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015332"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015334"></a><code>device</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015336"></a>Name of the device type to which the reduction is to apply.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015340"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015342"></a><code>combineFunction</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015344"></a>SKILL function name. This function combines the parameters of pairs of devices when they are combined into single devices. Parameter values are stored on devices as properties.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015348"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015350"></a><code>term1, term2</code></p>
+</td>
+<td class="webflareTd" colspan="2" rowspan="1">
+<p>
+<a id="pgfId-1015352"></a>Names of the terminals building the <code>seriesN</code> relationship.</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1015773"></a>You need different <em>permuteDevice </em>commands for each of the options: to apply parameter consolidation, provide a separate combine function name for each command having series or parallel options. These combine function references can be for the same or for different functions.</p>
+
+<p>
+<a id="pgfId-1015774"></a>This parameter-combining function does not apply for MOS grouping.</p>
+<p>
+<a id="pgfId-1015775"></a>The function returns the values described below. If you do not provide a function or the devices do not have parameters, parameter consolidation cannot take place although the devices are still combined.</p>
+<ul><li>
+<a id="pgfId-1015776"></a>A disembodied property list containing the resultant parameters that is added to the resultant combined device.</li><li>
+<a id="pgfId-1015777"></a>A text string of the value <code>doNotCombine</code>, which tells the program to not combine the two devices in series or parallel.</li><li>
+<a id="pgfId-1015798"></a>A symbol of the value <code>doNotCombine</code>, which tells the program to not combine the two devices in series or parallel.</li></ul>
+
+
+
+<h4>
+<a id="pgfId-1015771"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015371"></a>The following example reduces resistor devices in parallel before comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015372"></a>permuteDevice( parallel &quot;resistor&quot; )</pre>
+<p>
+<a id="pgfId-1015373"></a>The following example reduces capacitor devices in series before comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015374"></a>permuteDevice( series &quot;capacitor&quot; )</pre>
+<p>
+<a id="pgfId-1015375"></a>The following example reduces capacitor devices in parallel and calls a SKILL function to combine the device&#8217;s parameters before comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015376"></a>permuteDevice( parallel &quot;capacitor&quot; parCapMerge )</pre>
+<p>
+<a id="pgfId-1015377"></a>The following example reduces resistor devices in series and calls a SKILL function to combine the device&#8217;s parameters before comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015378"></a>permuteDevice( series &quot;resistor&quot; serResMerge )</pre>
+<p>
+<a id="pgfId-1015379"></a>The following example reduces<em> nfet</em> devices in AND or OR configurations and swaps input terminals during comparison.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015380"></a>permuteDevice( MOS &quot;nfet&quot; )</pre>
+<p>
+<a id="pgfId-1015381"></a>The following example illustrates the series reduction of a multiterminal device.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015382"></a>permuteDevice( seriesN &quot;res4&quot; &quot;anode&quot; &quot;cathode&quot; res4merge )</pre>
+
+<h3>
+<a id="pgfId-1015385"></a><a id="39453"></a>pruneDevice<a id="pruneDevice"></a></h3>
+<a id="pgfId-1015387"></a><a id="marker-1015386"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+pruneDevice( type device [terminal] )</pre>
+<h4>
+<a id="pgfId-1015388"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015389"></a>Ignores inactive devices in the circuit. It functions as if the devices were totally removed or <em>pruned </em>from the circuit.</p>
+<p>
+<a id="pgfId-1015390"></a>In some designs or design methodologies, such as gate array, the layout contains unused <a id="marker-1015391"></a>devices that have no equivalent in the schematic. These unused devices can cause a mismatch between the layout and schematic, and possibly mask or confuse real errors. If these devices are electrically inactive, they can be safely ignored.</p>
+<p>
+<a id="pgfId-1015392"></a>The pruning process is iterative and takes place during reduction. The removal of one inactive device can make another device inactive, which in turn is pruned.</p>
+
+<h4>
+<a id="pgfId-1015393"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015394"></a><code>type</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018397"></a><em>&#160;&#160;&#160;&#160;</em>Defines the type of pruning to be performed. The options are as follows:</p>
+
+<p><strong>
+<a id="pgfId-1018402"></a><code>general</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018405"></a><code>&#160;&#160;&#160;&#160;</code>Prunes devices connected to a single net.</p>
+
+<p><strong>
+<a id="pgfId-1018410"></a><code>MOS</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018413"></a> Prunes MOS devices whose connectivity guarantees they cannot affect the function of the circuit. The conditions for this are that either their source or drain is not connected to any other device in the circuit, and the gate is not driven. A gate that is not driven can connect to other MOS gates but nowhere else.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017389"></a> Also prunes MOS devices with the source, drain, and gate all connected to the same net.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017393"></a> When considering the connectivity for pruning, this command treats terminals of the circuit as if they are connections to another device. This ensures that any device connected to a terminal is considered driven. The program recognizes terminals automatically from the pins in the layout.</p>
+
+<p><strong>
+<a id="pgfId-1015398"></a><code>device</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018427"></a><em>&#160;&#160;&#160;&#160;</em>Name of the device type to which the pruning is to apply. The name consists of a character string enclosed in quotes or a number of separate strings, each enclosed in quotes with the list of strings enclosed in parentheses.</p>
+
+<p><strong>
+<a id="pgfId-1018432"></a><code>terminal</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018435"></a> Name of the terminal type to be ignored during device pruning. The name consists of a character string enclosed in quotes or a number of separate strings, each enclosed in quotes with the list of strings enclosed in parentheses.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017346"></a> The terminal name applies to all device types specified. If no device types have terminals with this name, the program continues and a warning message is issued.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015400"></a> If this terminal name is specified, the devices are pruned as if the terminal does not exist. The terminal is retained for all other processing.</p>
+
+<h4>
+<a id="pgfId-1015401"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015402"></a>In this example, during comparison all <em>nfet</em> devices that are configured in compliance with MOS mode are ignored.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015403"></a>pruneDevice( MOS &quot;nfet&quot; )</pre>
+<p>
+<a id="pgfId-1015404"></a>In this example, during comparison all <em>capacitor</em> devices that are configured in compliance with general mode are ignored.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015405"></a>pruneDevice( general &quot;capacitor&quot; )</pre>
+<p>
+<a id="pgfId-1015406"></a>In this example, during comparison all <em>nfet </em>and <em>pfet</em> devices that are configured in compliance with general mode are ignored.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015407"></a>pruneDevice( general ( &quot;nfet&quot; &quot;pfet&quot; ) )</pre>
+<p>
+<a id="pgfId-1015408"></a>In this example, terminal <em>B</em> for the three terminal resisters is ignored. For pruning, it is regarded as a two-terminal transistor.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015409"></a>pruneDevice ( general &quot;res3&quot; &quot;B&quot; )</pre>
+
+<h3>
+<a id="pgfId-1015411"></a>removeDevice<a id="marker-1015410"></a></h3>
+<a id="pgfId-1015412"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+removeDevice ( type [short(term-list) ...] [function])</pre>
+<h4>
+<a id="pgfId-1015413"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015415"></a><a id="marker-1015414"></a>Removes specific devices from the circuit based on the device type and the <em>function</em> you can optionally specify, which operates on the device parameters.</p>
+<p>
+<a id="pgfId-1015416"></a>With this command, you can specify whether the terminal nets are left open or shorted together.</p>
+
+<h4>
+<a id="pgfId-1015417"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015418"></a><code>type</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018448"></a> Name of the device type, in double quotation marks, to be removed. Instances of this device are removed in both the layout and schematic (depending on the use of the <em>function</em> option).</p>
+
+<p><strong>
+<a id="pgfId-1018453"></a><code>short</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018456"></a> An optional keyword that introduces a list of terminal names. All terminals in this list are shorted together when the device is removed. You can specify more than one <em>short</em> keyword and associated list. Terminals in each short list are shorted to other terminals in the same short list, but are not shorted to terminals in other short-lists.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015420"></a> All remaining terminals of the device not in the short lists are left open when the device is removed. If you do not specify the <em>short</em> option, all terminals are left open when the device is removed.</p>
+
+<p><strong>
+<a id="pgfId-1015421"></a><code>function</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1018468"></a> An optional argument that defines the name of a SKILL function previously defined in the rules file.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015422"></a> If you specify the <em>function</em> argument, Diva calls the function prior to removing the device. If the function returns <em>t</em>, the device is removed. If the function returns <em>nil</em>, the device is not removed.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015423"></a> If you do not specify the <em>function</em> argument, all devices of specified type are removed.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015424"></a> Diva passes the list of parameters on the device to the function. The intent of the function is to analyze the list of parameters and decide whether or not the device should be removed.</p>
+
+<h4>
+<a id="pgfId-1015425"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015426"></a>The following example is the simplest form of the command. The capacitors are removed and the connections are left open.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015427"></a>    removeDevice( &quot;cap&quot; )</pre>
+<p>
+<a id="pgfId-1015428"></a>The following example removes the resistors and shorts their terminals together:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015429"></a>    removeDevice( &quot;resistor&quot; short( &quot;PLUS&quot; &quot;MINUS&quot; ))</pre>
+<p>
+<a id="pgfId-1015430"></a>The following example includes two separate terminal shorts and a function which operates on the device parameters. It removes the device only if the size parameter is equal to 1.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015431"></a>procedure( myFunct( plist )
+&#160;&#160;&#160;&#160;prog( ( )
+&#160;&#160;&#160;&#160;  if( (plist &amp;&amp; plist-&gt;size == 1 ) <br />     return( t )<br />   )<br />   return( nil )<br /> )<br />)</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015432"></a>removeDevice( &quot;xyz&quot; short( &quot;a&quot; &quot;b&quot; ) short( &quot;c&quot; &quot;d&quot; ) myFunct )</pre>
+
+<h2>
+<a id="pgfId-1015436"></a>Backannotation<a id="marker-1015433"></a><a id="marker-1015434"></a> (lvsbx)<a id="marker-1015435"></a></h2>
+<h4>
+<a id="pgfId-1015437"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015438"></a>This function performs backannotation of schematic instance and net names to the extracted view of the circuit generated by the Diva verification&#160;&#160;extraction.</p>
+
+<h4>
+<a id="pgfId-1015439"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015440"></a>Before you specify this function, you must create an extracted version of the layout and run LVS between the extracted and schematic views.</p>
+
+<h4>
+<a id="pgfId-1015441"></a>Operation</h4>
+
+<p>
+<a id="pgfId-1015442"></a>Backannotation is performed by a stand-alone program. It reads instance and net names from the schematic and uses the files created by the LVS run to create a copy of the extracted view updated with the schematic names.</p>
+<p>
+<a id="pgfId-1015443"></a>You can either create an annotated copy of the <em>extracted</em> view, or you can overwrite the original <em>extracted</em> view.</p>
+<p>
+<a id="pgfId-1015444"></a>There is no difference in disk or virtual memory usage between creating a new extracted cellview and overwriting the original extracted cellview. Both operations create a new version of the cell in the library.</p>
+
+<h4>
+<a id="pgfId-1015445"></a>Execution</h4>
+
+<p>
+<a id="pgfId-1015446"></a>Use the following command in the UNIX environment to execute backannotation:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015447"></a>lvsbx &lt; run_dir &gt;&#160;&#160;[ library cell view ]</pre>
+<p>
+<a id="pgfId-1015448"></a>You must run the <em>lvsbx</em> program in the directory you ran the graphics editor when you executed LVS.</p>
+<p>
+<a id="pgfId-1015449"></a>You must specify the <em>run_dir</em> argument that defines the name of the run directory previously used for an LVS run. Diva determines the schematic and extracted cellviews to be processed from the <em>si.env</em> file in the <em>run_dir</em> directory.</p>
+<p>
+<a id="pgfId-1015450"></a>The <em>library</em>, <em>cell</em>, and <em>view</em> form a single optional argument that defines the name of the output cellview. You must specify all three of these options or the argument is not valid. If you specify this argument, the backannotated extracted cellview is written to the view specified. If you do not specify this argument, the original extracted cellview is overwritten.</p>
+
+<h4>
+<a id="pgfId-1015451"></a>Limitations</h4>
+
+<p>
+<a id="pgfId-1015453"></a><a id="marker-1015452"></a>Only flat extraction is supported. Diva does not backannotate to a layout that has been extracted hierarchically.</p>
+<p>
+<a id="pgfId-1015454"></a>Names of instances and nets that are hierarchical in the top level of the schematic are modified to create <em>flat</em> names in the extracted view. For example, Diva converts the schematic hierarchical name of <em>/I1/net</em>2 to the flat name |<em>I1</em>|<em>net2</em> in the extracted view.</p>
+<p>
+<a id="pgfId-1015455"></a>If you overwrite the original extracted cellview, the cross-probe capability from the original LVS run is lost because the LVS mapping files are now out-of-date. You can correct this only by re-executing the LVS run. </p>
+<p>
+<a id="pgfId-1015456"></a>If you re-run LVS after backannotating schematic names, devices or nets with the same names might not match. In areas of ambiguity, it is still possible for devices or nets to be matched to their ambiguous counterpart rather than the intended device or net. The backannotated names are not used as part of the LVS matching criteria.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap12.html" id="prev" title="Checking Electrical Rules (ERC)">Checking Electrical Rules (ERC ...</a></em></b><b><em><a href="chap14.html" id="nex" title="Verify Menu Commands">Verify Menu Commands</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

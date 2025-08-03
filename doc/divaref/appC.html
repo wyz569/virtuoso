@@ -1,0 +1,183 @@
+
+<html><head><title>Improving Hierarchical DRC Performance</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027645" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Improving Hierarchical DRC Performance" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027645" />
+<meta name="NextFile" content="appD.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="appB.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Improving Hierarchical DRC Performance" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="appB.html" title="Translating Dracula Files">Translating Dracula Files</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appD.html" title="Simulation and Environment Control">Simulation and Environment Con ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>C
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+<a id="37636"></a>Improving Hierarchical DRC Performance<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014199"></a>This appendix describes two<a id="marker-1014198"></a> methods for improving hierarchical DRC performance.</p>
+<ul><li>
+<a id="pgfId-1014200"></a>An extended methodology is available for improving performance when you have nonrectangular cells whose bounding boxes overlap significantly but whose data overlaps by a small amount. </li><li>
+<a id="pgfId-1014201"></a>Switches are available that let DRC address a small but difficult class of design rule checks. DRC has switch names that you can test during certain phases of program execution. </li></ul>
+
+
+<h3>
+<a id="pgfId-1014202"></a>Assigning the hdrc boundary Layer</h3>
+
+<p>
+<a id="pgfId-1014203"></a>To improve performance when you have nonrectangular cells whose bounding boxes overlap significantly but whose data overlaps by a small amount, you need to create a layer in your technology file lk<a id="marker-1014204"></a>called <em>hdrc boundary</em>. You can assign any number between 0 and 127 to the <em>hdrc</em> layer. Only the name and purpose are essential for identifying the layer.</p>
+<p>
+<a id="pgfId-1014205"></a>DRC checks for the existence of layers only when the rules are compiled. DRC is not aware of the <em>hdrc</em> layer if you add it during an interactive session unless you update the library by reloading the rules or by closing and reopening the library.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014206"></a>Do not digitize data on the <em>hdrc </em>layer. The layer is erased and created automatically by DRC. See the &#8220;Rules File Example&#8221; section for an example.</div>
+
+<h3>
+<a id="pgfId-1014207"></a>How the hdrc boundary Layer Works</h3>
+
+<p>
+<a id="pgfId-1014208"></a>With the extended methodology, a polygonal boundary shape is created for each cell on the <em>hdrc boundary</em> layer. The shape is always manhattan, containing no slanted edges. The boundary is formed by merging all shapes in the cell with all boundary shapes of lower level cells. The shapes are converted into trapezoids in the same manner as the tile option for <em>saveDerived</em> commands. Each trapezoid is converted into a rectangle by using the bounding box of the trapezoid. This shape is then &#8220;grown&#8221; by the halo distance of the rules. The grow process removes small notches and holes. Lastly, the shape is shrunk by the halo distance and stored in the database on the <em>hdrc</em> layer with a <em>boundary</em> purpose. </p>
+<p>
+<a id="pgfId-1014209"></a>The hierarchical DRC program uses these boundary shapes to determine interactions between cells or between instances and polygons in the cell. When cells are not rectangular, the area that is rechecked is greatly reduced. This improves performance significantly.</p>
+<p>
+<a id="pgfId-1014210"></a>Note the following:</p>
+<ul><li>
+<a id="pgfId-1014211"></a>There might be multiple boundary shapes and the shapes might have holes. The boundary shapes are available for use during DRC execution by using the <em>geomGetPurpose</em> command.</li><li>
+<a id="pgfId-1014212"></a>Small cells whose size is less than twice the halo distance are treated as polygons and not as real cells, meaning they are processed as flat data. Small cells do not have boundary shapes placed in them.</li></ul>
+
+
+<h3>
+<a id="pgfId-1014214"></a><a id="84405"></a>Hierarchical DRC Switch Names</h3>
+
+<p>
+<a id="pgfId-1014215"></a>DRC has three switches you can set during certain phases of program execution. These switches let DRC address a very specific class of design rule checks.</p>
+<ul><li>
+<a id="pgfId-1014216"></a><em>hier?</em> <br />
+<a id="pgfId-1014217"></a>This switch lets you use a different set of rules in hierarchical mode than in flat mode. In hierarchical mode, the <em>hier?</em> switch is automatically on. </li><li>
+<a id="pgfId-1014218"></a>currentCell?<br />
+<a id="pgfId-1014219"></a>This feature lets you write rules that are cell based and not truly hierarchical. The <em>currentCell?</em> switch is toggled on and off as the design is checked. In hierarchical mode, checking occurs in two passes. The first pass uses only the polygons in the current cell. The second pass runs in flat mode, from the current cell down, rechecking small areas where two instances overlap or where an instance and a polygon overlap in the current cell. The <em>currentCell?</em> switch is set on in the first pass and set off in the second pass. </li><li>
+<a id="pgfId-1014220"></a>topCell?<br />
+<a id="pgfId-1014221"></a>This switch, when present, instructs Diva verification to perform a flat DRC analysis on the top cell after all hierarchical checking is done. You can use this feature to check sparse data, for example pads, to improve execution speed.</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1014222"></a>In the final pass, you can run a rules check in flat mode on data that is best checked in flat mode. For example, pad checks have limited data and do not check efficiently in hierarchical mode.</p>
+
+<h3>
+<a id="pgfId-1014223"></a>Rules File Example</h3>
+
+<p>
+<a id="pgfId-1014224"></a>To understand how the switches can be used, consider four simple checks on a design.</p>
+<ol><li>
+<a id="pgfId-1014225"></a>Flag any metal spacing less than 0.5 microns. </li><li>
+<a id="pgfId-1014226"></a>Flag any pad spacing that is less than 10 microns. The pad layer is a sparse layer and is better checked in flat mode. This check can be done in hierarchical mode, but it increases the size of the halo, which makes the program run slow even when there is no pad layer in the vicinity.</li><li>
+<a id="pgfId-1014227"></a>Check that any cell containing layer Q also contains layer R and that layer R is exactly 0.4 micron larger than layer Q. This is where the <em>currentCell?</em> switch comes into play.</li><li>
+<a id="pgfId-1014228"></a>Check that no part of the design is more than 1 micron from a piece of metal. This check is easily done in flat mode.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014290"></a>This check is the most difficult of the four to implement.</div><pre class="webflare-pre-block webflare-courier-new" id="#id1014292">
+<a id="pgfId-1014292"></a>m1g = geomSize( &quot;m1&quot; 0.5 )
+err = geomAndNot( geomBkgnd() m1g )
+saveDerived( err &quot;m1 coverage error&quot; )</pre>
+<a id="pgfId-1014293"></a>The problem in hierarchical mode is that instances form an area where no polygonal data exists and a large error is generated. It is necessary to find errors that are not over instances, yet errors must also be found that are between instance polygons and cell polygons.<br />
+<a id="pgfId-1014232"></a>This problem is solved by introducing a new layer in the data base,<em> m1 boundary</em>. As the design is processed, a boundary shape for <em>m1</em> is created. The check is done by looking at shapes at the current level and <em>m1</em> boundaries from instances that have already been processed.<br />
+<a id="pgfId-1014233"></a>The rules for the check follow. The rules apply only to hierarchical mode.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014234"></a>drcExtractRules(<br />   ivIf( switch( &quot;drc?&quot; ) then<br />      ivIf( switch( &quot;hier?&quot; ) then<br />         ivIf( switch( &quot;topCell?&quot; ) then<br />            ; check 2<br />            pad = geomOr( &quot;pad&quot; )<br />            drc( pad sep &lt; 10 &quot;pad spacing less than 10&quot; )<br />         else<br />            m1 = geomOr( &quot;m1&quot; )<br />            ; check 1<br />            drc( m1 sep &lt; 0.5 &quot;m1 spacing less than 0.5&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014235"></a>            ivIf( switch( &quot;currentCell?&quot; ) then</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014316"></a>            ; check 3<br />            check3 = geomXor( geomSize( &quot;Q&quot; 0.4 ) &quot;R&quot; )<br />            saveDerived( check3 &quot;R and Q check&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014237"></a>            ; check 4<br />            ; Remove any m1 boundary shapes because they are<br />            ; going to be rederived<br />            geomErase( &quot;m1&quot; &quot;boundary&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014238"></a>            ; Collect m1 in the current cell with m1 boundary<br />            ; polygons from one level down in the hierarchy.<br />            m1b = geomOr( &quot;m1&quot; geomGetPurpose( &quot;m1&quot; &quot;boundary&quot; 1 1 ) )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014239"></a>            ; Grow the m1 shapes by 0.5 microns to find areas<br />            ; that are not covered.<br />            m1bg = geomSize( m1b 0.5 )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014240"></a>            ; Get the cell boundary to<br />            ; (1) determine where a coverage error should be flagged.<br />            ; This gets rid of errors on the boundary of the cells.<br />            ; (2) build the m1 boundary for the current cell.<br />            ;<br />            ; The hdrc boundary shapes were calculated just prior<br />            ; to rules execution in the current cell.</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014241"></a>            cell_bnd = geomGetPurpose( &quot;hdrc&quot; &quot;boundary&quot; 0 0 )<br />            cell_bnd_shrunk = geomSize( cell_bnd -0.5 )<br />            check4 = geomAndNot( cell_bnd_shrunk m1bg )<br />            saveDerived( check4 &quot;m1 coverage error&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014242"></a>            ; Derive the m1 boundary for the next level of hierarchy.<br />            m1_bnd_next = geomOr( &quot;m1&quot; cell_bnd_shrunk )<br />            saveDerived( m1_bnd_next ( &quot;m1&quot; &quot;boundary&quot; ) )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014361"></a>            )<br />         )<br />    else<br />      /*<br />       *  Rules to run in flat mode.<br />       */<br />       m1 = geomOr( &quot;m1&quot; )<br />       drc( m1 sep &lt; 0.5 )<br />       /*<br />         ... other flat checks ...<br />       */            .....</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014362"></a>      )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014245"></a>   )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014246"></a>)</pre>
+
+<p>
+<a id="pgfId-1014140"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="appB.html" id="prev" title="Translating Dracula Files">Translating Dracula Files</a></em></b><b><em><a href="appD.html" id="nex" title="Simulation and Environment Control">Simulation and Environment Con ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

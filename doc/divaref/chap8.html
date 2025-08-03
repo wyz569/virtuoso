@@ -1,0 +1,876 @@
+
+<html><head><title>Models of Device Extraction</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027700" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Models of Device Extraction" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027700" />
+<meta name="NextFile" content="chap9.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap7.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Models of Device Extraction" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap7.html" title="DRC Overview">DRC Overview</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap9.html" title="Extracting Parameters (LPE)">Extracting Parameters (LPE)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>8
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Models of Device Extraction<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014198"></a>A <em>device</em> is an electrical device such as a transistor or capacitor that is intentionally designed into the circuit by the arrangement of mask layers. This is sometimes referred to as a &#8220;designed device,&#8221; as compared to a parasitic device, which is a side effect of the mask layer arrangement. Designed devices usually appear in the schematic of the circuit. <a id="marker-1014199"></a><a id="marker-1014200"></a><a id="marker-1014201"></a></p>
+<p>
+<a id="pgfId-1014202"></a>There are four modes for extracting devices:</p>
+<ul><li>
+<a id="pgfId-1014204"></a><a id="marker-1014203"></a>Flat</li><li>
+<a id="pgfId-1014205"></a>Macro cell</li><li>
+<a id="pgfId-1014206"></a>Full hierarchical</li><li>
+<a id="pgfId-1014207"></a>Incremental hierarchical </li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1014208"></a>Flat Mode</h3>
+
+<p>
+<a id="pgfId-1014209"></a>The normal mode for extraction is <em>flat</em>. In flat mode, Diva flattens the hierarchy of the layout. This ensures that all structures and interactions forming devices, parameters, and parasitics are recognized. The result of a <em>flat</em> extraction is a single <em>extracted</em> view representing the complete original circuit.</p>
+
+<h3>
+<a id="pgfId-1014210"></a>Macro Cell Mode</h3>
+
+<p>
+<a id="pgfId-1014211"></a>Normally, for the extraction of hierarchical structured layouts, Diva expands the contents of each instance of a cell in the hierarchy into a single flat representation. The flattening process continues until all cell instances are gone, leaving only shapes on layers.</p>
+<p>
+<a id="pgfId-1014213"></a><a id="marker-1014212"></a>Macro cell mode is similar to flat mode, except that Diva treats certain cells as if they are devices. Each macro cell is considered a &#8220;<a id="marker-1014214"></a>black box.&#8221; Diva does not flatten a macro cell&#8217;s contents into the rest of the layout. The result of a <em>macro cell</em> extraction is a single <em>extracted</em> view in which the macro cells appear only as device instances. When you look at the <a id="marker-1014215"></a>extracted cellview, instances of <a id="marker-1014216"></a>macro cells appear the same as normal cell instances. See <a href="chap2.html#22351">Chapter 2, &#8220;Macro Cell Mode,&#8221;</a> for more information on macro cell mode.</p>
+
+<h3>
+<a id="pgfId-1014220"></a>Full Hierarchical Mode</h3>
+
+<p>
+<a id="pgfId-1014222"></a><a id="marker-1014221"></a>In full hierarchical mode, Diva extracts each cell at the lowest level of hierarchy exactly as in <em>flat mode</em>. Diva then extracts each cell at higher levels of hierarchy and treats the instances of lower level cells as device instances. The contents of higher level cells (other than other cell instances) are extracted as in flat mode. Macro cells can be included in hierarchical extraction.</p>
+<p>
+<a id="pgfId-1014223"></a>The result of a full hierarchical extraction is a single <em>extracted</em> view for each cell, in which the other cell instances appear only as device instances.You can use the results of hierarchical extraction the same way as flat extraction. </p>
+<p>
+<a id="pgfId-1014224"></a>When you process a hierarchical version with the netlister, the program adds <em>extracted</em> to the <em>representationPath</em> so it can switch between views to trace connectivity through the hierarchy. In addition, Diva creates an <em>excell</em> view for each extracted cell. This view provides an interface to the cells that contain it.</p>
+
+<h4>
+<a id="pgfId-1014225"></a>Advantages</h4>
+
+<p>
+<a id="pgfId-1014226"></a>There are several advantages to running extract in full hierarchical mode.</p>
+<ul><li>
+<a id="pgfId-1014227"></a>Analysis time is reduced for repetitive circuitry because the program analyzes each cell only once, regardless of how many times it appears in the circuit.</li><li>
+<a id="pgfId-1014229"></a><a id="marker-1014228"></a>Disk space is reduced because the program maintains only one copy of each extracted cell.</li><li>
+<a id="pgfId-1014230"></a>Virtual memory and graphic display time are reduced because the program partitions the extraction process into smaller sections.</li><li>
+<a id="pgfId-1014231"></a>Errors for a cell are located within the master for that cell rather than on a flattened representation of the circuit.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014232"></a>One of the major advantages of hierarchical extraction is that it reduces the run time. However, reduced run time occurs only if there is cell repetition. Running in hierarchical mode without cell repetition might actually increase run time. </p>
+
+<h4>
+<a id="pgfId-1014233"></a>Controlling Hierarchy Selection</h4>
+
+<p>
+<a id="pgfId-1014235"></a>You can use the <em>ivCellType</em> property to control the way the program interprets a cell. The <em>ivCellType</em><a id="marker-1014234"></a> <a id="marker-1014236"></a>property can have these values:</p>
+
+<p><strong>
+<a id="pgfId-1014237"></a><code>graphic</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016588"></a> Tells the program the cell is not a level of hierarchy, even if the cell has pins.</p>
+
+<p><strong>
+<a id="pgfId-1016593"></a><code>macro</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016596"></a> Declares the cell a <a id="marker-1014238"></a>macro cell. The cell must have pins to be considered a macro cell. If it does not have pins, it becomes a graphic even if you set this value.</p>
+<p>
+<a id="pgfId-1014240"></a>If a hierarchical cell has a <em>ivCellType</em> property of <em>macro</em><curly1>
+, </curly1>
+it is treated in the same way as macro cell processing. When the cell is reached in the hierarchy, it is treated as a normal device instance and is not pushed into. No <em>excell</em> is created.</p>
+
+<h4>
+<a id="pgfId-1014241"></a>Hierarchical Extraction Tools</h4>
+
+<p>
+<a id="pgfId-1014242"></a>Some of the commands available in the Diva environment that are helpful during hierarchical <a id="marker-1014243"></a>extraction include</p>
+<ul><li>
+<a id="pgfId-1014245"></a><a id="marker-1014244"></a>saveDerived<br />
+<a id="pgfId-1016268"></a>This command saves layers you can use with the <em>excell</em> version with the <em>cell_view</em> keyword. It copies derived layers into the <em>excell</em> version so you can do checks against the data in the cell containing the <em>excell</em>. See <a href="chap5.html#36725">Chapter 5, &#8220;saveDerived&#8221;</a> for more information.</li><li>
+<a id="pgfId-1015397"></a><a id="marker-1015396"></a>geomNoHoles<br />
+<a id="pgfId-1014252"></a>This command constructs &#8220;keep-out&#8221; layers that you can save in the <em>excell</em> version using the <em>saveDerived</em> command. See <a href="chap5.html#46566">Chapter 5, &#8220;geomNoHoles&#8221;</a> for more information.</li><li>
+<a id="pgfId-1014257"></a><a id="marker-1014256"></a>geomGetPurpose<br />
+<a id="pgfId-1014258"></a>This command accesses the cell boundary for copying to <em>excell. </em>See <a href="chap5.html#16439">Chapter 5, &#8220;geomGetPurpose&#8221;</a> for more information.</li><li>
+<a id="pgfId-1014263"></a><a id="marker-1014262"></a>geomAnd<br />
+<a id="pgfId-1014264"></a>This command performs a single layer <em>self-and</em> that you can use to check the overlap of one <em>excell</em> boundary onto another. See <a href="chap5.html#99276">Chapter 5, &#8220;geomAnd&#8221;</a> for more information.</li><li>
+<a id="pgfId-1014269"></a><a id="marker-1014268"></a>geomGetMacro<br />
+<a id="pgfId-1014272"></a>This command selects shapes on layers from macro cells. See <a href="chap5.html#16903">Chapter 5, &#8220;geomGetMacro&#8221;</a> for more information.</li></ul>
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1014274"></a>Limitations of Hierarchical Mode</h4>
+
+<p>
+<a id="pgfId-1014275"></a>Hierarchical mode limitations include the following:</p>
+<ul><li>
+<a id="pgfId-1014276"></a>The program does not recognize connections between cells that aren&#8217;t connected with pins. To prevent the program from missing design errors, you should create keep-out layers. You can use the keep-out layers to perform <a id="marker-1014277"></a>dimensional or logical checks between the connection layers and the parent cell data. </li><li>
+<a id="pgfId-1014278"></a>The program performs hierarchical extraction one cell at a time. The excell versions of a cell contain only a skeleton of the data and have no internal connectivity <a id="marker-1014279"></a>information. Therefore, it is impossible to generate cell-to-cell parasitic measurements during hierarchical extraction. Parasitics and parameters totally contained inside a cell are still valid.</li><li>
+<a id="pgfId-1014281"></a>The program might count parasitic<a id="marker-1014280"></a> measurements at pins multiple times, once for the original cell, and once for each instance of the <em>excell</em> of that cell. It does this because the area of the pins exists for both. You can avoid this by using the <em>geomGetPurpose </em><a id="marker-1014282"></a><a id="marker-1014283"></a>command, which allows shapes to be accessed from different levels of the hierarchy. Therefore, you can separate the pins at the current level from pins derived from lower levels of hierarchy.</li><li>
+<a id="pgfId-1014284"></a>The program doesn&#8217;t recognize any device formed between cells. You can avoid this by creating &#8220;keep-out&#8221; layers.</li><li>
+<a id="pgfId-1014286"></a>The hierarchical extraction is only valid with a true <a id="marker-1014285"></a>hierarchical design methodology. The integrity of the hierarchy and its extraction are violated if cells are modified in any way by the overlay of shapes from other cells, whether they are at the same level or at different levels of hierarchy.</li><li>
+<a id="pgfId-1014287"></a>When processing hierarchical extraction results for LVS, you need separate switching lists for the extracted and schematic circuits. Refer to <a href="chap13.html#21932">Chapter 13, &#8220;Comparing Layout to Schematic (LVS)&#8221;</a> for more information.</li></ul>
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1014291"></a>How the Program Processes Hierarchically</h4>
+
+<p>
+<a id="pgfId-1014293"></a>In hierarchical mode, t<a id="marker-1014292"></a>he programs starts by looking at the master (top level) of the cell containing the entire circuit. Traversing the hierarchy, the program looks for &#8220;leaf&#8221; cells. Leaf cells contain no instances of other cells.</p>
+<p>
+<a id="pgfId-1014294"></a>For each leaf cell, the program performs regular (flat) extraction, creating an <em>extracted</em> version of the cell and an <em>excell</em> view of the cell. The <em>excell</em> view is a simplified version of the original cell containing copies of pins and any other shapes you tell the program to copy from the original cell. You can copy shapes to perform integrity checks on parent cells, or for display purposes.</p>
+<p>
+<a id="pgfId-1014295"></a>After the program extracts the leaf cells, it proceeds to the next level up in the hierarchy. At this level, the program replaces instances of cells in the current cell with instances of the <a id="marker-1014296"></a><em>excell</em> version of those cells. The program then continues to recognize regular device and connectivity, with the <em>excell</em><a id="marker-1014297"></a> pins contributing to the connectivity of the current cell as if they are normal pins to external connections. The result is an <em>extracted</em> version and an <em>excell</em> version of the current cell.</p>
+<p>
+<a id="pgfId-1014298"></a>The program continues up the hierarchy until it processes all cells including the top level cell. The program creates an <em>excell</em> view, even at the top level, for extraction at a higher level.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014299"></a>When the program places an <em>excell </em>as an instance in another cell, it gives it the same name as the instance in the original cell. If the <em>excell</em> instance is the result of flattening a cell and bringing up an instance from a lower level, the program automatically names the instance <em>+1</em>, <em>+2</em>, <em>+3</em>, and so on.</div>
+
+<h4>
+<a id="pgfId-1014300"></a>Using Hierarchical Extraction</h4>
+
+<p>
+<a id="pgfId-1014301"></a>To start hierarchical extraction for interactive processing from a layout window, select the <em>Extract </em>command from the Verify menu, then select<em> hier </em>for the extract method in the Extract form.</p>
+<p>
+<a id="pgfId-1014303"></a>To start hierarchical extraction using SKILL, use the <a id="marker-1014302"></a><em>ivExtract</em> command to specify a <em>t </em>value for the <em>?hier </em><a id="marker-1014304"></a>argument.</p>
+
+<h3>
+<a id="pgfId-1014306"></a>Incremental Hierarchical Mode<a id="Incremental Hierarchical Mode"></a></h3>
+
+<p>
+<a id="pgfId-1014307"></a>When you make a layout change to a small number of cells, you can run in <a id="marker-1014308"></a>incremental hierarchical mode to minimize the amount of processing.<a id="marker-1014309"></a> In this mode, the program re-extracts only those cells that have layout changes within them, as well as cells that contain other cells whose pin connections have changed. Before you can run in incremental hierarchical mode, you must have performed a full extraction on the cell, and an <em>excell </em>view must exist for each original cell.</p>
+<p>
+<a id="pgfId-1014310"></a>You can use these properties to determine if the layout or extraction rules have changed since the last time the cell was extracted.</p>
+<ul><li>
+<a id="pgfId-1014312"></a>The <a id="marker-1014311"></a><em>instancesLastChanged</em> property on each layout cell indicates when the cell was last modified.</li><li>
+<a id="pgfId-1014313"></a>The <em>extractTime</em> property on the <em>excell</em> view indicates when the cell was last hierarchically extracted.</li><li>
+<a id="pgfId-1014314"></a>The <em>extractSignature </em>property on the <em>extracted </em>view indicates which set of rules was used for the extractio<a id="marker-1014315"></a>n.</li></ul>
+
+
+
+<h2>
+<a id="pgfId-1014317"></a>Device Recognition</h2>
+
+<p>
+<a id="pgfId-1014318"></a>Device recognition is the process by which the program recognizes devices and creates an instance for each device in the <em>extracted </em>version of the circuit.</p>
+
+<h3>
+<a id="pgfId-1014319"></a>Using Device Recognition</h3>
+
+<p>
+<a id="pgfId-1014320"></a>A single device is recognized by the existence of a single shape on a specific layer. You must use layer processing commands to create a single shape for each device. For example, if you use polysilicon and diffusion shapes in the graphics editor to form a MOS transistor and you use the <em>geomAnd</em> command on these layers in Diva verification, you create a shape that represents the MOS transistor. This shape is the <em>device recognition shape</em><a id="marker-1014321"></a>. </p>
+<p>
+<a id="pgfId-1014322"></a>Once the device recognition shapes are isolated, you direct the program to create the devices in the <em>extracted </em>version by using either the <em>extractDevice </em><a id="marker-1014323"></a><a id="marker-1014324"></a>command or the <a id="marker-1014325"></a><em>extractMOS</em> command. You use these commands to look at each device recognition shape and determine the electrical connections to the device terminals. To do this, you must have defined the circuit connectivity using the <em>geomConnect</em><a id="marker-1014326"></a> command.</p>
+<p>
+<a id="pgfId-1014327"></a>After the program recognizes and validates the device terminals, it matches the terminal with devices being extracted and places an instance of the device in the <em>extracted</em><a id="marker-1014328"></a> version of the circuit. The instance must reference a device model in the system library, and the devices must exist in a library. The program uses the device model to verify the terminal configuration of your extraction command. You define a device model using either the <em>extractMOS</em> or <em>extractDevice</em> command. </p>
+<p>
+<a id="pgfId-1014329"></a>The process of recognizing devices in the circuit automatically creates a cellview containing the extracted representation of the circuit. This cellview is given the default name <em>extracted </em>view. </p>
+<p>
+<a id="pgfId-1014330"></a>The process of hierarchical extraction also creates a view for each cell in the hierarchy. These views are given the default name <em>excell</em> view. </p>
+<p>
+<a id="pgfId-1014331"></a>You can override the default cellview names of <em>extracted</em> and <em>excell </em>by defining your own names. However, you must ensure that the view names you specify do not conflict with any other existing view names for cells that you wish to keep. Diva only checks that the <em>extracted</em> and <em>excell</em> view names are different.</p>
+
+<h3>
+<a id="pgfId-1014332"></a>Device Recognition Polygons</h3>
+
+<p>
+<a id="pgfId-1014336"></a>When <a id="marker-1014333"></a>the program generates<a id="marker-1014334"></a> devices<a id="marker-1014335"></a> and interconnects from a layout, it <a id="Device Recognition Polygons"></a>generates an extracted view of the circuit. This version initially contains only devices and nets. The device instances are the symbols that represent the devices. You can make the nets visible by displaying the pin-to-pin direct connections (&#8220;<a id="marker-1014338"></a>fly-lines&#8221;). Neither of these <a id="marker-1014339"></a>displays is associated with the layout mask layers, other than the dimensional location of the device instances. </p>
+<p>
+<a id="pgfId-1014341"></a>To see the layout shapes associated with the nets, you use the <a id="marker-1014340"></a><em>saveInterconnect</em> command. This command lets you save the derived layers used to define the circuit interconnect. When the program saves interconnect shapes in the <em>extracted </em><a id="marker-1014342"></a>view, the shapes are associated with the electrical net they helped create. If you probe one of these shapes, the graphics system can locate the net to which the shape belongs and highlight all the shapes associated with that net.</p>
+<p>
+<a id="pgfId-1014344"></a>To make device recognition shapes visible, you use the <a id="marker-1014343"></a><em>saveRecognition</em> command. This command lets you save the shapes that are used to recognize the devices in the <em>extractDevice</em> or <em>extractMOS</em> commands. Each recognition shape is associated with the device it created, so you can probe a device shape and have the shape and its device symbol highlighted. More importantly, it allows a cross-probe from the LVS program, so you can highlight the device shape directly.<a id="marker-1014345"></a></p>
+
+<h4>
+<a id="pgfId-1014346"></a>Saving Device Recognition Polygons</h4>
+
+<p>
+<a id="pgfId-1014347"></a>The <em>saveRecognition</em> command works by storing a property on each device instance. This property is the device recognition shape. To save device recognition polygons, you must</p>
+<ol><li>
+<a id="pgfId-1014349"></a>Create a <a id="marker-1014348"></a>parameterized cell for each device type. You do this in the graphics editor before running any extraction that uses the cell. Default <em>ivpcells</em> are in the<em> samples</em> library. Refer to the <a href="chap8.html#22216">Chapter 8, &#8220;About Parameterized Cells&#8221;</a> for more information. </li><li>
+<a id="pgfId-1014356"></a>Define the device type using the <a id="marker-1014353"></a><em>extractDevice</em><a id="marker-1014354"></a> or <em>extractMOS</em><a id="marker-1014355"></a> commands. The device model (<em>nfet, pfet</em>, and so forth) remains the same, however, you must define the version as<em> ivpcell</em>. Normally, the version default is symbol. <em>ivpcell</em> is detailed in the SKILL procedure description.</li><li>
+<a id="pgfId-1014357"></a>Save the device recognition layer with the option to redefine the graphics layer on which the shapes are displayed. You must do this for each device recognition layer to be saved, using the <a id="marker-1014358"></a><em>saveRecognition</em> command. The <em>saveRecognition</em> command looks at each device recognition shape on the specified layer, determines which device instance it represents, and attaches a property to that instance using the shape coordinates as its contents.</li></ol>
+
+
+
+<h4><em>
+<a id="pgfId-1014359"></a>Device Instance Property</em></h4>
+
+<p>
+<a id="pgfId-1014361"></a>When you use the <a id="marker-1014360"></a><em>saveRecognition</em> command, the program creates a property on the device instance. The property has two parts.</p>
+<ul><li>
+<a id="pgfId-1014362"></a>The property name (<em>recognitionShape</em>)</li><li>
+<a id="pgfId-1014363"></a>The property format</li></ul>
+
+<p>
+<a id="pgfId-1014365"></a>The property format is a string that looks like a SKILL list. <a id="marker-1014364"></a>The first part of the property format is the layer number on which you display the polygons. The second part of the property format lists one or more polygons that form the device shape. Most devices require only a single polygon, however, you might need to specify more than one polygon. For example, you might have to break very large device recognition shapes into multiple polygons in order to conform to the vertex limit of the graphics system. </p>
+<p>
+<a id="pgfId-1014366"></a>The format for specifying the shape coordinates is</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014367"></a>( ( x1 y1 ) ( x2 y2 ) ( x3 y3 ) ... )</pre>
+
+<p>
+<a id="pgfId-1014368"></a>You specify each coordinate in user units. </p>
+<p>
+<a id="pgfId-1014369"></a>For example, the <em>recognitionShape</em> displays a 1 by 3 rectangle on layer 10.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014370"></a>( 10 ( ( 0 0 ) ( 1 3 ) ) )</pre>
+<h4>
+<a id="pgfId-1014372"></a><a id="22216"></a>About Parameterized Cells</h4>
+
+<p>
+<a id="pgfId-1014373"></a>A parameterized cell is a special type of cell that has an associated procedure in SKILL. The procedure reads the properties on the cell instance (a device in the extracted cellview) and builds a &#8220;variant&#8221; of the cell. Instances of the variant are then placed instead of instances of the original cell. For a complete description of parameterized cells, refer to <em>Virtuoso Layout Editor Help</em>. </p>
+<p>
+<a id="pgfId-1014374"></a>The system library comes with a number of ready-made parameterized cells with view names of <em>ivpcell</em>. You can use these cells for saving device recognition shapes. Each cell has a resolution of 1000 database units per micron. You can use the <a href="chap3.html#32464">ivCreatePCells</a> SKILL procedure to create your own parameterized cells, or to change cells in the system library.<a id="marker-1014375"></a></p>
+<p>
+<a id="pgfId-1014376"></a>The<em> ivCreatePCells</em> procedure copies the pins and graphics from the <em>symbol</em> view of your device to the <em>ivpcell</em> view and magnifies them by a value you specify, so they are visible when the cell is placed in the <em>extracted</em> view. <em>ivCreatePcells</em> also generates the correct SKILL procedure for storing the recognition shape when you use the <em>saveRecognition </em>command. </p>
+<p>
+<a id="pgfId-1014377"></a>When you use <em>extractMOS</em> or <em>extractDevice</em> without the<em> saveRecognition</em> command, the extracted view displays the graphics and pins in the<em> ivpcell</em> for each device instance. When you use the <em>saveRecognition</em> command, you can also see the recognition shape. </p>
+
+<h4><em>
+<a id="pgfId-1014378"></a>The SKILL Procedure</em></h4>
+
+<p>
+<a id="pgfId-1014380"></a>You can use the <a id="marker-1014379"></a><em>ivCreatePCells</em> SKILL procedure to create your own parameterized cells. When Extract places a device instance using the <em>saveRecognition</em><a id="marker-1014381"></a> command, each logical terminal in the master cell is copied to the variant. The terminals facilitate the circuit connectivity of the device. </p>
+<p>
+<a id="pgfId-1014382"></a>The SKILL procedure</p>
+<ul><li>
+<a id="pgfId-1014384"></a>Copies each physical <a id="marker-1014383"></a>pin from the master to the variant. </li><li>
+<a id="pgfId-1014386"></a>Copies all shapes from the <a id="marker-1014385"></a>master to the variant.</li><li>
+<a id="pgfId-1014388"></a>Evaluates all recognized <a id="marker-1014387"></a>properties associated with the instance. In Diva verification, the procedure uses the<em> recognitionShape</em> property to create the defined shape on the required layer. It also creates the shape on the instance layer so that the device can be selected. The instance layer shape also allows the device to be seen in unexpanded graphics mode.<a id="marker-1014389"></a></li></ul>
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014390"></a>When you use a symbol view of a cell, you must draw the pins on the cell, instead of using instances of pins. If you do not draw the pins, <em>ivCreatePCells</em> creates cellviews without pins. When you do an Extract, the pin names do not match and the extraction fails.</div>
+
+<h3>
+<a id="pgfId-1014391"></a>Processing Pins</h3>
+
+<p>
+<a id="pgfId-1014393"></a><a id="marker-1014392"></a>Normally, pins form part of the interconnect of a circuit. If you want to use this connectivity, you must specify the pin&#8217;s layer, or one derived from it, in a <em>geomConnect</em> command.</p>
+<p>
+<a id="pgfId-1014394"></a>If you store a pin layer in the extracted view of the circuit using the <em>saveInterconnect</em> command, the system treats the pins as any other shape on that layer and stores them with the net purpose.</p>
+<p>
+<a id="pgfId-1014395"></a>During layout extraction, pins are copied to the output cellview (extracted, excell, abstract). Pin instances are copied as pin instances and are not flattened. </p>
+<p>
+<a id="pgfId-1014396"></a>Pins have two fundamental uses. </p>
+<ul><li>
+<a id="pgfId-1014397"></a>Pins at the topmost level in the hierarchy are used to label nets and are copied to the output cellview.</li><li>
+<a id="pgfId-1014398"></a>Pins are used during macro-cell and hierarchical extraction. The existence of the pins indicate that a cell is a macro cell or a hierarchical cell and tells the program where connections between the parent and child cells are made.</li></ul>
+
+<p>
+<a id="pgfId-1014399"></a>During hierarchical extraction the pin names might be changed by the program to correctly reflect the true connectivity in a cell. If there are two pins with the same name that are not on the same physical net (intended to imply a connection external to the cell), the program renames the second pin and creates a new net for it. The program also adds a property called <em>connectToTerminal</em> to the changed pin. The property contains a reference to the pin that retains the original pin name.</p>
+<p>
+<a id="pgfId-1014400"></a>The Diva verification extraction process and the full <em>abgen</em> analysis place a property called <em>netNumber</em> on each pin in the output cellview. The <em>netNumber</em> and <em>connectToTerminal</em> properties are used by the hierarchical and macro cell extraction programs as follows:</p>
+<ul><li>
+<a id="pgfId-1014401"></a>If two pins are on the same net and neither has a <em>netNumber</em> property, the pins are assumed to be connected inside the cell.</li><li>
+<a id="pgfId-1014402"></a>If two pins are on the same net and both have the same <em>netNumber</em> property, the pins are assumed to be connected inside the cell.</li><li>
+<a id="pgfId-1014403"></a>If two pins are on the same net and they have different <em>netNumber</em> properties or only one of the pins has a <em>netNumber</em> property, the pins are assumed to be unconnected in the cell. However the fact that the pins are on the same net indicates they should be connected. This is commonly known as a &#8220;must-connect&#8221; and an error is generated if the connections in the parent cell to these pins are on different nets.</li><li>
+<a id="pgfId-1014404"></a>If two pins are on different nets but one pin has the property <em>connectToTerminal</em> referencing the other pin, then the pins must be connected in the parent cell otherwise an error message is generated. This is another example of the &#8220;must-connect.&#8221;</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014405"></a>If, for macro-cell extraction, the macro cell is not generated automatically by Diva&#8217;s extraction or by full <em>abgen</em>, the <em>netNumber</em> property does not exist and you must add this property manually if you want to control the connectivity.</p>
+
+<h4>
+<a id="pgfId-1014406"></a>Pin Instances</h4>
+
+<p>
+<a id="pgfId-1014408"></a><a id="marker-1014407"></a>If a cell contains nothing other than a pin, you need to assign that cell a property of <em>ivCellType</em> with a value of <em>graphic</em>. This ensures that during macro cell extraction the cell is not treated as a macro cell and that during hierarchical extraction it is not treated as another level of hierarchy. With the <em>ivCellType</em> of <em>graphic</em>, the pin instance is expanded into a pin in the parent cell.</p>
+
+<h2>
+<a id="pgfId-1014411"></a>Device Extraction Commands<a id="Device Extraction Commands"></a></h2>
+
+<p>
+<a id="pgfId-1014826"></a>The following section discusses the device extraction commands.</p>
+<p>
+<a id="pgfId-1015963"></a>The Assura device extraction commands <em>extractBJT</em><a id="marker-1015964"></a>, <em>extractCAP</em><a id="marker-1015965"></a>, <em>extractDIODE</em><a id="marker-1015968"></a>, <em>extractMOS</em><a id="marker-1015969"></a>, and <em>extractRES</em><a id="marker-1015970"></a> are recognized and parsed as if they were <em>extractDevice</em> commands. The Assura <em>extractMOS</em> command is recognized as different from the Diva <em>extractMOS</em> command by the first parameter being a string with the model name in it.</p>
+
+<h3>
+<a id="pgfId-1014414"></a>extractDevice<a id="extractDevice"></a></h3>
+<a id="pgfId-1015607"></a><a id="marker-1015606"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+extractDevice( [model] recLayer termLayer ... 
+[model] 
+[physical]
+[flagMalformed]
+[namePrefix(string)]
+[property(name value) ...]
+[cellView(model)]
+[termOrder(string)]
+[spiceModel(string)]
+[targetLayer(string)] )</pre>
+<h4>
+<a id="pgfId-1015608"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015610"></a>The <em>extractDevice </em><a id="marker-1015609"></a>command extracts devices of any type from the layout and stores them in an extracted view of the circuit.</p>
+<p>
+<a id="pgfId-1015881"></a>If the Assura syntax is used, with the model string before the recLayer, Diva sets the flag that suppresses error messages about malformed devices. This can be over-ridden by the flagMalformed keyword.</p>
+
+<h4>
+<a id="pgfId-1015611"></a>Prerequisite</h4>
+
+<p>
+<a id="pgfId-1015612"></a>The terminal layers (<em>termLayer)</em> must be connected layers. The device recognition layer <em>(recLayer)</em> must be a derived layer.</p>
+
+<h4>
+<a id="pgfId-1015613"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015614"></a><code>recLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016603"></a> The device recognition layer name. This must be a merged derived layer name. Each shape on this layer causes the extraction of a separate device. Any shape on this layer from which the tool cannot extract a device is now used as the error marker shape instead of the small square generated in previous versions of Diva.</p>
+
+<p><strong>
+<a id="pgfId-1016608"></a><code>termLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016611"></a> The device <a id="marker-1015615"></a>terminal definition. There must be a separate terminal definition for each different terminal type on the device. Each terminal definition consists of a derived layer name and any number of terminal name references enclosed in parentheses. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015618"></a> The terminal <a id="marker-1015617"></a>layers must be connected layers.</p>
+
+<p><strong>
+<a id="pgfId-1015619"></a><code>model</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016620"></a> The device model name with a character string enclosed in quotes or the keyword <code>nil</code>. In the Assura form, the keyword <code>nil</code> is not allowed.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015620"></a> If you provide a model name, any device that matches the configuration specified with this command will have an instance of that device model created in the extracted cellview.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015628"></a> If you provide the keyword <code>nil</code>, any device that matches the configuration specified with this command is accepted as valid. However, no instance is created in the extracted cellview and no errors are generated.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015629"></a> All device commands having the same device recognition layer are considered together when the program determines if a device matches the specified configuration. If a device matches any of the configurations specified with this command, the action defined by the command is carried out (either a device is created or is ignored). If a device does not match any of the defined configurations, the tool generates an error.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015630"></a> The character string you use must define the cell name and can optionally define the view name and a library name. If you don&#8217;t specify the view name, the program defaults to the name <code>symbol</code>. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015726"></a> Your defined model must be available in a library accessible by the program so that the terminal configurations can be verified and instances of the device can be placed in the extracted view of the circuit. If you specify a library name, the library is searched. Otherwise, the library that contains the layout cellview is searched. If that search fails, all available libraries are searched in arbitrary order.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015632"></a> The following example illustrates model definitions.</p>
+<p>
+<a id="pgfId-1015364"></a></p>
+<table class="webflareTable" id="#id1015636">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015638"></a>&quot;<code>nfet</code> <code>lvs</code> <code>mylib</code>&quot;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015640"></a>Use model <code>nfet</code> <code>lvs</code> from the library <code>mylib</code>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015642"></a>&quot;<code>nfet</code> <code>lvs</code>&quot;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015644"></a>Search for the model <code>nfet</code> <code>lvs</code> in the same library as the layout cellview; and if that fails, search all the available libraries in arbitrary order.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015646"></a>&quot;<code>nfet</code>&quot;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015648"></a>Search for the <code>nfet</code> symbol in the same library as in the case <code>nfet</code> <code>lvs</code>.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p><strong>
+<a id="pgfId-1015656"></a><code>physical</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016646"></a> Optional keyword which specifies that the tool matches the terminals of this model by the physical terminal count, rather than by the logical terminal count.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015662"></a> The program gathers the terminals of a device by both the figure number and the node number. Each unique figure number represents a physical terminal. Each unique node number represents a logical terminal. Logical terminals must, by definition, be a subset of physical terminals.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015666"></a> For each device that the program detects, it cycles through the provided device definitions and their different terminal types. The program then tries to match either the logical or the physical terminal count as defined by this keyword or lack of keyword.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015667"></a> A device is matched if all its terminals match either the physical or logical counts. A device is not matched if some of its terminals match the physical count and some match the logical net count.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015668"></a> If a device could match more than one model, the program matches whichever one it comes across first. There is no precedence for logical or physical counts.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015669"></a> The use of the &#8220;physical&#8221; option does not necessarily allow for all possible terminal connection scenarios. The following examples illustrate structures which are ambiguous.</p>
+
+<p>
+<a id="pgfId-1015675"></a></p>
+<table class="webflareTable" id="#id1015681">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1015683"></a>If a device matches one model for physical terminal counts and another model for logical net counts, there is no way for the program to know which is the correct model.</li></ul>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ul><li>
+<a id="pgfId-1015685"></a>If a device could match a model because some terminal types match on the physical count and some on the logical count, this device is not recognized.</li></ul>
+
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1015676"></a><code>flagMalformed</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016657"></a> Optional keyword that enables reporting of malformed devices as errors. When the Assura form of the command is used, the default is to not report malformed devices, which can be changed with this keyword. When the Diva form is used, this keyword is the default.</p>
+
+<p><strong>
+<a id="pgfId-1016662"></a><code>namePrefix(string)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016665"></a>Optional argument that allows you to specify the character string to use as the prefix for the instance name. Instance names are constructed from the prefix and an integer value to create a unique name. If not provided, the default prefix of &#8220;+&#8221; is used.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015677"></a> The <code>string</code> parameter must be a quoted string or an expression that evaluates to a string.</p>
+
+<p><strong>
+<a id="pgfId-1016673"></a><code>property(name value)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016679"></a> Optional argument that allows you to specify a property to be attached to each instance that <code>extractDevice</code> rule generates. You can use more than one property option in an <code>extractDevice</code> rule.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015691"></a> The <code>name</code> parameter must be a quoted string or an expression that evaluates to a string.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015692"></a> The <code>value</code> parameter must be a quoted string, integer constant, real constant, or an expression that evaluates to a string, integer or real.</p>
+
+<p><strong>
+<a id="pgfId-1015870"></a><code>cellView(string)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016688"></a> Optional argument that allows you to specify the cellview to use for the device instance. The string must follow the same format as for the model parameter.</p>
+
+<p><strong>
+<a id="pgfId-1016693"></a><code>spiceModel(string)</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016696"></a>Optional argument that allows you to specify the Spice model in the Assura physical verification RCX processing. In Diva, this option is parsed, but ignored.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015850"></a> The string parameter must be a quoted string or an expression that evaluates to a string.</p>
+
+<p><strong>
+<a id="pgfId-1015854"></a><code>targetLayer(string)</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016705"></a>Optional argument that allows you to specify the target layer in the Assura physical verification device extraction. In Diva, this option is parsed, but ignored.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015855"></a> The string parameter must be a quoted string or an expression that evaluates to a string.</p>
+
+<p><strong>
+<a id="pgfId-1015696"></a><code>termOrder(string)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016714"></a> Optional argument that allows you to specify the terminal order in the Assura physical verification RCX processing. In Diva, this option is parsed, but ignored.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015697"></a> The string parameter must be a quoted string or an expression that evaluates to a string.</p>
+
+<h4>
+<a id="pgfId-1015700"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015701"></a>The following example illustrates the <em>extractDevice</em> command for a four-terminal MOS transistor with terminal names of &#8220;S,&#8221; &#8220;D,&#8221; &#8220;G,&#8221; and &#8220;B.&#8221; The device recognition layer is <em>gate</em>. The<em> poly</em> layer is used for a single terminal, but the <em>diff</em> layer is used to define both &#8220;S&#8221; and &#8220;D.&#8221; The device is recognized, even if the source and drain are shorted together, provided that these terminals are formed by independent shapes.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015702"></a>extractDevice( ngate poly(&quot;G&quot;) ndiff(&quot;S&quot; &quot;D&quot;) 
+&#160;&#160;&#160;&#160;pwell( &quot;B&quot; ) &quot;nfet ivpcell&quot; physical )</pre>
+
+<p>
+<a id="pgfId-1015703"></a>Diva verification is careful in forming devices. In order to extract a device, Diva must find a shape on the recognition layer that touches or overlaps shapes on each of the specified terminal layers. </p>
+<p>
+<a id="pgfId-1015704"></a>There must be <em>exactly</em> the right number of terminals of each type, in this case, exactly one each of &quot;<code>poly</code>&quot; and &quot;<code>pwell</code>&quot; and exactly 2 of &quot;<code>ndiff</code>&quot;. If any of these conditions are not met, you will get the &#8220;<code>cannot match terminal counts ...</code>&#8221; message. The cause for this message depends on the particular extraction rules you are using and you will need to check each terminal layer to determine the root cause. Use of <em>saveInterconnect</em> for each layer can help in debugging the error.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015708"></a>Diva verification checks the specified terminals against the exact names on the device which will be placed in the &#8220;extracted&#8221; view. (Capitalization also counts: there must be &quot;G,&quot; &quot;S,&quot; &quot;D,&quot; and &quot;B&quot; - and only those terminals - or Diva will point out the problem and ask you to fix it.)</div>
+
+<h3>
+<a id="pgfId-1014455"></a>extractMOS<a id="extractMOS"></a></h3>
+<a id="pgfId-1014457"></a><a id="marker-1014456"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+extractMOS( recLayer gate s_d [bg] model
+[length width scale] )</pre>
+<h4>
+<a id="pgfId-1014458"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014459"></a>The <em>extractMOS </em>command extracts MOS devices from the layout and stores them in an extracted view of the circuit. The gate width and length parameters are measured and stored on the device instance.</p>
+<p>
+<a id="pgfId-1015891"></a>This command is a macro implemented using the following commands:</p>
+
+<pre class="webflare-courier-new webflare-indent2 codeContent">
+<a id="pgfId-1015892"></a>extractDevice(recLayer gate s_d bg model)<br />extractDevice(recLayer gate s_d bg model physical)<br />w = measureParameter(length (recLayer butting s_d) 0.5)<br />p = measureParameter(perimeter recLayer 0.5)<br />l = calculateParameter(p - w)<br />saveParameter(w width)<br />saveParameter(l length)</pre>
+<h4>
+<a id="pgfId-1015954"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1014463"></a>The terminal layers <em>(gate, s_d, </em>and<em> bg)</em> must be derived and must be connected layers. The device recognition layer must have been merged. The options length, width, and scale must be used together and in the order shown.</p>
+
+<h4>
+<a id="pgfId-1014464"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014465"></a><code>recLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016726"></a> Specifies the device recognition layer name. This must be a merged derived layer name. Each shape on this layer causes the extraction of a separate device.</p>
+
+<p><strong>
+<a id="pgfId-1016731"></a><code>gate</code><a id="marker-1014466"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016734"></a> The transistor <a id="marker-1014467"></a>gate terminal. The definition contains a layer name for the terminal followed by an optional text string in parentheses specifying the terminal name. The default terminal name is &#8220;G.&#8221; Use this format for the definition.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014469"></a><code> layer [ ( &quot;name&quot; ) ]</code></p>
+
+<p><strong>
+<a id="pgfId-1014471"></a><code>s_d</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016743"></a> The transistor <a id="marker-1014470"></a>source and drain terminals. This definition contains a layer name for the terminals followed by two optional text strings in parentheses specifying the terminal names. The default terminal names are &#8220;S&#8221; and &#8220;D.&#8221; Use this format for the definition.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014472"></a><code> layer [ ( &quot;t_sname&quot; &quot;t_dname&quot; ) ]</code></p>
+
+<p><strong>
+<a id="pgfId-1014474"></a><code>bg</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016755"></a> The optional transistor back-gate <a id="marker-1014473"></a>terminal. This definition contains a layer name for the terminal followed by an optional text string in parentheses specifying the terminal name. The default terminal name is &#8220;B.&#8221; Use this format for the definition.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014475"></a><code> layer [ ( &quot;name&quot; ) ]</code></p>
+
+<p><strong>
+<a id="pgfId-1014477"></a><code>model</code><a id="marker-1014476"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016764"></a> The device model name, which is a character string enclosed in quotes. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1014478"></a> You must define the model name and the view name, and optionally, the library name in the character string. If you don&#8217;t specify the view name, the program defaults to the name <em>symbol</em>. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1014479"></a> The defined model must be available in a library accessible by the program so that the terminal configurations can be verified and instances of the device can be placed in the extracted view of the circuit. If you specify a library name, the library is searched, otherwise, the library that contains the layout cellview is searched. If that search fails, all available libraries are searched in arbitrary order.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014480"></a> The following example illustrates model definitions.</p>
+
+<p>
+<a id="pgfId-1015265"></a></p>
+<table class="webflareTable" id="#id1015222">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015224"></a>&quot;nfet lvs mylib&quot;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015226"></a>Use model <em>nfet lvs</em> from library mylib.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015228"></a>&quot;nfet lvs&quot;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015230"></a>Search for model <em>nfet lvs</em> in the library that contains the layout cellview. If that search fails, all available libraries are searched in arbitrary order.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015232"></a>&quot;nfet&quot;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015234"></a>Search for <em>nfet</em> symbol in same library, as example above.</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1014487"></a><code>length</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016773"></a> You can optionally specify a name in quotes for the transistor length property. If you do not define this name, the program uses the default name of <em>l</em>. This option must be used with the width and scale options.</p>
+
+<p><strong>
+<a id="pgfId-1016778"></a><code>width</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016781"></a> You can optionally specify a name in quotes for the transistor width property. If this name is not defined, the program uses the default name of <em>w</em>.</p>
+
+<p><strong>
+<a id="pgfId-1016786"></a><code>scale</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016789"></a> You can optionally specify a floating-point number defining the scale of the width and length properties. The scale is relative to the user units in use. With user units of microns, the default value of 1.0 implies that the width and length are measured in microns. Similarly, a value of 1.0e-6 converts the units to meters.</p>
+
+<h4>
+<a id="pgfId-1014530"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014531"></a>The following example illustrates the <em>extractMOS</em> command for a four-terminal MOS transistor with terminal names of <em>S</em>, <em>D</em>, <em>G</em> and <em>B</em>, and width and length properties of <em>w</em> and<em> l</em>.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014532"></a>extractMOS( gate poly diff substrate &quot;nfet&quot; )</pre>
+
+<p>
+<a id="pgfId-1014533"></a>All the terminal names, properties, and model views are defaulted. </p>
+<p>
+<a id="pgfId-1014534"></a>The next example illustrates the <em>extractMOS</em> command for the same device, but explicitly defines the previously defaulted values.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014535"></a>extractMOS( gate poly(&quot;G&quot;) diff(&quot;S&quot; &quot;D&quot;) substrate(&quot;B&quot;) &quot;nfet symbol&quot; &quot;l&quot; &quot;w&quot; 1.0 )</pre>
+<h2>
+<a id="pgfId-1014538"></a>Data Storage<a id="Data Storage"></a></h2>
+<h3>
+<a id="pgfId-1015746"></a><a id="68071"></a>saveInterconnect<a id="saveInterconnect"></a></h3>
+<a id="pgfId-1015748"></a><a id="marker-1015747"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+saveInterconnect( layer_list [ tile ] [ fig ] [ fig(n) ] )</pre>
+<h4>
+<a id="pgfId-1015749"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015753"></a>The <em>saveInterconnect </em>command copies shapes into the extracted cellview. If a layer being copied has nodal information because it was being processed in a <em>geomConnect</em><a id="marker-1015750"></a><a id="marker-1015751"></a><a id="marker-1015752"></a> command or because it was being processed by commands that maintain net information, it is saved in the extracted cellview with <em>net</em> purpose. Any other layer, whether an original graphics layer or a derived layer, is saved with <em>drawing</em> purpose.</p>
+
+<h4>
+<a id="pgfId-1015754"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015756"></a><code>layer_list</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016796"></a> A single original layer name enclosed in quotes, or a derived layer name. Shapes from the layer are saved in the extracted view on the graphics layer having the same name.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1016002"></a> A parenthesized list consisting of a single original layer name enclosed in quotes, or a derived layer name followed by a graphics layer name in quotes, or a parenthesized layer purpose pair. Shapes from the first layer are saved in the extracted view on the second layer.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1016007"></a> By default, if no purpose is given, the &#8220;net&#8221; purpose is used for connected layers and the &#8220;drawing&#8221; purpose is used for unconnected layers.</p>
+
+<p><strong>
+<a id="pgfId-1015763"></a><code>tile</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016805"></a>Optional keyword that causes the output layer to be generated as trapezoids. This is the default in Abgen mode.</p>
+
+<p><strong>
+<a id="pgfId-1016810"></a><code>fig</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016813"></a> Optional keyword that causes the output layer to be generated as figures. This is the default in Extract mode.</p>
+
+<p><strong>
+<a id="pgfId-1016818"></a><code>fig(n)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016821"></a> Optional keyword that causes the output layer to be generated as figures with no more than <code>n</code> vertices.</p>
+
+<p>
+<a id="pgfId-1015769"></a></p>
+<table class="webflareTable" id="#id1015766">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015768"></a>If a derived layer is named &#8220;tile&#8221; or &#8220;fig&#8221;, it will take precedence over the output format options above. If you want to use the options, do not use these names for layers in your rule deck.</div>
+
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1015770"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015771"></a>The following examples illustrate the <em>saveInterconnect</em> command.</p>
+<p>
+<a id="pgfId-1015772"></a>Save a single derived layer <em>poly </em>on the graphics layer &#8220;poly.&#8221;</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015773"></a>saveInterconnect( poly )</pre>
+
+<p>
+<a id="pgfId-1015774"></a>Save<em> diffn</em> to the graphics layer &#8220;diffusion.&#8221;</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015775"></a>saveInterconnect( ( diffn &quot;diffusion&quot; ) )</pre>
+
+<p>
+<a id="pgfId-1015776"></a>Save two layers in one command.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015777"></a>saveInterconnect( ( metal &quot;cuts&quot; ) (poly &quot;poly1&quot;) )</pre>
+
+<p>
+<a id="pgfId-1015816"></a>Save a layer as tiles.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015817"></a>saveInterconnect( poly tile )</pre>
+
+<p>
+<a id="pgfId-1015818"></a>Save a layer on a non-standard purpose.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015819"></a>saveInterconnect( ( poly ( &quot;poly1&quot; &quot;pin&quot; ) ) )</pre>
+<h3>
+<a id="pgfId-1014564"></a>saveProperty<a id="saveProperty"></a></h3>
+<a id="pgfId-1014566"></a><a id="marker-1014565"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+saveProperty( deviceLayer propname expression )</pre>
+<h4>
+<a id="pgfId-1014567"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014569"></a>This command saves a preset <a id="marker-1014568"></a>property on devices created using the <em>extractMOS</em> or<em> extractDevice</em> commands.</p>
+
+<h4>
+<a id="pgfId-1014570"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014572"></a><code>deviceLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016828"></a> A <a id="marker-1014571"></a>device recognition layer reference previously used in an <em>extractMOS </em>or <em>extractDevice</em> command.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014573"></a> This entry can also be a layer derived from a device recognition layer by a selection command such as <em>geomInside</em> or <em>geomGetTexted</em>. For each shape on this layer, the property is saved on the original device from which the shape was derived.</p>
+
+<p><strong>
+<a id="pgfId-1014574"></a><code>propname</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016837"></a> The name of the property, in quotes, to be saved on the devices formed by the <em>deviceLayer</em>. </p>
+
+<p><strong>
+<a id="pgfId-1016842"></a><code>expression</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016845"></a><code>&#160;&#160;&#160;&#160;</code>The contents of the property to be saved on the devices formed by the <em>deviceLayer.</em> This can be either a character string in quotes or a fixed or floating-point number. The number might include an expression involving preset variables.</p>
+
+<h4>
+<a id="pgfId-1014576"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014577"></a>The following examples illustrate the <em>saveProperty</em> command.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014578"></a>saveProperty( gate &quot;type&quot; &quot;nfet&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014579"></a>saveProperty( pgate &quot;fan-out-limit&quot; 5 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014580"></a>p = &quot;float-property&quot; x = 2</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014581"></a>saveProperty( n_gate p sqrt(x) )</pre>
+<h3>
+<a id="pgfId-1014584"></a>saveRecognition<a id="saveRecognition"></a></h3>
+<a id="pgfId-1014586"></a><a id="marker-1014585"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+saveRecognition( recLayer [display_layer] )</pre>
+<h4>
+<a id="pgfId-1014587"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014589"></a>The <em>saveRecognition</em> command stores the extracted device recognition shapes used in the <em>extractDevice</em><a id="marker-1014588"></a><a id="marker-1014590"></a> and <em>extractMOS </em><a id="marker-1014591"></a>commands in the extracted cellview and attaches them to the appropriate device instances.</p>
+
+<h4>
+<a id="pgfId-1014592"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014594"></a><code>recLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016852"></a> The <a id="marker-1014593"></a>device recognition layer used in the <em>extractDevice </em>or <em>extractMOS</em> commands.</p>
+
+<p><strong>
+<a id="pgfId-1016857"></a><code>display_layer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016860"></a> You can specify an optional graphics layer name enclosed in quotes. If this layer is specified, the shapes from the recognition layer are displayed on it. Otherwise, the shapes are displayed on a graphics layer with the same name as the recognition layer.</p>
+
+<h4>
+<a id="pgfId-1014596"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1014597"></a>The following example saves the recognition layer <em>gate </em>and displays it on the original graphics layer &#8220;gate.&#8221;</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014598"></a>saveRecognition( gate )</pre>
+
+<p>
+<a id="pgfId-1014599"></a>This example saves the recognition shapes from the layer <em>gate</em> and displays them using the &#8220;gate_display&#8221; graphics layer.</p>
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014600"></a>saveRecognition( gate &quot;gate_display&quot; )<a id="Parameterized Cell SKILL Function"></a><a id="ivCreatePCells"></a></pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap7.html" id="prev" title="DRC Overview">DRC Overview</a></em></b><b><em><a href="chap9.html" id="nex" title="Extracting Parameters (LPE)">Extracting Parameters (LPE)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

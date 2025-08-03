@@ -1,0 +1,915 @@
+
+<html><head><title>Extracting Parasitic Resistance (PRE)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027658" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Extracting Parasitic Resistance (PRE)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027658" />
+<meta name="NextFile" content="chap12.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap10.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Extracting Parasitic Resistance (PRE)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap10.html" title="Extracting Parasitics (LPE)">Extracting Parasitics (LPE)</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap12.html" title="Checking Electrical Rules (ERC)">Checking Electrical Rules (ERC ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>11
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Extracting Parasitic Resistance (PRE)<hr />
+</h1>
+<h2>
+<a id="pgfId-1014199"></a>Introduction<a id="Introduction"></a></h2>
+<h3>
+<a id="pgfId-1014201"></a>What Is Parasitic Resistance Extraction?<a id="What Is Parasitic Resistance Extraction?"></a></h3>
+
+<p>
+<a id="pgfId-1014202"></a>The Parasitic Resistance Extraction (PRE) capability lets you convert one or more interconnect layers to a resistance-capacitance network. You do not have to perform any preprocessing to prepare the interconnect layers for extraction, as would be the case if you were extracting devices using the <em>extractDevice </em>and <em>extractMOS</em> commands.</p>
+<p>
+<a id="pgfId-1014203"></a>Resistance extraction provides you with a reasonably accurate representation of the interconnect parasitics without incurring excessive processing overhead. Accuracy is obtained by a thorough topological analysis and by inclusion of factors such as bend resistance, transition resistance, and contact resistance, and through the handling of complex shapes, all angles, and multiple terminations to contacts and device terminals.</p>
+<p>
+<a id="pgfId-1014204"></a>Distributed capacitance of the interconnect can be included in the extraction with your own choice of the resistance-capacitance (RC) model as well as the various coefficients and factors.</p>
+
+<h3>
+<a id="pgfId-1014206"></a>How Do I Invoke It?<a id="How Do I Invoke It?"></a></h3>
+
+<p>
+<a id="pgfId-1014208"></a>Resistance extraction is triggered through the <a id="marker-1014207"></a><em>measureResistance </em>command, which must precede the last <em>geomConnect</em> command in the rule deck. Resistance extraction is performed as part of a normal layout extraction run in which the circuit network is extracted from the layout and stored in an extracted view of the circuit.</p>
+
+<h3>
+<a id="pgfId-1014210"></a>What Are the Results?<a id="What Are the Results?"></a></h3>
+
+<p>
+<a id="pgfId-1014211"></a>During circuit extraction processing without parasitic resistance, an<em> extracted</em> view of the circuit is produced in which every electrical net formed by the layout is represented as a single entity in the data.</p>
+<p>
+<a id="pgfId-1014213"></a><a id="marker-1014212"></a>Parasitic resistance works on one connected layer at a time. Any part of an electrical net that is composed of the specified layer is broken down into a resistor-capacitor network. The parts of the net that are not composed of resistance layers are left as before. </p>
+<p>
+<a id="pgfId-1014214"></a>The result is that each single entity that is an original net becomes a network. The original net no longer exists. If the original net was labelled, the part of the original net that overlaps the label uses that label for the net name. The additional nets created have names based on the original net name and a sequence number. You can control the exact format of the name used for the additional nets by defining the SKILL procedure <em>ivUserNetNameFormatter</em>. If the SKILL procedure is not defined, Diva uses a default format of &lt;original-name&gt;:&lt;sequence-number&gt;. An example of the Skill procedure that mimics the default behavior is:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014215"></a>procedure( ivUserNetNameFormatter( name number )<br />   get_string( concat( name &quot;:&quot; number ) )<br />); end iVUserNetNameFormatter</pre>
+<p>
+<a id="pgfId-1014216"></a>The original devices which were recognized by the <em>extractDevice</em> and <em>extractMOS</em> commands are unchanged. New devices representing the resistors and capacitors are added.</p>
+<p>
+<a id="pgfId-1014217"></a>The layers used for resistance extraction are removed from the circuit to form the resistors themselves. Therefore, they are no longer available for other parasitic measurements, such as cross-coupling capacitance.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014339"></a>Resistance Extraction Capabilities</div>
+<p>
+<a id="pgfId-1015705"></a></p>
+<div class="webflare-div-image">
+<img width="597" height="469" src="images/chap11-2.gif" /></div>
+<h2>
+<a id="pgfId-1014342"></a>The Extraction Process<a id="The Extraction Process"></a></h2>
+
+<p>
+<a id="pgfId-1014344"></a><a id="marker-1014343"></a>Several separate operations are performed during parasitic resistance extraction. Processing is split into two sections. </p>
+<ul><li>
+<a id="pgfId-1014345"></a>The first section is performed before the circuit interconnect extraction and is the preparation of the data. It is performed for each layer defined to be used for resistance extraction.</li><li>
+<a id="pgfId-1014346"></a>The second section is performed after the interconnect extraction and is the actual recognition and measurement of resistors and capacitors.</li></ul>
+
+
+<h3>
+<a id="pgfId-1014348"></a>Preconnect<a id="Preconnect"></a></h3>
+
+<p>
+<a id="pgfId-1014349"></a>The resistance layer is split into two separate layers. The first layer is a replacement for the original interconnect layer and consists of the areas formed by the contacts and pins plus special areas formed from device recognition shapes see the <a href="chap11.html#23173">&#8220;Device Terminals&#8221;</a>. This layer forms the terminals of the resistors. The second layer is all of the original layer minus the terminal layer and forms the shapes to be converted into resistors.</p>
+<p>
+<a id="pgfId-1014353"></a>To enable the capability of combining resistance extraction and cross-coupling or fringe capacitance extraction, you can also specify that a special additional layer be derived that consists of a concatenation of the terminal and resistor layer. This layer appears to be almost identical to the original layer but has the correct nodal information to allow parasitic capacitance to be measured. You can use this special layer as input to the parasitic measurement commands.</p>
+<p>
+<a id="pgfId-1014354"></a>You can also request that the resistor bodies be fractured into smaller pieces to allow more accurate distribution of the cross-coupling capacitance inside the resistor network.</p>
+
+<h3>
+<a id="pgfId-1014356"></a>Postconnect<a id="Post Connect"></a></h3>
+
+<p>
+<a id="pgfId-1014357"></a>The resistor layer is processed to extract the resistance and capacitance network it contains. Each contact or device terminal that was cut out to form the resistance layer acts as a terminal to the extracted network. The devices and nets forming the extracted network are added to the <em>extracted</em> view of the circuit, supplementing the devices and interconnect already extracted through device and connectivity extraction steps.</p>
+<p>
+<a id="pgfId-1014358"></a>The extraction process consists of breaking the resistor layer down into small pieces. Each piece can have its resistance and capacitance calculated with compensation for bends and transitions. These resistances and capacitances form an initial network into which contact resistance is added. The network output is then reduced to its simplest form. </p>
+<p>
+<a id="pgfId-1014359"></a>Each resulting device in the network is an entry that has a resistance value and a capacitance value. You can use the system netlisting capabilities to translate these devices into networks of their own, such as Pi or Tee R-C networks.</p>
+
+<h2>
+<a id="pgfId-1014362"></a>Resistor Formation<a id="Resistor Formation"></a></h2>
+
+<p>
+<a id="pgfId-1014366"></a>Forming<a id="marker-1014363"></a> resistors<a id="marker-1014364"></a> from<a id="marker-1014365"></a> polygon shapes requires several steps. The individual polygons on the resistor layer are fractured into pieces. Each piece has a maximum of four sides and no external angles less than 180 degrees (the piece has no reentrant angles). Each piece has its edges identified as external edges of the original shape, as connections to other polygon pieces, or as connections to contacts and device terminals. This concept is illustrated for a simple polygon. Complex polygons follow the same process.</p>
+
+<p>
+<a id="pgfId-1015682"></a></p>
+<div class="webflare-div-image">
+<img width="591" height="238" src="images/chap11-3.gif" /></div>
+
+<p>
+<a id="pgfId-1014384"></a>Each polygon piece has possible current flow between all contact edges, terminal edges, and connections to other pieces. For each possible current flow path, the shape is analyzed and the resistance of that path is calculated. All the resistance paths are then combined to form a network. There can be from zero to four resistors in each polygon piece. As far as current flow is concerned, the pieces with zero resistors are dead ends. The following <a id="marker-1014385"></a>figure illustrates examples of resistance networks inside polygon pieces.</p>
+
+<p>
+<a id="pgfId-1015683"></a></p>
+<div class="webflare-div-image">
+<img width="594" height="94" src="images/chap11-4.gif" /></div>
+
+<p>
+<a id="pgfId-1014406"></a>The determination of resistance for each path in a polygon piece includes compensation for bends, steps, and transitions. Even though each individual piece does not have these configurations, the information from the original polygon, necessary for the calculations, can be deduced from the pieces. </p>
+<p>
+<a id="pgfId-1014407"></a>During the fracturing process, the external edge length and area of each polygon piece is measured and associated with the piece. If you supply a calculation as part of the resistance extraction command, the capacitance of each polygon piece is calculated and distributed among the resistors calculated from the piece. </p>
+
+<h2>
+<a id="pgfId-1014410"></a>Contact Resistance<a id="Contact Resistance"></a></h2>
+
+<p>
+<a id="pgfId-1014411"></a>The program considers three components of contact resistance during the resistance network extraction.</p>
+<ul><li>
+<a id="pgfId-1014412"></a>The resistance relative to current flow around the contact</li><li>
+<a id="pgfId-1014413"></a>The resistance of contact edges</li><li>
+<a id="pgfId-1014414"></a>The resistance of contact area</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1014416"></a>Current Flow<a id="Current Flow"></a></h3>
+
+<p>
+<a id="pgfId-1014417"></a>You conventionally apply a compensating factor to the resistance along a net based on the width of the contact to that net and the width of the net itself. This approximation is intended to compensate for the change in resistance created by current flow around the contact. </p>
+<p>
+<a id="pgfId-1014418"></a>This program&#8217;s resistance extraction methodology makes contact compensation unnecessary since it extracts the complete network around the contact. </p>
+<p>
+<a id="pgfId-1014419"></a>The following figure illustrates an example of a resistance network around a single contact. This form of network extraction is applied in all contact configurations, whether there be single, multiple, or arrays of contacts.</p>
+
+<p>
+<a id="pgfId-1015684"></a></p>
+<div class="webflare-div-image">
+<img width="679" height="161" src="images/chap11-5.gif" /></div>
+<h3>
+<a id="pgfId-1015499"></a>Edge Resistance<a id="Edge Resistance"></a></h3>
+
+<p>
+<a id="pgfId-1014458"></a>Contact edge resistance is considered when current is flowing across the edge from the net to the contact or vice-versa.</p>
+<p>
+<a id="pgfId-1014459"></a>You conventionally consider only the edge of the contact that is perpendicular to the main direction of the net to which it connects. This is an approximation because you have no information as to the current flow around the contact. </p>
+<p>
+<a id="pgfId-1014460"></a>Since the program does have the current flow information around the contact in the form of the extracted network, it can utilize the resistance of all edges of the contact. The program therefore measures the length of each contact edge and applies to it the coefficient you supplied for contact edge resistance with the assumption that the resistance value of an edge is inversely proportional to its length.</p>
+<p>
+<a id="pgfId-1014461"></a>You can define a different edge resistance coefficient for each type of contact.</p>
+<p>
+<a id="pgfId-1014462"></a>The following figure illustrates the edge resistance of a contact in isolation from other resistances.</p>
+
+<p>
+<a id="pgfId-1015688"></a></p>
+<div class="webflare-div-image">
+<img width="610" height="155" src="images/chap11-6.gif" /></div>
+<h3>
+<a id="pgfId-1014480"></a>Area Resistance<a id="Area Resistance"></a></h3>
+
+<p>
+<a id="pgfId-1014481"></a>Resistance of the contact area is considered as a resistance to the flow of <a id="marker-1014482"></a>current through the contact. The coefficient you supply is used to calculate the resistance inversely proportional to the contact area. </p>
+<p>
+<a id="pgfId-1014483"></a>You can define a different area resistance coefficient for each different type of contact.</p>
+<p>
+<a id="pgfId-1014484"></a>The following figure illustrates area resistance of a contact in isolation from other resistances.</p>
+
+<p>
+<a id="pgfId-1015687"></a>.</p>
+<div class="webflare-div-image">
+<img width="610" height="160" src="images/chap11-7.gif" /></div>
+
+<p>
+<a id="pgfId-1014501"></a>Since the contact edge and area resistance extraction capabilities are both optional, the network output can be formed in one of four ways, as illustrated in this figure.</p>
+<p>
+<a id="pgfId-1014503"></a><a id="marker-1014502"></a>In all cases, the resistors on the side of the contact away from the current flow direction have little effect on the total resistance, but they do accurately model the true circuit.</p>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014678"></a>Possible Contact Configurations</div>
+<p>
+<a id="pgfId-1015837"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="589" src="images/chap11-8.gif" /></div>
+<h2>
+<a id="pgfId-1014680"></a><a id="23173"></a>Device Terminals</h2>
+
+<p>
+<a id="pgfId-1014682"></a>Connections to resistors are formed from contacts, pins, and device terminals formed from the device recognition shapes. For pin and contact connections to resistors,&#160;&#160;Diva uses the complete area of the connection shape as the connection to the resistor. For device terminals, Diva has to create special connection shapes using the device recognition shape as the base.</p>
+<p>
+<a id="pgfId-1014683"></a>There are two types of device terminals. A resistor shape can butt against a device recognition shape to form a terminal as in the source/drain of an MOS transistor. A resistor shape can also pass across a device recognition shape to form a terminal as in the gate of an MOS transistor.</p>
+<p>
+<a id="pgfId-1014684"></a>To form connectivity for the device terminal recognition, each device terminal has to be represented by a shape on the interconnect layer. If Diva converted all the interconnect layer to resistor layer there would be no terminals left for connectivity, so Diva creates its own terminals.</p>
+<p>
+<a id="pgfId-1014685"></a>For the source/drain type of connection, Diva creates a terminal at each butting interface between the resistor layer and the device recognition shape.This terminal is a narrow sliver along the butting edges. Its existence lets Diva recognize both the resistor and device terminals.</p>
+
+<p>
+<a id="pgfId-1015693"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="207" src="images/chap11-9.gif" /></div>
+
+<p>
+<a id="pgfId-1014717"></a>For the gate connection, Diva creates a very narrow sliver across the device between the source and drain edges. This sliver has area, so it behaves as a normal terminal to the device during device extraction. However it is small enough that is has virtually no effect on the resistance along the path through the gate.</p>
+
+<p>
+<a id="pgfId-1015694"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="166" src="images/chap11-10.gif" /></div>
+
+<p>
+<a id="pgfId-1014746"></a>For both these connection types, the final interconnect layer has no shape that represents the full device recognition shape. This means you cannot use the original resistor layer to make device parameter measurements. For example, if you convert gate polysilicon into resistors you cannot measure gate width by measuring the length of polysilicon coincident with the gate region. You must measure the length of the gate region butting the source/drain layer.</p>
+<p>
+<a id="pgfId-1014747"></a>If there is a contact or pin over the gate region, and the area of that contact or pin does not intersect with the gate <em>sliver </em>terminal, the gate has two connections and is flagged as badly formed.</p>
+
+<h2>
+<a id="pgfId-1014749"></a>Bend Resistance<a id="Bend Resistance"></a></h2>
+
+<p>
+<a id="pgfId-1014752"></a><a id="marker-1014750"></a>You<a id="marker-1014751"></a> can provide a bend resistance factor to the program so that it can more accurately calculate the effect of bends in a path on the resistance of that path. You provide a factor that is defined for right-angled bends where the path width does not change from one side of the bend to the other. For bends in which the paths on either side of the bend are of different width, the factor is modified to cover the angle of the bend plus the transition effect from one path width to another.</p>
+<p>
+<a id="pgfId-1014753"></a>If you want a 90-degree bend to be considered as if the current always flows through the center line, you would have to provide a factor of 1. The default factor applied by the program if you do not provide one is 0.56. For bends other than 90 degrees, the program uses a portion of the factor you supply based on the angle between the paths on either side of the bend. The smaller the angle, the smaller the factor used.</p>
+<p>
+<a id="pgfId-1014754"></a>The following figure illustrates sample bend configurations for which the program compensates.</p>
+
+<p>
+<a id="pgfId-1015695"></a></p>
+<div class="webflare-div-image">
+<img width="602" height="161" src="images/chap11-11.gif" /></div>
+<h2>
+<a id="pgfId-1014796"></a>Transition Resistance<a id="Transition Resistance"></a></h2>
+
+<p>
+<a id="pgfId-1014798"></a>A <a id="marker-1014797"></a>transition is a sudden change in the width of a conducting path. Generally, the term <em>transition</em> is used when the one or both sides of a path form a step. In the examples, the discussion is limited to a step on a single side, but the principle applies in both cases.</p>
+<p>
+<a id="pgfId-1014800"></a>The transition effect on current flow is to form a <a id="marker-1014799"></a><em>dead</em> corner through which no current actually passes. Since all the resistive material of the path is not in use, the resistance formed by the path is higher than would be the case if all the material were used.</p>
+<p>
+<a id="pgfId-1014801"></a>The figure shows the current flow pattern and examples of how the resistance could be calculated.</p>
+<p>
+<a id="pgfId-1014803"></a><a id="marker-1014802"></a>The simple solution does not consider the transition, and results in a calculated resistance value higher than the real value. The alternate solutions show how the program methodology of cutting the original shape ensures that the calculated resistance is as close to the real resistance as <a id="marker-1014804"></a>possible. The appropriate shape cutting is automatic, requiring no user information or intervention.</p>
+
+<p>
+<a id="pgfId-1015696"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="325" src="images/chap11-12.gif" /></div>
+<h2>
+<a id="pgfId-1014867"></a>Network Reduction<a id="Network Reduction"></a></h2>
+
+<p>
+<a id="pgfId-1014869"></a><a id="marker-1014868"></a>The resistance extraction process described so far results in a large number of individual resistors connected in a complex network. Even a simple &#8220;dog-bone&#8221; resistor can result in over 36 resistors representing a single resistance path. Although this is an accurate representation of the resistive circuit in the original shapes, it would consume an unacceptable amount of storage space and be time-consuming to simulate.</p>
+<p>
+<a id="pgfId-1014870"></a>To overcome this, the program reduces the network to a minimum configuration. A dog-bone shape should reduce to a single resistor. The reduction process uses a series of transformations in an iterative sequence. Each sequence reduces the number of resistors. The program repeats the process until no more reduction takes place.</p>
+<p>
+<a id="pgfId-1014871"></a>The reduction process does not reduce the accuracy of the network. The transformations used give exact equivalent circuits. No approximations are made.</p>
+<p>
+<a id="pgfId-1014872"></a>In most cases, the reduced network includes the minimum number of resistors required to represent the circuit. For some circuits, the program might produce a less-than-minimum result when the network reaches a configuration that cannot be reduced further by the tools available.</p>
+<p>
+<a id="pgfId-1014873"></a>The resistor configuration produced by the program might not match your concept of what that configuration should be. The result, however, is meaningful and accurate.</p>
+<p>
+<a id="pgfId-1014874"></a>You can also eliminate resistors from the network after the reduction process completes by using the <em>ignore</em> option. The <em>ignore</em> option replaces resistors below the value you define with short circuits and replaces resistors above the value you define with open circuits.</p>
+
+<h2>
+<a id="pgfId-1014877"></a><a id="marker-1014875"></a>Cross Coupling and Fringe Capacitance<a id="marker-1014876"></a></h2>
+<h4>
+<a id="pgfId-1014878"></a>Measurement</h4>
+
+<p>
+<a id="pgfId-1014880"></a>You can specify an output layer for th<a id="marker-1014879"></a>e <code>measureResistance</code> command. This layer is the original layer you defined for resistance but contains separate polygons for the resistor bodies and contacts, pins, and device recognition polygons that form the terminals of the resistors. It is a composite of the resistor layer and the remaining interconnect layer.</p>
+<p>
+<a id="pgfId-1014881"></a>You treat the output layer like any other derived layer containing unmerged data. For most situations, Diva treats the layer as <em>unconnected</em>. However, you can use the layer to measure parasitic capacitance with the following commands:</p>
+<ul><li>
+<a id="pgfId-1014882"></a>measureFringe</li><li>
+<a id="pgfId-1014883"></a>multiLevelParasitic</li></ul>
+
+<p>
+<a id="pgfId-1014884"></a>In these cases, the language parser treats the resistance output layer as if it is connected. You use the layer in these commands just like any other connected layer.</p>
+<p>
+<a id="pgfId-1017202"></a>The output layer from <code>measureResistance</code> must not be used with the <code>complexParasitic</code> command. This new command requires the input layer of <code>measureResistance</code> to be used. The <code>complexParasitic</code> command will automatically locate any <code>measureResistance</code> command which processes the layer, and cause <code>measureResistance</code> to produce the data needed by <code>complexParasitic</code>.</p>
+<p>
+<a id="pgfId-1017200"></a></p>
+<p>
+<a id="pgfId-1014885"></a>Any parasitic measurements made between the resistance output layer and any other layers are evenly distributed to the terminal connections of the resistors. For example, in the following figure</p>
+<ul><li>
+<a id="pgfId-1014886"></a>The resistor connected between terminals A and B.</li><li>
+<a id="pgfId-1014887"></a>The resistor crosses net C with a cross coupling capacitance of 10.</li><li>
+<a id="pgfId-1014888"></a>Two capacitors are formed:<br />
+<a id="pgfId-1014889"></a>A to C = 5
+B to C = 5<br />
+<a id="pgfId-1015697"></a><div class="webflare-div-image">
+<img width="492" height="215" src="images/chap11-13.gif" /></div></li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1014934"></a>Any capacitance to nets directly connected to the resistor body are considered as capacitors to the same net and are ignored.</p>
+<p>
+<a id="pgfId-1014935"></a>Measurements can be made between two or more resistor bodies, and the resultant values are distributed between all the resultant terminals. For example, in the following illustration</p>
+<ul><li>
+<a id="pgfId-1014936"></a>Resistor 1 (R1) is between nets A and B</li><li>
+<a id="pgfId-1014937"></a>Resistor 2 (R2) is between nets C and D</li><li>
+<a id="pgfId-1014938"></a>The value of 20 is measured by R1 crossing R2.</li><li>
+<a id="pgfId-1014939"></a>These capacitors are formed:<br />
+<a id="pgfId-1014940"></a>A to C = 5
+A to D = 5
+B to C = 5
+B to D = 5<br />
+<a id="pgfId-1017556"></a><br /><div class="webflare-div-image">
+<img width="668" height="404" src="images/chap11-14.gif" /></div>
+<a id="pgfId-1015698"></a></li></ul>
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1014992"></a>You can manipulate parasitic measurements made from a resistor body like any other measurement by using the <em>calculateParasitic</em> and <em>saveParasitic</em> commands.</p>
+<p>
+<a id="pgfId-1014993"></a>When using <em>measureFringe</em> on resistor bodies, it is recommended that you always use the <em>shielded</em> and <em>opposite</em> options in the <em>drc</em> command. This is recommended whenever you use <em>measureFringe</em>, but is even more important when you use the command on resistor bodies because the layer you are measuring consists of the concatenation of the resistor bodies and the resistor terminals. This concatenation results in <em>internal</em> edges at the interface between the two layers. If your resistance layer originally terminated at a gate (like the source/drain of an MOS device), this butting edge is included in the parasitic measurements and might cause false capacitance values.</p>
+<p>
+<a id="pgfId-1014994"></a>If any resistor shape has no terminals, it is not included in the parasitic measurements because there are no terminal nodes to which the resultant capacitors can attach.</p>
+
+<h4>
+<a id="pgfId-1014995"></a>Distribution</h4>
+
+<p>
+<a id="pgfId-1014997"></a><a id="marker-1014996"></a>For resistors or networks derived from larger polygons, the even distribution of capacitance on the original resistor terminals might be inaccurate. To improve the accuracy, you can fracture the original resistor bodies into smaller pieces. You can provide a command line option to control the size of these pieces.<a id="marker-1014998"></a></p>
+<p>
+<a id="pgfId-1014999"></a>Diva fractures resistor bodies for better distribution of resistance and capacitance by creating extra terminals along the path of the resistor. These extremely narrow terminals cut across the resistance path and have little impact on resistance and capacitance calculations. When you measure cross-coupling capacitance on resistors where fracturing has been applied, separate measurements are made for each fractured resistor piece and are distributed only to the terminals of that piece. Consider the following example:</p>
+<p>
+<a id="pgfId-1015000"></a>A path has been cut into four pieces and has a cross coupling-capacitance across the second piece. The original terminals of the shape are <em>A</em> and <em>B</em>. The extra terminals created by the distributed cutting are <em>D1</em>, <em>D2</em>, and <em>D3.</em></p>
+
+<p>
+<a id="pgfId-1015699"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="122" src="images/chap11-15.gif" /></div>
+
+<p>
+<a id="pgfId-1015014"></a>The resultant network shows the cross-coupling capacitance value distributed only to the terminals of the second piece.</p>
+
+<p>
+<a id="pgfId-1015700"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="124" src="images/chap11-16.gif" /></div>
+
+<p>
+<a id="pgfId-1015038"></a>The fracturing applies to all resistor body shapes, but the actual cuts are made only in parallel-edged horizontal and vertical sections of the resistor. The extra terminals are narrow and have a minor effect on the resistance and capacitance values. For example, a resistance of 10 might become 9.99.</p>
+<p>
+<a id="pgfId-1015039"></a>Diva has been designed to provide consistent results when fracturing shapes that you place at different orientations. However, it is possible that in some circumstances rotated shapes are cut differently.</p>
+<p>
+<a id="pgfId-1015040"></a>Diva maintains the length of the fractured segments in a straight, parallel-edged path, close to the distribution factor you provide. However, no attempt is made to maintain the exact length of segments that form steps, bends, or branches.</p>
+
+<h2>
+<a id="pgfId-1015042"></a>Resistor Body Capacitance<a id="Distributed Capacitance"></a></h2>
+
+<p>
+<a id="pgfId-1015047"></a><a id="marker-1015043"></a>As <a id="marker-1015044"></a>described<a id="marker-1015045"></a> under <a id="marker-1015046"></a><em>Resistor Formation</em>, during the creation of the resistor pieces from the original shape, the area and external edge length of the pieces is used to calculate a capacitance value for those pieces. The area is the complete area of the piece, and the edge length is the length of any edges of the piece which were also edges (or partial edges) from the original shape. These values are used in the calculation you supplied in the original <em>measureResistance</em><a id="marker-1015048"></a> command to generate a capacitance value for the piece.</p>
+<p>
+<a id="pgfId-1015049"></a>When the resistor network is calculated for each piece, that capacitance value is distributed among those resistors. During the resistor network reduction phase of this verification, the capacitance values are consolidated along with the resistors. The result is a single value of capacitance associated with each resistor in the reduced network. As with the resistance values, no accuracy is lost during the reduction process.</p>
+
+<h3>
+<a id="pgfId-1015051"></a>R-C Models<a id="R-C Models"></a></h3>
+
+<p>
+<a id="pgfId-1015052"></a>Although this description of the resistance extraction process has, up to now, used the word <em>resistor</em> to describe the devices extracted by the program, this is not exactly true. What has been extracted is two terminal devices of undefined type that have both a resistance value and capacitance value. It is up to you to give these devices a model name and to provide a device library element for them.</p>
+<p>
+<a id="pgfId-1015053"></a>For the purposes of netlisting these devices, you can either set up the netlist control to have each of your own device types generate a netlist entry directly, or you can have each device be represented by a schematic <a id="marker-1015054"></a>containing a subnetwork that forms a netlist down to individual resistors and capacitors. Within this subnetwork, you can choose the required resistor and capacitor network formation.</p>
+
+<p>
+<a id="pgfId-1015701"></a></p>
+<div class="webflare-div-image">
+<img width="676" height="238" src="images/chap11-17.gif" /></div>
+<h3>
+<a id="pgfId-1015132"></a>Netlisting R-C Models<a id="Netlisting R-C Models"></a></h3>
+
+<p>
+<a id="pgfId-1015133"></a>The major difference between normal netlisting R-C models and normal netlist control is that the properties containing the values of resistance and capacitance are not on the instances of the resistors and capacitors, but on the instance of the higher level cell. </p>
+<p>
+<a id="pgfId-1015134"></a>Each lower level device in the schematic can have associated with it only a portion of the value assigned to that property on the instance of the cell. For example, if the property value on the cell for capacitance is 20, and the schematic cellview of it contains two capacitors, each capacitor needs to have a value of 10 generated for it in the netlist. </p>
+<p>
+<a id="pgfId-1015136"></a><a id="marker-1015135"></a>To facilitate netlisting for this situation, the following procedure must be adopted.</p>
+<ul><li>
+<a id="pgfId-1015137"></a>Create a cell called <em>pirescap</em> for the device to be extracted from the resistance program. </li><li>
+<a id="pgfId-1015138"></a>This cell needs two cellviews, one called <em>symbol</em> containing a picture of the circuit used to display the device in the extracted cellview, and one called <em>schematic</em> containing interconnected instances of resistors and capacitors, which is used by the netlister. The resistance extraction program creates instances of this cell and adds two properties to each. For example<br /><span class="indent-as-level2">
+<a id="pgfId-1015139"></a>r = 12.65
+c = 134.9 </span></li><li>
+<a id="pgfId-1015140"></a>The <em>pirescap </em>schematic cellview contains a circuit consisting of a single resistor with a capacitor to ground at either end. The single resistor is an instance of a device called <em>pires</em> and the two capacitors are instances of devices called <em>picap</em>. Both devices have cellviews called &#8220;lvs&#8221; with similar properties. The capacitor is used in this example.<br /><span class="indent-as-level2">
+<a id="pgfId-1015141"></a>NLPModelPreamble = [@NLPcapacitorModelCard]
+NLPElementPostamble = [@NLPElementComment:%][@NLPcapacitorElementCard]
+LVScapacitorProp = resPrintCBy2( ) </span></li><li>
+<a id="pgfId-1015563"></a>The first two entries have the type of <em>NlpExpr</em> and are the same as those on a normal capacitor. The third entry defining the property has the type of <em>ilExpr</em>. The <em>Postamble</em> entry references the capacitor element entry which is in the <em>nlpglobals</em> cellview. The capacitor element entry references the property entry. Normally, the property entry is found in <em>nlpglobals</em>, but in this case, the one shown in the capacitor itself takes precedence. The property entry references a SKILL procedure that must be provided by the user. <br /><pre class="webflare-pre-block webflare-courier-new" id="#id1015633">
+<a id="pgfId-1015633"></a>procedure( resPrintCBy2( )
+   prog(( str tmp )
+      tmp = fnlSearchPropString( &quot;c&quot; nil )
+      if (tmp, then
+         tmp = evalstring( tmp ) / 2.0
+      else
+         tmp = 0.0
+      )
+      sprintf( str &quot;\ c %f &quot; tmp )
+      return( str )
+   )
+)</pre></li></ul>
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1015573"></a>The <a id="marker-1015569"></a><em>fnlSearchPropString</em> procedure searches through the hierarchy leading to the device instance, looking for a property called <em>c.</em> In this case, it finds it on the parent instance of the capacitor, namely, the instance of <em>pirescap</em>. The value is returned as a string and is converted to a number by the <em>evalstring</em> procedure and divided by 2.</p>
+<p>
+<a id="pgfId-1015150"></a>The resultant value is then printed into a string along with the remaining text required by the final property (in this case, the enclosing quotes and the <em>c</em> character) and returned, which has the effect of printing it in the netlist. In the example, a similar routine is needed for the resistance, but without dividing its value by 2. </p>
+<p>
+<a id="pgfId-1015152"></a>The <a id="marker-1015151"></a>resistance extraction program is working with devices that have two terminals. The only additional nets that can be introduced into the schematic are global signals such as power and ground.</p>
+
+<h2>
+<a id="pgfId-1015155"></a>Multiple Layer Extraction<a id="Multiple Layer Extraction"></a></h2>
+
+<p>
+<a id="pgfId-1015157"></a>Your run command stream can have more than one <a id="marker-1015156"></a>resistance extraction command. Each command applies to a different interconnection layer, and there are no interactions between the devices created from one command and the devices created from another.</p>
+<p>
+<a id="pgfId-1015158"></a>Since the extraction and reduction process works on a shape-by-shape basis, the terminations of each shape (the contacts and device terminals) remain the terminations of the network generated for that shape. For example, a single interconnection line formed from two layers joined by a single contact causes two resistors to be created, one for each layer, with a junction net at the contact between them. The circuit reduction does not proceed across that contact. </p>
+
+<h3>
+<a id="pgfId-1015160"></a>Unexpected Results<a id="Unexpected Results"></a></h3>
+
+<p>
+<a id="pgfId-1015161"></a>There is one situation that causes unexpected results if you are not careful. As explained, if you request extraction of two or more layers, and any two of them are directly connected by a contact, the network reduction is broken at that point. The manner in which the contact is cut from the resistor prior to resistance extraction creates a new electrical net at the contact area. </p>
+<p>
+<a id="pgfId-1015162"></a>If the connection between the two layers is made at any point by multiple contacts, each contact area becomes a separate electrical net. Since they are independent nets, resistance extraction causes discrete resistors to be created between them. This can be seen in the figure, which shows how a single contact between two resistance layers causes a break in the network, and how two contacts result in a more complex network.</p>
+
+<p>
+<a id="pgfId-1015702"></a></p>
+<div class="webflare-div-image">
+<img width="583" height="338" src="images/chap11-18.gif" /></div>
+
+<p>
+<a id="pgfId-1015196"></a>As the number of individual contacts forming a single connection between two resistance layers increases, so does the complexity of the network. The lowest number of resistors between three contacts is three on each layer, totalling six. The lowest number of resistors between five contacts is ten on each layer, totalling twenty. As the numbers of resistors increases, the problems of subsequently processing those devices increases. </p>
+<p>
+<a id="pgfId-1015197"></a>You reach a point where you won&#8217;t want such a network formed. There are techniques you can use to overcome the problem. The results are not quite as accurate as having the full network, but the degradation is minimal.</p>
+<p>
+<a id="pgfId-1015198"></a>The paragraphs detail two techniques to handle the problem. Both rely on the same principle but approach it in different ways. Each has its advantages and disadvantages. Both cause all the contacts at a single connection to be connected to a single net, allowing better network reduction.</p>
+
+<h3>
+<a id="pgfId-1015200"></a>A Simple Approach<a id="A Simple Approach"></a></h3>
+
+<p>
+<a id="pgfId-1015201"></a>The simplest way to make all contacts at a single point have a common net is to generate a new layer from the intersection of the two resistance layers and include it in the <em>connect</em> command.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015202"></a>short = geomAnd( metal1 metal2 )<br />measureResistance( metal1 &quot;resistor&quot; 1.0 &quot;r&quot; )<br />measureResistance( metal2 &quot;resistor&quot; 1.0 &quot;r&quot; )<br />geomConnect ( via( via short metal1 metal2) )</pre>
+<p>
+<a id="pgfId-1015203"></a>In this example, a layer called <em>short</em> is created as the <em>and</em> of <em>metal1</em> and <em>metal2</em>. During the preparation for resistance extraction, the <em>metal1</em> and <em>metal2</em> layers is split into the areas wanted for resistance, and the areas under the contacts. During the connection process, if there are no contacts over a shape on the <em>short</em> layer, no connections are made. Where there are contacts over a <em>short</em> shape, the remaining contact areas of <em>metal1 </em>and <em>metal2</em> connect as normal, and each area connects to the same <em>short</em> shape, forming a single electrical net.</p>
+<p>
+<a id="pgfId-1015220"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="198" src="images/chap11-19.gif" /></div>
+
+<p>
+<a id="pgfId-1017513"></a>This figure shows two examples of multiple contacts. The first figure illustrates a case where the approach gives a reasonable result. The second figure, however, illustrates a case where the result becomes significantly inaccurate. There is a large resistance between the contacts which disappears if the contact areas are on the same electrical net.</p>
+
+<h3>
+<a id="pgfId-1015222"></a>A Better Approach<a id="A More Accurate Approach"></a> to get More Accurate Results</h3>
+
+<p>
+<a id="pgfId-1015223"></a>This approach requires more commands and absorbs more processing time, but provides more accurate results.&#160;&#160; </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015224"></a>close = drc( via sep &lt; 3 opposite )<br />short = geomOr( via close )<br />measureResistance( metal1 &quot;resistor&quot; 1.0 &quot;r&quot; )<br />measureResistance( metal2 &quot;resistor&quot; 1.0 &quot;r&quot; )<br />geomConnect( via( via short metal1 metal2 ) )</pre>
+<p>
+<a id="pgfId-1015225"></a>The <em>drc</em> command creates shapes from the areas between close contacts. The value used for the separation depends upon your own understanding of the technology and definition of when contacts can be considered common and when they cannot. The shape results are then combined with the contacts themselves to produce the same <em>short</em> layer as in the previous example, which is then processed the same way in the <em>connect</em> command. In the previous figure, the first figure shows contacts shorted together (providing they are closer than the <em>drc</em> separation value). The second figure shows contacts remaining separated with the network resistor result between them.</p>
+
+<h3>
+<a id="pgfId-1015661"></a>Using Shorts to Reduce Large Contact Array Resistor Networks</h3>
+
+<p>
+<a id="pgfId-1015662"></a>You must grow and shrink the contacts by an amount sufficient to merge contact arrays and then use the resultant layer as the &quot;short&quot; layer. This has the effect of giving all contacts in the array a common node, but it does not bypass the measurement of the network around the node or the contact resistance measurement. The program will still need time to create the network inside the contact array, but the time to reduce the network down is significantly reduced and the resultant network is much simpler.</p>
+<p>
+<a id="pgfId-1015659"></a>This provides an intermediate solution between leaving the contacts as they are (which is expensive in run time and creates a very large resistor network) and growing and shrinking the contacts themselves which eliminates the contact resistance accuracy.</p>
+
+<h2>
+<a id="pgfId-1015228"></a>Command Reference </h2>
+
+<p>
+<a id="pgfId-1015681"></a>The following section discusses the <code>measureResistance</code> command.<a id="Command Reference"></a></p>
+
+<h3>
+<a id="pgfId-1015231"></a>measureResistance<a id="measureResistance"></a></h3>
+<a id="pgfId-1015232"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+[outlayer=] measureResistance( reslayer model rescoeff [bf] resprop [cap] [ignore] [save][contact][distribute][capLimit]
+[namePrefix(string)][property(name value) ...])</pre>
+<h4>
+<a id="pgfId-1015233"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015236"></a>The <code>measureResistance</code><a id="marker-1015234"></a> command<a id="marker-1015235"></a> extracts a resistance-capacitance network from an interconnect layer. The extraction process allows for sheet resistance, bend resistance, transition resistance, terminal resistance, contact area resistance, contact edge resistance, area capacitance, edge capacitance, and user defined R-C models.</p>
+
+<h4>
+<a id="pgfId-1015237"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015238"></a>The layer to be processed for resistance extraction must be referenced in a <code>geomConnect</code> command. The <code>measureResistance</code> command must precede the <code>geomConnect</code> command.</p>
+
+<h4>
+<a id="pgfId-1015239"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015240"></a><code>outLayer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019248"></a> An optional output layer consisting of the original <em>resLayer </em>separated out into the resistor bodies and the resistor terminals (cuts, pins, gates, and device recognition shapes).</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015241"></a> If you specify this option, you can treat the <em>outLayer</em> as any other unconnected derived layer, except that it is unmerged. For the purposes of parasitic extraction, you can treat it as a connected layer, except for the <code>complexParasitic</code> command, which must be given the <em>reslayer</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015242"></a> The following parasitic measurement commands accept the <em>outLayer</em> as a connected layer:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017722"></a> measureFringe
+multiLevelParasitic</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015245"></a> Any parasitic capacitance created with a shape on the resistor output layer is distributed evenly between the terminal nets of the resistor network extracted from the shape.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015246"></a> If you do not specify this argument, no output layer is created.</p>
+
+<p><strong>
+<a id="pgfId-1015247"></a><code>reslayergt</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019274"></a> The layer to be processed for resistance extraction. This must be a derived layer used in a <code>geomConnect </code>command. The layer is used for both input and output. On input, the layer is the originally derived interconnect layer. The resistance extraction process removes those areas of the layer which becomes resistors, leaving only those areas which form contacts and device terminals. It is these remaining areas which compose the output layer.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015248"></a> The area of the input layer that forms the resistor bodies can be saved separately, if required for reference, using the <em>save</em> option of the <code>measureResistance</code> command.</p>
+
+<p><strong>
+<a id="pgfId-1015252"></a><code>model </code><a id="marker-1015249"></a></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019283"></a>The device<a id="marker-1015250"></a> model name <a id="marker-1015251"></a>consisting of a character string enclosed in quotes. The model can represent a low-level device such as a resistor or a higher level device that netlists down into a resistor and capacitor network.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015253"></a> The character string must define the model name and the view name. If the view name is omitted, the name <em>symbol</em> is defaulted. The defined model must be available in a library accessible to the program so that the terminal configurations can be verified and instances of the device can be placed in the extracted view of the circuit.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015254"></a> The defined model must be a two-terminal device in which the terminals are interchangeable (nonpolarized). Because of this, the terminal names are not required to be specified in this model definition since they can be deduced directly from the model.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015255"></a><code> &quot;pi-res-cap symbol&quot; </code></p>
+
+<p><strong>
+<a id="pgfId-1015256"></a><code>rescoeff</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019295"></a><code>&#160;&#160;&#160;&#160;</code>A floating point or integer value representing the resistivity of the interconnect layer being processed, in ohms per square.</p>
+
+<p><strong>
+<a id="pgfId-1019300"></a><code>bf</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019303"></a> An optional bend factor for adjusting the values of resistors having bends. The value is the resistance in squares around a single 90-degree bend, replacing the theoretical measured value of 1. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015258"></a> The bend factor is automatically adjusted for bends having angles other than 90 degrees and for bends whose legs are of different width. The bend factor is also applied to step transitions between one width and another in straight resistors to improve the accuracy of resistance calculation.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015259"></a> If you do not provide a bend factor, the program defaults to a 0.56 value.</p>
+
+<p><strong>
+<a id="pgfId-1015260"></a><code>resprop</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019312"></a><code>&#160;&#160;&#160;&#160;</code>The name of the property to be attached to the device to contain the value of its resistance. This must be a text string enclosed in quotes.</p>
+
+<p><strong>
+<a id="pgfId-1019317"></a><code>cap</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019320"></a><code>&#160;&#160;&#160;&#160;</code><a id="marker-1015261"></a>An optional argument to specify the parameters for capacitance measurement. If not defined, no capacitance extraction is performed. The options are</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015263"></a><code> cap( capprop equation )</code></p>
+
+<p><strong>
+<a id="pgfId-1015264"></a><code>cap</code> </strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019329"></a>This is a keyword introducing the capacitance definition.</p>
+
+<p><strong>
+<a id="pgfId-1019334"></a><code>capprop</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019337"></a> The name of the property to be attached to the device to contain the value of its capacitance. This must be a text string enclosed in quotes.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015266"></a> &quot;c&quot;</p>
+
+<p><strong>
+<a id="pgfId-1015267"></a><code>equation</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019346"></a><code>&#160;&#160;&#160;&#160;</code>This equation converts the area and perimeter of the capacitor into a single capacitance value. It uses the symbols<em> a</em> (area) and <em>p</em> (perimeter). No other symbol is allowed in the equation. The full range of procedures used in the <code>calculateParasitic </code>and <code>measureFringe</code> commands are available.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015268"></a> Since the capacitance calculation is performed on resistor pieces, and the perimeter measured is from the original shape&#8217;s external edge perimeter, it&#8217;s possible that some resistor pieces have no original edge perimeter, resulting in a <em>p</em> value of zero. Do not perform a division using the <em>p</em> symbol. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015269"></a> Here is an example of the cap option.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015270"></a> cap( &quot;c&quot; 0.35 * a + 1.02 * p )</p>
+
+<p><strong>
+<a id="pgfId-1015273"></a><code>ignore</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019355"></a><code>&#160;&#160;&#160;&#160;</code><a id="marker-1015271"></a>This optional argument lets you remove resistors from the circuit if their values fall outside the limits you specify.<a id="marker-1015272"></a></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015274"></a> This argument has the following syntax:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015275"></a><code> [value op] keyword op value</code></p>
+
+<p><strong>
+<a id="pgfId-1015276"></a><code>value</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019364"></a><code>&#160;&#160;&#160;&#160;</code>Any positive integer or floating point value.</p>
+
+<p><strong>
+<a id="pgfId-1019369"></a><code>op</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019372"></a> One of the following operators:</p>
+
+<p>
+<a id="pgfId-1017056"></a></p>
+<table class="webflareTable" id="#id1017015">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017041"></a><code>&lt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017043"></a>less than</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017045"></a><code>&lt;=</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017047"></a>less than or equal to</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017049"></a><code>&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017051"></a>greater than</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017053"></a><code>&gt;=</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017055"></a>greater than or equal to</p>
+</td>
+</tr>
+</tbody></table>
+<p><strong>
+<a id="pgfId-1015279"></a><code>keyword</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019379"></a> You can define two keywords:</p>
+<table class="webflareTable" id="#id1017121">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017123"></a><code>keep</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p class="webflare-indent1">
+<a id="pgfId-1017125"></a>Keeps any resistor that meets the limits you specify.</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1017127"></a><code>ignore</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p class="webflare-indent1">
+<a id="pgfId-1017129"></a>Removes any resistor that meets the limits you specify.</p>
+
+</td>
+</tr>
+</tbody></table>
+<p class="webflare-indent1">
+<a id="pgfId-1017131"></a> For example, the following syntax removes all resistors whose value is less than 1.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015282"></a><code> ignore &lt; 1</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015283"></a> The following example removes all resistors whose value is greater than 1,000.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015284"></a><code> ignore &gt; 1000</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015285"></a> The following example removes all resistors whose value is less than 1 and more than 1,000.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015286"></a><code> 1 &lt; keep &lt; 1000</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015287"></a> Any resistor that is removed because its value is lower than the limit you specify is replaced by a short circuit. Any resistor that is removed because its value is greater than the limit you specify is replaced by an open circuit.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015288"></a> You cannot specify a range of limits using the <em>ignore</em> keyword. For example, the following syntax is invalid:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017715"></a><code> 1 &lt; ignore &lt; 1000</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015290"></a> Any capacitance associated with the removed resistors is distributed around the resistors on the resultant nets.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015291"></a>For versions <em>prior to 4.4.3</em>, there were limitations when using the <code>keep</code> or <code>ignore</code> options. A resistor was never removed, regardless of its value, if one of its nets was connected to a contact, device terminal, or pin on the original net. This was true even if the value of the resistor would otherwise cause it to be ignored.
+
+In the 4.4.3 release and all subsequent releases, resistors can now be removed based on their values regardless of their connectivity. </div>
+<p class="webflare-indent1">
+<a id="pgfId-1015293"></a> The program automatically ignores very small resistors during network reduction, whether you specify the <code>ignore</code> option or not. The program applies the <code>ignore</code> option after the network reduction. </p>
+
+<p><strong>
+<a id="pgfId-1015294"></a><code>save</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019393"></a> This optional argument allows you to save the shapes representing the resistor bodies in the extracted cellview. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015295"></a><code> save( layerName fracture )</code></p>
+
+<p><strong>
+<a id="pgfId-1015296"></a><code>save</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019402"></a> This is a keyword introducing the save layer definition.</p>
+
+<p><strong>
+<a id="pgfId-1019407"></a><code>layerName</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019410"></a> The name of the graphics layer, in quotes, on which the resistor body shapes are to be stored.</p>
+
+<p><strong>
+<a id="pgfId-1019415"></a><code>fracture</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019418"></a> This is a keyword that creates <a id="marker-1015298"></a>fracturing lines, which lets you see how the geometry is cut up before analysis.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015300"></a> This is an example of a <code>save</code> option.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015301"></a><code> save( &quot;poly_res&quot; fracture )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015303"></a> <a id="marker-1015302"></a>The shapes saved on this layer are for display purposes only. They are not associated with the electrical network in any way. They are a subset of the original connectivity layer used to create the resistors. The remaining shapes from the connectivity layer remain on that layer and can be viewed by saving the connectivity layer in the normal way.</p>
+
+<p><strong>
+<a id="pgfId-1015304"></a><code>contact </code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019427"></a>This optional argument lets you specify parameters for contact resistance measurement. Without this argument, no contact resistance is measured. Any number of these arguments can be specified for different contact and terminal layers. The same process is applied to contacts and device terminals.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015305"></a><code> contact( layer acoeff lcoeff )</code></p>
+
+<p><strong>
+<a id="pgfId-1015306"></a><code>contact</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019436"></a> Keyword introducing the contact resistance definition.</p>
+
+<p><strong>
+<a id="pgfId-1019441"></a><code>layer</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019444"></a> The layer reference for which the contact resistance is to be measured. The layer must appear in a<code> geomConnect</code> command.</p>
+
+<p><strong>
+<a id="pgfId-1019449"></a><code>acoeff</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019452"></a><code>&#160;&#160;&#160;&#160;</code>A floating point or integer value that defines the coefficient to be applied to the contact to convert its area into a single resistance value in the resultant network. The resultant value becomes inversely proportional to the area. If this coefficient is not required, its value must be set to 0.0.</p>
+
+<p><strong>
+<a id="pgfId-1019457"></a><code>lcoeff</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019460"></a> A floating point or integer value that defines the coefficient to be applied to the contact to convert its edge lengths into individual resistors in the resultant network. Each edge forms a resistor between the contact and the surrounding interconnect, whose value is inversely proportional to the edge length. If this coefficient is not required, its value must be set to 0.0. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1017162"></a><code> contact( cut 0.03 2.5 )</code></p>
+
+<p><strong>
+<a id="pgfId-1017163"></a><code>capLimit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019469"></a> This optional <a id="marker-1017236"></a>argument lets you limit the number of terminals used when distributing parasitic capacitance values created between a resistor body and another shape. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1017155"></a><code> capLimit( [N] )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1017152"></a> The required value N is the maximum number of resister network terminals used when distributing parasitic capacitance. The terminals used are selected by the software on a first-come, first-used basis.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017174"></a> The primary purpose of this option is to reduce parasitic capacitance runtimes and disk usage. Improvements in data handling have greatly reduced the impact of large numbers of resistor network terminals. We no longer recommend the use of this option.</p>
+
+<p><strong>
+<a id="pgfId-1015311"></a><code>distribute</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019478"></a> This optional argument lets you fracture the resistor bodies into smaller pieces to obtain more accurate resistance and capacitance distribution. The <code>distribute</code> argument has the following form:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015312"></a><code> distribute( [N] )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015313"></a> The <em>distribute</em> keyword tells Diva to fracture the resistor shapes into smaller pieces.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015314"></a> The optional value <em>N</em> is any integer greater than 1. The value is directly related to the size of the fractured pieces that result. If you specify the <em>distribute</em> keyword but do not specify a number, a default value of 12 is used. If you do not specify a keyword, the resistor bodies are not fractured.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017191"></a> The value of N is allowed to be zero for the special case of disabling the distribute option.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015315"></a> The value <em>N </em>defines the ideal length in <em>squares</em> that each fractured piece should be if a single straight path is fractured. For irregular shapes and branched shapes, there may not be any unbroken paths of this length, but Diva still fractures the shape. The larger the number, the larger the pieces are.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015316"></a> Fracturing introduces new terminals in the circuit. These extremely narrow terminals span the resistor bodies (hence cutting them into pieces) and have virtually no impact on the resultant resistance and capacitance of the pieces. These terminals are positioned only in horizontal or vertical sections of the resistor body.</p>
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015317"></a>For versions prior to 4.4.3, there were limitations when using the <code>distribute </code>option in conjunction with the <code>keep</code> or <code>ignore </code>options.  The splitting of the resistor bodies into two or more pieces using the <code>distribute</code> option creates new terminals.  For purposes of resistor removal, these new terminals are treated as if they were part of the original net.  The result is that pieces created by the <code>distribute</code> option cannot be removed, even if the value of the resistor would otherwise cause it to be ignored.
+
+This implies that there can be situations where the entire resistor in a branch is removed when the <code>distribute</code> option is <em>not</em> used, but <em>none</em> of the pieces are removed when the <code>distribute</code> option is used.
+
+This above problem has been fixed in the 4.4.3 release. All resistor pieces created by the <code>distribute</code> option can now be removed based on their values using the <code>keep</code> or <code>ignore</code> options.</div>
+
+<p><strong>
+<a id="pgfId-1017279"></a><code>namePrefix(string)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019487"></a>Optional argument that allows you to specify the character string to use as the prefix for the instance name. Instance names are constructed from the prefix and an integer value to create a unique name. If not provided, the default prefix of &#8220;+&#8221; is used.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017280"></a> The string parameter must be quoted string or an expression that evaluates to a string.</p>
+
+<p><strong>
+<a id="pgfId-1017281"></a><code>property(name value)</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1019496"></a>Optional argument that allows you to specify a property to be attached to each instance generated by the <code>measureResistance</code> rule. More than one property option can be used in a <code>measureResistance</code> rule.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017282"></a> The name parameter must be a quoted string or an expression that evaluates to a string.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1017283"></a> The value parameter must be a quoted string, integer constant, real constant, or an expression that evaluates to a string, integer or real.</p>
+
+<h4>
+<a id="pgfId-1015320"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015321"></a>Since the number of permutations of this command is large, these examples illustrate one minimal command and one using all options.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015322"></a>measureResistance( poly &quot;resistor&quot; 30.5 &quot;r&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015323"></a>measureResistance( metal &quot;res_pi_cap&quot; 30.5 0.5 &quot;r&quot;<br />   cap( &quot;c&quot; 1.5e-12 * a + 2.7e-13 * p )<br />   ignore &lt;= 0.15<br />   save( &quot;resist_body&quot; )<br />   contact( cut 0.1 2.5 )<br />   contact( via 0.08 1.4 )<br />   distribute( 20 )<br />)</pre>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap10.html" id="prev" title="Extracting Parasitics (LPE)">Extracting Parasitics (LPE)</a></em></b><b><em><a href="chap12.html" id="nex" title="Checking Electrical Rules (ERC)">Checking Electrical Rules (ERC ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

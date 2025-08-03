@@ -1,0 +1,600 @@
+
+<html><head><title>Simulation and Environment Control</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027645" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Simulation and Environment Control" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027645" />
+<meta name="NextFile" content="appE.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="appC.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Simulation and Environment Control" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="appC.html" title="Improving Hierarchical DRC Performance">Improving Hierarchical DRC Per ...</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appE.html" title="Application Techniques">Application Techniques</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>D
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+<a id="29125"></a>Simulation and Environment Control<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014198"></a>The ERC and LVS programs both run under the control of the system <em>simulation environment</em> (<em>se</em>). When you start a job, the <em>se</em> takes control and performs a number of operations. These include running the system netlister if required, running the LVS or ERC program, and translating the output for probing and cross probing.</p>
+<p>
+<a id="pgfId-1014199"></a>The netlister produces a text format netlist that provides the input to LVS and ERC. To run the netlister correctly, you must set up the netlist control environment. To understand this environment, read the <em>Simulation Environment Help.</em></p>
+<p>
+<a id="pgfId-1014201"></a>The LVS and ERC system defaults are set up to run the programs without needing to know about the operations of <em>se.</em></p>
+<p>
+<a id="pgfId-1015110"></a>It should be noted that LVS uses different netlisting modules depending on the mode the workbench is running in. In digital mode the Diva module is used. In analog mode the Artist module is used. This leads to differences in behavior and file content in the LVS run directory. Any issues encountered during LVS in analog mode should be addressed to Artist product support, not Diva product support. This chapter only discusses the digitial mode. Please refer to the Analog Artist product documentation for a discussion of analog mode LVS.</p>
+
+<h3>
+<a id="pgfId-1014203"></a>Directories and Files<a id="Directories and Files"></a></h3>
+
+<p>
+<a id="pgfId-1014204"></a>To enable the <em>se</em> to work automatically, you must provide a directory structure. For LVS, you do this by naming the directory in the LVS form or in the <em>ivLVS</em> command. For ERC, you do this by naming the directory in the ERC form or in the<em> ivERC</em> command. These programs then set up the directory and the necessary files and subdirectories. </p>
+<p>
+<a id="pgfId-1014205"></a>The run directory for LVS contains two subdirectories, one for the extracted layout circuit data and one for the schematic circuit data. All files specific to a circuit are stored in its subdirectory. All other files are stored in the main run directory.</p>
+<p>
+<a id="pgfId-1014206"></a>The LVS run directory contains the following files:</p>
+
+<p><strong>
+<a id="pgfId-1014207"></a><code>si.env</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015591"></a> Contains the <em>se </em>variables with their states as set up by the system or the Setup Environment form.</p>
+<p><strong>
+<a id="pgfId-1015596"></a><code>si.log</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015599"></a><code>&#160;&#160;&#160;&#160;</code>Contains the simulation environment run log.</p>
+<p><strong>
+<a id="pgfId-1015604"></a><code>si.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015607"></a> Contains the simulation environment output.</p>
+<p><strong>
+<a id="pgfId-1015612"></a><code>layout</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015615"></a> Subdirectory for extracted layout data.</p>
+<p><strong>
+<a id="pgfId-1015620"></a><code>schematic</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015623"></a> Subdirectory for schematic data.</p>
+
+<p>
+<a id="pgfId-1014212"></a>The layout and schematic subdirectories contains the following files:</p>
+
+<p><strong>
+<a id="pgfId-1014213"></a><code>map</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015629"></a> Directory for both extracted and schematic cellviews containing the net and device mapping between the original hierarchical circuit and the flat netlist. The mapping files are in binary format.</p>
+<p><strong>
+<a id="pgfId-1015634"></a><code>netlist</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015637"></a> Text file for both extracted and schematic cellviews containing the netlist.</p>
+<p><strong>
+<a id="pgfId-1015642"></a><code>netxref.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015645"></a> LVS net cross-references.</p>
+<p><strong>
+<a id="pgfId-1015650"></a><code>devxref.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015653"></a><code>&#160;&#160;&#160;&#160;</code>LVS device cross-references.</p>
+<p><strong>
+<a id="pgfId-1015658"></a><code>netbad.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015661"></a><code>&#160;&#160;&#160;&#160;</code>LVS unmatched nets for both extracted and schematic cellviews.</p>
+<p><strong>
+<a id="pgfId-1015666"></a><code>devbad.out</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015669"></a>LVS unmatched devices for both extracted and schematic cellviews.</p>
+<p><strong>
+<a id="pgfId-1015674"></a><code>prune.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015677"></a> LVS nets and devices pruned from both extracted and schematic cellviews.</p>
+<p><strong>
+<a id="pgfId-1015682"></a><code>audit.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015685"></a> LVS nets and devices failing the parameter matching for both extracted and schematic cellviews.</p>
+<p><strong>
+<a id="pgfId-1015690"></a><code>ovfldev.out</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015693"></a>Overflow file used with <em>devxfref.out</em> for cross probing parallel device groups.</p>
+<p><strong>
+<a id="pgfId-1015698"></a><code>termbad.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015701"></a><code>&#160;&#160;&#160;&#160;</code>LVS unmatched terminals and matched terminals that have different I/O directions in the extracted and schematic cellviews.</p>
+
+<p>
+<a id="pgfId-1014223"></a>The ERC run directory contains the following files:</p>
+
+<p><strong>
+<a id="pgfId-1014224"></a><code>si.env</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015723"></a> <em>se </em>variables with their states as set up by the system or the ERC form.</p>
+<p><strong>
+<a id="pgfId-1015728"></a><code>si.log</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015731"></a> Simulation environment run log.</p>
+<p><strong>
+<a id="pgfId-1015736"></a><code>si.out</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015739"></a> Simulation environment output.</p>
+<p><strong>
+<a id="pgfId-1015744"></a><code>map</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015747"></a> Directory for both extracted and schematic cellviews containing the net and device mapping between the original hierarchical circuit and the flat netlist. The mapping files are in binary format.</p>
+<p><strong>
+<a id="pgfId-1015752"></a><code>netlist</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015755"></a> Text file for both extracted and schematic cellviews containing the netlist.</p>
+<p><strong>
+<a id="pgfId-1015765"></a><code>probe.err</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015768"></a>ERC nets and devices selected through the run commands either as errors or as requested information.</p>
+<h3>
+<a id="pgfId-1014231"></a>Variables<a id="Variables"></a></h3>
+
+<p>
+<a id="pgfId-1014232"></a>The <em>se </em>uses many variables to control LVS and ERC. You can set these variables from the menu forms or automatically through the system. </p>
+<p>
+<a id="pgfId-1014233"></a>Although you do not normally change these variables, they are listed for reference. They are shown with their true default values or with dummy values where there is no specific default.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014234"></a>In the following variable lists, the apostrophe (&#8217;) in <em>t</em> and <em>nil</em> is optional.</div>
+
+<p>
+<a id="pgfId-1014235"></a>The following variables are contained in the <em>si.env</em> file:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014238"></a>lvsLayoutLibName =            &quot;lib&quot;<br />lvsLayoutCellName =           &quot;fflatch&quot;<br />lvsLayoutViewName =           &quot;extracted&quot;<br />lvsSchematicLibName =         &quot;lib&quot;<br />lvsSchematicCellName =        &quot;fflatch&quot;<br />lvsSchematicViewName =        &quot;schematic&quot;<br />lvsNetlistSchematic =         &#8217;t<br />lvsNetlistLayout =            &#8217;t<br />applyDeviceFixing =           &#8217;nil<br />correspondenceFile =          &#8217;nil<br />useFileCorrespondence =       &#8217;nil<br />useTerminalCorrespondence =   &#8217;t<br />createXref =                  &#8217;nil<br />simSimulator =                &quot;LVS&quot;<br />simLibName =                  &quot;lib&quot;<br />simCellName =                 &quot;fflatch&quot;<br />simViewName =                 &quot;schematic&quot;<br />tmp/ff&quot;</pre>
+<p>
+<a id="pgfId-1014239"></a>The following variables can be added to the .<em>simrc </em>file to override the defaults:</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014240"></a>lvsRulesLibName =        lvsSchematicLibName<br />simNlpGlobalLibName =    &quot;basic&quot;<br />simNlpGlobalCellName =   &quot;nlpglobals&quot;<br />disableLikeMatching =    &#8217;nil<br />disableReWire =&#160;&#160;        &#8217;nil</pre>
+
+<h3>
+<a id="pgfId-1014242"></a>Control Input<a id="Control Input"></a></h3>
+
+<p>
+<a id="pgfId-1014243"></a>The <em>se</em> uses several files. Although you never need to access most of these files, they are listed for reference. If you do need to make changes, see your system administrator. </p>
+<table class="webflareTable" id="#id1015871">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015873"></a><code>.simrc</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015875"></a>Overrides the <em>se</em> variable default values. Resides in your home or execution directory. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015877"></a><code>caplib</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015894"></a> <em>/etc/skill/si</em> in the cds system path. The file for ERC is <em>ERC</em> and the file for LVS is <em>LVS.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015885"></a><code>sed.lvs</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015887"></a>File used by the program to translate the output files to a form usable by the system probing capabilities. Resides in /<em>etc/si </em>in the cds system path.</p>
+</td>
+</tr>
+</tbody></table>
+
+<h3>
+<a id="pgfId-1014248"></a>Setting Up the Netlister<a id="Setting Up the Netlister"></a></h3>
+
+<p>
+<a id="pgfId-1014249"></a>Both LVS and ERC perform their main processing from netlists of the circuit. These netlists are produced by the system netlister program under the control of the <em>se</em>.</p>
+<p>
+<a id="pgfId-1014250"></a>For netlisting of low-level devices such as transistors and capacitors, a special cellview of these devices called <em>lvs</em> is available in the system device library. This has the properties preset for the netlisting for both LVS and ERC.</p>
+
+<h4>
+<a id="pgfId-1014251"></a>Cellview Switching</h4>
+
+<p>
+<a id="pgfId-1014252"></a>Both the<em> schematic</em> and <em>extracted</em> cellviews of the circuit being compared use the same organization of<a id="marker-1014253"></a> cells and views. The schematic cellview organization is usually a multilevel hierarchy, where each level of cells refers to lower level cells, down to the lowest device level. The extracted cellview, even though it can be described as &#8220;flat,&#8221; has the same hierarchy, because the network cell refers to device cells placed within it.</p>
+<p>
+<a id="pgfId-1014254"></a>Depending upon whether you are working on a schematic or a layout, you might want to reference different views of cells in the hierarchy. For graphic display, you can reference a symbol containing drawing information. For <a id="marker-1014255"></a>simulation, you need to reference a view containing the required simulation information. The system facilitates such references by having different views available for each cell. First, you must be able to tell the system how to find the correct cell within the computer directory system, and then you must tell the system how to determine which view to use.</p>
+<p>
+<a id="pgfId-1014256"></a>In addition to knowing which view to use at each level of hierarchy, the netlister needs to know at which level of hierarchy to stop processing. A netlist for logic simulation needs to process the hierarchy down to the logic gates. A netlist for a circuit simulator, such as Cadence SPICE, needs to process the hierarchy down to the lowest device level, such as transistors.</p>
+<p>
+<a id="pgfId-1014257"></a>Both the schematic and layout netlisting must stop at the same device definition. If you stop at an <em>nfet</em> in the schematic, you must stop at an <em>nfet</em> in the layout. Also, these two devices must use the same model with the same terminals in the same order.</p>
+<p>
+<a id="pgfId-1014258"></a>Similarly, the netlist for the LVS and ERC programs must be processed to the level being analyzed, which might be the lowest device level, the macro cell level, or a combination of both. The view for the device does not need to contain graphic or symbolic information, but must contain formatting information to tell the netlister which form and information to generate. You can find further details in the &#8220;Netlist Formatting&#8221; section in this chapter.</p>
+<p>
+<a id="pgfId-1014259"></a>To determine where to find specific cells, the program uses the system library path. To determine which views to use, the program uses &#8220;switching lists&#8221; and &#8220;stopping lists.&#8221; These variables are initialized to default values. </p>
+<p>
+<a id="pgfId-1014260"></a>The switching and stopping lists are used as follows:</p>
+<ul><li>
+<a id="pgfId-1014261"></a>When the master cell is found, the program searches the switching list and tries to match a view name in the list with the views available for that cell. The list is searched left to right, and the first matching view is used. </li><li>
+<a id="pgfId-1014262"></a>The program then searches for this view in the stopping list. If the view is found, the expansion process stops for that cell. If it is not found, the program switches into the view, determines the instances within the view, and repeats the process.</li></ul>
+
+<p>
+<a id="pgfId-1014263"></a>The switching and stopping list variables and their default values are as follows:</p>
+<p>
+<a id="pgfId-1014264"></a>LVS</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014265"></a>lvsSchematicViewList = &#8217;( &quot;lvs&quot; &quot;schematic&quot; gate.sch&quot;<br />                          &quot;cmos.sch&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014266"></a>lvsLayoutViewList = &#8217;( &quot;lvs&quot; &quot;extracted&quot; &quot;schematic&quot; <br />                       &#8220;gate.sch&quot; &quot;cmos.sch&quot; )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014267"></a>lvsSchematicStopList = &#8217;( &quot;lvs&quot; )<br />lvsLayoutStopList = &#8217;( &quot;lvs&quot; )</pre>
+<p>
+<a id="pgfId-1014268"></a>ERC</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014269"></a>ercViewList = &#8217;( &quot;lvs&quot; &quot;schematic&quot; gate.sch&quot; )<br />ercStopList = &#8217;( &quot;lvs&quot; )</pre>
+<p>
+<a id="pgfId-1014270"></a>To override these default values, you can provide a file in your home directory called <em>.simrc</em>. This file can already exist for specifying other information, such as the switching and stopping lists for SPICE netlisting. If the file does not exist, you can create it.</p>
+<p>
+<a id="pgfId-1014271"></a>If having a single simulator control file in your home directory leads to conflicts, the same data can be put into a file called <em>.simrc</em> in the directory from which you started Design Framework II. </p>
+
+<h4>
+<a id="pgfId-1014272"></a>Netlist Formatting</h4>
+
+<p>
+<a id="pgfId-1014274"></a>The output of the <a id="marker-1014273"></a>netlister is controlled by format strings stored in cellviews as <em>nlpExpr</em><a id="marker-1014275"></a> properties. The netlisting process is triggered by specific property names in the cellviews defined by the netlisting stopping list. In the case of LVS and ERC, these cellviews are the <em>lvs</em> cellviews. </p>
+<p>
+<a id="pgfId-1014276"></a>The properties consist of netlisting instructions. Each instruction can print something in the netlist, go to another instruction property, or both. Each cell that is encountered in the circuit prints out the correct information in the netlist by using a sequence of instruction properties. </p>
+<p>
+<a id="pgfId-1014277"></a>One source of the netlisting instruction properties is the cellview itself. Another source of netlisting instruction properties is a cell called <em>nlpglobals </em>in the system device library. Any netlisting instructions that are common to more than one device are stored in the <em>nlpglobals </em>cell.</p>
+<p>
+<a id="pgfId-1014278"></a>The device library supplied by Cadence contains device simulation and global cells for all currently supported simulators. The LVS and ERC programs have their own <em>nlpglobals</em> cell called <em>lvs</em> and their own cellviews, also called <em>lvs</em>, for each of the lowest level devices such as transistors, capacitors, and so forth. If an <em>lvs</em> cellview does not exist for a specific device you need for LVS or ERC, you can either create your own <em>lvs</em> cellview or create an equivalent cellview with any other name. Use that name in the switching and stopping lists.</p>
+<p>
+<a id="pgfId-1014279"></a>For LVS and ERC, the predefined <em>lvs </em>cellviews generate one line in the netlist for each device type and two lines for each instance of the device: one for comments and one for device usage. Additional lines are automatically generated for terminals and net names. The next sections detail the process of generating the device type and device instance lines.</p>
+
+<h4>
+<a id="pgfId-1014280"></a>Device Type Definition</h4>
+
+<p>
+<a id="pgfId-1014282"></a>Each different <a id="marker-1014281"></a>device type in the netlist must have a single-line definition of its structure. The <a id="marker-1014283"></a><em>nlpglobals</em> cell contains a property called <em>NLPcreateModelString</em><a id="marker-1014284"></a>. This property starts the sequence of operations that generates the device type definition. In LVS and ERC, this property references a property in the master cell of the device called <a id="marker-1014285"></a><em>NLPModelPreamble</em>. The master cell of the device is defined by the stopping list as previously described, for example, <em>nfet lvs</em>.</p>
+<p>
+<a id="pgfId-1014286"></a>The <em>NLPModelPreamble</em> property, which determines the specific netlist format for a device, appears in all netlisted devices. Instead of putting the format inside the device cell, the <em>NLPModelPreamble</em> property references a model property (usually found in the <em>nlpglobals</em> cell). This allows multiple devices to have the same netlist format without duplicating information. The model property in <em>nlpglobals</em> has a name, such as <em>NLPMosfetModelCard</em>. This property provides the string to be written to the netlist. It contains a mixture of characters, written directly to the netlist, and substitutions, in which keywords are replaced by other information. There is a different model property for each device type having different netlisting information.</p>
+<p>
+<a id="pgfId-1014287"></a>The substitutions used are as follows:</p>
+<ul><li>
+<a id="pgfId-1014288"></a><em>BlockName</em>. The system automatically places the cell name of the device in the netlist at this point. </li><li>
+<a id="pgfId-1014289"></a><em>permuteRule</em>. As shown in the example, if the property of <em>permuteRule</em> exists in the device cell, or in the <em>nlpglobals</em> cell, <em>permuteRule</em> is placed in the netlist at this point. If <em>permuteRule</em> does not exist, the default permute rule, following it in the property, is placed in the netlist.</li></ul>
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1014919"></a>In some cases, the property name might need to be permutability. This depends upon which property name is used in the NLP expressions that are associated to the cell.</div>
+
+<p>
+<a id="pgfId-1014290"></a>The following is an example of device type formatting:</p>
+<p>
+<a id="pgfId-1014291"></a>Properties (in sequence) </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014292"></a>NLPcreateModelString = &quot;[@NLPModelPreamble:%n]&quot;<br />NLPModelPreamble = &quot;[@NLPMosfetModelCard]&quot;<br />NLPMosfetModelCard = &quot;d [@BlockName] D G S B<br />                        [@permuteRule:%:(p S D)]&quot;<br />permuteRule = &quot;(p S D)&quot;</pre>
+<p>
+<a id="pgfId-1014293"></a>Result in netlist</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014294"></a>d nfet D G S B (p S D) </pre>
+<p>
+<a id="pgfId-1014295"></a>In this example, the <em>permuteRule</em> property on the device is the same as the default rule in the <em>nlpglobals</em> model property.</p>
+
+<h4>
+<a id="pgfId-1014296"></a>Device Instance Definition</h4>
+
+<p>
+<a id="pgfId-1014298"></a>Each different device<a id="marker-1014297"></a> instance appearing in the netlist must have at least one single line specifying its connections. It can also have an additional <a id="marker-1014299"></a>comment line. </p>
+<p>
+<a id="pgfId-1014302"></a>The <a id="marker-1014300"></a><em>nlpglobals</em> cell contains a property called <em>NLPcompleteElementString</em><a id="marker-1014301"></a>. This property begins the sequence of operations that generates the device instance line in the netlist. In the case of LVS and ERC, it references a property called <a id="marker-1014303"></a><em>NLPElementPostamble</em> in the device master cell. The master cell is defined by the stopping list as described previously (for example, <em>nfet lvs</em>).</p>
+<p>
+<a id="pgfId-1014304"></a>The <em>NLPElementPostamble</em> property appears in all netlisted devices and determines the specific netlist format for that device instance. Instead of putting the format inside the device cell, the <em>NLPElementPostamble</em> references an element property (usually found in the <em>nlpglobals</em> cell). This allows multiple devices to have the same netlist format without duplicating information). The element property in the <em>nlpglobals</em> has a name, such as <em>NLPMosfetElementCard</em>. This property provides the string to be written to the netlist. It contains a mixture of characters, written directly to the netlist, and substitutions, in which keywords are replaced by other information. (There is a different element property for each device type having different netlisting information.)</p>
+<p>
+<a id="pgfId-1014305"></a>The substitutions used are as follows:</p>
+<ul><li>
+<a id="pgfId-1014306"></a><em>ElementNumber</em> increments the index. Each device instance written to the netlist has a unique number. </li><li>
+<a id="pgfId-1014307"></a><em>BlockName</em> places the cell name of the device in the netlist at this point. </li><li>
+<a id="pgfId-1014308"></a>Device terminals provide the net numbers connecting to the netlist.</li><li>
+<a id="pgfId-1014309"></a><em>LVSmosfetProp</em>. If this property exists in the device cell, it is placed in the netlist at this point. If it is not in the device cell or anywhere higher in the hierarchy, this property is taken from the <em>nlpglobals</em>. The <em>LVSmosfetProp</em>, in turn, contains its own substitutions which are a combination of property names and contents. In this case, the parameters of width (w) and length (l) as contained in the device instance are added to the netlist.</li></ul>
+
+
+
+<p>
+<a id="pgfId-1014310"></a>The following is an example of device instance formatting:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014311"></a>Properties (in sequence)</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014312"></a>NLPcompleteElementString = &#8220;[@NLPElementPostamble:%\\n]&#8221;<br />NLPElementPostamble = &#8220;[@NLPMosfetElementCard]&#8221;<br />NLPMosfetElementCard = &#8220;i [@ElementNumber] [@BlockName]<br />     [|D:%] [|G:%] [|S:%] [|B:%] [@LVSmosfetProp]&#8221;<br />LVSmosfetProp = &#8220; \&#8220; [@l:l %] [@w:w %] \&#8221;&#8221;<br />w = 3<br />l = 6 </pre>
+<p class="webflare-indent1">
+<a id="pgfId-1014313"></a>Result in netlist</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014314"></a>i 26 nfet 26 57 17 87 &#8220; l 6 w 3&#8221; </pre>
+
+<h4>
+<a id="pgfId-1014315"></a>Parasitic Devices</h4>
+
+<p>
+<a id="pgfId-1014317"></a>Normally, the schematic representation of a circuit does not contain <a id="marker-1014316"></a>parasitic devices. Any device referenced is nonparasitic (referred to as a &#8220;schematic&#8221; device). The extracted representation, on the other hand, can contain parasitic devices. These have usually been created from measured properties using a <em>saveParasitic</em> command and do not appear on the schematic.</p>
+<p>
+<a id="pgfId-1014318"></a>If you try to make an LVS run match the extracted parasitics to the schematic, it fails. For LVS to be successful, either the extracted layout must not contain parasitic devices, or these devices must be ignored.</p>
+<p>
+<a id="pgfId-1014319"></a>To overcome this problem, you can include special devices as parasitics in the extracted layout. These devices behave exactly the same as normal devices for SPICE simulation, but are ignored by the netlister for LVS (or ERC if so desired). This lets the program process only the schematic devices.</p>
+<p>
+<a id="pgfId-1014320"></a>The <em>saveParasitic</em> statement (or <em>extractDevice</em> statement) used during circuit extraction must reference one of these special devices instead of a normal device, whenever that device does not appear in the schematic. The following special devices are available for this purpose. </p>
+
+<p><strong>
+<a id="pgfId-1014321"></a>pcapacitor</strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015901"></a> Equivalent to the normal device <em>capacitor</em>.</p>
+<p><strong>
+<a id="pgfId-1015906"></a>pdiode</strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015909"></a> Equivalent to the normal device <em>diode</em>. </p>
+
+<p>
+<a id="pgfId-1014322"></a>Each special device has a <em>symbol</em> cellview, which becomes the default referenced in the extracted layout so that it can be viewed. Each special device also has an<em> lvs</em> cellview for the<a id="marker-1014323"></a> LVS netlister, and a SPICE cellview to permit full simulation. If any other cellview is required, you must copy it, without change, from the normal cellview of that device and add it to the cell.</p>
+
+<h4>
+<a id="pgfId-1014324"></a>Netlist Format</h4>
+
+<p>
+<a id="pgfId-1014325"></a>The netlister program produces a text format netlist. You can view this netlist to check the netlister control has performed as desired. To understand the format of the netlist, this format guide is provided.</p>
+<p>
+<a id="pgfId-1014326"></a>This netlist format is generated by the system device library model entries using the lvs <em>cellview</em>. </p>
+<p>
+<a id="pgfId-1014327"></a>The netlist is always flat, that is, all hierarchy is removed. Each line of the netlist defines an item. The items are as follows:</p>
+<ul><li>
+<a id="pgfId-1014328"></a>Net name to number translation</li><li>
+<a id="pgfId-1014329"></a>Device type definition</li><li>
+<a id="pgfId-1014330"></a>Device instance definition</li><li>
+<a id="pgfId-1014331"></a>Terminal definition</li><li>
+<a id="pgfId-1014332"></a>Device fixing</li></ul>
+
+
+
+
+
+<h4>
+<a id="pgfId-1014333"></a>Net Name to Number Translation</h4>
+
+<p>
+<a id="pgfId-1014334"></a>Defines the correspondence between the net numbers in the netlist and the net names in the original layout or schematic. This is optional in LVS.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014335"></a>net &lt; net_number&gt; [ = ] &lt;net_name&gt;</pre>
+
+<p><strong>
+<a id="pgfId-1014336"></a><code>net</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015916"></a> This word introduces the net definition line. The word <em>net</em> can be abbreviated to the character <em>n</em>.</p>
+<p><strong>
+<a id="pgfId-1015921"></a><code>net_number</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015924"></a><code>&#160;&#160;&#160;&#160;</code>The number of the net in the netlist.</p>
+<p><strong>
+<a id="pgfId-1015929"></a><code>=</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015932"></a>An optional character to indicate equivalence between net number and net name.</p>
+<p><strong>
+<a id="pgfId-1015937"></a><code>net_name</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015940"></a> The name of the net in the layout or schematic.</p>
+<h4>
+<a id="pgfId-1014340"></a>Device Type Definition</h4>
+
+<p>
+<a id="pgfId-1014341"></a>You must define each different device type used in the netlist. Use the following format</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014342"></a>d &lt;dev_type&gt; &lt;term_list&gt; &lt;perm&gt; &lt;property&gt;</pre>
+
+<p><strong>
+<a id="pgfId-1014343"></a><code>d</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015946"></a> Introduces the device definition line. </p>
+<p><strong>
+<a id="pgfId-1015956"></a><code>dev_type</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015959"></a><code>&#160;&#160;&#160;&#160;</code>Name of the device type model in the system device library.</p>
+<p><strong>
+<a id="pgfId-1015964"></a><code>term_list</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015967"></a>List of terminal names that defines the order for net connections to the device. </p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014346"></a> This order is arbitrary, unless you are reducing MOS transistors into gate configurations, in which case the order must be <em>source-gate-drain</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014347"></a> If the terminal names contain parentheses, for example &#8220;pin(1)&#8221;, the parentheses must be escaped by proceeding each with a backslash (&#8220;pin\(a\)&#8221;). The parentheses is reserved in the device type definition to delineate the device terminal permutability.</p>
+
+<p><strong>
+<a id="pgfId-1014348"></a><code>perm</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015976"></a> Defines device terminal permutability. </p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014349"></a> The definition has as two operators: <em>f </em>(fixed) and <em>p</em> (permutable). A typical property for permuting a transistor source and drain is</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014350"></a><code> ( p S D )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014351"></a> An example of a combination fixed and permuted terminal definition is</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014352"></a><code> ( f ( p t1 t2 ) ( p t3 t4 ) )</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014353"></a> This means that terminals 1 and 2 are permutable, and terminals 3 and 4 are permutable, but the terminal pair of 1 and 2 is not permutable with the terminal pair of 3 and 4.</p>
+
+<p><strong>
+<a id="pgfId-1014354"></a><code>property</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015988"></a><code>&#160;&#160;&#160;&#160;</code>This property is a text string containing a series of name pairs that define the default properties of the device type. Each pair consists of the property name and the property contents. The following example contains two pairs, <em>w 10</em> and <em>l 15.</em></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014355"></a><code> &quot;w 10 l 15&quot;</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1014356"></a> If the property value contains any special characters (including periods), the property must be included in quotes and each quote must be preceded by a backslash. For example</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014357"></a> <code>&quot;w 12 l 7 code \&quot;abc.def$\&quot; &quot;</code></p>
+
+<h4>
+<a id="pgfId-1014358"></a>Device Instance Definition</h4>
+
+<p>
+<a id="pgfId-1014359"></a>Each different instance of a device in the netlist must be defined with this line.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014360"></a>i &lt;inst_num&gt; &lt;device_type&gt; &lt;terminal_netlist&gt; &lt;property&gt;</pre>
+
+<p><strong>
+<a id="pgfId-1014361"></a><code>i</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015998"></a> Introduces the device instance line.</p>
+<p><strong>
+<a id="pgfId-1016003"></a><code>inst_num</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016006"></a><code>&#160;&#160;&#160;&#160;</code>A unique identification number for this device instance.</p>
+<p><strong>
+<a id="pgfId-1016011"></a><code>device_type</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016014"></a> Name of the device type of which this is an instance.</p>
+<p><strong>
+<a id="pgfId-1016020"></a><code>terminal_netlist</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016034"></a>List of net numbers in terminal order that defines the connections to the device.</p>
+<p><strong>
+<a id="pgfId-1016039"></a><code>property</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016042"></a>Text string containing a series of name pairs that define the properties of the device instance. Each pair consists of the property name and the property contents. The following example contains two pairs, <em>w 10</em> and <em>l 15.</em></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014366"></a> <code>&quot;w 10 l 15&quot;</code> </p>
+
+<h4>
+<a id="pgfId-1014367"></a>Terminal Definition</h4>
+
+<p>
+<a id="pgfId-1014368"></a>Defines the terminals of the circuit. LVS uses terminal definitions to define terminal-based correspondence points and to define net connections that enable the <em>LVS prune</em> command to correctly handle inputs and outputs.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014369"></a>t &lt; net_number &gt; &lt; net_name &gt;</pre>
+
+<p><strong>
+<a id="pgfId-1014370"></a><code>t</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016055"></a> Introduces the terminal definition line.</p>
+<p><strong>
+<a id="pgfId-1016060"></a><code>net_number</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016063"></a> Number of the terminal net in the netlist.</p>
+<p><strong>
+<a id="pgfId-1016068"></a><code>net_name</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016071"></a> Name of the terminal net in the layout or schematic.</p>
+
+<p>
+<a id="pgfId-1014373"></a>Terminal names that contain special characters such as &#8220;(&#8221; used for referencing busses, should be enclosed in double quotes. For example, &#8220;pin(1)&#8221;. The netlisting should be set up to always enclose terminal names in quotes, in case any name contains these special characters.</p>
+
+<h4>
+<a id="pgfId-1014374"></a>Fixing Devices</h4>
+
+<p>
+<a id="pgfId-1014375"></a>LVS uses two lines to define the devices are to be fixed or unfixed using the <em>fixing </em>feature. This only applies to the schematic netlist.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015100"></a>f&#160;&#160;&#160;&#160;&lt; net_number [order] net_number [order] ... ... &gt;
+u&#160;&#160;&#160;&#160;&lt; net_number [order] net_number [order] ... ... &gt;</pre>
+
+<p><strong>
+<a id="pgfId-1015101"></a><code>f</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016078"></a> Introduces the fix line.</p>
+<p><strong>
+<a id="pgfId-1016083"></a><code>u</code> </strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016086"></a>Introduces the unfix line.</p>
+<p><strong>
+<a id="pgfId-1016091"></a><code>order</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016094"></a> Introduces order fixing.</p>
+<p><strong>
+<a id="pgfId-1016099"></a><code>net_number</code></strong></p>
+<p class="webflare-indent1">
+<a id="pgfId-1016102"></a> List of net numbers used to determine which devices are fixed or unfixed.</p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014380"></a> Fixing applies to any device occurring in the netlist between the fix and unfix commands that reference a net to which that device is connected. </p>
+<p class="webflare-indent1">
+<a id="pgfId-1014381"></a> The <em>fix</em> and <em>unfix</em> commands are considered pairs. Each time you give a <em>fix</em> command you must also give a matching <em>unfix</em> command.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014489"></a> In the following example, the net 23 is defined twice. Devices connected to net 23 are not considered unfixed until both <em>unfix</em> commands containing net 23 are encountered. </p>
+
+<p>
+<a id="pgfId-1014490"></a></p>
+<table class="webflareTable" id="#id1014494">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014498"></a>f 23 45 56<br />f 84 23<br />....<br />u 84 23<br />u 23 45 56</pre>
+
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1014491"></a>Example of Netlist</h4>
+
+<p>
+<a id="pgfId-1014385"></a>The following example illustrates the structure of a netlist. It is not meant to represent a real circuit.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014710"></a>d   dep  s g d  (p s d)  ; Depletion load device<br />d   enh  s g d  (p s d)  ; Enhancement device<br /></pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014711"></a>t    1   gnd<br />t    2   vdd<br />t    3   a<br />t    4   b<br />t    9   clk<br />i    1   dep  7 7 2   &quot;l 3 w 2&quot;<br />i    2   dep  5 5 2   &quot;l 3 w 2&quot;<br />i    3   dep  6 6 2   &quot;l 3 w 2&quot;<br />i    4   dep  8 8 2   &quot;l 3 w 2&quot;<br />i    6   enh  1 4 7<br />i    7   enh  1 3 7<br />i    8   enh  1 3 5<br />i    9   enh  1 4 6<br />i    10  enh  1 5 8<br />i    11  enh  1 6 8<br />i    12  enh  1 7 9<br />i    13  enh  1 8 9<br /></pre>
+<p>
+<a id="pgfId-1014140"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="appC.html" id="prev" title="Improving Hierarchical DRC Performance">Improving Hierarchical DRC Per ...</a></em></b><b><em><a href="appE.html" id="nex" title="Application Techniques">Application Techniques</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

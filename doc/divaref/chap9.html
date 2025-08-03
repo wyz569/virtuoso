@@ -1,0 +1,1355 @@
+
+<html><head><title>Extracting Parameters (LPE)</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sarita" />
+<meta name="CreateDate" content="2023-05-02" />
+<meta name="CreateTime" content="1683027701" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="The Diva verification tool lets you check physical design and electrical functionality, perform layout versus schematic comparisons, and view errors interactively to speed diagnosis and correction." />
+<meta name="DocTitle" content="Diva Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Extracting Parameters (LPE)" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="divaref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-05-02" />
+<meta name="ModifiedTime" content="1683027701" />
+<meta name="NextFile" content="chap10.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Physical Verification  Analysis" />
+<meta name="PrevFile" content="chap8.html" />
+<meta name="c_product" content="Diva" />
+<meta name="Product" content="Diva" />
+<meta name="ProductFamily" content="Diva" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Diva Reference -- Extracting Parameters (LPE)" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="divarefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="divarefTOC.html">Contents</a></li><li><a class="prev" href="chap8.html" title="Models of Device Extraction">Models of Device Extraction</a></li><li style="float: right;"><a class="viewPrint" href="divaref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="chap10.html" title="Extracting Parasitics (LPE)">Extracting Parasitics (LPE)</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Diva Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>9
+<a id="pgfId-1008781"></a></h1>
+<h1>
+<a id="pgfId-1011663"></a><hr />
+Extracting Parameters (LPE)<hr />
+</h1>
+<h2>
+<a id="pgfId-1014200"></a>Introduction<a id="Introduction"></a><a id="chap8.doc:Introduction"></a></h2>
+
+<p>
+<a id="pgfId-1014201"></a>Device and connectivity extraction creates an extracted version of the circuit layout that contains instances of devices and nets in the form of a true electrical network.</p>
+<p>
+<a id="pgfId-1014202"></a>The verification system provides tools for measuring parameters of those devices, performing calculations with them, and storing the results on the extracted network as parameter properties.</p>
+<p>
+<a id="pgfId-1014205"></a><a id="marker-1014203"></a>A parameter is a property<a id="marker-1014204"></a> associated with a device which contains some information relative to that device. These properties can be accessed by application programs or SKILL routines as required. A good example is the netlister, which can annotate a transistor network listing with width and length parameters.</p>
+<p>
+<a id="pgfId-1014206"></a>The verification tools measure a wide range of characteristics of devices and can associate any number of them with a single device as parameters. The <em>measureParameter</em><a id="marker-1014207"></a> command definition gives full details of the capabilities.</p>
+<p>
+<a id="pgfId-1014209"></a>The <em>extractMOS </em><a id="marker-1014208"></a>command has built-in parameter extraction of gate width and length.</p>
+<p>
+<a id="pgfId-1014211"></a>The commands available for manipulating <a id="marker-1014210"></a>parameters are as follows:</p>
+<ul><li>
+<a id="pgfId-1014213"></a><a id="marker-1014212"></a>measureParameter<br />
+<a id="pgfId-1015989"></a>Measures the size of the device and the values of its relationships to other shapes.</li><li>
+<a id="pgfId-1015991"></a>calculateParameter<a id="marker-1015990"></a><br />
+<a id="pgfId-1015992"></a>Allows calculations to be performed on and between measured values. </li><li>
+<a id="pgfId-1015993"></a>saveParameter<br />
+<a id="pgfId-1014224"></a><a id="marker-1014219"></a><a id="marker-1014220"></a>Saves<a id="marker-1014221"></a> measured<a id="marker-1014222"></a> or <a id="marker-1014223"></a>calculated values as parameter properties on devices.</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1014225"></a>Parameters are normally associated with a device via the device recognition polygon. They can also be associated with any shape derived from a device recognition polygon, providing that the shape is created by a selection command, such as <em>geomOverlap</em>, rather than a logical command such as <em>geomAnd</em>.</p>
+
+<h3>
+<a id="pgfId-1014227"></a>Measurement Process<a id="The Measurement Process"></a></h3>
+
+<p>
+<a id="pgfId-1014228"></a>The measurement process consists of two operations: <em>measure </em>and <em>calculate.</em></p>
+
+<h4>
+<a id="pgfId-1014229"></a>Measure</h4>
+
+<p>
+<a id="pgfId-1014231"></a>The <a id="marker-1014230"></a>measurement commands associate each measurement with the object being measured. For parameter measurement, this is the device number. </p>
+<p>
+<a id="pgfId-1014232"></a>The results from any measurement are given a name. This is a reference to those measurements that can be used in other processing commands.</p>
+
+<h4>
+<a id="pgfId-1014233"></a>Calculate</h4>
+
+<p>
+<a id="pgfId-1014234"></a>A calculation can be performed on a single measurement result (referenced by name), or a calculation can be performed between measurements of results. All measurement names referenced in the calculation must be associated with the same device type.</p>
+<p>
+<a id="pgfId-1014235"></a>You cannot mix device measurements with parasitic measurements. Similarly, you cannot mix device measurements of one device type with those of another device type. For example, it is meaningless to calculate the <em>W/L</em> relationship of devices if the <em>W </em>comes from an <em>nfet</em> and the<em> L </em>comes from a<em> pfet.</em></p>
+<p>
+<a id="pgfId-1014240"></a><a id="marker-1014236"></a>The<a id="marker-1014237"></a> best<a id="marker-1014238"></a> way<a id="marker-1014239"></a> to define how the calculation of measured values works is to show an example.</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014241"></a>l = calculateParameter( lc - ( w * b * 0.5 ) )</pre>
+<p>
+<a id="pgfId-1014242"></a>In this example, the effective length of a device is calculated as the center line length minus half the width for each bend.</p>
+
+<h3>
+<a id="pgfId-1014244"></a>Measurement Commands<a id="Measurement Functions"></a></h3>
+
+<p>
+<a id="pgfId-1014245"></a>The measurement commands that are available are detailed in the command reference section of this manual. Some, such as <em>area</em> and <em>perimeter</em>, are obvious and need no further explanation. Others, however, do need clarification.</p>
+
+<h4>
+<a id="pgfId-1014246"></a>Length</h4>
+
+<p>
+<a id="pgfId-1014247"></a>The term <em>length</em>, when applied to a random polygon, is meaningless. For a rectangle, it could mean the length of the longest axis; but for any more complex shape, no simple definition is possible.</p>
+<p>
+<a id="pgfId-1014251"></a>For the purposes of parameter and <a id="marker-1014248"></a>parasitic <a id="marker-1014249"></a>measurement<a id="marker-1014250"></a>, the definition of length of a shape on a layer is defined as the length of edges of that shape relative to shapes on other layers.</p>
+<p>
+<a id="pgfId-1014252"></a>An example of this is the length of a transistor gate. In this context it is <em>the length of the gate shape which is totally inside the polysilicon shape, divided by two</em>. The division by two is required because the relationship defined measures both sides of the gate.</p>
+<p>
+<a id="pgfId-1014253"></a>Many tools are provided to define the relationship. They are as follows:</p>
+<ul><li>
+<a id="pgfId-1014254"></a>over</li><li>
+<a id="pgfId-1014255"></a>not_over</li><li>
+<a id="pgfId-1014256"></a>inside</li><li>
+<a id="pgfId-1014257"></a>outside</li><li>
+<a id="pgfId-1014258"></a>butting</li><li>
+<a id="pgfId-1014259"></a>coincident</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1014260"></a>The relationship can include up to eight layers.</p>
+
+<h4>
+<a id="pgfId-1014261"></a>Bends</h4>
+
+<p>
+<a id="pgfId-1014269"></a>The definition of <a id="marker-1014262"></a>bends is not simple. Consider this figure.</p>
+
+<p>
+<a id="pgfId-1014815"></a></p>
+<div class="webflare-div-image">
+<img width="586" height="131" src="images/chap9-2.gif" /></div>
+
+<p>
+<a id="pgfId-1014270"></a>The first two figures are squares with a corner cut out. The first one appears to have a bend in it. Based on the first one having a bend in it, the third figure appears to have two bends in it.</p>
+<p>
+<a id="pgfId-1014271"></a>Consider this figure, which represents an MOS transistor gate with source and drain diffusions.</p>
+
+<p>
+<a id="pgfId-1014816"></a></p>
+<div class="webflare-div-image">
+<img width="610" height="150" src="images/chap9-3.gif" /></div>
+
+<p>
+<a id="pgfId-1014285"></a>Both gates have bends in them, but one has a bend in the length of the gate and the other has a bend in the width of the gate. The bend is relative to the diffusion layer.</p>
+<p>
+<a id="pgfId-1014286"></a>As in the definition of length, the definition of bends depends upon a shape&#8217;s relationship to shapes on other layers. The measurement command allows you to define this relationship to other layers as part of the bend determination.</p>
+<p>
+<a id="pgfId-1014288"></a><a id="marker-1014287"></a>By the program&#8217;s definition, a bend is created by an inside corner (concave corner) in a shape, so a count of bends is a count of the inside corners. </p>
+<p>
+<a id="pgfId-1014289"></a>In addition to counting bends, you can also use the program for counting corners and angles. A corner is an outside corner (convex corner) in a shape, and an angle is any corner, outside or inside. Therefore, a count of angles is the same as a count of bends plus a count of corners.</p>
+
+<h3>
+<a id="pgfId-1014290"></a>NULL Measurements </h3>
+
+<p>
+<a id="pgfId-1014291"></a>The parameter and figure mode parasitic extraction measurements have these characteristics.</p>
+<ul><li>
+<a id="pgfId-1014292"></a>If a value is measured to be 0, as is the case with bend counts, the value is treated as any other value. If there are no limits specified, the value is retained. If there are limits specified, the value is checked against them and retained if it conforms to those limits.</li><li>
+<a id="pgfId-1014293"></a>If no measurement is made, as is the case of area of gate over metal when there is no metal under the gate, no measurement is created, and a value of zero is created if the limits specified request a value of zero to be retained. If the limits exclude the value of zero, no measurement value will be created.</li></ul>
+
+<p>
+<a id="pgfId-1014294"></a>The difference between a value of zero and no measurement is in creation of the resultant property. A value of zero can be used to create a property with a value of zero. If no measurement is made, a property cannot be created.</p>
+
+<h3>
+<a id="pgfId-1014296"></a>Measurement Optimization<a id="Measurement Optimization"></a></h3>
+
+<p>
+<a id="pgfId-1014297"></a>For general use, the measurement capabilities of the system are designed to be flexible. As a result, the code cannot be optimized as would be the case if the measurements were made from predefined layer relationships, as in the case of MOS transistor width and length in the <em>extractMOS </em>command.</p>
+<p>
+<a id="pgfId-1014299"></a>You can achieve some degree of run-time <a id="marker-1014298"></a>optimization, however, by using other techniques. These techniques can be controlled by the way you write your measurement commands.</p>
+
+<h4>
+<a id="pgfId-1014300"></a>Implied Logical Operations</h4>
+
+<p>
+<a id="pgfId-1015978"></a>Inside<a id="marker-1015977"></a> the measurement command, up to eight layers can be defined in a single complex relationship. For example, with five layers you can write</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015979"></a>measureParameter( area metal over poly over cut not_over&#160;&#160; buried_cut not_over tub )</pre>
+<p>
+<a id="pgfId-1014304"></a>Such a relationship is processed by looking at all the layers at once. The program does not do a series of two-layer logical operations to derive the required area. This is optimal unless parts of the relationship are used multiple times, in which case it would be better to extract that area separately with logical commands. In the example, if you had a number of relationships involving <em>poly over cut</em>, it would be more efficient to write</p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1014305"></a>pcut = geomAnd( poly cut )<br />measureParameter( area metal over pcut not_over buried_cut not_over tub )<br />measureParameter( area metal2 over pcut over well )</pre>
+<p>
+<a id="pgfId-1014306"></a>This optimization has to be considered with the consolidated measurements.</p>
+
+<h4>
+<a id="pgfId-1014307"></a>Consolidated Measurements</h4>
+
+<p>
+<a id="pgfId-1014308"></a>Multiple measurement commands can be processed in one pass of the data. This capability is controlled by the system command optimizer, which decides if such consolidation is worthwhile.</p>
+<p>
+<a id="pgfId-1014309"></a>The optimization decision is based on the number of common layers in a command. For example, if one measurement involves layers <em>a, b, c</em>, and <em>d,</em> and another measurement involves layers <em>b, c, d, </em>and <em>e, </em>then they are consolidated, and both measurements are made at the same time.</p>
+<p>
+<a id="pgfId-1014310"></a>The exact optimization criteria is not given here since it is not a simple heuristic. </p>
+<p>
+<a id="pgfId-1014312"></a>Any number of <a id="marker-1014311"></a>measurement commands can be consolidated provided these criteria are met:</p>
+<ul><li>
+<a id="pgfId-1014313"></a>The optimizer decides that the consolidation is worthwhile.</li><li>
+<a id="pgfId-1014314"></a>The resulting number of layers does not exceed the maximum allowed.</li><li>
+<a id="pgfId-1014315"></a>The measurements are contiguous in the command stream; that is, not separated by other commands.</li></ul>
+
+
+<p>
+<a id="pgfId-1014316"></a>Separate groups of measurement commands in the command stream are optimized separately.</p>
+
+<h2>
+<a id="pgfId-1014318"></a>Parameter Measurement Reference Commands<a id="Parameter Measurement Reference Commands"></a></h2>
+
+<p>
+<a id="pgfId-1014821"></a>The following section contains the parameter measurement reference commands.</p>
+
+<h3>
+<a id="pgfId-1014321"></a><a id="77361"></a>calculateParameter<a id="calculateParameter"></a></h3>
+<a id="pgfId-1014323"></a><a id="marker-1014322"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outValue = calculateParameter( expression [limit] )</pre>
+<h4>
+<a id="pgfId-1014324"></a>Description</h4>
+
+<p>
+<a id="pgfId-1014325"></a>This command creates new device parameter measurement values based on calculations with previously measured or calculated values derived through the <em>measureParameter</em><a id="marker-1014326"></a> and <em>calculateParameter</em> commands.</p>
+<p>
+<a id="pgfId-1014327"></a>Each <em>measureParameter</em> command allows you to make a single device parametric measurement. This command lets you manipulate one or more of these simple measurements to form more complex parameters.</p>
+
+<h4>
+<a id="pgfId-1014328"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1014329"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016702"></a> <a id="marker-1015683"></a>The measurement<a id="marker-1015684"></a> results are stored in a layer that contains parameter values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands related to parameter manipulation can reference the layer. Specifically, these are <em>calculateParameter</em><a id="marker-1015789"></a> and <em>saveParameter.</em><a id="marker-1015799"></a></p>
+
+<p><strong>
+<a id="pgfId-1016707"></a><code>expression</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016710"></a> This is the calculation expression relating the results of previous <em>measureParameter</em><a id="marker-1014331"></a> or <em>calculateParameter</em> commands with mathematical operators. The operators can be any of the following:</p>
+
+<p>
+<a id="pgfId-1014951"></a></p>
+<table class="webflareTable webflareTableIndent" id="#id1014332">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014334">
+<a id="pgfId-1014334"></a>Operator</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014336">
+<a id="pgfId-1014336"></a> Operation</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014338">
+<a id="pgfId-1014338"></a>Example</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016010"></a>if()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016012"></a>conditional expression; returns the second argument if the first argument is non-zero, otherwise the third argument</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016014"></a>if(x y z)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016016"></a>and()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016018"></a>logical AND; returns 1 if both of the arguments are non- zero, otherwise 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016020"></a>and(x y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016022"></a>or()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016024"></a>logical OR; returns 1 if either of the arguments are non- zero, otherwise 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016026"></a>or(x y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016028"></a>==</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016030"></a>equal; returns 1 if the arguments have the same value, otherwise 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016032"></a>x == y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016034"></a>nequal</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016036"></a>not equal; returns 1 if the arguments do not have the same value, otherwise 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016038"></a>nequal(x y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016040"></a> &gt;=</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016042"></a>greater than or equal; returns 1 if the first argument is greater than or equal to the second argument, otherwise 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016044"></a>x &gt;= y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016046"></a>&gt;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016048"></a>greater than; returns 1 if the first argument is greater than the second argument, otherwise 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-1016050"></a> x &gt; y</p>
+
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016052"></a>&lt;=</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-1016054"></a>less than or equal; returns 1 if the first argument is less than or equal to the second argument, otherwise 0</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016056"></a>x &lt;= y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016058"></a>&lt;</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-1016060"></a>less than; returns 1 if the first argument is less than the second argument, otherwise 0</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016062"></a>x &lt; y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016064"></a>min()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<p>
+<a id="pgfId-1016066"></a>minimum; returns the smaller of the two arguments</p>
+
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016068"></a>min(x y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016070"></a>max()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016072"></a>maximum; returns the larger of the two arguments</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016074"></a>max(x y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014340"></a>+</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014342"></a>add</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014344"></a>x + y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014346"></a>-</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014348"></a>subtract</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014350"></a>x - y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014352"></a>*</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014354"></a>multiply</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014356"></a>x * y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014358"></a>/</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014360"></a>divide</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014362"></a>x / y</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014364"></a>log()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014366"></a>natural log</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014368"></a>log(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014370"></a>sin()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014372"></a>sine in radians</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014374"></a>sin(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014376"></a>cos()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014378"></a>cosine in radians</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014380"></a>cos(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014382"></a>atan()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014384"></a>arctangent of x with range -pi/2 to pi/2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014386"></a>atan(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014388"></a>sqrt()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014390"></a>square root</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014392"></a>sqrt(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014394"></a>abs()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014396"></a>absolute value</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014398"></a>abs(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014400"></a>exp()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014402"></a>exponential (e to power x)</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014404"></a>exp(x) </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014406"></a>ceiling()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014408"></a>smallest integer not less than x</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014410"></a>ceiling(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014412"></a>floor()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014414"></a>largest integer not greater than x</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014416"></a>floor(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014418"></a>round()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014420"></a>nearest integer (floor(x + 0.5))</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014422"></a>round(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014424"></a>log10()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014426"></a>base 10 logarithm; x must be &gt; 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014428"></a>log10(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014430"></a>tanh()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014432"></a>hyperbolic tangent of x</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014434"></a>tanh(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014436"></a>sinh()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014438"></a>hyperbolic sine of x</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014440"></a>sinh(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014442"></a>cosh()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014444"></a>hyperbolic cosine of x</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014446"></a>cosh(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014448"></a>acos()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014450"></a>cos-1 of x in range 0 to pi<br />x must be in range -1 to +1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014452"></a>acos(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014454"></a>asin()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014456"></a>sin-1 of x in range -pi/2 to pi/2<br />x must be in range -1 to +1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014458"></a>asin(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014460"></a>tan()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014462"></a>tangent of x</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014464"></a>tan(x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014466"></a>power()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014468"></a>x raised to power y<br />if x is 0, y must be &gt; 0<br />if x is negative, y must be integer</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014470"></a>power(x,y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014472"></a>atan2()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014474"></a>tan-1 of y/x in range -pi to +pi</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014476"></a>atan2(y,x)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014478"></a>fmod()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014480"></a>floating point remainder of x/y with same sign as x; y cannot be 0</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014482"></a>fmod(x,y)</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016003"></a>step()</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016005"></a>comparison<br />returns 1 if the first argument is less than or equal to the second, otherwise 0.</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1016007"></a>step(x y)</p>
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014484"></a> The precedence of the calculation <a id="marker-1014483"></a>operators follows normal mathematics conventions; that is, multiply and divide have higher precedence than plus or minus with left to right evaluation of operators with the same precedence. You can include parentheses to override the default evaluation order. To avoid conflict with names containing special characters (such as P+), you must use spaces to separate names from operators.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014485"></a> All the layer references from previous <em>measureParameter</em> or <em>calculateParameter</em> commands, used in a <em>calculateParameter</em> command, must be made from a device recognition layer of the same type. You cannot mix measurements made for different device types. In addition, all measurements in a calculation for a <em>device</em> application must be made from the same device recognition layer.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014486"></a> Each parameter used in a <em>calculateParameter</em> command references data stored in a file which has to be opened by Diva. The number of files available when Diva is running depends upon factors outside Diva&#8217;s control. To reduce the risk of exceeding the number of files available, a limit of ten parameters within a single <em>calculateParameter</em><a id="marker-1014487"></a> command has been set (as a compile-time option). If you exceed this limit, the run does not start. If the required number of files is not available when the <em>calculateParameter</em> command is executed, the program recognizes the fact and stops the run.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014488"></a> If a calculation results in an inappropriate operation, such as dividing by zero, the program issues a warning message and aborts that particular calculation. Such situations are normally the result of a flawed calculation definition, as would be the case if a division is requested by a value that can be measured as zero or nonexistent.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1014961"></a> For example</p>
+
+<p>
+<a id="pgfId-1015664"></a></p>
+<table class="webflareTable" id="#id1014966">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+
+<ol><li>
+<a id="pgfId-1014968"></a>Measure <em>area metal over poly.</em></li><li>
+<a id="pgfId-1014989"></a>Measure <em>area metal over diff.</em></li><li>
+<a id="pgfId-1014978"></a>Divide the result of step 1 by step 2.</li></ol>
+
+
+
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1014493"></a> If a shape of metal overlaps <em>poly</em> but not <em>diff</em>, there is no second measurement. This results in a value of 0 and the calculation fails.</p>
+
+<p><strong>
+<a id="pgfId-1015039"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016723"></a><code>&#160;&#160;&#160;&#160;</code>This optional argument provides the ability to reject calculated values because they fall outside the specified limits. It can be used to significantly reduce the amount of data being created by rejecting all values which are insignificant.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015255"></a> The format of the limits specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015256"></a><code> low_limit op keyword op high_limit
+keyword op low_limit
+keyword op high_limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015259"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015260"></a> You can use the following operators:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015261"></a> <code>&lt;  
+&lt;=  
+&gt;  
+&gt;=  
+==</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015266"></a> The keyword can be either <em>ignore</em> or <em>keep</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015267"></a> The following examples illustrate the format:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015268"></a> <code>ignore &lt; .001
+keep &gt;= .3
+1 &lt; keep &lt; 5
+1.3e-4 &lt;= ignore &lt;= 2.7e-3</code></p>
+
+<h4>
+<a id="pgfId-1015060"></a>Example</h4>
+
+<p>
+<a id="pgfId-1015061"></a>The following example illustrates the generation of the effective gate length for a device. </p>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015062"></a>av_length = measureParameter( length gate inside <br />  poly 0.5 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015063"></a>width = measureParameter( length gate coincident poly<br />  0.5 )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015064"></a>bends = measureParameter( bends_all gate inside poly )</pre>
+<pre class="webflare-courier-new webflare-indent1 codeContent">
+<a id="pgfId-1015065"></a>length = calculateParameter( av_length - ( .1 * bends ) )</pre>
+<p>
+<a id="pgfId-1015066"></a>The calculation formulates the effective length from the average center line length minus half the width for every bend.</p>
+
+<h3>
+<a id="pgfId-1015069"></a>measureParameter<a id="measureParameter"></a></h3>
+<a id="pgfId-1015071"></a><a id="marker-1015070"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+outValue = measureParameter( operator ( layer1 [operator layer2]... ) [coeff] [limit] )</pre>
+<h4>
+<a id="pgfId-1015072"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015073"></a>This command measures devices or the relationships between devices and other shapes. Those measurements might later be applied as parameters of the devices using the <a id="marker-1015074"></a><em>saveParameter</em><a id="marker-1015075"></a> command, or contribute to calculations for subsequent parameters using the <em>calculateParameter</em><a id="marker-1015076"></a> command. </p>
+
+<h4>
+<a id="pgfId-1015077"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015079"></a>You must process the first layer with an<em> extractDevice </em><a id="marker-1015078"></a>or <em>extractMOS</em> device command. </p>
+
+<h4>
+<a id="pgfId-1015696"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015697"></a><code>outValue</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016736"></a> <a id="marker-1015701"></a>The measurement<a id="marker-1015702"></a> results are stored in a layer that contains parameter values instead of shapes. This layer cannot be processed by any layer manipulation commands. Only commands related to parameter manipulation can reference the layer. Specifically, these are <em>calculateParameter</em><a id="marker-1015731"></a> and <em>saveParameter</em><a id="marker-1015744"></a>.</p>
+
+<p><strong>
+<a id="pgfId-1016741"></a><code>operator</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016744"></a><code>&#160;&#160;&#160;&#160;</code>This argument defines the relationship to be measured. It consists of a single operator followed by a layer reference and optional operator-layer reference pairs.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015083"></a> The following are possible operators:</p>
+
+<p>
+<a id="pgfId-1015558"></a></p>
+<table class="webflareTable" id="#id1015487">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015489"></a><code>area</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015491"></a>Area of the shape or combinations of shapes defined by the <em>over</em> and <em>not_over </em>operators.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015493"></a><code>perimeter</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015495"></a>Perimeter of the shape or combinations of shapes defined by the <em>over</em> and <em>not_over</em> operators.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015497"></a><code>length</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015499"></a>Length of edges conforming to the defined relationship. </p>
+<p>
+<a id="pgfId-1015500"></a>If the<em> length </em>operator is used, the <em>operator</em> argument is required.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015502"></a><code>bends_all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015504"></a>Count of all bends in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015506"></a><code>bends_full</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015508"></a>Count of full bends (&gt;45 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015510"></a><code>bends_part</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015512"></a>Count of partial bends (&lt;=45 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015514"></a><code>bends_rad</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015516"></a>Count of the angles of all bends measured in radians.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015518"></a><code>corners_all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015520"></a>Count of all outside (convex) corners in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015522"></a><code>corners_full</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015524"></a>Count of all outside (convex) full corners ( &gt;= 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015526"></a><code>corners_part</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015528"></a>Count of all outside (convex) partial corners ( &lt; 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015530"></a><code>corners_rad</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015532"></a>Count of the angles of all corners measured in radians.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015534"></a><code>angles_all</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015536"></a>Count of all corners and bends in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015538"></a><code>angles_full</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015540"></a>Count of all full corners and bends ( &gt;= 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015542"></a><code>angles_part</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015544"></a>Count of all partial corners and bends ( &lt; 90 degrees) in a shape.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015546"></a><code>figCount</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015548"></a>Count of figures (shapes) of <em>inLayer2</em> enclosed inside <em>inLayer1</em>. A shape of <em>inLayer2</em> is enclosed in <em>inLayer1</em> if it does not cross the boundary of <em>inLayer1</em>. The edges of the shapes can be coincident.</p>
+<p>
+<a id="pgfId-1015549"></a>You can use this operator only in conjunction with the <em>enclosing</em> operator.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015551"></a><code>layer1</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015553"></a>The first layer referenced must have been used as a device recognition polygon in a device extraction command, or derived from a recognition polygon by a selection command such as <em>geomOverlap</em>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015555"></a><code>operator</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015557"></a>The operators define the required relationship between the layers referenced before and after them. In these descriptions, the operators are defined relative to a relationship of <em>layerA operator layerB.</em></p>
+</td>
+</tr>
+</tbody></table>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015596"></a> The following are possible operators:</p>
+
+<p>
+<a id="pgfId-1015600"></a></p>
+<table class="webflareTable" id="#id1015559">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015561"></a><code>butting</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015563"></a>Edge coincidence where the shapes of <em>layerA </em>do not overlap shapes of <em>layerB.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015565"></a><code>coincident</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015567"></a>Edge coincidence where the shapes of <em>layerA </em>do overlap shapes of <em>layerB.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015569"></a><code>over</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015571"></a>For <em>area</em> and <em>perimeter</em>, equivalent to a logical AND of <em>layerA </em>and <em>layerB</em>. For length and bend operators, equivalent to <em>inside </em>plus <em>coincident.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015573"></a><code>not_over</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015575"></a>For <em>area</em> and <em>perimeter</em>, equivalent to a logical AND_NOT of <em>layerA </em>and <em>layerB</em>. For length and bend operators, equivalent to <em>outside </em>plus <em>butting.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015577"></a><code>outside</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015579"></a>Edges of <em>layerA</em> outside but not butting shapes of<em> layerB</em>.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015581"></a><code>inside</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015583"></a>Edges of <em>layerA </em>inside but not coincident with shapes of <em>layerB.</em></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015585"></a><code>enclosing</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1015587"></a>Used in conjunction with the <em>figCount</em> operator to count the number of shapes on <em>inLayer2</em> enclosed by the shape on <em>inLayer1</em>.</p>
+<p>
+<a id="pgfId-1015606"></a>You cannot use this operator with any other operators. This operator applies only to two layers.</p>
+</td>
+</tr>
+</tbody></table>
+
+<div class="webflare-indent1 webflare-information-macro webflare-macro-note">
+<a id="pgfId-1015597"></a>The <em>area </em>and <em>perimeter</em> operators are shape based and can only measure relationships defined with the<em> over</em> and <em>not_over</em> operators. The <em>length</em> and <em>bend</em> operators are edge based and can measure relationships defined by any of the operators.</div>
+
+<p><strong>
+<a id="pgfId-1015112"></a><code>layer2</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016758"></a> Subsequent layers can be derived layer references or original layer names in quotes.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015113"></a> The sequence of layers and operators is read from left to right. There is a limit of eight layers total for any single measurement.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015114"></a> The following figure illustrates the basic operator relationships. The operators other than <em>over</em> and <em>not_over</em> define edges rather than areas.</p>
+
+<p>
+<a id="pgfId-1015145"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="282" src="images/chap9-4.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015146"></a> The following figure illustrates the various bend operator options. The same principles apply to the corner operator options, although the angle measurement is applied to the outside (convex) corners rather than the inside (concave) corners.</p>
+
+<p>
+<a id="pgfId-1015167"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="223" src="images/chap9-5.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015169"></a> The angle of a <a id="marker-1015168"></a>bend is measured as the deviation of one edge of the bend from being colinear with the other edge, as illustrated in this figure.</p>
+
+<p>
+<a id="pgfId-1015183"></a></p>
+<div class="webflare-div-image">
+<img width="569" height="173" src="images/chap9-6.gif" /></div>
+
+<p class="webflare-indent1">
+<a id="pgfId-1015184"></a> The following figure illustrates a complete multilayer relationship.</p>
+
+<p>
+<a id="pgfId-1015205"></a></p>
+<div class="webflare-div-image">
+<img width="643" height="206" src="images/chap9-7.gif" /></div>
+<p><strong>
+<a id="pgfId-1015206"></a><code>coeff</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016777"></a> An optional coefficient. This is a floating-point number applied as a multiplier to the measured value to change its units. For example, it can be used to change an area measurement in square microns to a capacitance in farads. The choice of the coefficient depends upon the final destination of the data. For example, SPICE™ requires area measurements to be in square meters rather than square microns.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015648"></a> The default value for this coefficient is 1.0.</p>
+
+<p><strong>
+<a id="pgfId-1015649"></a><code>limit</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016789"></a> This optional argument provides the ability to reject measured values because they fall outside the specified limits. It can be used to significantly reduce the amount of data being created by rejecting all measured values which are insignificant.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015209"></a> The format of the limits specification can be one of the following:</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015210"></a> <code>low_limit op keyword op high_limit
+keyword op low_limit
+keyword op high_limit</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015211"></a> The limits can be integer or floating-point values or mathematical expressions defining such values.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015212"></a> Operators (op) you can use are as follows: </p>
+<p class="webflare-indent1">
+<a id="pgfId-1015213"></a> <code>&lt;  
+&lt;=  
+&gt;  
+&gt;=  
+==</code></p>
+<p class="webflare-indent1">
+<a id="pgfId-1015218"></a> The keyword can be either <em>ignore </em>or <em>keep</em>.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015665"></a> The following examples illustrate the format.</p>
+<p class="webflare-indent1">
+<a id="pgfId-1015666"></a> <code>ignore &lt; .001
+keep &gt;= .3
+1 &lt; keep &lt; 5
+1.3e-4 &lt;= ignore &lt;= 2.7e-3</code></p>
+
+<h4>
+<a id="pgfId-1015224"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1015225"></a>Since the number of permutations of this command is large, these examples illustrate some possibilities.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015226"></a>trans_length = measureParameter( length ( gate inside&#160;&#160; poly ) 0.5 )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015227"></a>trans_width = measureParameter( length ( gate <br />  coincident poly ) 0.5 )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015228"></a>trans_bends = measureParameter( bends_all ( gate inside&#160;&#160; poly ) )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015229"></a>poly_perim = measureParameter( perimeter( poly not_over&#160;&#160; diff ) ignore &lt;.01 )</pre>
+<h2>
+<a id="pgfId-1016147"></a>Data Storage<a id="Data Storage"></a></h2>
+
+<p>
+<a id="pgfId-1016148"></a>The following section discusses the commands to save parameter measurements.</p>
+
+<h3>
+<a id="pgfId-1016177"></a><a id="69717"></a>name<a id="marker-1016203"></a>Parameter<a id="nameParameter"></a></h3>
+<a id="pgfId-1016179"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+nmaeParameter( measurement propname )</pre>
+<h4>
+<a id="pgfId-1016180"></a>Description</h4>
+
+<p>
+<a id="pgfId-1016182"></a>Provided for rule deck compatibility with Assura, this command saves device measurements as properties on the appropriate device instances in the extracted cellview.</p>
+
+<h4>
+<a id="pgfId-1016183"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1016184"></a>Measurements must have been made by a <em>measureParameter</em> command, or derived from them using the <em>calculateParameter</em> command.</p>
+
+<h4>
+<a id="pgfId-1016185"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1016186"></a><code>measurement</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016802"></a><code>&#160;&#160;&#160;&#160;</code>The layer resulting from the <em>measureParameter</em> or <em>calculateParameter </em>commands.</p>
+
+<p><strong>
+<a id="pgfId-1016807"></a><code>propname</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016810"></a><code>&#160;&#160;&#160;&#160;</code>The name of the property, enclosed in quotes, that is created on the device and references the value of the measurement. The value type of the property is a floating-point number.</p>
+
+<h4>
+<a id="pgfId-1016188"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016189"></a>nameParameter( wl &quot;wl&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016190"></a>nameParameter( width &quot;w&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1016191"></a>nameParameter( length &quot;l&quot; )</pre>
+<h3>
+<a id="pgfId-1016151"></a>saveParameter<a id="saveParameter"></a></h3>
+<a id="pgfId-1015239"></a><a id="marker-1015238"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+saveParameter( measurement propname )</pre>
+<h4>
+<a id="pgfId-1015240"></a>Description</h4>
+
+<p>
+<a id="pgfId-1015242"></a>This command <a id="marker-1015241"></a>saves device measurements as properties on the appropriate device instances in the extracted cellview.</p>
+
+<h4>
+<a id="pgfId-1015243"></a>Prerequisites</h4>
+
+<p>
+<a id="pgfId-1015244"></a>Measurements must have been made by a <em>measureParameter</em> command, or derived from them using the <em>calculateParameter</em> command.</p>
+
+<h4>
+<a id="pgfId-1015245"></a>Fields</h4>
+<p><strong>
+<a id="pgfId-1015246"></a><code>measurement</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016817"></a><code>&#160;&#160;&#160;&#160;</code>The layer resulting from the <em>measureParameter</em> or <em>calculateParameter </em>commands.</p>
+
+<p><strong>
+<a id="pgfId-1016822"></a><code>propname</code></strong></p>
+
+<p class="webflare-indent1">
+<a id="pgfId-1016825"></a><code>&#160;&#160;&#160;&#160;</code>The name of the property, enclosed in quotes, that is created on the device and references the value of the measurement. The value type of the property is a floating-point number.</p>
+
+<h4>
+<a id="pgfId-1015248"></a>Examples</h4>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015249"></a>saveParameter( wl &quot;wl&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1015250"></a>saveParameter( width &quot;w&quot; )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014696"></a>saveParameter( length &quot;l&quot; )</pre>
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap8.html" id="prev" title="Models of Device Extraction">Models of Device Extraction</a></em></b><b><em><a href="chap10.html" id="nex" title="Extracting Parasitics (LPE)">Extracting Parasitics (LPE)</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
