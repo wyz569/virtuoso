@@ -1,0 +1,361 @@
+
+<html><head><title>Running MDL in Post-processing Mode</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="namratam" />
+<meta name="CreateDate" content="2023-06-12" />
+<meta name="CreateTime" content="1686596460" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes Spectre Measurement Description Language." />
+<meta name="DocTitle" content="Spectre Circuit Simulator Measurement Description Language User Guide and Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Running MDL in Post-processing Mode" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="mdlref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-12" />
+<meta name="ModifiedTime" content="1686596460" />
+<meta name="NextFile" content="appA.html" />
+<meta name="Group" content="MDL" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="chap3.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator Measurement Description Language User Guide and Reference -- Running MDL in Post-processing Mode" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="mdlref231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="mdlrefTOC.html">Contents</a></li><li><a class="prev" href="chap3.html" title="Running MDL in Batch Mode">Running MDL in Batch Mode</a></li><li style="float: right;"><a class="viewPrint" href="mdlref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appA.html" title="Built-In Functions">Built-In Functions</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator Measurement Description Language User Guide and Reference<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>4
+<a id="pgfId-1065082"></a></h1>
+<h1>
+<a id="pgfId-1065083"></a><hr />
+Running MDL in Post-processing Mode<hr />
+</h1>
+
+<p>
+<a id="pgfId-1065566"></a><a id="runningmdlinpostprocessingmode"></a>MDL supports the post-processing mode that enables the user to evaluate measurements after the simulation has completed. This is especially helpful if you would like to use the same language (MDL or <code>.measure</code> statements) that was used for measurements evaluated during the simulation. </p>
+<p>
+<a id="pgfId-1065567"></a>In case the measurements were not set up correctly, or more measurements need to be evaluated, the simulation needs to be run repeatedly to get the desired results. With post-processing capability, you can edit the measurements (in a MDL file, or .measure&#160;&#160;in the netlist) and then invoke the simulator in a mode, where instead of performing the actual simulation, it reads the simulation results from a specified results directory or file, depending upon the waveform format being used.</p>
+<p>
+<a id="pgfId-1065073"></a>The MDL post-processing mode allows you to execute a MDL script on an existing results database. Optionally a netlist can be provided. This allows the MDL script to reference objects in the netlist. For example the parameters in the netlist could be used in the MDL measurements.</p>
+
+<h2>
+<a id="pgfId-1065583"></a>mdl</h2>
+
+<p>
+<a id="pgfId-1065584"></a>Runs MDL in post-processing mode.</p>
+<p>
+<a id="pgfId-1065585"></a>In the following syntax, the vertical bar ( | ) separates alternatives.</p>
+
+<h3>
+<a id="pgfId-1065586"></a>Syntax</h3>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065587"></a>mdl &#8211;batch|-b &lt;file.mdl&gt; [-design|-d netlist] -raw|-r &lt;rawdir&gt; [options]</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065588"></a>       mdl &#8211;d &lt;netlist containing .measure statement&gt; -raw|-r &lt;rawdir&gt; [options]</pre>
+<h3>
+<a id="pgfId-1065643"></a>Arguments</h3>
+<table class="webflareTable" id="#id1065589">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065591"></a><code>-batch|-b &lt;file.mdl&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065593"></a>The filename of the MDL file to be executed.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065595"></a><code>-raw|-r &lt;rawdir&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065597"></a>Location of the results directory.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065599"></a><code>-design|-d &lt;netlist&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065601"></a>The filename of the netlist to be loaded by MDL. This can also be a netlist containing <code>.measure</code> statemtents.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065603"></a><code>-measure|-m &lt;file.measure&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065605"></a>The default output filename is taken from the basename of the design argument, and appended with the <code>.measure</code> extension. This option creates an output file with the specified name. If an absolute path is not specified, the output file is created in the directory of the design argument.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065607"></a><code>+log|+l &lt;logfile&gt; </code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065609"></a>Copies all messages to logfile.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065611"></a><code>=log|=l &lt;logfile&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065613"></a>Sends all messages to logfile.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065615"></a><code>-prec|-p &#39;&lt;format&gt;&#39;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065617"></a>Optional argument to specify the precision of of the measured value output in the measurement file.</p>
+<p>
+<a id="pgfId-1065618"></a><strong>Example:</strong> <code>%.15g</code> will output the measured values to 15 significant digits. The argument is ignored if <code>-engineering</code> argument is used.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065620"></a><code>-eng|-e &lt;numdigits&gt;</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065622"></a>Optional argument to specify the engineering format of the signal value output to the measurement file. <code>&lt;numdig&gt;</code> is a number of significant digits of the signal value. <code>&lt;numdig&gt;</code> is optional. If <code>&lt;numdig&gt;</code> is omitted than value of the <code>&lt;numdig&gt;</code> is 6. <code>-prec</code> argument is ignored.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065624"></a><code>-tab|-t</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065626"></a>Optional argument to specify that the measure file should be displayed in tabular format.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065628"></a><code>-append|-a</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065630"></a>Optional argument to specify that the measure file should be opened in append mode.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065632"></a><code>-nosort|-n</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065634"></a>Optional argument to specify that variables in the measure file should not be sorted.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065636"></a><code>-outdir|-o</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065638"></a>Optional argument to specify an alternate output directory location for all output files. This&#160;&#160;does not change the location of the raw directory if explicitly specified with the <code>&#8211;raw</code> option.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065640"></a><code>-warn|-w</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065642"></a>Optional argument to issue warning for ignoring unsupported constructs. Default is to issue an error.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065811"></a><code>-faults</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1065813"></a>Applies the MDL file to a fault dataset. You can use <code>-ft</code> as an abbreviation of <code>-faults</code>.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1065644"></a>Most of the options are consistent with previous versions of <code>spectremdl</code> executable. However, the <code>-warn</code> option allows unsupported constructs (<code>search</code>, <code>mvarsearch</code>) to be ignored and evaluation to proceed.</p>
+
+<h4><em>
+<a id="pgfId-1065645"></a>Examples</em></h4>
+
+<p>
+<a id="pgfId-1065646"></a>Assume that an MDL script, <code>test.mdl</code> was used to generate a raw directory, <code>input.raw</code> using Spectre. </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065647"></a>$ spectremdl &#8211;batch test.mdl &#8211;design input.scs &#8211;raw input.raw</pre>
+
+<p>
+<a id="pgfId-1065648"></a>To rerun the script on the results, the following command will be used:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065649"></a>$ mdl &#8211;b test.mdl &#8211;r input.raw</pre>
+
+<p>
+<a id="pgfId-1065650"></a>In this case, the measurement results are written out to the <code>test.measure</code> file. The <code>&#8211;m</code> command-line option can override the name of the output file.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065651"></a>$ mdl &#8211;b test.mdl &#8211;r input.raw &#8211;m input.measure</pre>
+
+<p>
+<a id="pgfId-1065652"></a>If the netlist <code>input.scs</code> was used to generate the results, it is possible that the MDL file references parameters from the netlist. Without the netlist, the MDL measurements cannot be evaluated, hence the netlist must be provided on the command-line so that those parameters and their values can be found.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065653"></a>$ mdl &#8211;b test.mdl &#8211;d input.scs &#8211;r input.raw</pre>
+
+<p>
+<a id="pgfId-1065654"></a>Another usage is for users who do not have MDL script, but instead use <code>.MEASURE</code> statements in the netlist (or in a file included in the netlist). Here <code>test.sp</code> may either contain the complete design or may have just <code>.measure</code> statements.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065655"></a>$ mdl &#8211;d test.sp &#8211;r test.raw</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065656"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065657"></a>.include &quot;param.sp&quot;&#160;&#160;// optional parameter definiton</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065658"></a>.include &quot;design.sp&quot; //optional design</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065659"></a>.include &quot;test.msr&quot;&#160;&#160;// contains measurements </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065660"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065661"></a>$ mdl &#8211;d test.msr &#8211;r test.raw</pre>
+
+<p>
+<a id="pgfId-1065662"></a>Here <code>test.msr</code> may contains some parameter definition of the parameters referenced in the <code>.measure</code> statement. There is no need for complete design.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065663"></a>.param VDD=1.8</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065664"></a>.meas tran&#160;&#160;tfr trig v(a) val=&#39;0.5*VDD&#39;&#160;&#160;fall=1 targ v(y) val=&#39;0.5*VDD&#39; rise=1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065665"></a>.measure tran tranmaxout1 max v(out)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065666"></a>.measure tran tranavg avg v(out)</pre>
+
+<p>
+<a id="pgfId-1065667"></a>Some waveform formats do not use the result directory concept. Cadence formats (such as PSF or SST), when generated from Spectre and Spectre APS, place a logFile in the results directory that is used to associate datasets with the physical files containing the simulation data. For formats that do not support this, it is necessary to explicitly specify the file contains the data rather than the results directory itself.</p>
+<p>
+<a id="pgfId-1065668"></a>An example using the FSDB format is:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065669"></a>$ mdl &#8211;d tran.msr &#8211;r input.raw/tran.fsdb</pre>
+
+<p>
+<a id="pgfId-1065670"></a>In this example, <code>tran.msr</code> contains the measurements for the specified transient analysis results file, <code>input.raw</code>/<code>tran.fsdb</code>. The content of <code>tran.msr</code> could be</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065671"></a>.measure tran tranmaxout1 max v(out)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065672"></a>.measure tran tranavg avg v(out)</pre>
+
+<p>
+<a id="pgfId-1065673"></a>In another example, the some measurements are evaluated using a DC analysis results file.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065674"></a>$ mdl &#8211;d dc.msr &#8211;r input.raw/dc.fsdb</pre>
+
+<p>
+<a id="pgfId-1065675"></a>Here, <code>dc.msr</code> contains the measurements to be evaluated, as in</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065676"></a>.measure dc dcnmaxout1 max v(out)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1065677"></a>.measure dc dcavg avg v(out)</pre>
+<h3>
+<a id="pgfId-1065678"></a>Limitations</h3>
+
+<p>
+<a id="pgfId-1065679"></a>There are limitations when using this mdl tool to execute an MDL script. </p>
+<p>
+<a id="pgfId-1065680"></a>The primary limitation that exists with the post-processing flow is a result of the nature of this flow. It can only work with the data that is in the netlist, MDL file and results database. Hence, if a signal that is used in an MDL expression is not saved in the database, then the expression will fail to evaluate.</p>
+<p>
+<a id="pgfId-1065681"></a>For example, when the netlist is used, device input parameters can be used in expressions; however oppoint parameters cannot be used, unless they were already saved.</p>
+<p>
+<a id="pgfId-1065682"></a>Other restrictions are:</p>
+<ul><li>
+<a id="pgfId-1065683"></a>Other consequences of being only able to use information that is readily available in the MDL script, netlist (if supplied) and results database are the following;<ul><li>
+<a id="pgfId-1065684"></a>The <code>mvarsearch</code> and <code>search</code> statements are not currently supported. When these are seen, mdl prints an error message and ignores these statements.</li><li>
+<a id="pgfId-1065685"></a>For montecarlo, the parameter <code>savefamilyplots=yes</code> must be set during the simulation run. Else, the waveform data for each iteration of the montecarlo run will not be saved.<ul><li>
+<a id="pgfId-1065686"></a>Re-elaboration is not supported. Hence, if the measurement references the process or mismatch parameters, mdl will only see the nominal parameter values.</li></ul></li><li>
+<a id="pgfId-1065687"></a>Foreach and montecarlo are only supported for PSF format.</li><li>
+<a id="pgfId-1065688"></a>Result dataset generated from <code>alter</code>/<code>sweep</code> specified in the netlist have different naming convention. Hence, if a netlist contains <code>alter</code>/<code>sweep</code> then dataset will not be located. It is recommended to use MDL scripts for <code>alter</code>/<code>sweep</code> so that  corresponding dataset can be found.</li></ul></li><li>
+<a id="pgfId-1065689"></a>The MDL post-processing flow works on waveforms rather than on each individual point of a signal as occurs in the SpectreMDL flow. There are following consequences to this:<ul><li>
+<a id="pgfId-1065690"></a>An <code>if</code> statement in a measurement alias can behave differently if the condition depends upon a signal value. In SpectreMDL, this could result in the true or false block being executed multiple times for each datapoint on the signal. In the post-processing flow, the condition is evaluated only once for the complete waveform.</li></ul></li></ul>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1065579"></a>If there is a sweep contained in the netlist, the dataset generated by Spectre is different from the dataset generated by MDL. Hence, MDL will not be able to locate the correct dataset. This is why currently, the <code>.measure</code> flow is supported for a netlist that does not contain sweep in the netlist.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="chap3.html" id="prev" title="Running MDL in Batch Mode">Running MDL in Batch Mode</a></em></b><b><em><a href="appA.html" id="nex" title="Built-In Functions">Built-In Functions</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
