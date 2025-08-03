@@ -1,0 +1,1001 @@
+
+<html><head><title>Optimizing LEF Technology for Place and Route</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="leenap" />
+<meta name="CreateDate" content="2022-08-09" />
+<meta name="CreateTime" content="1660030294" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the syntax for Library Exchange Format (LEF) and Design Exchange Format (DEF) files." />
+<meta name="DocTitle" content="LEF/DEF 5.8 Language Reference" />
+<meta name="DocType" content="Reference" />
+<meta name="FileTitle" content="Optimizing LEF Technology for Place and Route" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-3.3.1" />
+<meta name="Keyword" content="lefdefref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2022-08-09" />
+<meta name="ModifiedTime" content="1660030294" />
+<meta name="NextFile" content="PAE.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Digital Implementation,Cadence Shared Tools" />
+<meta name="PrevFile" content="Examples.html" />
+<meta name="c_product" content="Innovus,Languages" />
+<meta name="Product" content="Innovus,Languages" />
+<meta name="ProductFamily" content="Innovus,Languages" />
+<meta name="ProductVersion" content="5.8" />
+<meta name="RightsManagement" content="Copyright 2022 Cadence Design Systems Inc." />
+<meta name="Title" content="LEF/DEF 5.8 Language Reference -- Optimizing LEF Technology for Place and Route" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="5.8" />
+<meta name="SpaceKey" content="lefdefref58" />
+<meta name="webflare-version" content="2.2" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="lefdefrefTOC.html">Contents</a></li><li><a class="prev" href="Examples.html" title="Examples">Examples</a></li><li style="float: right;"><a class="viewPrint" href="lefdefref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="PAE.html" title="Calculating and Fixing Process Antenna Violations">Calculating and Fixing Process ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>LEF/DEF 5.8 Language Reference<br />Product Version 5.8, September 2022</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>B
+<a id="pgfId-1031371"></a></h1>
+<h1>
+<a id="pgfId-1031927"></a><hr />
+Optimizing LEF Technology for Place and Route<hr />
+</h1>
+
+<p>
+<a id="pgfId-1031952"></a>This appendix contains the following information.</p>
+<ul><li>
+<a id="pgfId-1031953"></a><a href="OptimizingLEFTechnology.html#10564">Overview</a></li><li>
+<a id="pgfId-1031956"></a><a href="OptimizingLEFTechnology.html#17612">Guidelines for Routing Pitch</a></li><li>
+<a id="pgfId-1031957"></a><a href="OptimizingLEFTechnology.html#14912">Guidelines for Wide Metal Spacing</a></li><li>
+<a id="pgfId-1031958"></a><a href="OptimizingLEFTechnology.html#38126">Guidelines for Wire Extension at Vias</a></li><li>
+<a id="pgfId-1031959"></a><a href="OptimizingLEFTechnology.html#40956">Guidelines for Default Vias</a></li><li>
+<a id="pgfId-1031960"></a><a href="OptimizingLEFTechnology.html#21753">Guidelines for Stack Vias (MAR Vias) and Samenet Spacing</a></li><li>
+<a id="pgfId-1031961"></a><a href="OptimizingLEFTechnology.html#33490">Example of an Optimized LEF Technology File</a></li></ul>
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1031962"></a><a id="10564"></a>Overview</h2>
+
+<p>
+<a id="pgfId-1036182"></a>This appendix provides guidelines for defining the optimized technology section in the LEF file to get the best performance using Cadence<sup>&#174;</sup> place-and-route tools.</p>
+<p>
+<a id="pgfId-1036179"></a>For the following guidelines, the preferred routing direction for <code>metal1</code> and all other odd metal layers is horizontal. The preferred routing direction for <code>metal2</code> and all other even metal layers is vertical. Standard cells are arranged in horizontal rows.</p>
+<p>
+<a id="pgfId-1031980"></a>This appendix discusses the following LEF statements.</p>
+
+<a id="pgfId-1031987"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>LAYER</code> <code><em>layerName
+</em></code><code>TYPE ROUTING</code> ;
+<code>PITCH</code> <code><em>distance</em></code> ;
+<code>WIDTH</code> <code><em>defWidth</em></code> ;
+<code>SPACING</code> <code><em>minSpacing</em></code> [<code>RANGE</code> <code><em>minwidth</em></code> <code><em>maxwidth</em></code>] ;
+<code>WIREEXTENSION</code> <code><em>value</em></code> ;</pre>
+<a id="pgfId-1035376"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>END</code> <code><em>layerName</em></code> </pre>
+<a id="pgfId-1031936"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>VIA</code> <code><em>viaName</em></code> <code>DEFAULT
+</code>[<code>TOPSTACKONLY</code>]
+<code>LAYER</code> <code><em>layerName</em></code> <code>RECT</code> <code><em>pt</em></code> <code><em>pt</em></code> ; ... </pre>
+<a id="pgfId-1035383"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>END</code> <code><em>viaName</em></code></pre>
+<a id="pgfId-1031991"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>SPACING</code> 
+<code>SAMENET
+</code>   <code><em>layerName</em></code> <code><em>layerName</em></code> <code><em>minSpace</em></code> [<code>STACK</code>] ;</pre>
+<a id="pgfId-1035387"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>END</code> <code>SPACING</code></pre>
+<h2>
+<a id="pgfId-1031996"></a><a id="18882"></a><a id="17612"></a>Guidelines for Routing Pitch</h2>
+
+<p>
+<a id="pgfId-1032041"></a>The following is a summary for choosing the right pitch for an existing design library. For detailed information on determining routing pitch, refer to the <em>Cadence Abstract Generator User Guide</em>.</p>
+
+<p class="ft-figtabl-title-styling">
+<a id="pgfId-1032052"></a>Pitch Measurement  </p>
+<div class="webflare-div-image">
+<img width="663" height="215" src="images/OptimizingLEFTechnology-2.gif" /></div>
+<h4>
+<a id="pgfId-1032055"></a>DESIGN RULE No. 1</h4>
+<table class="webflareTable" id="#id1032329">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032331"></a>W.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032333"></a>Minimum width of <code>metal1</code> = 0.23 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032335"></a>S.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032337"></a>Minimum space between two <code>metal1</code> regions = 0.23 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032339"></a>W.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032341"></a>Minimum and maximum width of <code>cut1</code> = 0.26 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032391"></a>E.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032393"></a>Minimum extension of <code>metal1</code> beyond <code>cut1</code> = 0.01 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032387"></a>W.3</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032389"></a>Minimum width of <code>metal3</code> = 0.28 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032383"></a>S.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032385"></a>Minimum space between two <code>metal3</code> regions = 0.28 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032379"></a>W.4</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032381"></a>Minimum and maximum width of <code>cut2</code> = 0.26 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032453"></a>E.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032455"></a>Minimum extension of <code>metal1</code> beyond <code>cut2</code> = 0.01 μm</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1034859"></a></p>
+<div class="webflare-div-image">
+<img width="661" height="311" src="images/OptimizingLEFTechnology-3.gif" /></div>
+
+<p>
+<a id="pgfId-1034860"></a>Although the minimum <code>metal1</code> routing pitch is 0.485um from the design rule, you should use 0.56um instead, to match the <code>metal3</code> routing pitch in the same preferred direction.</p>
+
+<h4>
+<a id="pgfId-1032157"></a>LEF Construct No. 1</h4>
+<a id="pgfId-1032160"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+<code>LAYER</code> metal1
+<code>TYPE</code> ROUTING ;
+WIDTH 0.23 ;
+SPACING 0.23 ; 
+PITCH 0.56 ;
+DIRECTION HORIZONTAL ;</pre>
+<a id="pgfId-1035388"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal1</pre>
+<a id="pgfId-1032167"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1032168"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal3
+TYPE ROUTING ;
+WIDTH 0.28 ;
+SPACING 0.28 ;
+PITCH 0.56 ;
+DIRECTION HORIZONTAL ;</pre>
+<a id="pgfId-1035389"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal3</pre>
+<h4>
+<a id="pgfId-1032158"></a>Recommendations</h4>
+
+<ul><li>
+<a id="pgfId-1032221"></a>Use line-to-via spacing for both the horizontal and vertical direction.</li><li>
+<a id="pgfId-1032222"></a>Allow diagonal vias with the routing pitch.</li><li>
+<a id="pgfId-1032223"></a>Align the routing pitch for <code>metal1</code> and <code>metal2</code>, with the pins inside the standard cells.</li><li>
+<a id="pgfId-1032224"></a>Have uniform routing pitch in the same preferred direction. The pitch ratio should be 2 - 3 or 1 - 2. It is better to define the <code>metal1</code> pitch larger than necessary in order to achieve a 1 - 1 ratio because the <code>metal1</code> width is usually smaller the <code>metal2</code> and <code>metal3</code> widths.</li></ul>
+
+
+
+
+<h4>
+<a id="pgfId-1032225"></a>Pitch Recommendations for Library Development</h4>
+
+<ul><li>
+<a id="pgfId-1032226"></a>All pins should be on the grid, and only those portions of the pins that are accessible to the router should be modeled as pins. For example, 45 degree pin geometry.</li><li>
+<a id="pgfId-1032227"></a>The height of the cell should be the even multiple of the <code>metal1</code> pitch, and the width of the cell should be the even multiple of the <code>metal2</code> pitch.</li><li>
+<a id="pgfId-1032228"></a>The blockage modeling, especially for <code>metal1</code>, should be simplified as much as possible. For example, it is very common for the entire area within the cell boundary to be obstructed in <code>metal1</code>, so use a single rectangular blockage instead of many small blockages.</li></ul>
+
+
+
+<h2>
+<a id="pgfId-1032229"></a><a id="14912"></a>Guidelines for Wide Metal Spacing</h2>
+
+<p>
+<a id="pgfId-1032234"></a>The <code>SPACING</code> statement in the LEF <code>LAYER</code> section is applied to both regular and special wires. You can use the Cadence&#174; ultra router option <code>frouteUseRangeRule</code> to determine which objects to check against the <code>SPACING RANGE</code> statement. The default checks both pin and obstruction. </p>
+
+<h4>
+<a id="pgfId-1032247"></a>DESIGN RULE No. 2</h4>
+<table class="webflareTable" id="#id1032561">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032563"></a>S.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032565"></a>Minimum space between two <code>metal1</code> regions = 0.23 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032567"></a>S.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032598"></a>Minimum space between metal lines with one or both metal line width and length are greater than 10um = 0.6 μm</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1032286"></a></p>
+<div class="webflare-div-image">
+<img width="663" height="251" src="images/OptimizingLEFTechnology-4.gif" /></div>
+<h4>
+<a id="pgfId-1032290"></a>LEF CONSTRUCT No. 2</h4>
+<a id="pgfId-1032292"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal1
+WIDTH 0.23 ;
+SPACING 0.23 ; 
+SPACING 0.6 RANGE 10.002 1000 ; </pre>
+<a id="pgfId-1035390"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal1</pre>
+<h2>
+<a id="pgfId-1032245"></a><a id="38126"></a>Guidelines for Wire Extension at Vias</h2>
+
+<p>
+<a id="pgfId-1034719"></a>The following guidelines are for wire extension at vias.</p>
+
+<h4>
+<a id="pgfId-1032315"></a>DESIGN RULE No. 3</h4>
+<table class="webflareTable" id="#id1032471">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032473"></a>W.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032475"></a>Minimum and maximum width of <code>cut1</code> = 0.26 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032477"></a>W.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032479"></a>Minimum width of <code>metal2</code> = 0.28 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032481"></a>E.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032483"></a>Minimum extension of <code>metal2</code> beyond <code>cut1</code> = 0.01 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032485"></a>E.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032487"></a>Minimum extension of <code>metal2</code> end-of-line region beyond <code>cut1</code> = 0.06 μm</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1035039"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="278" src="images/OptimizingLEFTechnology-5.gif" /></div>
+<h4>
+<a id="pgfId-1032646"></a>LEF CONSTRUCT No. 3</h4>
+<a id="pgfId-1032648"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal2
+TYPE ROUTING ;
+WIDTH 0.28 ;
+SPACING 0.28 ;
+PITCH 0.56 ;
+WIREEXTENSION 0.19 ;   
+DIRECTION VERTICAL ;</pre>
+<a id="pgfId-1035391"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal2</pre>
+
+<p>
+<a id="pgfId-1032656"></a></p>
+
+<a id="pgfId-1032657"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via23 DEFAULT
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.14 ;        # Use square via
+LAYER cut2 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;        # Use square via</pre>
+<a id="pgfId-1035392"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via23</pre>
+<h4>
+<a id="pgfId-1032643"></a>Recommendations</h4>
+
+<ul><li>
+<a id="pgfId-1032733"></a>Use the <code>WIREEXTENSION</code> statement instead of defining multiple vias because the width of the <code>metal2</code> in <code>cut1</code> is the same as the default routing width of the <code>metal2</code> layer.</li><li>
+<a id="pgfId-1036105"></a>The <code>WIREEXTENSION</code> statement only extends wires and not vias. For 65nm and below, <code>WIREEXTENSION</code> is no longer recommended because it may generate some advance rule violations if wires and vias have different widths. </li><li>
+<a id="pgfId-1032734"></a>Define the <code>DEFAULT</code> <code>VIA</code> as a square via.</li></ul>
+
+
+
+<h2>
+<a id="pgfId-1032644"></a><a id="40956"></a>Guidelines for Default Vias</h2>
+
+<p>
+<a id="pgfId-1034720"></a>The following guidelines are for default vias.</p>
+
+<h4>
+<a id="pgfId-1032743"></a>DESIGN RULE No. 4</h4>
+<table class="webflareTable" id="#id1032751">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032753"></a>W.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032755"></a>Minimum width of <code>metal1</code> = 0.23 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032757"></a>W.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032759"></a>Minimum and maximum width of <code>cut1</code> = 0.26 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032761"></a>E.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032763"></a>Minimum extension of <code>metal1</code> beyond <code>cut1</code> = 0.01 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032792"></a>E.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1032794"></a>Minimum extension of <code>metal1</code> end-of-line region beyond <code>cut1</code> = 0.06 μm</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1035099"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="346" src="images/OptimizingLEFTechnology-6.gif" /></div>
+<h4>
+<a id="pgfId-1032893"></a>LEF CONSTRUCT No. 4 (Case B)</h4>
+<indented id="#id1032894">
+<a id="pgfId-1032894"></a>
+<a id="pgfId-1032895"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal1
+TYPE ROUTING ;
+WIDTH 0.23 ;
+SPACING 0.23 ;
+PITCH 0.56 ;
+DIRECTION HORIZONTAL ;</pre>
+<a id="pgfId-1035393"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033023"></a></pre>
+<a id="pgfId-1032903"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via12_H DEFAULT
+LAYER metal1 ;
+ RECT -0.19 -0.14 0.19 0.14 ;        # <code>metal1</code> end-of-line
+ extension 0.6 in both directions
+LAYER cut1 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035394"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via12_H</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033022"></a></pre>
+<a id="pgfId-1032912"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via12_V DEFAULT
+LAYER metal1 ;
+ RECT -0.14 -0.19 0.14 0.19 ;        # <code>metal1</code> end-of-line
+ extension 0.6 in both directions
+LAYER cut1 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035395"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via12_V</pre>
+<h4>
+<a id="pgfId-1032741"></a>Recommendations </h4>
+
+<ul><li>
+<a id="pgfId-1033033"></a>If the width of the end-of-line metal extension is the same as the default metal routing width, as in Case A, use the <code>WIREEXTENSION</code> statement in the LEF <code>LAYER</code> section, and define a square via in the <code>DEFAULT</code> <code>VIA</code> section.</li><li>
+<a id="pgfId-1033034"></a>If the width of the end-of-line metal extension is the same as the width of the via metal, as in Case B, define one horizontal <code>DEFAULT</code> <code>VIA</code> and one vertical <code>DEFAULT</code> <code>VIA</code> to cover the required metal extension area in both pregerred and non-preferred routing directions. Do not use the <code>WIREEXTENSION</code> statement in the LEF <code>LAYER</code> section.</li></ul>
+
+
+<h2>
+<a id="pgfId-1033035"></a><a id="21753"></a>Guidelines for Stack Vias (MAR Vias) and Samenet Spacing</h2>
+
+<p>
+<a id="pgfId-1034721"></a>The following guidelines are for stack vias (minimum area rule) and <code>SAMENET</code> <code>SPACING</code>.</p>
+
+<h4>
+<a id="pgfId-1033058"></a>DESIGN RULE No. 5</h4>
+<table class="webflareTable" id="#id1033080">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033082"></a>W.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033084"></a>Minimum width of <code>metal2</code> = 0.28 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033086"></a>W.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033088"></a>Minimum and maximum width of <code>cut2</code> = 0.26 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033090"></a>E.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033092"></a>Minimum extension of <code>metal2</code> beyond <code>cut2</code> = 0.01 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033106"></a>A.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033108"></a>Minimum area of <code>metal2</code> = 0.2025 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033102"></a>C.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033104"></a><code>Cut2</code> can be fully or partially stacked on <code>cut1</code>, contact or any combination</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033098"></a>W.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033100"></a>Minimum width of <code>metal3</code> = 0.28 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033094"></a>W.2</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033096"></a>Minimum and maximum width of <code>cut3</code> = 0.26 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033160"></a>E.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033162"></a>Minimum extension of <code>metal2</code> beyond <code>cut3</code> = 0.01 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033156"></a>A.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033158"></a>Minimum area of <code>metal3</code> = 0.2025 μm</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033152"></a>C.1</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1033154"></a><code>Cut3</code> can be fully or partially stacked on <code>cut2</code>, <code>cut1</code>, contact or any combination</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1035254"></a></p>
+
+<div class="webflare-div-image">
+<img width="668" height="637" src="images/OptimizingLEFTechnology-7.gif" /></div>
+<h4>
+<a id="pgfId-1033333"></a>LEF CONSTRUCT No. 5</h4>
+<indented id="#id1033334">
+<a id="pgfId-1033334"></a>
+<a id="pgfId-1033335"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via23_stack_north DEFAULT
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74
+LAYER cut2 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035396"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via23_stack_north</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033343"></a></pre>
+<a id="pgfId-1033344"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via23_stack_south DEFAULT
+LAYER metal2 ;
+ RECT -0.14 -0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut2 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035397"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via23_stack_south</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033352"></a></pre>
+<a id="pgfId-1033353"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via34_stack_east DEFAULT
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.6 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut3 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035398"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via34_stack_east</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033361"></a></pre>
+<a id="pgfId-1033362"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via34_stack_west DEFAULT
+LAYER metal3 ;
+ RECT -0.6 -0.14 0.14 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut3 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035399"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via34_stack_west</pre>
+<h4>
+<a id="pgfId-1033056"></a>Recommendations</h4>
+
+<ul><li>
+<a id="pgfId-1033547"></a>The minimum metal routing segment (two vias between one pitch grid) with or without end-of-line metal extension should automatically satisfy the minimum area rule.</li><li>
+<a id="pgfId-1033548"></a>If vias are stackable, create the <code>TOPSTACKONLY</code> vias with a rectangular shape blocking only one neighboring grid for both sides of the preferred routing direction. In other words, one north oriented and one south oriented for vertical-preferred routing layers, and one east oriented and one west oriented for horizontal-preferred routing layers.</li><li>
+<a id="pgfId-1033555"></a>Use slightly larger dimensions for the via size to make them an even number, so they snap to the manufacturing grids.</li><li>
+<a id="pgfId-1033556"></a>The <code>STACK</code> keyword in the <code>SAMENETSPACING</code> statements only allows vias to be fully overlapped (stacked) by SROUTE commands. To allow vias to be partially overlapped, set the environment variable <code>SROUTE</code>.<code>ALLOWOVERLAPINSTACKVIA</code> to <code>TRUE</code>.</li><li>
+<a id="pgfId-1033557"></a>The <code>metal1</code> layer does not require a MAR via because all metal1 pins should satisfy the minimum area rules.</li></ul>
+
+
+
+
+
+<h2>
+<a id="pgfId-1033558"></a><a id="33490"></a>Example of an Optimized LEF Technology File</h2>
+<a id="pgfId-1033561"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VERSION 5.8 ;</pre>
+<a id="pgfId-1035407"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+BUSBITCHARS &quot;[]&quot; ;
+</pre>
+<a id="pgfId-1033565"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+UNITS
+DATABASE MICRONS 100  ;</pre>
+<a id="pgfId-1035408"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END UNITS</pre>
+<a id="pgfId-1033568"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033569"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal1
+TYPE ROUTING ;
+WIDTH 0.23 ;
+SPACING 0.23 ; 
+SPACING 0.6 RANGE 10.02 1000 ;
+PITCH 0.56 ;
+DIRECTION HORIZONTAL ;</pre>
+<a id="pgfId-1035412"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal1</pre>
+<a id="pgfId-1033577"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033578"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER cut1
+TYPE CUT ;</pre>
+<a id="pgfId-1035413"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END cut1</pre>
+<a id="pgfId-1033581"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033582"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal2
+TYPE ROUTING ;
+WIDTH 0.28 ;
+SPACING 0.28 ;
+SPACING 0.6 RANGE 10.02 1000 ;
+PITCH 0.56 ;
+WIREEXTENSION 0.19 ;
+DIRECTION VERTICAL ;</pre>
+<a id="pgfId-1035414"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal2</pre>
+<a id="pgfId-1033591"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033592"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER cut2
+TYPE CUT ;</pre>
+<a id="pgfId-1035415"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END cut2</pre>
+<a id="pgfId-1033595"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033596"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal3
+TYPE ROUTING ;
+WIDTH 0.28 ;
+SPACING 0.28 ;
+SPACING 0.6 RANGE 10.02 1000 ;
+PITCH 0.56 ;
+WIREEXTENSION 0.19 ;
+DIRECTION HORIZONTAL ;</pre>
+<a id="pgfId-1035418"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal3</pre>
+<a id="pgfId-1033605"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033606"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER cut3
+TYPE CUT ;</pre>
+<a id="pgfId-1035419"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END cut3</pre>
+<a id="pgfId-1033609"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033610"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal4
+TYPE ROUTING ;
+WIDTH 0.28 ;
+SPACING 0.28 ;
+SPACING 0.6 RANGE 10.02 1000 ;
+PITCH 0.56 ;
+WIREEXTENSION 0.19 ;
+DIRECTION VERTICAL ;</pre>
+<a id="pgfId-1035420"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal4</pre>
+<a id="pgfId-1033619"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033620"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER cut4
+TYPE CUT ;</pre>
+<a id="pgfId-1035421"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END cut4</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033623"></a></pre>
+<a id="pgfId-1033624"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal5
+TYPE ROUTING ;
+WIDTH 0.28 ;
+SPACING 0.28 ;
+SPACING 0.6 RANGE 10.02 1000 ;
+PITCH 0.56 ;
+WIREEXTENSION 0.19 ;
+DIRECTION HORIZONTAL ;</pre>
+<a id="pgfId-1035422"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal5</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033633"></a></pre>
+<a id="pgfId-1033634"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER cut5
+TYPE CUT ;</pre>
+<a id="pgfId-1035423"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END cut5</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033637"></a></pre>
+<a id="pgfId-1033638"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+LAYER metal6
+TYPE ROUTING ;
+WIDTH 0.44 ;
+SPACING 0.46 ;
+SPACING 0.6 RANGE 10.02 1000 ;
+PITCH 1.12 ;
+DIRECTION VERTICAL ;</pre>
+<a id="pgfId-1035424"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END metal6</pre>
+<a id="pgfId-1033646"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+
+<p>
+<a id="pgfId-1033647"></a>### start DEFAULT VIA ###</p>
+
+<a id="pgfId-1033648"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via12_H DEFAULT
+LAYER metal1 ;
+ RECT -0.19 -0.14 0.19 0.14 ;     # metal1 end-of-line ext 0.6
+LAYER cut1 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035425"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via12_H</pre>
+<a id="pgfId-1033656"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1035428"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via12_V DEFAULT
+LAYER metal1 ;
+ RECT -0.14 -0.19 0.14 0.19 ;     # metal1 end-of-line ext 0.6
+LAYER cut1 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035431"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via12_V</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033665"></a></pre>
+<a id="pgfId-1033666"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via23 DEFAULT
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.14 ;
+LAYER cut2 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035432"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via23</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033674"></a></pre>
+<a id="pgfId-1033675"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via34 DEFAULT
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;
+LAYER cut3 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035433"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via34</pre>
+<a id="pgfId-1033683"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033684"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via45 DEFAULT
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.14 ;
+LAYER cut4 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal5 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035434"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via45</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033692"></a></pre>
+<a id="pgfId-1033693"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via56_H DEFAULT
+LAYER metal5 ;
+ RECT -0.24 -0.19 0.24 0.19 ;
+LAYER cut5 ;
+ RECT -0.18 -0.18 0.18 0.18 ;
+LAYER metal6 ;
+ RECT -0.27 -0.27 0.27 0.27 ;</pre>
+<a id="pgfId-1035435"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via56_H</pre>
+<a id="pgfId-1033701"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033702"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via56_V DEFAULT
+LAYER metal5 ;
+ RECT -0.19 -0.24 0.19 0.24 ;
+LAYER cut5 ;
+ RECT -0.18 -0.18 0.18 0.18 ;
+LAYER metal6 ;
+ RECT -0.27 -0.27 0.27 0.27 ;</pre>
+<a id="pgfId-1035436"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via56_V</pre>
+
+<p>
+<a id="pgfId-1033710"></a>### end DEFAULT VIA ###</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033711"></a></pre>
+
+<p>
+<a id="pgfId-1033712"></a>### start STACK VIA ###</p>
+
+<a id="pgfId-1035439"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via23_stack_north DEFAULT
+LAYER metal2 ;
+ RECT -0.14 -0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74
+LAYER cut2 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035442"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via23_stack_north</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033721"></a></pre>
+<a id="pgfId-1033722"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via23_stack_south DEFAULT
+LAYER metal2 ;
+ RECT -0.14 -0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut2 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035443"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via23_stack_south</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033730"></a></pre>
+<a id="pgfId-1033731"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via34_stack_east DEFAULT
+LAYER metal3 ;
+ RECT -0.14 -0.14 0.6 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut3 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035444"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via34_stack_east</pre>
+<a id="pgfId-1033739"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1035445"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via34_stack_west DEFAULT
+LAYER metal3 ;
+ RECT -0.6 -0.14 0.14 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut3 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035448"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via34_stack_west</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033748"></a></pre>
+<a id="pgfId-1033749"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via45_stack_north DEFAULT
+LAYER metal4 ;
+ RECT -0.14 -0.14 0.14 0.6 ;   # MAR = 0.28 x 0.74
+LAYER cut4 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal5 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035449"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via45_stack_north</pre>
+<a id="pgfId-1033757"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033758"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via45_stack_south DEFAULT
+LAYER metal4 ;
+ RECT -0.14 -0.6 0.14 0.14 ;   # MAR = 0.28 x 0.74
+LAYER cut4 ;
+ RECT -0.13 -0.13 0.13 0.13 ;
+LAYER metal5 ;
+ RECT -0.14 -0.14 0.14 0.14 ;</pre>
+<a id="pgfId-1035450"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via45_stack_south</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1033766"></a></pre>
+<a id="pgfId-1033767"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via56_stack_east DEFAULT
+LAYER metal5 ;
+ RECT -0.19 -0.19 0.35 0.19 ;   # MAR = 0.38 x 0.54
+LAYER cut5 ;
+ RECT -0.18 -0.18 0.18 0.18 ;
+LAYER metal6 ;
+ RECT -0.27 -0.27 0.27 0.27 ;</pre>
+<a id="pgfId-1035451"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via56_stack_east</pre>
+<a id="pgfId-1033775"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+</pre>
+<a id="pgfId-1033776"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+VIA via56_stack_west DEFAULT
+LAYER metal5 ;
+ RECT -0.35 -0.19 0.19 0.19 ;   # MAR = 0.38 x 0.54
+LAYER cut5 ;
+ RECT -0.18 -0.18 0.18 0.18 ;
+LAYER metal6 ;
+ RECT -0.27 -0.27 0.27 0.27 ;</pre>
+<a id="pgfId-1035452"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+END via56_stack_west</pre>
+
+<p>
+<a id="pgfId-1033784"></a>### end STACK VIA ###</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></indented></indented></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Examples.html" id="prev" title="Examples">Examples</a></em></b><b><em><a href="PAE.html" id="nex" title="Calculating and Fixing Process Antenna Violations">Calculating and Fixing Process ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2022, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
