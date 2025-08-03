@@ -1,0 +1,278 @@
+
+<html><head><title>ipcSkillProcess</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-06-15" />
+<meta name="CreateTime" content="1686846346" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to create and communicate with child processes" />
+<meta name="DocTitle" content="Cadence Interprocess Communication SKILL Reference" />
+<meta name="DocType" content="SKILL Reference" />
+<meta name="FileTitle" content="ipcSkillProcess" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="skipcref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-15" />
+<meta name="ModifiedTime" content="1686846346" />
+<meta name="NextFile" content="ipcskill_re_ipcSleep.html" />
+<meta name="Group" content="SKILL Language" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="ipcskill_re_ipcSignalProcess.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="SKILL" />
+<meta name="ProductFamily" content="SKILL" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence Interprocess Communication SKILL Reference -- ipcSkillProcess" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="api reference" />
+<meta name="prod_feature" content="SKILL" />
+<meta name="prod_subfeature" content="Interprocess Communication" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="skipcrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="skipcrefTOC.html">Contents</a></li><li><a class="prev" href="ipcskill_re_ipcSignalProcess.html" title="ipcSignalProcess">ipcSignalProcess</a></li><li style="float: right;"><a class="viewPrint" href="skipcref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="ipcskill_re_ipcSleep.html" title="ipcSleep">ipcSleep</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence Interprocess Communication SKILL Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:re_ipcSkillProcess" title="ipcSkillProcess"></a><h3>
+<a id="pgfId-1038095"></a><a id="ipcSkillProcess"></a><a id="37759"></a>ipcSkillProcess</h3>
+<a id="pgfId-1012131"></a><a id="marker-1012129"></a><pre class="webflare-courier-new webflare-syx-syntax codeContent">
+ipcSkillProcess(<em> 
+</em><code><em>t_command</em></code> 
+[ <code><em>t_hostName</em></code> ] 
+[ <code><em>tsu_dataHandler</em></code> ] 
+[ <code><em>tsu_errHandler</em></code> ] 
+[ <code><em>tsu_postFunc</em></code> ] 
+[ <code><em>t_logFile</em></code> ] 
+[ <code><em>x_cmdDesc</em></code> ] 
+[ <code><em>x_resDesc</em></code> ] 
+)
+=&gt; <code><em>o_childId</em></code></pre>
+<h4>
+<a id="pgfId-1009217"></a>Description</h4>
+<p>
+<a id="pgfId-1009686"></a>Invokes an operating system process capable of executing SKILL functions in the parent process and opens two additional channels to the child process that let the child send and receive the results of SKILL commands.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1028091"></a>The maximum number of child processes is limited by the system resources and a warning message displays when the <code>fileDescriptor</code> limit is exceeded.</div>
+<h4>
+<a id="pgfId-1008671"></a>Sending Channel</h4>
+
+<p>
+<a id="pgfId-1008672"></a>The SKILL command channel is by default bound to file descriptor number 3 in the child process. In addition to whatever input and output the child process may perform, it can write SKILL executable commands on this descriptor that are in turn sent to the parent to be executed. The parent executes these commands during the next cycle of SKILL&#8217;s top level without interrupting the current evaluation. The result of this execution is sent back to the child over the SKILL result channel, which is by default bound to file descriptor number 4 in the child process. </p>
+<p>
+<a id="pgfId-1008673"></a>The defaults can be over-ridden by supplying the descriptors in the call to <code>ipcSkillProcess</code>. These descriptors must be declared and used by the child process, that is, the parent process cannot force the child process to use a particular pair of channels. </p>
+<p>
+<a id="pgfId-1008674"></a>SKILL functions written into the SKILL command channel should have sound syntactic structures. For example, </p>
+<ul><li>
+<a id="pgfId-1008675"></a>Use parentheses when writing function calls, even for infix functions.</li><li>
+<a id="pgfId-1008676"></a>Ensure that all command expressions are separated by at least a single space character. <br /><div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1008677"></a>
+Command expressions with missing parentheses or incomplete strings can cause syntax errors in the SKILL interpreter, thereby causing other functions in the pipeline to fail.</div></li></ul>
+
+
+
+<h4>
+<a id="pgfId-1008678"></a>Result Channel</h4>
+
+<p>
+<a id="pgfId-1008679"></a>The results of executing SKILL functions are sent back on the result channel (descriptor 4 by default). It is up to the child process to read from the result channel. </p>
+
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1008680"></a>
+When using the Windows Operating System, because of limited buffer sizes, if the child process fails to read accumulated data from the result channel there is a chance that results will be discarded if the buffer fills up. </div>
+
+<p>
+<a id="pgfId-1008681"></a>The buffer for the result channel is separate from all other buffers so the process does not have to empty the buffer if the results are not needed.</p>
+
+<h4>
+<a id="pgfId-1040551"></a>Arguments</h4>
+<table class="webflareTable" id="#id1041008">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041010"></a><span class="webflare-courier-new" style="white-space:pre"><em>t_command</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041012"></a><a id="ipcSkillProcess arguments"></a>Command to be executed locally or on a network node.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041014"></a><span class="webflare-courier-new" style="white-space:pre"><em>t_hostName</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041016"></a>Specifies the network node. An empty string (<code>&quot;&quot;</code>) for <span class="webflare-courier-new" style="white-space:pre"><em>hostName</em></span> means the process is run locally.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041018"></a><span class="webflare-courier-new" style="white-space:pre"><em>tsu_dataHandler</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>tsu_errHandler</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>tsu_postFunc</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041076"></a>These call back functions can be given as strings, symbols or function objects. <a id="marker-1041077"></a>Handlers are called whenever the parent process receives data from the child process. Activation of handler calls occurs at the top level of SKILL; that is, it does not interrupt the current evaluation. Define handlers to accept two parameters: <span class="webflare-courier-new" style="white-space:pre"><em>o_childId</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>t_data</em></span>. Handlers are called with the <span class="webflare-courier-new" style="white-space:pre"><em>childId</em></span> of the child that sent the data and the data itself is packed into a SKILL string.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041022"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041090"></a>If <span class="webflare-courier-new" style="white-space:pre"><em>tsu_dataHandler</em></span> is <code>nil</code>, the parent must use <span class="webflare-courier-new" style="white-space:pre"><em>ipcReadProcess</em></span> to read the data. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041026"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041028"></a><span class="webflare-courier-new" style="white-space:pre"><em>tsu_dataHandler</em></span>, <span class="webflare-courier-new" style="white-space:pre"><em>tsu_errHandler</em></span> correspond to a child&#8217;s stdout and stderr respectively.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041030"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041149"></a>The <span class="webflare-courier-new" style="white-space:pre"><em>tsu_postFunc</em></span> function is called when a child terminates. It must be defined to accept two parameters: <span class="webflare-courier-new" style="white-space:pre"><em>o_childId</em></span> and <span class="webflare-courier-new" style="white-space:pre"><em>x_exitStatus</em></span>, where <span class="webflare-courier-new" style="white-space:pre"><em>exitStatus</em></span> is the value returned by the child process on exit. If <span class="webflare-courier-new" style="white-space:pre"><em>tsu_postFunc</em></span> is <code>nil</code>, the child&#8217;s health and exit status must be checked using the <code>ipcIsAliveProcess</code> and <code>ipcGetExitStatus</code> functions.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041042"></a><span class="webflare-courier-new" style="white-space:pre"><em>t_logFile</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041044"></a>File that can be used to log all output from a child process.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041046"></a></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041048"></a>A child invoked with the <span class="webflare-courier-new" style="white-space:pre"><em>t_logFile</em></span> present starts its life duplicating its output to the log file and sending the data to the parent. If at any point the child is to be put in batch mode and its communications with the parent silenced, use <code>ipcActivateBatch</code>. Once in batch mode, the output of a child process is written to the <span class="webflare-courier-new" style="white-space:pre"><em>logFile</em></span> only. Subsequently, the messages to the parent can be turned back on using <code>ipcActivateMessages</code>. Using these two functions, a child process can be made to switch between the batch and active data passing states. </p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041050"></a><span class="webflare-courier-new" style="white-space:pre"><em>x_cmdDesc</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041052"></a>SKILL command sending channel.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041054"></a><span class="webflare-courier-new" style="white-space:pre"><em>x_resDesc</em></span></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1041056"></a>SKILL result receiving channel.</p>
+</td>
+</tr>
+</tbody></table>
+<h4>
+<a id="pgfId-1040564"></a>Examples</h4>
+
+<p>
+<a id="pgfId-1050687"></a><strong>Example 1</strong></p>
+<p>
+<a id="pgfId-1008688"></a>Suppose we have a C program, <code>sample.c</code>:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008689"></a>/**********************************************<br />* Sample process for executing SKILL commands<br />* in parent process.<br />**********************************************/<br />#include &quot;stdio.h&quot;<br />#define skill_cmd 3<br />#define skill_result 4<br />
+main(int argc, char **argv)
+{
+&#160;&#160;  int status;<br />    char s[100];</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008690"></a>    sprintf(s, &quot;%s&quot;, &quot;(let () (println \&quot;Hello world \&quot;) (1 + 1))&quot;); <br />    printf(&quot;Executing %s&quot;, s);<br />    fflush(stdout);<br />    status = write(skill_cmd, &amp;s[0], strlen(s));<br />    status = read(skill_result, &amp;s[0], 100);<br />    s[status] = &#39;\0&#39;;<br />    printf(&quot;Result = %s&quot;,  s);<br />    fflush(stdout);<br />    exit(0);<br />}</pre>
+
+<p>
+<a id="pgfId-1008691"></a>Compile this into an executable named <code>sample.exe</code>. Then in SKILL:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008692"></a>      cid = ipcSkillProcess(&quot;sample.exe&quot;)<br />ipc:5<br />&quot;Hello world&quot;<br />      ipcReadProcess(cid)<br />&quot;Executing (let () (println \&quot;Hello world\&quot;) (1 + 1))&quot;<br />      ipcReadProcess(cid)<br />&quot;Result = (2)&quot;<br />      cid-&gt;exitStatus<br />0</pre>
+
+<p>
+<a id="pgfId-1041230"></a><strong>Example 2</strong></p>
+<p>
+<a id="pgfId-1041304"></a>/**********************************************<br />* Example of ipcSkillProcess using a Perl script.<br />**********************************************/<br />=== Perl script === </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041530"></a>#!/usr/bin/perl <br />use IO::Handle;<br />use Fcntl;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041548"></a># open descriptor 3 and ensure it flushes automatically<br />open(outPort, &quot;&gt;&amp;3&quot;);<br />outPort-&gt;autoflush(1);<br />print outPort &quot;(myTest)\n&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041535"></a># open descriptor 4 and ensure it&#39;s non-blocking<br />open(inPort, &quot;&lt;&amp;4&quot;);<br />fcntl(inPort,F_GETFL,$flags);<br />$flags|=O_NONBLOCK;<br />fcntl(inPort,F_SETFL,$flags);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041557"></a># wait a bit and then read<br />sleep(2);<br />$inLine=&lt;inPort&gt;;<br />print &quot;From Perl: $inLine\n&quot;;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041327"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041612"></a>=== SKILL script ===</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041328"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041670"></a>procedure( testIpc()<br />   let( (child)<br />     printf(&quot;Executing ipc: %s\n&quot; getCurrentTime())<br />     child=ipcSkillProcess(&quot;./test.perl&quot;)<br />     ipcWaitForProcess(child)<br />     printf(&quot;%s\n&quot; ipcReadProcess(child 10))<br />   ) ;let<br />) ;procedure</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041338"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1041339"></a>procedure( myTest()<br />   prog( ()<br />      printf(&quot;Executed by Perl\n&quot;)<br />      return(&quot;123&quot;)<br />   ) ;prog<br />) ;procedure</pre>
+<h4><em>
+<a id="pgfId-1049365"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1049369"></a><a href="ipcskill.html#72470">Interprocess Communication Functions</a></p>
+<p>
+<a id="pgfId-1049373"></a><a href="ipcskill_re_ipcBatchProcess.html#29129">ipcBatchProcess</a></p>
+<p>
+<a id="pgfId-1049377"></a><a href="ipcskill_re_ipcBeginProcess.html#21538">ipcBeginProcess</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="ipcskill_re_ipcSignalProcess.html" id="prev" title="ipcSignalProcess">ipcSignalProcess</a></em></b><b><em><a href="ipcskill_re_ipcSleep.html" id="nex" title="ipcSleep">ipcSleep</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>

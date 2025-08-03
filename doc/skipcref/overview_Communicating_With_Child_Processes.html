@@ -1,0 +1,273 @@
+
+<html><head><title>Communication with Child Processes</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="parula" />
+<meta name="CreateDate" content="2023-06-15" />
+<meta name="CreateTime" content="1686846347" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to create and communicate with child processes" />
+<meta name="DocTitle" content="Cadence Interprocess Communication SKILL Reference" />
+<meta name="DocType" content="SKILL Reference" />
+<meta name="FileTitle" content="Communication with Child Processes" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="skipcref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-15" />
+<meta name="ModifiedTime" content="1686846347" />
+<meta name="NextFile" content="ipcskill.html" />
+<meta name="Group" content="SKILL Language" />
+<meta name="Platform" content="Cadence Shared Tools" />
+<meta name="PrevFile" content="overview.html" />
+<meta name="c_product" content="Virtuoso Layout Suite,Virtuoso Schematic Editor,Virtuoso Analog Design Environment" />
+<meta name="Product" content="SKILL" />
+<meta name="ProductFamily" content="SKILL" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Cadence Interprocess Communication SKILL Reference -- Communication with Child Processes" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="reference" />
+<meta name="reference_type" content="api reference" />
+<meta name="prod_feature" content="SKILL" />
+<meta name="prod_subfeature" content="Interprocess Communication" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="skipcrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="skipcrefTOC.html">Contents</a></li><li><a class="prev" href="overview.html" title="Interprocess Communication (IPC) SKILL">Interprocess Communication (IP ...</a></li><li style="float: right;"><a class="viewPrint" href="skipcref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="ipcskill.html" title="Interprocess Communication Functions">Interprocess Communication Fun ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Cadence Interprocess Communication SKILL Reference<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:Communicating_With_Child_Processes" title="Communication with Child Processes"></a><h2>
+<a id="pgfId-1008290"></a><a id="14560"></a>Communication with Child Processes</h2>
+
+<p>
+<a id="pgfId-1008291"></a>A child process can be a program that executes normally under the given operating system. Design Framework II runs non-Cadence software as a child process. A child process can be as simple as execution of an Operating System utility, such as, <code>mail</code>,<em> </em><code>wc</code>,<em> </em><code>cat</code>,<em> </em><code>ls</code>, stand-alone simulator, a batch program, and so forth. Basically any process can be a child process, and run in parallel with the parent process that created it. </p>
+<p>
+<a id="pgfId-1008292"></a>The parent process communicates with a child process by writing to the child process&#8217;s <code>stdin</code> channel and reading from its <code>stdout</code> and <code>stderr</code> channels. Communication can be carried out in one of two modes: synchronous or asynchronous. </p>
+
+<h3>
+<a id="pgfId-1008293"></a>Child Process Output</h3>
+
+<p>
+<a id="pgfId-1008294"></a>When using SKILL interprocess communication, you should be aware of two possible modes of dealing with output from a child process. You can synchronize the flow of a program with child process output by performing blocking read operations. A blocking read operation will wait until data arrives from the child process thereby guaranteeing sequential flow of your program. </p>
+<p>
+<a id="pgfId-1008295"></a>Alternatively, you can choose to deal with output from a child process by registering a call-back function (referred to in this document as <code>outputHandler</code>). This function will be called asynchronously whenever data is received from a child process and the event manager in the parent program is ready to handle the data.</p>
+<p>
+<a id="pgfId-1008296"></a>There is only one mode of operation for the write function. Write always returns with a success/failure status. When a call to write returns, it does not always mean that the child process received the data. It just means that the data was dispatched successfully. </p>
+
+<h3>
+<a id="pgfId-1008297"></a>Blocking Reads and the SKILL Evaluation Process</h3>
+
+<p>
+<a id="pgfId-1008301"></a>You should determine in advance whether the use for SKILL IPC requires synchronous or asynchronous input and output handling, in which case either blocking reads or handlers should be the mode of operation. Synchronous and asynchronous output handling should not be mixed. An<em> </em><code>errHandler</code><a id="marker-1008302"></a>, once defined for a process, always receives the error messages despite a blocking read. </p>
+<p>
+<a id="pgfId-1008303"></a>Remember when writing asynchronous data handling code that the <a id="marker-1008304"></a>SKILL evaluation process blocks out any incoming messages. These messages cannot be gathered until the evaluator winds down and control returns to the top level. </p>
+<p>
+<a id="pgfId-1008305"></a>It is sometimes necessary to open gaps in the evaluator to collect incoming messages. These gaps can be opened using one of the following methods:</p>
+<ul><li>
+<a id="pgfId-1008306"></a>Blocking read with a time-out greater than 0 (<code>dataHandlers</code> will not be called during a blocking read). A blocking read overrides the outputHandler and data entered using one of the methods is never available again for the other method to retrieve. <a id="marker-1034488"></a><a id="marker-1034489"></a></li><li>
+<a id="pgfId-1008307"></a><code>ipcSleep</code>,<em> </em><code>ipcWait</code>,<em> </em><code>ipcWaitForProcess</code> (<code>dataHandlers</code> will be called during these calls)</li></ul>
+
+
+<h3>
+<a id="pgfId-1008308"></a>Tune the Handlers to Avoid Freezing Graphics</h3>
+
+<p>
+<a id="pgfId-1008310"></a>The <a id="marker-1008309"></a>data handlers are routines invoked by the SKILL interpreter in a non-deterministic fashion. You must tune their performance with respect to the frequency of incoming data because their activation can disrupt the responsiveness of the user interface graphics. Remember, it can be annoying to a user when the system feels unresponsive during the time data handlers are executing. </p>
+
+<h3>
+<a id="pgfId-1008311"></a>Wait for the Child to Become Active</h3>
+
+<p>
+<a id="pgfId-1008312"></a>The <code>ipcBeginProcess</code> and <code>ipcSkillProcess</code> function calls initiate a child process and return without waiting for that child to become active. </p>
+<p>
+<a id="pgfId-1008313"></a>To synchronize the activity of the parent process with that of the child process spawning and being ready for communication, use the <code>ipcWaitForProcess</code> function to force the parent process to wait until the child process is ready to communicate.</p>
+
+<h3>
+<a id="pgfId-1008314"></a>Data Buffers</h3>
+
+<p>
+<a id="pgfId-1008315"></a>The input and output performed by child processes must take into account <a id="marker-1008316"></a>buffer limitations. The standard IO channels have a 4096 byte buffer. For example, child process output may not always get flushed immediately after the child writes to <code>stdout</code>. A child process may have to flush data at appropriate points so the parent process can receive the data. </p>
+<p>
+<a id="pgfId-1008317"></a>Buffer limits do not apply to the SKILL-based parent process. For example, child process data is buffered in the parent process using memory pools limited only by the availability of runtime memory. </p>
+<p>
+<a id="pgfId-1008318"></a>Data written to a child process&#8217;s <code>stdin</code> channel should be read by the child process frequently. When using the Windows Operating System, if the <code>stdin</code> channel buffer fills up then the parent process discards data to prevent blocking on write. </p>
+
+<h3>
+<a id="pgfId-1008319"></a>Child Process Handles</h3>
+
+<p>
+<a id="pgfId-1008320"></a>A child process handle returned from a call to <code>ipcBeginProcess</code>, <code>ipcSkillProcess</code>, or <code>ipcBatchProcess</code> is an opaque data structure. </p>
+
+<h4>
+<a id="pgfId-1008323"></a>Child Process Read-Only Properties</h4>
+
+<p>
+<a id="pgfId-1009117"></a>A child process handle has the following read-only properties that can be accessed programmatically using the <code>-&gt;</code> syntax. </p>
+
+<p>
+<a id="pgfId-1011976"></a></p>
+<table class="webflareTable" id="#id1011980">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1011982">
+<a id="pgfId-1011982"></a>Property</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1011984">
+<a id="pgfId-1011984"></a>Meaning</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011986"></a>command</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011988"></a>Name of the command</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011990"></a>host</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011992"></a>Name of the host machine running the process</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011994"></a>processPid</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011996"></a>Process id of the child process on host</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1011998"></a>exitStatus</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012000"></a>Exit status of the child process</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012002"></a>priority</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012004"></a>Priority given to the child process</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012006"></a>type</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012008"></a>Begin, SKILL, or Batch process</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012010"></a>state</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1012012"></a>Active, Dead, or Stopped</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1009155"></a>Some of these properties are only meaningful if the child process is active. Once the child process expires, only <code>state</code> and <code>exitStatus</code> are guaranteed to have meaningful results. </p>
+
+<h3>
+<a id="pgfId-1008334"></a>Formatting Child to Parent SKILL Communication</h3>
+
+<p>
+<a id="pgfId-1008335"></a>Processes invoked using <code>ipcSkillProcess</code> send SKILL commands back to the parent for execution. Each command sent by the child must be formatted in the following way to ensure error-free execution. </p>
+
+<h4>
+<a id="pgfId-1008336"></a>Surround Each Command with Parentheses </h4>
+
+<p>
+<a id="pgfId-1008337"></a>For example, to send two <code>println</code> commands, format the string this way: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008338"></a>(println x) (println y) </pre>
+
+<p>
+<a id="pgfId-1008339"></a>When the child performs multiple print statements in sequence, the parentheses are needed: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1008340"></a>..printf(&quot;(println x) &quot;);printf(&quot;(println x) &quot;); </pre>
+<h4>
+<a id="pgfId-1008341"></a>Insert Spaces at the End of Each Command </h4>
+
+<p>
+<a id="pgfId-1008343"></a>Alternatively, use the SKILL <code>prog</code><a id="marker-1008342"></a> construct to send compound statements to SKILL. SKILL commands sent by a child process can become packed together in one string and sent to SKILL to evaluate. Therefore, exercise care in using the correct syntax as in the example above. </p>
+<p>
+<a id="pgfId-1008344"></a>This is similar to typing more than one command per line at the Command Interpreter Window. In fact, the CIW is a good place to experiment with formats of <a id="marker-1033916"></a>compound statements. </p>
+
+<h3>
+<a id="pgfId-1008346"></a>Detecting Child Process Termination</h3>
+
+<p>
+<a id="pgfId-1008348"></a>There are two ways of detecting <a id="marker-1008347"></a>child process termination: </p>
+<ul><li>
+<a id="pgfId-1008349"></a>The synchronous method using <code>ipcIsAliveProcess</code> or <code>ipcWait</code>.</li><li>
+<a id="pgfId-1008350"></a>The asynchronous method using <code>postFunc</code> at initiation time. </li></ul>
+
+<p>
+<a id="pgfId-1008351"></a>Behavior is undefined if you mix the use of synchronous and asynchronous child process exit detection.</p>
+
+<h4><em>
+<a id="pgfId-1033352"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1033378"></a><a href="overview.html#91419">Interprocess Communication (IPC) SKILL</a></p>
+<p>
+<a id="pgfId-1011385"></a> </p>
+<p>
+<a id="pgfId-1031135"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="overview.html" id="prev" title="Interprocess Communication (IPC) SKILL">Interprocess Communication (IP ...</a></em></b><b><em><a href="ipcskill.html" id="nex" title="Interprocess Communication Functions">Interprocess Communication Fun ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
