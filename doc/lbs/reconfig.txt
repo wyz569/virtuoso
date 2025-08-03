@@ -1,0 +1,67 @@
+
+NAME
+   cdsreconfig - Change the configuration parameters of the currently running 
+   cdsqmgr. This command line tool can be used to add new queues,new hosts,
+   remove hosts, remove queues, change host count, change job limit etc.
+
+SYNOPSIS
+
+   cdsreconfig <file_name>
+
+   cdsreconfig -version
+
+DESCRIPTION
+
+   The cdsreconfig tool accepts the new configuration file as the input and
+   change the currently running cdsqmgr configuration with the new 
+   configuration specified. It does a validity check for changeability of the
+   configuration. If any error is detected the configuration will be left 
+   unchanged. This new configuration file follows the same syntax as the 
+   cdsqmgr configuration files. 
+
+   There is no restrictions in adding new queues or new hosts. However a host
+   can be removed only if there are not running jobs or scheduled jobs
+   on that host. Similary a queue can only be removed if there are no running
+   jobs or scheduled jobs on the queue. 
+   If an pending or running  jobs are detected on a host or queue requested
+   to be removed an error message will be thrown to stdout.
+
+   For adding a new host to an existing queue, user can add the new host into 
+   the configuration file incrementing the host count.
+
+   For example:
+   oldQue 3  #host count incremented from 2 to 3 to accomodate newHost
+   oldHost1 7
+   oldHost2 29
+   newHost  21
+
+   For removing a host, the user can remove the entry with decrementing the host
+   count.
+
+   For example:
+   oldQue 3  #host count decremented from 3 to 2 to remove oldHost1
+   oldHost2 29
+   newHost  21
+
+
+SECURITY
+
+   Since there could be different cdsqmgr s running on different sessions  and 
+   as there is no undo operation available for reconfiguration; the cdsreconfig 
+   tool will ask for user's confirmation for the right cdsqmgr. The logic
+   used by the cdsreconfig to identify the cdsqmgr is similar to the logic used
+   by lbs client s. cdsreconfig will only change the cdsqmgr started by the same
+   user who is using cdsreconfig. to If LBS_CLUSTER_MASTER variable is set to a
+   host name, then cdsreconfig will configure the cdsqmgr running on that host 
+   under the same user name. However if the cdsreconfig is run as "root"
+   LBS_CLUSTER_MASTER variable is not used. This would make sure that if
+   cdsqmgr is started as root, you have to be on the same host running cdsqmgr
+   as root in order to reconfigure cdsqmgr.
+
+SPECIAL PROVISIONS
+
+   If you want to close a host for future removal, you can change the job limit
+   on that host to zero (0) so that new jobs cannot be scheduled to the host.
+   The currently running jobs on that host will continue to run without 
+   interruption. Similarly a queue can be marked for future removal by changing
+   the host count to zero(0).
