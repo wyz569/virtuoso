@@ -1,0 +1,399 @@
+
+<html><head><title>WSP/SP Support for Pin Optimization</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="spriya" />
+<meta name="CreateDate" content="2023-10-26" />
+<meta name="CreateTime" content="1698333651" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes Virtuoso Floorplanner that includes automatic and interactive floorplanning tools that let you specify the rough topology of a physical chip." />
+<meta name="DocTitle" content="Virtuoso Floorplanner User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="WSP/SP Support for Pin Optimization" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="fphelp" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-26" />
+<meta name="ModifiedTime" content="1698333651" />
+<meta name="NextFile" content="pinPlacement_tk_Setting_Pin_Constraints_Using_a_Pin_Constraints_File.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="pinPlacement_ct_Alignment_Issues_During_Pin_Optimization.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Floorplanner User Guide -- WSP/SP Support for Pin Optimization" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="Virtuoso Layout Suite::Floorplanning::Pin Optimization" />
+<meta name="prod_feature" content="Floorplanning" />
+<meta name="prod_subfeature" content="Pin Optimization" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="fphelpIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="fphelpTOC.html">Contents</a></li><li><a class="prev" href="pinPlacement_ct_Alignment_Issues_During_Pin_Optimization.html" title="Alignment Issues During Pin Optimization">Alignment Issues During Pin Op ...</a></li><li style="float: right;"><a class="viewPrint" href="fphelp.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="pinPlacement_tk_Setting_Pin_Constraints_Using_a_Pin_Constraints_File.html" title="Setting Pin Constraints Using a Pin Constraints File">Setting Pin Constraints Using  ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Floorplanner User Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:ct_WSP_SP_Support_for_Pin_Optimization" title="WSP/SP Support for Pin Optimization"></a><h3>
+<a id="pgfId-1110047"></a><a id="53239"></a>WSP/SP Sup<a id="pinOptWSP"></a>port for Pin Optimization</h3>
+
+<p>
+<a id="pgfId-1110027"></a>Pin Optimizer has been enhanced to support width-aware and constraint (CST)-aware optimization of pins. </p>
+<p>
+<a id="pgfId-1107255"></a>Pin Optimizer recognizes the Width Spacing Snap Pattern grid defined using the <code>widthSpacingSnapPatternDef</code> rule in the technology file. The <code>widthSpacingSnapPatternDef</code> definitions are available in the technology database as well as in the design. Pin Optimizer recognizes both global and local <code>widthSpacingSnapPatternDef</code> definitions.</p>
+<p>
+<a id="pgfId-1107257"></a>The pin optimization and snapping behavior for connected pins is different from that of unconnected pins. In both cases, the pin width is determined and compared with the WSP/SP track width. The pin width is determined by comparing the width of the pin with the <code>minWidth</code> constraint based on the CST lookup. The larger value is considered.</p>
+<p>
+<a id="pgfId-1107258"></a>Example:</p>
+<p>
+<a id="pgfId-1107259"></a>Pin width = <code>0.4</code> (considered)</p>
+<p>
+<a id="pgfId-1108209"></a>CST = <code>0.3</code></p>
+<p>
+<a id="pgfId-1109285"></a>Pin Optimizer honors the pin layer/side constraints while placing the pins on the WSP/SP tracks. The pin layer/side constraints are honored only when WSP/SP tracks are available on the specified side. For example, consider a technology in which <code>Metal2</code> WSP tracks are available in the horizontal direction. The pin layer/side constraint on this layer is honored only when the pins are assigned to the <em>Left</em> or <em>Right</em> side. The constraint is not honored when pins are assigned to the <em>Top</em> or <em>Bottom</em> side because there are no WSP/SP tracks on this side.</p>
+
+<h4><em>
+<a id="pgfId-1141770"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1141789"></a><h-hot><a actuate="user" class="URL" href="../ascitechfile/chap4.html#wsp_widthSpacingSnapPatternDefs" show="replace" xml:link="simple">Width Spacing Pattern Layer Rules</a></h-hot></p>
+<p>
+<a id="pgfId-1141808"></a><h-hot><a actuate="user" class="URL" href="../constraints/chap1.html#objectprocessrules" show="replace" xml:link="simple">Process Rules for Objects</a></h-hot></p>
+<p>
+<a id="pgfId-1141824"></a><a href="pinPlacement_tk_Setting_Pin_Layer_and_Side_Constraints_for_Pin_Optimization.html#35054">Setting Pin Layer and Side Constraints for Pin Optimization</a></p>
+
+<h4>
+<a id="pgfId-1107262"></a>Connected Pins</h4>
+
+<p>
+<a id="pgfId-1107264"></a>Connected pins are snapped to tracks with widths greater than or equal to the pin width, while ensuring the minimum net length. While snapping, pins are resized to square-shaped pins with dimensions that match the WSP/SP track width. Pins are centered along the WSP/SP tracks on the snapping layer that is identified in the WSP/SP definition.</p>
+
+<div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1107265"></a>
+The original pin area may not be maintained during pin snapping.</div>
+
+<p>
+<a id="pgfId-1117667"></a>Set the <a href="FPenvvars_re_retainLongPin.html#67944">retainLongPin</a> environment variable to <code>t</code> to retain the dimension of long, rectangular pins while snapping to WSP/SP tracks. The default value is <code>nil</code>, in which case pins are resized to square-shaped pins to match the WSP/SP track width. </p>
+<p>
+<a id="pgfId-1117668"></a>The following examples depict the snapping behavior in various scenarios when <code>retainLongPin</code> is set to <code>t</code>.</p>
+<p>
+<a id="pgfId-1117219"></a>Example 1: A long pin is snapped to a track of the same width. There is no change in the pin dimensions.</p>
+
+<p>
+<a id="pgfId-1117315"></a></p>
+<div class="webflare-div-image">
+<img src="images/LongPinOpt_SameWidthTrack.gif" /></div>
+
+<p>
+<a id="pgfId-1117271"></a>Example 2: A long pin is snapped to a wider track. The pin width is adjusted as per the track width, but the orthogonal pin dimension remains the same.</p>
+
+<p>
+<a id="pgfId-1117321"></a></p>
+<div class="webflare-div-image">
+<img src="images/LongPinOpt_DiffWidthTrack_wide.gif" /></div>
+
+<p>
+<a id="pgfId-1117284"></a>Example 3: A long pin is snapped to a narrower track. The pin width is adjusted as per the track width, but the orthogonal pin dimension remains the same.</p>
+
+<p>
+<a id="pgfId-1117327"></a></p>
+<div class="webflare-div-image">
+<img src="images/LongPinOpt_DiffWidthTrack_narrow.gif" /></div>
+
+<p>
+<a id="pgfId-1117297"></a>Example 4: A long pin is snapped to an orthogonal edge, typically due to a layer change. The shorter pin dimension is used to find a suitable width-aware track. The shorter pin edge is snapped to the track, and so the orthogonal dimension is maintained.</p>
+
+<p>
+<a id="pgfId-1117431"></a></p>
+<div class="webflare-div-image">
+<img src="images/LongPinOpt_Orthogonal.gif" /></div>
+
+<p>
+<a id="pgfId-1117312"></a>Example 5: A square pin is snapped to a wider width track. A square pin is created that matches the width of the snapped track.</p>
+
+<p>
+<a id="pgfId-1117444"></a></p>
+<div class="webflare-div-image">
+<img src="images/LongPinOpt_SquarePins.gif" /></div>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1107349"></a>The Alignment (Side/Edge), Order, and Fixed constraints continue to have the highest priority. For example, if <code>pin_1</code> has the side <code>Left</code> edge constraint, then only the tracks on the left side are considered.</div>
+
+<p>
+<a id="pgfId-1107350"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="744" src="images/pinPlacement-61.gif" /></div>
+
+<p>
+<a id="pgfId-1107351"></a>In the above figure, for the yellow pins, only those tracks with width &gt;=0.6 are considered for placement; whereas for the red pins, all the tracks are considered.</p>
+<p>
+<a id="pgfId-1107269"></a>During pin optimization, the yellow pin is snapped to a track such that the minimum net length is achieved.</p>
+<p>
+<a id="pgfId-1107270"></a>The red pin has multiple tracks available. Such pins are snapped to ensure minimal net length, and not minimal pin resize. Further, the pins are placed on the left to ensure minimum net length. While snapping, the pins are resized to square-shaped pins with dimensions that match the WSP/SP track width.</p>
+<p>
+<a id="pgfId-1107271"></a>If no matching WSP/SP tracks are found, then the pins are snapped to tracks such that the minimum net length is achieved.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1107272"></a>If WSP/SP tracks are not available, then pins are snapped to the manufacturing or routing grids, depending on the block type.</div>
+<p>
+<a id="pgfId-1107832"></a>To match a pin&#8217;s layer and size to the connected fixed pin&#8217;s layer and size, use the options in the <em>Match Fixed Pins Layer/Size</em> section on the <em>Pin Optimization</em> tab of the Pin Placement form.</p>
+
+<h4><em>
+<a id="pgfId-1146410"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1146425"></a><a href="pinPlacement_tk_Optimizing_Pins.html#67386">Optimizing Pins</a></p>
+
+<h4>
+<a id="pgfId-1107274"></a>Unconnected Pins</h4>
+
+<p>
+<a id="pgfId-1107682"></a>Unconnected pins are snapped to WSP/SP tracks with widths equal to or greater than the pin width. While snapping, the pins are resized to square-shaped pins with dimensions that match the WSP/SP track width. The following figures depict the snapping behavior of a pin with an original size 0.03. </p>
+<p>
+<a id="pgfId-1107683"></a>In Situation 1, there are two available tracks of widths 0.08 and 0.04. So, the pin is snapped to the WSP/SP track with width 0.04, and resized accordingly.</p>
+<p>
+<a id="pgfId-1107671"></a>In Situation 2, there are two available tracks of widths 0.08 and 0.02. This time, the pin is snapped to the WSP/SP track with width 0.08, and resized accordingly.</p>
+
+<p>
+<a id="pgfId-1107277"></a><a id="80443"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="526" src="images/pinPlacement-62.gif" /></div>
+<h4>
+<a id="pgfId-1107280"></a>Blockage Support</h4>
+
+<p>
+<a id="pgfId-1108235"></a>Pin Optimizer supports routing blockages. Therefore, during pin optimization, a pin is not placed on a WSP track if the placement would lead to an overlap between the pin and blockages on the pin&#8217;s layer.</p>
+
+<h4>
+<a id="pgfId-1108236"></a>Pin Snapping for Overlapping Regions</h4>
+
+<p>
+<a id="pgfId-1107282"></a>In certain designs, there could be an overlap between two WSP regions that have the same snapping layer. The following types of overlaps are possible:</p>
+<ul><li>
+<a id="pgfId-1108749"></a>Partial, between two regions</li><li>
+<a id="pgfId-1108782"></a>Exact, between two regions of the same size</li><li>
+<a id="pgfId-1108783"></a>Complete enclosure of a smaller region within another larger region</li></ul>
+
+
+<p>
+<a id="pgfId-1108876"></a>Pin Optimizer follows certain rules that define the pin snapping behavior for such overlapping regions.</p>
+
+<h4>
+<a id="pgfId-1107288"></a>Support for the allowedWireTypes Constraint</h4>
+
+<p>
+<a id="pgfId-1107289"></a>Pin Optimizer has been enhanced to support the <code>allowedWireTypes</code> constraint. When this constraint is set on a net, pins on that net are placed on tracks with allowed wire types. Pin Optimizer matches the <code>allowedWireTypes</code> constraint specified on the nets with the track <code>wiretype</code> value. If multiple matches are found, then the tack with the minimum net length is chosen for placement. </p>
+<p>
+<a id="pgfId-1107291"></a>Pin Optimizer achieves the minimum net length while honoring the constraints and the priority order mentioned below:</p>
+<ol><li style="list-style-type: none;background-image: none;"><ol><li>
+<a id="pgfId-1107292"></a>Matching wire type </li><li>
+<a id="pgfId-1107293"></a>Matching width<br /><div class="webflare-information-macro webflare-macro-warning">
+<a id="pgfId-1108014"></a>
+As WSP is a space-corrected grid, a pitch value does not make sense. Therefore, it is not supported.</div></li></ol></li></ol>
+
+
+
+<h4><em>
+<a id="pgfId-1141893"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1142050"></a><a href="pinPlacement_tk_Specifying_the_Priority_of_Optimized_Pins_Using_Pin_Planner.html#91764">Support for Rectangular and Square Pins and Blockages</a></p>
+<p>
+<a id="pgfId-1142068"></a><h-hot>Pin Snapping for Overlapping Regions</h-hot></p>
+<p>
+<a id="pgfId-1141918"></a><h-hot><a actuate="user" class="URL" href="../constraints/appA.html#wsp_assignWireType" show="replace" xml:link="simple">Assigning a Wire Type to a Net</a></h-hot></p>
+<p>
+<a id="pgfId-1141942"></a><h-hot><a actuate="user" class="URL" href="../constraints/appA.html#wsp_assignWireType" show="replace" xml:link="simple">Assigning a Wire Type to a Net &gt; Default Constraint Types</a></h-hot></p>
+
+<h4>
+<a id="pgfId-1109168"></a>Support for Pin Group Guides</h4>
+
+<p>
+<a id="pgfId-1109182"></a>If a design with WSP patterns has a pin group guide defined on its PR boundary, then the pins in the pin group guide are snapped to nearest WSP/SP track within the guide. However, if a pin group guide only intercepts a WSP/SP track, then the pins cannot be placed on the intercepting track, as shown below:</p>
+
+<p>
+<a id="pgfId-1109215"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="315" src="images/pinPlacement-63.gif" /></div>
+<h4><em>
+<a id="pgfId-1142006"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1142025"></a><a href="PGG_tk_Creating_a_Pin_Group_Guide.html#27936">Creating a Pin Group Guide</a></p>
+
+<h4>
+<a id="pgfId-1132506"></a>Cross-Selectio<a id="pinSelectionUseModel"></a>n of Pins</h4>
+
+<p>
+<a id="pgfId-1132507"></a>Any pin that you select in the pin table, as shown below, also gets selected in the navigator assistant and the layout canvas, or vice versa.</p>
+
+<p>
+<a id="pgfId-1132514"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="406" src="images/pinPlacement-64.gif" /></div>
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1132515"></a>
+The pin selection use-model has been enhanced such that any pins selected in the pin table are now highlighted and selected in the layout canvas. This enables directly selecting the pins from the pin table and editing them in the layout canvas.</div>
+
+<p>
+<a id="pgfId-1132516"></a>If you select a top-level pin in the layout canvas and the <em>Pin Planner</em> tab has the <em>Top Level Pins</em> edit mode selected, the pin table displays the selected pin as highlighted. However, if the edit mode selected in the <em>Pin Planner </em>tab is <em>Level-1 Pins</em>, the form automatically switches to the <em>Top Level Pins</em> mode to show the cross-selection. The automatic mode switching works as long as the selected layout pins belong to the same level&#8212;top or level-1. If you select a mix of top-level and level-1 pins in the layout canvas, the <em>Pin Planner</em> tab continues to be in the current selected mode and displays only those pins as highlighted in the pin table that belong to the current edit mode.</p>
+<p>
+<a id="pgfId-1132517"></a>The table below summarizes how the <em>Pin Planner</em> tab handles the cross-selection depending on the layout pins selected. Let us assume here that the default edit mode selected is <em>Top Level Pins</em><strong>
+:</strong>
+</p>
+
+<p>
+<a id="pgfId-1132560"></a></p>
+<table class="webflareTable" id="#id1132518">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1132520">
+<a id="pgfId-1132520"></a>Selected Pin</span>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1132522">
+<a id="pgfId-1132522"></a>Pin Planner Tab Behavior</span>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132524"></a>Only top pins</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132526"></a>Shows the selected top pins in the pin table.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132528"></a>Only soft block instance pins</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132530"></a>Automatically switches to the <em>Level-1 Pins</em><strong></strong>
+mode and shows the selected instance pins in the pin table.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132532"></a>Top pins + Soft block instance pins</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132534"></a>No automatic mode switching.</p>
+<p>
+<a id="pgfId-1132535"></a>The <em>Top Level Pins</em> mode shows the selected top pins and the <em>Level-1 Pins</em> mode shows the selected instance pins.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132537"></a>Only soft block instance</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132539"></a>Automatically switches to the <em>Level-1 Pins</em><strong></strong>
+mode<strong></strong>
+but shows no selection in the pin table as the instance &#8220;pin&#8221; is not selected.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132541"></a>Soft block instance + Soft block instance pins</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132543"></a>Automatically switches to the <em>Level-1 Pins</em><strong></strong>
+mode<strong></strong>
+and shows the selected instance pins in the pin table.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132545"></a>Top pins + Soft block instance</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132547"></a>No automatic mode switching.</p>
+<p>
+<a id="pgfId-1132548"></a>The <em>Top Level Pins</em> mode shows the selected top pins.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132550"></a>Top pins + Soft block instance + Soft block instance pins</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132552"></a>No automatic mode switching.</p>
+<p>
+<a id="pgfId-1132553"></a>The <em>Top Level Pins</em> mode shows the selected top pins and the <em>Level-1 Pins</em> mode shows the selected instance pins.</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132555"></a>Top pins + Soft block instance + Soft block instance pins + Pins of another soft block</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1132557"></a>No automatic mode switching.</p>
+<p>
+<a id="pgfId-1132558"></a>Each level shows the selected pins at that level.</p>
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<a id="pgfId-1132561"></a>You can also add to your selection set and nullify your selection in the pin table.</p>
+<ul><li>
+<a id="pgfId-1132562"></a>To add to your selection set in the pin table, incrementally select the pins using the <code>Ctrl</code> or <code>Shift</code> key, as appropriate.</li><li>
+<a id="pgfId-1132563"></a>To nullify your existing selection:<ul><li>
+<a id="pgfId-1132564"></a>In the pin table, click any pin. This nullifies the previous selection and shows only the clicked pin as selected.</li><li>
+<a id="pgfId-1132565"></a>In the layout canvas, click anywhere. This nullifies the previous selection and shows no pins as selected. However, if you click a pin in the layout canvas, the previous selection is nullified and the clicked pin appears as selected.</li></ul></li></ul>
+
+
+
+<p>
+<a id="pgfId-1146453"></a>Related Topics</p>
+<p>
+<a id="pgfId-1146475"></a><a href="pinPlacement_tk_Planning_Placement_of_Top-Level_and_Level-1_Pins.html#40018">Planning Placement of Top-Level and Level-1 Pins</a></p>
+<p>
+<a id="pgfId-1146492"></a><a href="FPforms_re_Pin_Placement_Form.html#91149">Pin Placement Form</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="pinPlacement_ct_Alignment_Issues_During_Pin_Optimization.html" id="prev" title="Alignment Issues During Pin Optimization">Alignment Issues During Pin Op ...</a></em></b><b><em><a href="pinPlacement_tk_Setting_Pin_Constraints_Using_a_Pin_Constraints_File.html" id="nex" title="Setting Pin Constraints Using a Pin Constraints File">Setting Pin Constraints Using  ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
