@@ -1,0 +1,142 @@
+
+<html><head><title>How to Package a Pcell</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sumehta" />
+<meta name="CreateDate" content="2023-09-14" />
+<meta name="CreateTime" content="1694697809" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to create parameterized cells using SKILL or the Virtuoso parameterized cell software." />
+<meta name="DocTitle" content="Virtuoso Parameterized Cell Reference" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="How to Package a Pcell" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="pcellref" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-09-14" />
+<meta name="ModifiedTime" content="1694697809" />
+<meta name="NextFile" content="skillPcells.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="safetyrules.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Parameterized Cell Reference -- How to Package a Pcell" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="pcellrefIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="pcellrefTOC.html">Contents</a></li><li><a class="prev" href="safetyrules.html" title="Safety Rules for Creating SKILL Pcells">Safety Rules for Creating SKIL ...</a></li><li style="float: right;"><a class="viewPrint" href="pcellref.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="skillPcells.html" title="Creating SKILL Parameterized Cells">Creating SKILL Parameterized C ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Parameterized Cell Reference<br />Product Version IC23.1, September 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>3
+<a id="pgfId-937817"></a></h1>
+<h1>
+<a id="pgfId-954324"></a><hr />
+<a id="90981"></a>How to Package a Pcell<hr />
+</h1>
+
+<p>
+<a id="pgfId-954368"></a>Pcell Library is a cellview library that contains Pcell supermaster cellviews and their Pcell Support Files. It is recommended to deliver Pcell Support File as context or encrypted files to protect the Pcell IP. For instance, Pcell as in supermaster cellviews and their Pcell Support Files are one components of a PDK.</p>
+<p>
+<a id="pgfId-954332"></a>When developing a Pcell, the developers need to provide the Pcell Definition File and Pcell Support Files. The Pcell Definition File contains the Pcell creation code that calls the function <code>pcDefinePCell</code> to create the on-disk Pcell (supermaster) cellview in the database. Pcell Support Files are the user-defined SKILL functions mentioned below:</p>
+<ul><li>
+<a id="pgfId-954403"></a>Functions used to support successful evaluation of Pcell</li><li>
+<a id="pgfId-954410"></a>Functions supporting CDF parameter callback</li><li>
+<a id="pgfId-954420"></a>Functions supporting Pcell abutment</li></ul>
+
+
+<p>
+<a id="pgfId-954469"></a>These functions are usually put in separate files. </p>
+
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-954731"></a>
+Load all Pcell Support Files prior to referencing the Pcell in a design to avoid evaluation failure of Pcell, CDF callback, or Pcell abutment callback.</div>
+<h3>
+<a id="pgfId-954477"></a><a id="29158"></a>Loading of Pcell Support Files</h3>
+
+<p>
+<a id="pgfId-954478"></a>DFII supports a mechanism to automatically load a SKILL file <code>libInit.il</code>, when a library is first accessed. The <code>libInit.il</code> file is written by Pcell developers to load the Pcell Support Files. If the Pcell Definition File is written in the top-level form, it should not be part of <code>libInit.il</code>. Each Pcell library should have one <code>libInit.il</code> file in the library directory. Pcell developers can organize the support files as required. One common example is to put all of the user SKILL functions in one SKILL directory. Then in each <code>libInit.il</code>, it loads the desired files from the SKILL location. Once each of the design libraries is opened, their <code>libInit.il</code> file and all the needed user SKILL functions will be loaded. The same approach can be applied to the ITDB libraries hierarchy. In each library level, it will only load its own support files in its <code>libInit.il</code>. By opening the top-level library, all the referenced libraries will also be loaded automatically.</p>
+<p>
+<a id="pgfId-954470"></a>During development, Pcell developers can choose to load the Pcell Support Files as individual files or as SKILL context files consisting of these files. Loading as individual files allow the functions defined in them to be debugged with SKILL IDE or Pcell IDE.</p>
+<p>
+<a id="pgfId-954533"></a>For example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-954534"></a>if(&#160;&#160;status(debugMode) then</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-954535"></a> load( file )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-954536"></a>else</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-954537"></a> loadContext( context )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-954538"></a>)</pre>
+
+<p>
+<a id="pgfId-954539"></a>Prior to the release of Pcell library, such a switch should be removed because only the protected files (context or encrypted) will be included in the release.</p>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-954540"></a>Do not use the <code>.cdsinit</code> file to initialize Pcell code.</div>
+
+<p>
+<a id="pgfId-954525"></a>The <code>.cdsinit</code> is the initialization file used for interactive DFII workbenches. It is an environmental initialization or setup file, not a general data initialization file. The <code>libInit.il</code> file is supported at the database level and should be used for all data initialization purposes, such as Pcells and CDF called functions.</p>
+
+<h3>
+<a id="pgfId-954853"></a>Delivery of a Pcell Library</h3>
+
+<p>
+<a id="pgfId-954864"></a>If you create complex multiple Pcells, you can write your own utility SKILL procedures to call from the Pcells. Calling your own procedures from within a Pcell makes debugging the Pcell code easier. It can also provide better protection of your intellectual property when these procedures are placed in separate files from the file containing the call to <code>pcDefinePCell</code>.</p>
+
+<h4>
+<a id="pgfId-936421"></a>What to Avoid in the libInit.il File<a id="libInit.avoid"></a></h4>
+
+<p>
+<a id="pgfId-954650"></a>Do not load SKILL code that is dependent on graphical SKILL functions, such as <code>hiSetBindKey</code>, from your <code>libInit.il</code>. Assume that only low-level SKILL functions are available, such as those permitted in parameterized cells. When you use SKILL routines within <code>libInit.il</code>, use only the following functions:</p>
+<ul><li>
+<a id="pgfId-954651"></a>The SKILL functions documented in <em>SKILL Language Reference Manual</em>; for example: <code>car</code>, <code>if</code>, <code>foreach</code>, <code>sprintf</code>, <code>while</code>.</li><li>
+<a id="pgfId-936424"></a>SKILL functions from the following families: <code>db</code>, <code>dd</code>, <code>cdf</code>, <code>rod</code>, <code>tech</code>, <code>cst</code>.</li></ul>
+
+
+<h3>
+<a id="pgfId-204202"></a>Specifying Source Code for Stream In</h3>
+
+<p>
+<a id="pgfId-930755"></a>When <code>libInit.il</code> is not provided in the data library, you must specify the source code files in the <em>User-Defined Skill File</em> field of the Stream In User-Defined Data form. For more information about this form and about the Design Data Translators, if you are using the OpenAccess database, refer to <em><a actuate="user" class="URL" href="../transrefOA/transrefOATOC.html#firstpage" show="replace" xml:link="simple">Design Data Translators Reference</a></em>.<a id="41978"></a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="safetyrules.html" id="prev" title="Safety Rules for Creating SKILL Pcells">Safety Rules for Creating SKIL ...</a></em></b><b><em><a href="skillPcells.html" id="nex" title="Creating SKILL Parameterized Cells">Creating SKILL Parameterized C ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
