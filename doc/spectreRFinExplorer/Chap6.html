@@ -1,0 +1,1827 @@
+
+<html><head><title>Envelope (ENVLP) Analysis</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="mzamori" />
+<meta name="CreateDate" content="2023-08-30" />
+<meta name="CreateTime" content="1693402037" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Provides user information for Spectre Circuit Simulator and Accelerated Parallel Simulator RF Analysis" />
+<meta name="DocTitle" content="Spectre Circuit Simulator and Accelerated Parallel Simulator RF Analysis in ADE Explorer User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Envelope (ENVLP) Analysis" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="spectreRFinExplorer" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-08-30" />
+<meta name="ModifiedTime" content="1693402037" />
+<meta name="NextFile" content="Chap7.html" />
+<meta name="Group" content="SpectreRF" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="Chap5.html" />
+<meta name="c_product" content="Spectre" />
+<meta name="Product" content="Spectre" />
+<meta name="ProductFamily" content="Spectre" />
+<meta name="ProductVersion" content="23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Spectre Circuit Simulator and Accelerated Parallel Simulator RF Analysis in ADE Explorer User Guide -- Envelope (ENVLP) Analysis" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="23.1" />
+<meta name="SpaceKey" content="spectreRFinExplorer231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="spectreRFinExplorerTOC.html">Contents</a></li><li><a class="prev" href="Chap5.html" title="Multiple Input Large and Small-signal Analyses">Multiple Input Large and Small ...</a></li><li style="float: right;"><a class="viewPrint" href="spectreRFinExplorer.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="Chap7.html" title="Large-Signal S-Parameter Simulation (LSSP)">Large-Signal S-Parameter Simul ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Spectre Circuit Simulator and Accelerated Parallel Simulator RF Analysis in ADE Explorer User Guide<br />Product Version 23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>7
+<a id="pgfId-1065082"></a></h1>
+<h1>
+<a id="pgfId-1065083"></a><hr />
+<a id="72102"></a>Envelope (ENVLP) Analysis<hr />
+</h1>
+
+<p>
+<a id="pgfId-1065319"></a>En<a id="envlp"></a>velope a<a id="marker-1118980"></a>nalysis is used instead of a transient analysis when there are fast things and slow things in the same circuit. The simulation term for this condition is called multi-rate simulation. In the transient, a large number of cycles of the fast signal must be simulated in order to capture the slow behavior in the circuit. Instead of simulating every fast cycle as in the transient, envelope skips many cycles of the fast signal because the change is very slow. Although many cycles are skipped, the result is almost as accurate as transient analysis.</p>
+<p>
+<a id="pgfId-1068090"></a>The primary applications for envelope analysis are for digital modulation of a high frequency carrier, or calculating the startup waveform of a high-Q oscillator.</p>
+<p>
+<a id="pgfId-1068097"></a>Envelope can solve for one cycle of the RF carrier either by solving for the waveform when shooting is selected, or by using harmonic balance when harmonic balance is selected. For very nonlinear systems like polar modulation, use shooting. For relatively more linear circuits like and I/Q modulator and or power amplifier, use harmonic balance. Harmonic balance has the advantage of having two fast envelope modes that can dramatically speed up simulation.</p>
+<p>
+<a id="pgfId-1068367"></a>Harmonic balance envelope has three different algorithms. The first is to simulate everything at the transistor level. The second, Level1, characterizes the circuit at the start of the simulation, and builds a behavioral model that is then run instead of the circuit. Level1 is useful for circuits that do not have memory effects.</p>
+<p>
+<a id="pgfId-1136749"></a>Level2 fast envelope characterizes the circuit at the beginning of the simulation with a more detailed simulation than level 1 and includes the frequency and phase response of the system. Then, it builds a behavioral model that includes memory effects. This model is more complicated than the level 1 model.</p>
+<p>
+<a id="pgfId-1137197"></a>Because of the more complicated simulations at the beginning and the more complicated behavioral model, level 2 takes slightly longer to run but it includes the memory effects of the circuit.</p>
+
+<h3>
+<a id="pgfId-1068389"></a>Example</h3>
+
+<p>
+<a id="pgfId-1068403"></a>Consider a circuit with a wireless signal source, a behavioral PA, a wireless probe, and a 50 ohm resistor, as shown below. Multiple wireless probes are allowed. Connect a wireless probe at each point in the circuit you want to measure. The wireless source can be at any level in the hierarchy.</p>
+
+<p>
+<a id="pgfId-1100332"></a></p>
+<div class="webflare-div-image">
+<img width="660" height="524" src="images/Chap6-2.gif" /></div>
+
+<p>
+<a id="pgfId-1110129"></a>The wireless source from <code>rfLib</code> generates a fully compliant LTE signal.</p>
+
+<p>
+<a id="pgfId-1100390"></a></p>
+<div class="webflare-div-image">
+<img width="495" height="631" src="images/Chap6-3.gif" /></div>
+
+<p>
+<a id="pgfId-1116422"></a>The behavioral PA has 20dB of gain, and is slightly nonlinear.</p>
+
+<p>
+<a id="pgfId-1116426"></a></p>
+<div class="webflare-div-image">
+<img width="432" height="475" src="images/Chap6-4.gif" /></div>
+
+<p>
+<a id="pgfId-1116427"></a>Now start ADE Explorer, and open the envelope <em>Choosing Analyses</em> form. The form is blank.</p>
+<p>
+<a id="pgfId-1116397"></a>Next, select the wireless mo<a id="wireless_envelope"></a>de, and type in the number of harmonics you want to simulate. Generally, <code>level1</code> or <code>level2</code> fast envelope is used because of the speed advantage compared to transistor-level simulation. Both modes work with wireless.</p>
+
+<p>
+<a id="pgfId-1116564"></a></p>
+<div class="webflare-div-image">
+<img width="357" height="760" src="images/Chap6-5.gif" /></div>
+
+<p>
+<a id="pgfId-1116357"></a>Now run the simulation from the ADE Explorer window. When you start the simulation for the first time, a variable <code>W0_wfreq</code> is introduced into the ADE variables list. This variable is used only when modulators are present in the design, and this variable should be used to set the LO frequency in the modulator. The actual frequency used in simulation is defined by the frequency range and channel number that is defined in the RF source.</p>
+
+<p>
+<a id="pgfId-1116643"></a></p>
+<div class="webflare-div-image">
+<img width="573" height="444" src="images/Chap6-6.gif" /></div>
+
+<p>
+<a id="pgfId-1116361"></a>Now open the <em>Direct Plot Form</em>. All the common measurements are available from the <em>Direct Plot Form</em>. For all wireless plots, select the wireless analysis choice at the top of the form. To plot the spectrum, select <em>Spectrum</em>, and then select the probe you want to plot. </p>
+
+<p>
+<a id="pgfId-1116687"></a></p>
+<div class="webflare-div-image">
+<img width="352" height="538" src="images/Chap6-7.gif" /></div>
+
+<p>
+<a id="pgfId-1116365"></a>Click <em>Plot</em>, and the spectrum is plotted. The spectral mask for the appropriate standard is also plotted. The channel power and the high and low acpr measurements are displayed using markers.</p>
+
+<p>
+<a id="pgfId-1126876"></a></p>
+<div class="webflare-div-image">
+<img width="661" height="391" src="images/Chap6-8.gif" /></div>
+
+<p>
+<a id="pgfId-1116749"></a>To plot the high and low acpr measurements at higher frequency offsets, select <em>Customized ACPR</em> in the <em>Direct Plot Form</em> and specify the number of channels in the <em>Number of Adjacent Channels</em> field, as shown below. </p>
+
+<p>
+<a id="pgfId-1126968"></a></p>
+<div class="webflare-div-image">
+<img width="340" height="579" src="images/Chap6-9.gif" /></div>
+
+<p>
+<a id="pgfId-1126972"></a>Click <em>Plot</em>. The high and low acpr measurements at higher frequency offsets are displayed using markers.</p>
+
+<p>
+<a id="pgfId-1127111"></a></p>
+<div class="webflare-div-image">
+<img width="661" height="457" src="images/Chap6-10.gif" /></div>
+
+<p>
+<a id="pgfId-1116369"></a>To plot the constellation diagram, select <em>Constellation</em>, and then either the <em>Percent</em> or dB value for the EVM measurement. Now select either the measured constellation, or the ideal constellation fitted to the actual datapoints, and click <em>Plot</em>.</p>
+
+<p>
+<a id="pgfId-1116834"></a></p>
+<div class="webflare-div-image">
+<img width="345" height="538" src="images/Chap6-11.gif" /></div>
+
+<p>
+<a id="pgfId-1116373"></a>The constellation is displayed along with the EVM calculation. For the 802.11n standard, EVM for the data, pilot, or the weighted average of both is available.</p>
+
+<p>
+<a id="pgfId-1116921"></a></p>
+<div class="webflare-div-image">
+<img width="573" height="380" src="images/Chap6-12.gif" /></div>
+
+<p>
+<a id="pgfId-1116377"></a>To plot the subframe by subframe EVM, select <em>Measure</em>, and then select the &lt;<span class="webflare-courier-new" style="white-space:pre"><em>probe name</em></span>&gt; <em>.evm</em>.</p>
+
+<p>
+<a id="pgfId-1116993"></a></p>
+<div class="webflare-div-image">
+<img width="349" height="465" src="images/Chap6-13.gif" /></div>
+
+<p>
+<a id="pgfId-1116384"></a>The EVM subframe by subframe is displayed.</p>
+
+<p>
+<a id="pgfId-1132499"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="441" src="images/Chap6-14.gif" /></div>
+<h4>
+<a id="pgfId-1128348"></a>Output</h4>
+
+<p>
+<a id="pgfId-1132511"></a>To specify output nodes for fast mode envelope, select <em>Output</em> and choose output nodes from the schematic. </p>
+
+<p>
+<a id="pgfId-1132591"></a></p>
+<div class="webflare-div-image">
+<img width="638" height="75" src="images/Chap6-15.gif" /></div>
+<h4>
+<a id="pgfId-1117069"></a><a id="envlpLoadpull"></a>Loadpull</h4>
+
+<p>
+<a id="pgfId-1128362"></a>For a loadpull simulation, use a port for the load. </p>
+<ol><li>
+<a id="pgfId-1128423"></a>Select the <em>Loadpull</em> check box.<br />
+<a id="pgfId-1128427"></a><div class="webflare-div-image">
+<img width="638" height="166" src="images/Chap6-16.gif" /></div></li><li>
+<a id="pgfId-1128428"></a>Click the <em>Select</em> button on the right of the grayed out<em> Load Instance</em> field. </li><li>
+<a id="pgfId-1128429"></a>In the schematic, select the load port. <br />
+<a id="pgfId-1128430"></a>The instance name is entered in the <em>Load Instance</em> field. Direct entry by typing is not allowed for this field.</li><li>
+<a id="pgfId-1128435"></a>Click the <em>Variable</em> button on the right of the <em>rho (Z)</em> field. </li><li>
+<a id="pgfId-1128437"></a>In the <em>Select Design Variable </em>window, select the variable you entered in ADE Explorer.<br />
+<a id="pgfId-1128520"></a>This variable will be used to set the value of the reflection coefficient in the port.</li><li>
+<a id="pgfId-1128500"></a>Specify a sweep range and set the spacing.</li><li>
+<a id="pgfId-1128442"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1128443"></a>Click the <em>Variable</em> button on the right of the <em>phi (Z)</em> field. This sets the angle of the reflection coefficient.</li><li>
+<a id="pgfId-1128444"></a>In the <em>Select Design Variable </em>window, select the second variable you entered and specify the sweep limits.</li><li>
+<a id="pgfId-1128449"></a>Click <em>OK</em>. <br />
+<a id="pgfId-1128450"></a>The <em>Choosing Analyses</em> form is updated.</li><li>
+<a id="pgfId-1128451"></a>Specify the system resistance in the <em>Z0</em> field.<br />
+<a id="pgfId-1128419"></a>The <em>Choosing Analyses</em> form should appear similar to the one below.<br />
+<a id="pgfId-1128617"></a><div class="webflare-div-image">
+<img width="397" height="750" src="images/Chap6-17.gif" /></div></li><li>
+<a id="pgfId-1128631"></a>When completed, click <em>OK</em> and run the simulation in ADE Explorer.</li><li>
+<a id="pgfId-1128565"></a>In ADE Explorer, select <em>Results - Direct Plot - Main Form</em>.<br />
+<a id="pgfId-1128648"></a>The Direct Plot Form is displayed as shown below.<br />
+<a id="pgfId-1128758"></a><div class="webflare-div-image">
+<img width="288" height="571" src="images/Chap6-18.gif" /></div></li><li>
+<a id="pgfId-1128738"></a>Click <em>Plot</em> with the settings as shown in the image above.<br />
+<a id="pgfId-1128848"></a>A smith chart is plotted.<br />
+<a id="pgfId-1129062"></a><br /><div class="webflare-div-image">
+<img width="668" height="448" src="images/Chap6-19.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1128888"></a><a id="ccdf"></a>C<a id="ccdf"></a>CDF Post Processing</h4>
+
+<p>
+<a id="pgfId-1129102"></a>You can perform complementary cumulative distribution post processing (CCDF) for each probe placed in the circuit. Consider the following example design:</p>
+
+<p>
+<a id="pgfId-1129263"></a></p>
+<div class="webflare-div-image">
+<img width="662" height="352" src="images/Chap6-20.gif" /></div>
+
+<p>
+<a id="pgfId-1129312"></a>To plot CCDF:</p>
+<ol><li>
+<a id="pgfId-1129267"></a>Run a fast envlp wireless simulation.</li><li>
+<a id="pgfId-1129331"></a>Open the Direct Plot Form.<br />
+<a id="pgfId-1129507"></a><em>CCDF</em> will be listed in the Function group box if there is an <code>envlp.ccdf.envlp</code> file in your <code>.raw</code> directory.</li><li>
+<a id="pgfId-1129402"></a>Select the <em>CCDF</em> function.<br /><div class="webflare-div-image">
+<img width="354" height="444" src="images/Chap6-21.gif" /></div>
+<a id="pgfId-1129546"></a><em>Selected Probe (sig) to plot</em> lists the wireless probes relative to CCDF. <code>.ccdf</code>, <code>.avgPower</code>, and <code>.peakPower</code> probe types are included in this list.</li><li>
+<a id="pgfId-1129358"></a>Select the required probe and click <em>Plot</em> or <em>Add To Outputs</em>.<br />
+<a id="pgfId-1129748"></a>The plot results will be based on the type of simulation that was run and the probe type that is selected. <br />
+<a id="pgfId-1130617"></a><strong>For non-sweep simulations</strong><br />
+<a id="pgfId-1130013"></a>If a non-sweep simulation is run and the<code>.ccdf</code> probe type is selected in the Direct Plot Form, a curve will be plotted as shown below:<br /><div class="webflare-div-image">
+<img width="661" height="401" src="images/Chap6-22.gif" /></div>
+<a id="pgfId-1130153"></a>If a non-sweep simulation is run and the<code>.avgPower</code> or <code>.peakPower </code>probe type is selected in the Direct Plot Form, there will be no option to plot the results because they are scalar values. Select the <em>Add to Outputs</em> check box to add these probes to the outputs as shown below:<br /><div class="webflare-div-image">
+<img width="660" height="208" src="images/Chap6-23.gif" /></div>
+<a id="pgfId-1130455"></a>After adding the expressions to <em>Outputs Setup</em> tab, open the <em>Results</em> tab and click the <em>Re-evaluate</em> button to update the values in the results table.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1130558"></a>For updating the results table, rerunning the simulation is not required.</div>
+<a id="pgfId-1130654"></a><strong>For sweep simulations</strong><br />
+<a id="pgfId-1130688"></a>Consider a simulation is run with the following sweep settings:<br />
+<a id="pgfId-1130769"></a><code>snr1=10,snr2=20;temp1=27,temp2=50</code><br />
+<a id="pgfId-1130767"></a>For this simulation, you can plot results for all the probe types using the Direct Plot Form.<br />
+<a id="pgfId-1131017"></a>Example of CCDF plot:<br /><div class="webflare-div-image">
+<img width="627" height="390" src="images/Chap6-24.gif" /></div>
+<a id="pgfId-1131052"></a>Example of average power plot:<br /><div class="webflare-div-image">
+<img width="656" height="391" src="images/Chap6-25.gif" /></div>
+<a id="pgfId-1131132"></a>Example of peak power plot:<br /><div class="webflare-div-image">
+<img width="668" height="402" src="images/Chap6-26.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1069024"></a>Envelope Principles</h3>
+<h4>
+<a id="pgfId-1101777"></a>Harmonic Balance</h4>
+
+<p>
+<a id="pgfId-1101778"></a>Use harmonic balance if the circuit has sinusoidal waveforms and is fairly linear. This is true for circuits with sinusoidal waveforms operating below compression. If polar modulation is used where the circuit is operated in a very nonlinear mode, then shooting is suggested.</p>
+
+<h4><em>
+<a id="pgfId-1070911"></a>Basic Principles</em></h4>
+
+<p>
+<a id="pgfId-1069653"></a>Consider an amplifier that is being driven by an unmodulated source. Because of the finite bandwidth of the system, there is some startup behavior, and then the amplifier reaches steady-state.</p>
+<p>
+<a id="pgfId-1069639"></a>The time-zero time point is the initial transient solution, which is a DC analysis that observes all the time-zero values for all the waveforms in the system.</p>
+
+<p>
+<a id="pgfId-1101810"></a></p>
+<div class="webflare-div-image">
+<img width="610" height="402" src="images/Chap6-27.gif" /></div>
+
+<p>
+<a id="pgfId-1069760"></a>The waveform above is an actual starting waveform for harmonic balance. Vertical markers have been placed at 400psec intervals, which correspond to one cycle of 2.5GHz.</p>
+<p>
+<a id="pgfId-1069762"></a>When the system becomes predictable with a low order polynomial, harmonic balance envelope begins to skip cycles. The number of cycles it skips depends on whether fixed or adaptive timestep control is selected. For fixed timestep control, the next strobing point is simulated. For adaptive timestep control, the number of cycles skipped depends on the curvature of the envelope. For an unmodulated sinusoid, conceptually, the cycle skipping could continue to grow to the end of the simulation because the same waveform repeats over and over again.</p>
+<p>
+<a id="pgfId-1069766"></a>Note that for an accurate PSD and ACPR measurement, the data needs to be strobed at the time interval in the original I and Q modulation file. In harmonic balance, there does not need to be an integer number of skipped cycles. </p>
+<p>
+<a id="pgfId-1069752"></a>If that delta-time was 8.3333333333nsec, to get an integer number of skipped cycles, the carrier frequency needs to be an integer multiple of 120MHz. Note that when the carrier is 2.4GHz, this is a multiple of 20. Because of the integer multiple, the envelope time-domain waveform shows a horizontal line between the cycles of simulation.</p>
+
+<p>
+<a id="pgfId-1101861"></a></p>
+<div class="webflare-div-image">
+<img width="610" height="398" src="images/Chap6-28.gif" /></div>
+
+<p>
+<a id="pgfId-1069862"></a>When the carrier is 2.41GHz, there is a small offset from the actual period of the carrier frequency. This causes a sinusoidal line to appear between the cycles that are simulated. This is because the periods do not exactly align.</p>
+
+<p>
+<a id="pgfId-1101946"></a></p>
+<div class="webflare-div-image">
+<img width="608" height="397" src="images/Chap6-29.gif" /></div>
+
+<p>
+<a id="pgfId-1070165"></a>Note that harmonic balance envelope is not a series of steady-state harmonic balance simulations. It is a hybrid of transient and harmonic balance. </p>
+<p>
+<a id="pgfId-1070181"></a>Consider an amplifier followed by a diode peak detector shown below.</p>
+
+<p>
+<a id="pgfId-1102015"></a></p>
+<div class="webflare-div-image">
+<img width="604" height="539" src="images/Chap6-30.gif" /></div>
+
+<p>
+<a id="pgfId-1070223"></a>At time zero, there is no signal, so the filtered output at the net <em>out2</em> starts at zero. The resistors and capacitors cause the signal to ramp up in an exponential fashion.</p>
+
+<p>
+<a id="pgfId-1102061"></a></p>
+<div class="webflare-div-image">
+<img width="611" height="396" src="images/Chap6-31.gif" /></div>
+
+<p>
+<a id="pgfId-1070251"></a>If the envelope simulation had been steady-state at each time point, the voltage at the net out2 would have been constant and non-zero from the start.</p>
+<p>
+<a id="pgfId-1070258"></a>For systems that can have complex behavior, make sure that adaptive time step control is selected. This allows the number of skipped cycles to be dynamic along with the variations in the envelope signal. If this system had been an analog AGC circuit, the feedback might have resulted in overshooting and ringing. This behavior could accurately be determined by using adaptive timestep control.</p>
+
+<h3>
+<a id="pgfId-1111178"></a>Envelope-Transient Simulation</h3>
+
+<p>
+<a id="pgfId-1111179"></a>In envelope-transient analysis, a circuit is driven by one or more modulated carriers of the form:</p>
+
+<p>
+<a id="pgfId-1111183"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="76" src="images/Chap6-32.gif" /></div>
+
+<p>
+<a id="pgfId-1111184"></a>Subject to the modulated carrier excitation, circuit waveforms can be represented by sums of slowly modulated carriers harmonically related to <code>w0</code>. Every voltage, charge, and current looks like:</p>
+
+<p>
+<a id="pgfId-1111188"></a></p>
+<div class="webflare-div-image">
+<img width="652" height="165" src="images/Chap6-33.gif" /></div>
+
+<p>
+<a id="pgfId-1111189"></a>Envelope-transient analysis solves for the harmonic modulations (complex envelopes) <br /><code>Vn(t)</code> at each node. Because the envelope bandwidths are typically much lower than the carrier frequency, the sampling rates are correspondingly lower and the simulations more efficient than traditional transient analysis.</p>
+<p>
+<a id="pgfId-1111190"></a>Under modulated carrier excitation, circuit equations take the form:</p>
+
+<p>
+<a id="pgfId-1111194"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="46" src="images/Chap6-34.gif" /></div>
+
+<p>
+<a id="pgfId-1111195"></a>where <code>V(t)</code> is the vector of nodal harmonic envelopes. The remaining terms represent the quasi-static contributions to the envelope circuit equations, equivalent to a repeated solution of steady-state circuit equations by means of harmonic balance, one for each envelope time step <code>t</code>i, where the sources are treated as sinusoids having a time-varying complex amplitude <code>X(t</code>i). </p>
+<p>
+<a id="pgfId-1111196"></a>The dynamic term describes the contribution of reactive elements to the envelope circuit equations. Taking a linear capacitor as an example, it becomes:</p>
+
+<p>
+<a id="pgfId-1111200"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="48" src="images/Chap6-35.gif" /></div>
+
+<p>
+<a id="pgfId-1111201"></a>This term vanishes unless the modulation is relatively wideband and/or the capacitance is relatively large.</p>
+
+<h3>
+<a id="pgfId-1111202"></a>Transistor Level V/s Fast Envelope</h3>
+
+<p>
+<a id="pgfId-1111203"></a>Transistor-level (envelope-transient) simulation solves for all of the circuit equations rigorously, taking dynamic effects into account. The cost of transistor-level envelope simulation is virtually the same as a sweep of M harmonic balance simulations, where M is the number of envelope time samples. Transistor-level envelope analysis is usually more efficient than transient simulation for modulated inputs, but it remains computationally very expensive when the number of the time samples is large, as is usually the case for today&#39;s communication standards.</p>
+<p>
+<a id="pgfId-1111204"></a>The fast envelope method relies on two basic assumptions to accelerate simulation speed:</p>
+<ul><li>
+<a id="pgfId-1111205"></a>The modulation is relatively slow and the contribution of the dynamic term mentioned earlier is small or negligible.</li><li>
+<a id="pgfId-1111206"></a>There is a single-modulated carrier at the input (or, equivalently, a pair of baseband I/Q channels).</li></ul>
+
+<p>
+<a id="pgfId-1111207"></a>With those assumptions and considering the output signal as a modulated carrier of the form,</p>
+
+<p>
+<a id="pgfId-1111211"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="71" src="images/Chap6-36.gif" /></div>
+
+<p>
+<a id="pgfId-1111212"></a>the output envelope is a function of the input signal&#39;s amplitude and phase:</p>
+
+<p>
+<a id="pgfId-1111216"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="36" src="images/Chap6-37.gif" /></div>
+
+<p>
+<a id="pgfId-1111220"></a>Two forms of f(A(t) ,<img width="11" height="13" src="images/Chap6-38.gif" />
+(t)) are observed in practice:</p>
+
+<h3>
+<a id="pgfId-1111221"></a>The Passband Model</h3>
+
+<p>
+<a id="pgfId-1111222"></a>In the passband model the nonlinear behavior is dependent on the magnitude of the input signal only.</p>
+
+<p>
+<a id="pgfId-1111226"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="36" src="images/Chap6-39.gif" /></div>
+
+<p>
+<a id="pgfId-1111227"></a><code>G(A)</code> describes the circuit&#39;s amplitude and phase compression characteristic. It is extracted efficiently by treating the input signal as a sinusoid and sweeping its amplitude over the expected range of the complex envelope&#39;s magnitude. At runtime, the output is obtained by table look-up and interpolation, which are very efficient operations. Since only a handful of points are required to build the look-up table, typically around 10, the runtime cost of the passband fast envelope model is equivalent to approximately 10 harmonic balance simulations for level 1. Level 2 simulations characterize the magnitude and phase response over the channel bandwidth and then build a behavioral model that includes the memory effects of the circuit. For a typical modulation source consisting of thousands, or tens of thousands of samples, the speed-up offered by fast envelope is much higher than the transistor-level methods.</p>
+
+<h3>
+<a id="pgfId-1111228"></a>The Baseband Model</h3>
+
+<p>
+<a id="pgfId-1111229"></a>The most frequent application of the passband model is in PA design where the input,</p>
+
+<p>
+<a id="pgfId-1111233"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="76" src="images/Chap6-40.gif" /></div>
+
+<p>
+<a id="pgfId-1111234"></a>may be viewed as a pair of I/Q channels upconverted by an ideal quadrature modulator. For most other situations, especially when the circuit contains transistor-level modulators, the output is a function of both the I and Q channels (or, equivalently, the modulated carrier&#39;s amplitude and phase), and therefore, requires a 2D sweep for proper characterization.</p>
+<p>
+<a id="pgfId-1111235"></a>SpectreRF now includes a highly efficient and accurate baseband fast envelope model, which typically requires approximately 100 or fewer harmonic balance sweep points for proper characterization.</p>
+<p>
+<a id="pgfId-1112155"></a>Fast envelope models are extracted from swept harmonic balance simulations performed over a range of the input envelope magnitude for the passband model, and phase for the baseband model, respectively. The number of sweep points has a significant impact on both the simulation accuracy and on speed of model extraction. In the present implementation, the default number of sweep points is as follows:</p>
+<ul><li>
+<a id="pgfId-1138023"></a>Passband model (magnitude only): 7</li><li>
+<a id="pgfId-1138026"></a>Baseband model (phase only): 12</li></ul>
+
+<p>
+<a id="pgfId-1138030"></a>This is a controllable parameter set by the options sweepmethod, Magnitude Points, and Phase Points in the Envelope Options form. Choosing Fine for sweepmethod will run 10 magnitude points and 12 phase points. Setting <em>userdefined</em> allows you to set both the number of magnitude and phase points for the characterization phase of the fast envelope extraction. Adaptive is a work in progress.</p>
+
+<h3>
+<a id="pgfId-1115061"></a>Power Scaling in Baseband Mode</h3>
+
+<p>
+<a id="pgfId-1115062"></a>In passband mode, the power specified by the <code>wsource</code> instance parameter <em>Power</em> represents the average power dissipated in a matched load. In baseband mode, <em>Power</em> represents the sum of the average power dissipated in matched load resistors in the I and Q channels. More precisely, assuming that the power available in the I and Q channels is the same, the sum of power in the I/Q loads is:</p>
+
+<p>
+<a id="pgfId-1115066"></a></p>
+<div class="webflare-div-image">
+<img width="652" height="168" src="images/Chap6-41.gif" /></div>
+
+<p>
+<a id="pgfId-1115067"></a>Here, <code>v(t)</code> is the voltage across either of the load resistors. Then,</p>
+
+<p>
+<a id="pgfId-1115071"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="37" src="images/Chap6-42.gif" /></div>
+
+<p>
+<a id="pgfId-1115049"></a>Using <code>P=10 mW</code> and <code>R=50</code> as examples, the rms voltage should be 500 mV.</p>
+
+<h3>
+<a id="pgfId-1115224"></a>WFreq</h3>
+
+<p>
+<a id="pgfId-1115225"></a>Notice that the fundamental frequency is specified as <code>W0_wfreq</code>. The variable, termed <code>wfreq</code>, is entered on your behalf directly from the wsource instance name. In general, its format is <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>wsource instance name</em></span><code>&gt;_wfreq</code>.</p>
+<p>
+<a id="pgfId-1115226"></a><code>wfreq</code> is a reserved variable, which represents the carrier frequency of the source. Each standard has channel numbers and band numbers (if applicable) that define the carrier frequency that is currently in use.</p>
+<p>
+<a id="pgfId-1115228"></a>Instead of calculating carrier frequencies manually, you can directly access the frequency computed by the source by means of <code>wfreq</code>.</p>
+<p>
+<a id="pgfId-1115229"></a><code>wfreq</code> is available in the analysis form but you can also use it to set values of the instance parameters.</p>
+<p>
+<a id="pgfId-1115230"></a>When you click <em>OK</em>, ADE Explorer will automatically add a variable called <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>wsource instance name</em></span><code>&gt;_wfreq</code> to the list of <em>Design Variables</em> and set it to <code>1G</code>. The wireless engine overrides it with the correct value internally and issues an info message in the log to report the actual value used during simulation. The actual value of the carrier frequency is reported in the Spectre output window.</p>
+
+<h3>
+<a id="pgfId-1111236"></a>When do I use Passband or Baseband?</h3>
+
+<p>
+<a id="pgfId-1111237"></a>Use the following simple rules to choose the model:</p>
+<ul><li>
+<a id="pgfId-1111238"></a>If the input is a pair of baseband I/Q signals upconverted by a transistor-level (or otherwise non-ideal) modulator, use the baseband model.</li><li>
+<a id="pgfId-1111239"></a>If the input is a modulated carrier (typically a case for PA modeling), use the passband model. An uncommon exception to this rule is the modeling of demodulators. Since the output of a demodulator depends both on the real and imaginary parts of the input signal, use the baseband method to model it.</li></ul>
+
+
+<h3>
+<a id="pgfId-1111240"></a>Fast Envelope Noise</h3>
+
+<p>
+<a id="pgfId-1111241"></a>Optionally, in the presence of random noise, the output is modeled as:</p>
+
+<p>
+<a id="pgfId-1111245"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="71" src="images/Chap6-43.gif" /></div>
+
+<p>
+<a id="pgfId-1111246"></a>The random noise signal, <code>N(t)</code>, is extracted by one of the two methods: linear noise analysis around the DC operating point, or periodic noise analysis computed around a sinusoidal input (or the equivalent DC representation in the case of baseband input) given by: </p>
+
+<p>
+<a id="pgfId-1111250"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="46" src="images/Chap6-44.gif" /></div>
+
+<p>
+<a id="pgfId-1111251"></a>In both cases, the noise analysis is performed over the modulation bandwidth to extract the noise spectrum and calculate its complex-envelope representation. The periodic noise representation takes more time to extract than the linear model but is recommended as more rigorous and accurate than the linear approximation.</p>
+<p>
+<a id="pgfId-1124212"></a>To perform envelope noise simulation:</p>
+<ol><li>
+<a id="pgfId-1124525"></a>Open the Envelope Choosing Analyses form, as shown below.<br />
+<a id="pgfId-1124598"></a><div class="webflare-div-image">
+<img width="668" height="801" src="images/Chap6-45.gif" /></div></li><li>
+<a id="pgfId-1124603"></a>Select the <em>Wireless</em> option.</li><li>
+<a id="pgfId-1124810"></a>Specify the number of harmonics that you want to simulate in the <em>Number of Harmonics</em> field.</li><li>
+<a id="pgfId-1124610"></a>Select <em>level1</em> for <em>Fast envlp mode</em>.<br />
+<a id="pgfId-1125393"></a>Here, <em>level1</em> refers to linear noise and <em>level2</em> refers to pnoise, as explained above.</li><li>
+<a id="pgfId-1136425"></a>Select whether you want to have all the harmonics on the output along with the time-domain waveform or not. The default in fast envelope is to not calculate the time-domain output waveform and higher harmonics in order to save time. If you take the default, only the harmonic number you specify in the <em>Output harmonic</em> field is calculated. If you want all the harmonics and/or the time-domain waveform, select the <em>yes</em> check box to the right of <em>Output time-domain waveform and all harmonics</em>.</li><li>
+<a id="pgfId-1125311"></a>Select the <em>Noise</em> check box.</li><li>
+<a id="pgfId-1125570"></a>Leave the <em>Sweep type</em> to the default value of <em>Log</em>.</li><li>
+<a id="pgfId-1125735"></a>Leave the <em>Noise method</em> to the default value of <em>level2</em>.</li><li>
+<a id="pgfId-1125829"></a>Set the start frequency at least 4 decades smaller than the bandwidth of the modulation but not equal to zero.<br />
+<a id="pgfId-1125895"></a>The stop frequency is set automatically based on the bandwidth of the modulation.</li><li>
+<a id="pgfId-1125880"></a>Click <em>Apply</em>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1133258"></a>Separ<a id="noiseSep"></a>ating Noise Plus Distortion and Distortion in Wireless Analysis</h4>
+
+<p>
+<a id="pgfId-1133277"></a>When performing fast envelope noise calculation, you can choose to calculate noise plus distortion and distortion separately. Select the <em>Noise and Distortion Separation</em> check box in the <em>Noise</em> groupbox.</p>
+
+<p>
+<a id="pgfId-1133516"></a></p>
+<div class="webflare-div-image">
+<img width="646" height="165" src="images/Chap6-46.gif" /></div>
+
+<p>
+<a id="pgfId-1133520"></a>Usually, the input power needs to be reduced to see the difference in noise plus distortion and distortion.</p>
+<p>
+<a id="pgfId-1133501"></a>To plot the results after running the simulation, in the Direct Plot Form, select the following:</p>
+<ul><li>
+<a id="pgfId-1133679"></a><em>WPRBN.mea</em> to for noise and distortion.</li><li>
+<a id="pgfId-1133660"></a><em>WPRBN.meaDis</em> for distortion only.<br />
+<a id="pgfId-1134754"></a><div class="webflare-div-image">
+<img width="344" height="451" src="images/Chap6-47.gif" /></div></li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1133637"></a>The following image shows the plot for both the outputs.</p>
+
+<div class="webflare-div-image">
+<img width="668" height="522" src="images/Chap6-48.gif" /></div>
+<h4>
+<a id="pgfId-1134810"></a>PAE in Wireless Baseband Mode</h4>
+
+<p>
+<a id="pgfId-1134896"></a>To set up PAE in the wireless baseband mode, follow these steps:</p>
+
+<ol><li>
+<a id="pgfId-1134990"></a>Add wireless probes on the input and output of the PAE circuit.<br />
+<a id="pgfId-1135024"></a><div class="webflare-div-image">
+<img width="668" height="411" src="images/Chap6-49.gif" /></div></li><li>
+<a id="pgfId-1135010"></a>Select <em>Results - Save - Select on Design</em> to save the terminal currents for the modulator output in ADE Explorer.</li><li>
+<a id="pgfId-1135006"></a>Select <em>Simulation - Netlist - Recreate</em>.<br />
+<a id="pgfId-1136320"></a>The netlist is generated. Take a note of the save statement in the netlist.<br />
+<a id="pgfId-1135258"></a><div class="webflare-div-image">
+<img width="668" height="491" src="images/Chap6-50.gif" /></div></li><li>
+<a id="pgfId-1135255"></a>Select the output wireless probe in the schematic and open the Edit Object Properties form.</li><li>
+<a id="pgfId-1135372"></a>Set the properties of the output wireless probe.<br />
+<a id="pgfId-1135445"></a><div class="webflare-div-image">
+<img width="460" height="562" src="images/Chap6-51.gif" /></div><ol><li>
+<a id="pgfId-1135452"></a>In the <em>Associated Current Terminal</em> field, specify the terminal name for the output measurement.<br />
+<a id="pgfId-1135505"></a>For a port, use <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>instance_name</em></span><code>&gt;:p</code>, regardless of the actual terminal name.</li><li>
+<a id="pgfId-1135426"></a>Set <em>PAE</em> to <em>yes</em>.</li><li>
+<a id="pgfId-1135614"></a>Specify the instance name of <em>Input Wprobe</em>.</li><li>
+<a id="pgfId-1135921"></a>Specify <em>DC Bias sources</em> to calculate the DC power.</li><li>
+<a id="pgfId-1135610"></a>Click <em>OK </em>to close the Edit Object Properties form.</li></ol></li><li>
+<a id="pgfId-1135694"></a>Load the Edit Object Properties form for the input wireless probe.</li><li>
+<a id="pgfId-1135814"></a>In the <em>Associated Terminal Current</em> field, specify the terminal name from the netlist generated in Step 3 to calculate the input power.</li><li>
+<a id="pgfId-1135855"></a>Click <em>OK</em> to close the Edit Object Properties form.</li><li>
+<a id="pgfId-1135659"></a>Run the simulation.</li><li>
+<a id="pgfId-1135423"></a>Select <em>Results - Direct Plot - Main Form</em>.</li><li>
+<a id="pgfId-1136076"></a>In the Direct Plot Form, select the <em>PAE</em> function.</li><li>
+<a id="pgfId-1136151"></a>In <em>Select Probe (sig) to plot</em> group box, select <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>probe_name</em></span><code>&gt;.pae</code>.</li><li>
+<a id="pgfId-1136214"></a>Click <em>Add To Outputs</em>.<br />
+<a id="pgfId-1136234"></a>An expression is added in ADE Explorer.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1112211"></a>Wireless Mode in Envelope Analysis</h3>
+
+<p>
+<a id="pgfId-1112338"></a>Starting with the 13.1 release of SpectreRF, RFIC designers can evaluate system-level performance metrics in an integrated, automated, and easy-to-use simulation flow enabled by the new wireless analysis option. </p>
+
+<p>
+<a id="pgfId-1112216"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="277" src="images/Chap6-52.gif" /></div>
+
+<p>
+<a id="pgfId-1112217"></a>In wireless analysis, standards-compliant modulation sources are applied to the DUT and measurement probes calculate system-level performance metrics. The sources and the probes are implemented by two new Spectre primitives: <code>wsource</code> and <code>wprobe</code>. Based on the familiar SpectreRF envelope-following algorithms, the wireless engine works with <code>wsource</code> and <code>wprobe</code> to automate the analysis setup and simulation parameters. The sources and the probes are standard-aware, resulting in a powerful and streamlined flow - though rich in standard support and complete in system-level simulation coverage, it is designed from the ground up for everyday use by RFIC designers.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1119904"></a>Wireless sources are only valid in wireless analysis. They cannot be used in traditional envelope analysis.</div>
+
+<h3>
+<a id="pgfId-1112218"></a>Supported Standards</h3>
+
+<p>
+<a id="pgfId-1112219"></a>The 19.1 release supports Bluetooth, DMR, LTE, NR, ZigBee, Smart Meter (802.15.4g),802.11a, 802.11b, 802.11n, 802.11p, 802.11ac, 802.11ad, 802.11ah, 802.11ax, and 802.11af standards.</p>
+
+<h3>
+<a id="pgfId-1112220"></a>Wireless Analysis Vs. Traditional Envelope Following</h3>
+
+<p>
+<a id="pgfId-1112221"></a>Wireless analysis, based on traditional envelope-following analysis, has the advantage of automated set-up and post processing using the new <code>wsource</code> and <code>wprobe</code> components. Advanced modeling options, such as fast envelope, are supported as well. Wireless analysis produces, among other features, the traditional envlp dataset, making it compatible with all of the pre-existing Direct Plot capabilities and post-processing functionality.</p>
+<p>
+<a id="pgfId-1112222"></a>Wireless analysis offers a number of additional benefits beyond the traditional envelope following:</p>
+<ul><li>
+<a id="pgfId-1112223"></a><strong>Parametric modulation sources</strong>. Traditional envelope-following relies on generic PWL sources of fixed frame structure, sampling rate, bit patterns, and modulation options. In contrast, wsources are fully parametrized according to the specified communications standard.</li><li>
+<a id="pgfId-1112224"></a><strong>Automated simulation setup and control</strong>. Wireless analysis works with standards-aware wsources, which help determine all of the relevant simulation parameters &#8211; sampling rates, stop times, strobe options, and carrier frequencies, as dictated by the communications standard. A key benefit of automated simulation control is that the designer is now less likely to make common setup mistakes which affect simulation and measurement accuracy. Wireless analysis is fully supported within ADE Explorer behind an easy-to-use and familiar-looking analysis setup form.</li><li>
+<a id="pgfId-1112225"></a><strong>Efficient post-processing</strong>. Most of the wireless analysis post processing is performed at runtime by wprobes. Much like the sources, wprobes are aware of the communications standard specifications. They output all of the standard-specific system-level metrics, such as EVM, BER, and spectrum masks directly to the output database. System-level metrics are available directly from the Direct Plot form, without manual post processing and in compliance with the modulation format and communications standard.</li></ul>
+
+
+
+<h3>
+<a id="pgfId-1112226"></a>Limitation of Wireless Analysis</h3>
+
+<p>
+<a id="pgfId-1127330"></a>Wireless analysis works in conjunction with Cadence-supplied <code>wsources</code> and <code>wprobes</code>. Custom PWL sources are not supported in this mode. Traditional envelope-following can still be used with custom PWL sources as a fully supported simulation option.</p>
+<p>
+<a id="pgfId-1119129"></a>Many wireless simulations are done using level 1 or level 2 fast envelope. Both level 1 and level 2 allow noise to be added. Level 1 does not take memory effects into account, while level 2 includes the memory effects.</p>
+
+<h4>
+<a id="pgfId-1069244"></a>Shooti<a id="shooting_envelope"></a>ng</h4>
+
+<p>
+<a id="pgfId-1071583"></a>Wireless mode is not available when shooting is selected.</p>
+<p>
+<a id="pgfId-1111473"></a>Shooting is suggested if polar modulation is used where the circuit is operated in a nonlinear mode. Use harmonic balance if the circuit has sinusoidal waveforms and is fairly linear. This is true for circuits with sinusoidal waveforms operating below compression. </p>
+<p>
+<a id="pgfId-1069254"></a>Consider an amplifier that is being driven by an unmodulated source. Because of the finite bandwidth of the system, there is some startup behavior, and then the amplifier reaches steady-state.</p>
+<p>
+<a id="pgfId-1069265"></a>The time-zero time point is the initial transient solution, which is a DC analysis that observes all the time-zero values for all the waveforms in the system. At this point, the only thing that is known is the time-zero value, so the projected ending point of the first period is the starting point.</p>
+
+<p>
+<a id="pgfId-1102179"></a></p>
+<div class="webflare-div-image">
+<img width="572" height="371" src="images/Chap6-53.gif" /></div>
+
+<p>
+<a id="pgfId-1069038"></a>The waveform above is an actual starting waveform for shooting. Vertical markers have been placed at 400nsec intervals, which correspond to one cycle of 2.5GHz.</p>
+<p>
+<a id="pgfId-1069468"></a>Note that at the end of the first period, the ending point misses the starting point by a lot. This error between the predicted and actual ending point is used to control the simulation. In this case, the error is large, so the transient continues for another period. The beginning and ending points of the first cycle allow a prediction of a ramp as the ending point for the second cycle. </p>
+<p>
+<a id="pgfId-1069476"></a>When the system becomes predictable with a low order polynomial, shooting envelope begins to skip cycles. First, it will skip one period, which is done twice in a row in the above example. Then it skips 2 periods, and then it skips 4 periods. For an unmodulated sinusoid, conceptually, the cycle doubling could continue to the end of the simulation because the same waveform repeats over and over again.</p>
+<p>
+<a id="pgfId-1069490"></a>Shooting has the limitation that only an integer number of cycles can be skipped. This is because the starting and ending voltages need to be predictable, which happens only when an integer number of cycles is skipped.</p>
+<p>
+<a id="pgfId-1069483"></a>When digital modulation is present, the number of skipped cycles depends on the curvature of the envelope. When the envelope has little curvature, many cycles can be skipped. When the envelope has a large curvature, not many cycles can be skipped.</p>
+<p>
+<a id="pgfId-1069513"></a>In order to maintain accuracy, adaptive timestep needs to be used with shooting to allow the envelope algorithm to maintain the accuracy of the simulation.</p>
+<p>
+<a id="pgfId-1069524"></a>Note that for an accurate PSD and ACPR measurement, the data needs to be strobed at the time interval in the original I and Q modulation file. For maximum accuracy, the carrier frequency needs to be an integer multiple of the reciprocal of the delta-T in the I and Q modulation file.</p>
+<p>
+<a id="pgfId-1069535"></a>If that delta-time was 8.3333333333nsec, the carrier needs to be an integer multiple of 120MHz. Note that when the carrier is 2.4GHz, this is a multiple of 20. The sampled carrier cycles are exactly aligned with the data in the I and Q modulation file.</p>
+
+<p>
+<a id="pgfId-1102252"></a></p>
+<div class="webflare-div-image">
+<img width="572" height="371" src="images/Chap6-54.gif" /></div>
+
+<p>
+<a id="pgfId-1102306"></a>When the carrier is 2.45GHz, because of the limitation of skipping an integer number of cycles, the timing of the actual points in the envelope is not an integer multiple of 8.3333nsec. This causes small interpolation errors in the result due to the time mismatch. </p>
+
+<p>
+<a id="pgfId-1102317"></a></p>
+<div class="webflare-div-image">
+<img width="572" height="371" src="images/Chap6-55.gif" /></div>
+
+<p>
+<a id="pgfId-1102310"></a>Shooting envelope is a general-purpose extension of the transient and is useful for calculating the startup behavior of many circuits that have very long time constants and very short time constants in the same circuit. An example is analog AGC (Automatic Gain Control).</p>
+<p>
+<a id="pgfId-1070493"></a>As an example, consider an amplifier that has a diode peak detector after the amplifier.</p>
+
+<p>
+<a id="pgfId-1102363"></a></p>
+<div class="webflare-div-image">
+<img width="571" height="534" src="images/Chap6-56.gif" /></div>
+
+<p>
+<a id="pgfId-1070505"></a>The capacitor voltage starts at zero because there is no signal at time zero, and then has an exponential charging curve set by the resistors and capacitor in the peak detector.</p>
+
+<p>
+<a id="pgfId-1102417"></a></p>
+<div class="webflare-div-image">
+<img width="605" height="393" src="images/Chap6-57.gif" /></div>
+
+<p>
+<a id="pgfId-1072070"></a>ADE Implementation and Detailed Envelope S<a id="envelope_driven_circuit"></a>ettings for a Driven Circuit</p>
+<p>
+<a id="pgfId-1082879"></a>First a modulation source is needed. Your choice of modulation source depends on whether you will be using wireless mode or using your own I and Q modulation files. Cadence provides three components in <em>rfLib</em> called <em>wlan11n, lte, or ZigBee</em>, which have modulated signals for the three standards. If you use one of these sources, then add wprobes in your circuit to make the measurements.</p>
+<p>
+<a id="pgfId-1072195"></a>If you are using your own I and Q modulation files, you will need to get a piecewise linear I and Q modulation file from your system design group. These files will have a constant delta-time between the points. This delta-time should be 1/(channel bandwidth*6) or smaller if you need an ACPR measurement, and 1/(channel bandwidth*10) or smaller if you need a second adjacent channel power ratio calculation. This is required to meet the Nyquist criteria for the modulation.</p>
+<p>
+<a id="pgfId-1117464"></a>To create the modulated RF signal from the I and Q modulation files, either a port component from <em>analogLib</em> or <em>ACPR_Source</em> from <em>rfLib</em> can be used. If the port is used, you need to scale the amplitude of the RF signal to achieve the correct power at the output of the port. If you use the <em>rfVsource</em>, it will read the I and Q data files, and the power in dBm can be set directly on the source. Note that this power will be achieved when you simulate to exactly the end time in the I and Q modulation files. The properties list for the port is shown below.</p>
+
+<p>
+<a id="pgfId-1117468"></a></p>
+<div class="webflare-div-image">
+<img width="491" height="781" src="images/Chap6-58.gif" /></div>
+
+<p>
+<a id="pgfId-1081279"></a>The properties list for the ACPR source is shown below.</p>
+
+<p>
+<a id="pgfId-1102546"></a></p>
+<div class="webflare-div-image">
+<img width="440" height="465" src="images/Chap6-59.gif" /></div>
+<h4>
+<a id="pgfId-1065685"></a>The raised cosine filter should not be needed for most simulations.</h4>
+<h3>
+<a id="pgfId-1094983"></a>Setting up the Envelo<a id="envlp_analysis"></a>pe Analysis in ADE Explorer: Wireless Mode</h3>
+
+<p>
+<a id="pgfId-1065686"></a>If you are using wireless mode, all you have to do is place a wireless source in the schematic, add wireless probes in the schematic at every point you want to make a measurement, select wireless mode in ADE Explorer, and define a reasonable number of harmonics for your system. After you run the envelope analysis, direct plot functions are available for all the common measurements. See the example at the beginning of this chapter for details.</p>
+
+<h3>
+<a id="pgfId-1112878"></a>Setting up the Envelo<a id="envlp_analysis"></a>pe Analysis in ADE Explorer: Using your own I and Q Files</h3>
+
+<ol><li>
+<a id="pgfId-1065687"></a>Everything starts with the I and Q files you are working with.</li><li>
+<a id="pgfId-1113256"></a>Calculate 1/time difference in these files. If you are using shooting, consider making the carrier frequency in the design an integer multiple of this frequency. This will reduce the numerical noise floor of the simulation. For harmonic balance, it is not needed unless you are trying to determine the phase of the signal based on the time-domain result. The carrier frequency has been set in ADE Explorer variable <em>frf</em> shown below.<br />
+<a id="pgfId-1065691"></a><div class="webflare-div-image">
+<img width="649" height="465" src="images/Chap6-60.gif" /></div></li><li>
+<a id="pgfId-1065692"></a>Now select <em>Analysis - Choose</em> or click the <em>Choosing Analyses</em> icon on the right side of the ADE Explorer window.</li><li>
+<a id="pgfId-1102752"></a>Select <em>envlp</em>. The ENVLP <em>Choosing Analyses</em> form is displayed.<br />
+<a id="pgfId-1102758"></a><div class="webflare-div-image">
+<img width="481" height="683" src="images/Chap6-61.gif" /></div></li><li>
+<a id="pgfId-1065703"></a>Now click the <em>Start ACPR Wizard</em> button.<br />
+<a id="pgfId-1065704"></a>The ACPR wizard is displayed.<br />
+<a id="pgfId-1102819"></a><div class="webflare-div-image">
+<img width="491" height="802" src="images/Chap6-62.gif" /></div></li><li>
+<a id="pgfId-1065709"></a>From the <em>Clock Name</em> drop-down list, select the name that is in the <em>Frequency name</em> 1 or 2 property that sets the carrier frequency in the circuit. If you are using <em>ACPR_source</em>, this name is <em>fc</em>.</li><li>
+<a id="pgfId-1065714"></a>Select <em>Net</em> or <em>Differential net</em>, depending on your design.</li><li>
+<a id="pgfId-1065715"></a>Click <em>Select</em> on the right of the <em>Net</em> field and then select the output net(s) in the schematic.</li><li>
+<a id="pgfId-1065716"></a>If you are working on a Qualcomm standard, select <em>Power Density</em>. Otherwise, select <em>Power</em>.</li><li>
+<a id="pgfId-1073085"></a>If you are working on an 802.11n standard, select the standard from the Channel Definitions drop-down list. The rest of the fields in the form will have starting values. Please see the discussion for Symbol Start, Window Size, and Repetitions below.</li><li>
+<a id="pgfId-1073096"></a>If you are working on another standard, select Custom.</li><li>
+<a id="pgfId-1065717"></a>Type the channel bandwidth in the <em>Main Channel Width</em> field.</li><li>
+<a id="pgfId-1065722"></a>In the Adjacent frequencies section select <em>low</em>. <br />
+<a id="pgfId-1065723"></a>The edit fields below this section become active. </li><li>
+<a id="pgfId-1065724"></a>Type the frequency limits for the first low adjacent channel for the ACPR calculation. Note that these frequencies are referenced to the center of the main channel. For frequencies on the low side of the main channel, the numbers will be negative. </li><li>
+<a id="pgfId-1065725"></a>Select <em>Change</em>. <br />
+<a id="pgfId-1065726"></a>This moves the contents of the edit field up into the list. </li><li>
+<a id="pgfId-1065727"></a>In a similar manner, select <em>high</em>, enter the frequency range, and click <em>Change</em>. </li><li>
+<a id="pgfId-1065728"></a>If you have second adjacent specifications, add the name and frequency limits in the edit field above, and then click <em>Add</em>.</li><li>
+<a id="pgfId-1065729"></a>Set <em>Symbol Start(Sec)</em> field to the time when you want the Fourier transform to begin. In many I and Q files, there is a time delay caused by digital filtering. The start time for the frequency response calculation needs to be after that delay time. If you are unsure, simulate the I and Q file in a piecewise-linear source in the transient analysis, and watch for the time that the output becomes non-zero, and pick a time slightly later than that.<br />
+<a id="pgfId-1065733"></a><div class="webflare-div-image">
+<img width="636" height="503" src="images/Chap6-63.gif" /></div></li><li>
+<a id="pgfId-1065734"></a>Set the strobe period to the delta-time in the I and Q modulation file. If you are unsure, view the file in a text editor, and look at the left entry of the second line. The first line should have a left entry of zero (seconds) The second entry left entry (in seconds) should be entered in the strobe period field. The right entry is the voltage at the time in the left column.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1073649"></a>When you enter a strobe period, the ACPR wizard will update the Symbol Start field so that it is an integer multiple of the strobe period.</div>
+<a id="pgfId-1081531"></a>The Fourier transform used to calculate the frequency response of the circuit is inherently noisy. To make the spectrum less noisy, the <em>psd</em> function is used. The <em>psd</em> function splits the time that is simulated into smaller pieces, which allows multiple shorter time sequences to be considered individually. A fourier transform is performed on all the pieces individually, and then the power of all the first harmonics is averaged. This is done for the rest of the harmonics also. Because of the averaging, the noise is reduced. Because a shorter time exists in each piece, the frequency of the first harmonic goes up. In the <em>psd</em>, this reduces the resolution (the number of frequency points analyzed in the spectrum). Generally, a trade-off is needed between the number of pieces, the length of the simulation, and the noise in the psd calculation. </li><li>
+<a id="pgfId-1073651"></a>Window size is the number of delta-times in the I and Q input files you want to include for the spectral calculation. This needs to be a power of two. Generally, this is in the range of 256 to 8192.</li><li>
+<a id="pgfId-1065736"></a>Specify repetitions as a power of 2. This will run as many windows sizes as you specify.</li><li>
+<a id="pgfId-1073656"></a>The <em>Symbol Stop(Sec)</em> is calculated based on the symbol start, window size, and repetitions fields. Make sure that the data in your I and Q modulation file has entries to at least this time. View the I and Q modulation file, and look at the left entry (the time) in the last line of the file to make sure that ending time is larger than the <em>Symbol Stop(Sec)</em> time in the ACPR wizard.<br />
+<a id="pgfId-1065737"></a>The resolution bandwidth is calculated based on the entries for strobe period and window size. It is the frequency resolution of the Fourier transform of the output signal.</li><li>
+<a id="pgfId-1065738"></a>Because the data bits in the modulation are random, a Fourier transform window function needs to be selected. There are advantages and disadvantages to all window functions. The <em>Hanning</em> window is a reasonable window if the window function is not specified by the standard. Check with your system designer to find out his or her preference.</li><li>
+<a id="pgfId-1065739"></a>When you are done, click <em>OK</em>.<br />
+<a id="pgfId-1065740"></a>In the <em>Choosing Analyses</em> form for ENVLP, the <em>Stop Time</em> field is populated. The <em>Time Step Contro</em>l is also set to <em>fixed</em> and the <em>Step Period</em> field has the entry that you specified for the strobing interval in the ACPR wizard. A number of envelope options are also set to provide the output from the simulator at the times needed for the FFT-based frequency response calculation. <br />
+<a id="pgfId-1103516"></a><div class="webflare-div-image">
+<img width="387" height="685" src="images/Chap6-64.gif" /></div></li><li>
+<a id="pgfId-1065745"></a>Either type the frequency of the carrier, the number of harms, and the oversample factor, or select names, and set the desired number of harmonics.<br />
+<a id="pgfId-1103605"></a><div class="webflare-div-image">
+<img width="446" height="688" src="images/Chap6-65.gif" /></div></li><li>
+<a id="pgfId-1065750"></a>If you have square waves in your circuit, use an oversample factor if you choose harmonic balance, or select shooting. If you decide to use harmonic balance, you need relatively more harmonics. In this case, also set oversample factor to two to eight. The more non-sinusoidal the waveform is, the higher oversample factor should be.</li><li>
+<a id="pgfId-1065751"></a>If you have a frequency divider in your circuit, specify the divider ratio in the <em>Freqdivide Ratio</em> field.</li><li>
+<a id="pgfId-1065752"></a>For the <em>Time Step Control</em> field, select <em>fixed </em>or adaptive for Harmonic Balance and <em>adaptive</em> for Shooting.</li><li>
+<a id="pgfId-1065757"></a>For most ACPR measurements, select <em>conservative</em>.</li><li>
+<a id="pgfId-1065758"></a>Select the fast envelope level you desire. This is available only when harmonic balance is chosen for the engine. When the <a id="fastenvelopeperformance"></a>fast envelope mode is set to off (default), normal envelope is performed at the transistor level. Harmonic Balance or Shooting is used to solve for a subset of the RF cycles. Level 1 is available for circuits where acceleration is desired, and the circuit has little memory effect Level1 requires defining the I and Q sources in the circuit, and the nodes to save data for in the circuit.<br />
+<a id="pgfId-1103645"></a><div class="webflare-div-image">
+<img width="462" height="232" src="images/Chap6-66.gif" /></div></li><li>
+<a id="pgfId-1074313"></a>Select whether you want to have all the harmonics on the output along with the time-domain waveform or not. The default in fast envelope is to not calculate the time-domain output waveform and higher harmonics in order to save time. If you take the default, only the harmonic number you specify in the <em>Output harmonic</em> field is calculated. If you want all the harmonics and/or the time-domain waveform, select the <em>yes</em> check box to the right of <em>Output time-domain waveform and all harmonics</em>.<br />
+<a id="pgfId-1065759"></a>If you are using the port component with an I and Q modulation file, that port should be selected for both the I and Q source. If you are using the <em>ACPR_source</em>, descend-read into the <em>ACPR_source</em> schematic. The I source is highlighted in red below, and the Q source is highlighted in blue below.<br />
+<a id="pgfId-1103749"></a><div class="webflare-div-image">
+<img width="640" height="547" src="images/Chap6-67.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1065761"></a>The mathematical model can be saved by setting the <code>writeenv</code> option to a file name. After this, the model file can be read in and used directly by setting the <code>readenv</code> option. You cannot set both options at the same time.</p>
+<p>
+<a id="pgfId-1067802"></a>Now run the simulation. When the simulation completes, the psd (frequency response) plots in the waveform window.</p>
+
+<p>
+<a id="pgfId-1103822"></a></p>
+<div class="webflare-div-image">
+<img width="609" height="421" src="images/Chap6-68.gif" /></div>
+
+<p>
+<a id="pgfId-1074453"></a>The unit for the Y-axis is dBV/Hz.</p>
+<p>
+<a id="pgfId-1074460"></a>The ACPR is shown under the Maestro tab of the ADE Explorer window.</p>
+
+<p>
+<a id="pgfId-1103951"></a></p>
+<div class="webflare-div-image">
+<img width="663" height="524" src="images/Chap6-69.gif" /></div>
+<h4>
+<a id="pgfId-1074489"></a>Plotting EVM</h4>
+
+<p>
+<a id="pgfId-1074503"></a>EVM is integrated into the Direct Plot Form for the 802.11 standards only.</p>
+<ol><li>
+<a id="pgfId-1074510"></a>In ADE Explorer, select <em>Results</em> - <em>Direct Plot</em> - <em>Main Form</em>.</li><li>
+<a id="pgfId-1074658"></a>Select <em>envlp</em> results.</li><li>
+<a id="pgfId-1074524"></a>Select <em>EVM</em>.</li><li>
+<a id="pgfId-1074531"></a>Select the first harmonic.</li><li>
+<a id="pgfId-1074538"></a>Select <em>OFDM</em>.</li><li>
+<a id="pgfId-1074545"></a>If you are using rfVsource, select the standard you are using in rfVsource.</li><li>
+<a id="pgfId-1074552"></a>Set the symbol start to 0 (zero) except for 802.11a, which is 4u.</li><li>
+<a id="pgfId-1074559"></a>Select the output net in the circuit.<br />
+<a id="pgfId-1104028"></a><div class="webflare-div-image">
+<img width="616" height="405" src="images/Chap6-70.gif" /></div>
+<a id="pgfId-1074599"></a>The EVM for both the data channels and the control channels is displayed.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1074617"></a>Plotting Main Channel Power</h4>
+
+<p>
+<a id="pgfId-1074631"></a>Plotting main channel power is a bit less straightforward than plotting EVM.</p>
+<ol><li>
+<a id="pgfId-1074638"></a>In ADE Explorer, select <em>Results</em> - <em>Direct Plot</em> - <em>Main Form</em>.</li><li>
+<a id="pgfId-1074648"></a>Select <em>envlp</em> results.</li><li>
+<a id="pgfId-1074671"></a>Select <em>Main Channel Power</em>.</li><li>
+<a id="pgfId-1074682"></a>Select the first harmonic.</li><li>
+<a id="pgfId-1074689"></a>Type the bandwidth of the main channel.</li><li>
+<a id="pgfId-1074696"></a>Open the envelope <em>Choosing Analyses</em> form.</li><li>
+<a id="pgfId-1074703"></a>Open the ACPR wizard.</li><li>
+<a id="pgfId-1074710"></a>In the ACPR wizard, triple-click the entry in the <em>Symbol Start</em> field.</li><li>
+<a id="pgfId-1074717"></a>In the <em>Direct Plot Form</em>, click the middle mouse button in the <em>From</em> field. The entry from the ACPR wizard should transfer.</li><li>
+<a id="pgfId-1074724"></a>In a similar manner, transfer the Strobe Period, Window Size, and Repetitions entries.</li><li>
+<a id="pgfId-1074731"></a>Select the same window function that was used in the ACPR wizard.<br />
+<a id="pgfId-1104215"></a><div class="webflare-div-image">
+<img width="423" height="690" src="images/Chap6-71.gif" /></div></li><li>
+<a id="pgfId-1074738"></a>Select the output net in the schematic. The power calculation is displayed with a marker in the display tool.<br />
+<a id="pgfId-1104272"></a><div class="webflare-div-image">
+<img width="614" height="401" src="images/Chap6-72.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1074789"></a>Plotting the Envelope Voltage Versus Time</h4>
+
+<ol><li>
+<a id="pgfId-1074810"></a>In the ADE Explorer, select <em>Results</em> - <em>Direct Plot</em> - <em>Main Form</em>.</li><li>
+<a id="pgfId-1074824"></a>Select <em>envlp</em> results.</li><li>
+<a id="pgfId-1074831"></a>Select <em>Voltage</em>.</li><li>
+<a id="pgfId-1074838"></a>Select harmonic time.</li><li>
+<a id="pgfId-1074845"></a>Select the appropriate modifier. </li><li>
+<a id="pgfId-1074852"></a>Select the first harmonic.<br />
+<a id="pgfId-1104370"></a><div class="webflare-div-image">
+<img width="308" height="613" src="images/Chap6-73.gif" /></div></li><li>
+<a id="pgfId-1074877"></a>Select the net in the schematic.<br />
+<a id="pgfId-1104416"></a><div class="webflare-div-image">
+<img width="615" height="381" src="images/Chap6-74.gif" /></div></li><li>
+<a id="pgfId-1074979"></a>Zoom in if you would like. The symbols are turned on in the display below so the strobe points are visible.<br />
+<a id="pgfId-1104461"></a><div class="webflare-div-image">
+<img width="658" height="380" src="images/Chap6-75.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>
+<a id="pgfId-1075105"></a>Plotting the Time-Domain Waveform</h4>
+
+<p>
+<a id="pgfId-1075147"></a>This is available in fast envelope <em>level1</em> and <em>level2</em> only when <em>yes</em> is selected for Output time-domain waveform and all harmonics.</p>
+<ol><li>
+<a id="pgfId-1075119"></a>In ADE Explorer, select <em>Results</em> - <em>Direct Plot</em> - <em>Main Form</em>.</li><li>
+<a id="pgfId-1075133"></a>Select <em>envlp</em> results.</li><li>
+<a id="pgfId-1075140"></a>Select <em>Voltage</em>.</li><li>
+<a id="pgfId-1075155"></a>Select <em>time</em>.<br />
+<a id="pgfId-1104570"></a><div class="webflare-div-image">
+<img width="413" height="404" src="images/Chap6-76.gif" /></div></li><li>
+<a id="pgfId-1075162"></a>Select the net in the schematic.<br />
+<a id="pgfId-1104613"></a><div class="webflare-div-image">
+<img width="643" height="398" src="images/Chap6-77.gif" /></div></li><li>
+<a id="pgfId-1075208"></a>Zoom in, if desired.<br />
+<a id="pgfId-1104663"></a><div class="webflare-div-image">
+<img width="610" height="400" src="images/Chap6-78.gif" /></div>
+<a id="pgfId-1075229"></a>The line that is visible between the spikes can be used to determine the phase of the signal as time increases only if the carrier frequency is an integer multiple of 1/delta-T in the I and Q modulation file. When the line is near the middle, the phase is zero or 180 degrees. When the line is near the top, the phase is 90 degrees. When the line is near the bottom, the phase is 270 degrees.<br />
+<a id="pgfId-1075239"></a>When you zoom in further, you can see the individual carrier cycles that envelope is calculating.<br />
+<a id="pgfId-1104710"></a><div class="webflare-div-image">
+<img width="639" height="397" src="images/Chap6-79.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1067944"></a>To see the full transient output, set the <em>transtrobeperiod</em> option to the period of the carrier divided by an integer. The choppiness of the waveform and the runtime is controlled by the number of time points in the waveform that gets calculated. This is available in harmonic balance transistor-level simulation only. An example is shown below.</p>
+
+<p>
+<a id="pgfId-1067954"></a></p>
+<div class="webflare-div-image">
+<img width="670" height="474" src="images/Chap6-80.gif" /></div>
+
+<p>
+<a id="pgfId-1075474"></a>When zoomed in, the waveform is continuous.</p>
+
+<p>
+<a id="pgfId-1104965"></a></p>
+<div class="webflare-div-image">
+<img width="664" height="396" src="images/Chap6-81.gif" /></div>
+<h3>
+<a id="pgfId-1084733"></a>Frequency Modulated Input Signals</h3>
+
+<p>
+<a id="pgfId-1084750"></a>Frequency modulated signals can be simulated in transistor-level envelope simulations only. When frequency modulation is used, the period of the waveform varies as a function of the modulation that is applied. Conventional envelope simulation cannot be used because the fundamental assumption is that the period is constant and defined by the carrier signal.</p>
+<p>
+<a id="pgfId-1084758"></a>To allow frequency modulation, a new option has been added that allows the period to be solved at each carrier cycle that is simulated.</p>
+<p>
+<a id="pgfId-1084766"></a>To simulate a frequency modulated signal, follow these steps:</p>
+<ol><li>
+<a id="pgfId-1084787"></a>Set up the frequency modulated source. In this example, a simple sinusoidal modulated port is used. If you use this element, remember that the modulation index is in percent.<br />
+<a id="pgfId-1105024"></a><div class="webflare-div-image">
+<img width="558" height="748" src="images/Chap6-82.gif" /></div></li><li>
+<a id="pgfId-1084862"></a>Set up for a simulation using the envlp <em>Choosing Analyses</em> form and the ACPR wizard as shown before. Choose a standard with a bandwidth that is slightly larger than the FM modulation frequency. This will set the simulation to produce data at the time interval needed for the psd calculation. See the previous section for the steps that are needed.</li><li>
+<a id="pgfId-1084906"></a>Click <em>Options</em> in the envelope <em>Choosing Analyses</em> form.</li><li>
+<a id="pgfId-1084907"></a>Select the <em>Misc</em> tab.<br />
+<a id="pgfId-1105097"></a><div class="webflare-div-image">
+<img width="451" height="596" src="images/Chap6-83.gif" /></div></li><li>
+<a id="pgfId-1084908"></a>Select the check box to the left of the number 1 for the <em>fmspeedup</em> option.</li><li>
+<a id="pgfId-1085048"></a>Type the modulation frequency in the <em>modulationbw</em> field.</li><li>
+<a id="pgfId-1085061"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1085073"></a>In the envelope <em>Choosing Analyses</em> form, type in the center frequency in the <em>Fundamental Frequency</em> field.<br />
+<a id="pgfId-1105201"></a><div class="webflare-div-image">
+<img width="448" height="657" src="images/Chap6-84.gif" /></div></li><li>
+<a id="pgfId-1085082"></a>Set harmonics and oversample as required. For more information, see the harmonic balance section at the beginning of Chapter 3.</li><li>
+<a id="pgfId-1085151"></a>Choose an accuracy level.</li><li>
+<a id="pgfId-1085163"></a>Set the <em>Fast envlp</em> mode to <em>off</em>.</li><li>
+<a id="pgfId-1085171"></a>Click <em>OK</em> and run the simulation.</li><li>
+<a id="pgfId-1085179"></a>When the simulation completes, the psd will plot.<br />
+<a id="pgfId-1105279"></a><div class="webflare-div-image">
+<img width="619" height="404" src="images/Chap6-85.gif" /></div></li><li>
+<a id="pgfId-1085204"></a>If you want to see a spectral plot, set the line style to spectral. To do this, select the legend at the upper left. Right-click and select <em>Type</em> from the context menu. In the popup window, select <em>Spectral</em>. The line style will change to a more familiar plot.<br />
+<a id="pgfId-1105334"></a><div class="webflare-div-image">
+<img width="553" height="375" src="images/Chap6-86.gif" /></div></li><li>
+<a id="pgfId-1085232"></a>When you zoom in to the individual spikes, you will see multiple spikes. There will be either one or two phantom spikes on each side of the output sideband because of the DFT sample window used in the psd function. The number of spikes and the relative amplitude depend on the actual window function you selected. Remember that these spikes are not real. They are produced because of the window function itself.<br />
+<a id="pgfId-1134012"></a> determine the frequency limits of the ACLR calculation<div class="webflare-div-image">
+<img width="629" height="370" src="images/Chap6-87.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1105410"></a>Determining Frequency Limits of ACPR</h3>
+
+<p>
+<a id="pgfId-1134062"></a>To find the frequency limits of the ACPR calculation, plot PSD in the waveform tool. </p>
+
+<div class="webflare-div-image">
+<img width="668" height="540" src="images/Chap6-88.gif" /></div>
+
+<p>
+<a id="pgfId-1134510"></a>After plotting PSD, follow these steps:</p>
+<ol><li>
+<a id="pgfId-1134466"></a>Select the <em>Browser</em> mode.</li><li>
+<a id="pgfId-1134613"></a>In the Browser pane, click <em>param</em> to expand the options.</li><li>
+<a id="pgfId-1134585"></a>Click <em>channelFreqPairs</em>. <br />
+<a id="pgfId-1134590"></a>The frequency limits is displayed in the <em>Signals</em> tab. The top <em>FreqStart</em> and <em>FreqEnd </em>are the half frequency for the channel. The bottom <em>FreqStart</em> and <em>FreqEnd</em> are the frequency limits for the ACPR calculation.</li></ol>
+
+
+
+
+<h3>
+<a id="pgfId-1085260"></a>Commonly Us<a id="envlp_options"></a>ed Options</h3>
+
+<p>
+<a id="pgfId-1085274"></a>Options are provided to control the specific behavior of the simulation. This next section discusses the effect of the options in the options form for envelope. They are listed as they appear on the <em>Options</em> form.</p>
+
+<h4>
+<a id="pgfId-1085291"></a>Convergence Tab</h4>
+<p>
+<a id="pgfId-1105464"></a></p>
+<div class="webflare-div-image">
+<img width="373" height="429" src="images/Chap6-89.gif" /></div>
+<h4><em>
+<a id="pgfId-1085301"></a>ic (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1085830"></a>Initial conditions can be specified graphically by selecting <em>Simulation</em> - <em>Convergence Aids</em> - <em>Initial Condition</em> in the ADE Explorer. Initial conditions can also be specified from a file using the <em>readic</em> property. Capacitors and inductors have the initial condition properties in the property list for the component. For capacitors, this is an initial voltage across the capacitor, and for inductors, it is an initial current in the inductor. The default is to observe all the initial conditions in the DC analysis that is used as the time-zero time point. The initial conditions force a voltage or current to be present in the time-zero solution. The initial conditions are released for the rest of the transient simulation in the tstab interval. The <em>ic</em> option controls the initial conditions that should be observed in the time-zero time point. <em>all</em> is the default. <em>dev</em> means that only the initial conditions on capacitors and inductors are observed. <em>node</em> means that only the initial conditions on a node are observed. <em>dc</em> means that no initial conditions are observed.<em> </em>The example below shows node. </p>
+
+<p>
+<a id="pgfId-1085834"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="35" src="images/Chap6-90.gif" /></div>
+<h4>
+<a id="pgfId-1085835"></a>Skipdc (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1085836"></a>In some cases, the time-zero time point DC analysis does not converge. Instead of stopping the simulation, <em>skipdc</em> allows the envelope simulation to continue using an assumed solution for the time-zero time point. The default is <em>no</em> and a DC analysis is run to get the initial time point. <em>yes</em> means skip the DC solution, and proceed directly to the envelope simulation. All the nodes with initial conditions specified start at the initial condition value. Nodes with batteries start at the battery voltage. Nodes with no initial conditions start at zero volts. For <code>skipdc=yes</code>, the signal sources start as specified immediately in the envelope simulation. The example below shows the <em>skipdc</em> option set to <em>no</em>. The default is <em>yes</em>.</p>
+
+<h4>
+<a id="pgfId-1085841"></a>Readic (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1085842"></a>This specifies an ascii file that contains two columns to be read as initial conditions. The left column is the node name. The right column is the voltage value. If the entry does not start with / (slash), the entry is located in the netlist directory. To find the netlist directory, select <em>Setup</em>- <em>Simulator/Directory/Host</em> in ADE Explorer. Look in the <em>Project Directory</em> field for the location of the simulation directory. Navigate to that directory and then to the <span class="webflare-courier-new" style="white-space:pre"><em>&lt;Circuit Name&gt;</em></span><code>/spectre/</code><span class="webflare-courier-new" style="white-space:pre"><em>&lt;schematic or config&gt;</em></span><code>/netlist</code> directory. You can also click (<img width="30" height="24" src="images/Chap6-91.gif" />
+) and browse to the directory. There is no default.</p>
+
+<h4>
+<a id="pgfId-1085850"></a>Readns (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1085851"></a>This specifies an ascii file with the same format as an ic file that is used as nodesets for the time-zero DC solution. Nodesets do not force a voltage to be held for the time-zero solution. Instead, they are a way of speeding up the time-zero calculation. As a suggestion, set the <em>write</em> option and the <em>readns</em> option to the same filename. The <em>write</em> option writes the time-zero solution to a file. When this is used as a starting point, many fewer iterations are needed for the time-zero point to converge. There is no default.</p>
+
+<h4>
+<a id="pgfId-1085856"></a>Cmin (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1085857"></a><em>cmin</em> adds a capacitor to ground from all nodes in the circuit to ground with the value specified in the <em>cmin</em> field. Note that if 1 is specified, a 1 farad capacitor is added from every node to ground in the circuit. Do not forget the multiplier suffix. Values from 1f to 100f are typically used to allow convergence. The default is 0.</p>
+
+<h4><em>
+<a id="pgfId-1085862"></a>Maxiters (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1105573"></a>The transient analysis for tstab (for both shooting and hb) and shooting interval iterate to a solution at each time point. <em>maxiters</em> specifies the maximum number of iterations before the timestep is cut for another try at convergence. In some cases, model parameters can cause discontinuities in the device current or capacitance. If this occurs, the change in the circuit condition can be large enough to require more than the five iterations that are the default. Specifying <em>maxiters</em> in the 40 to 100 range usually allows the simulator to converge in spite of the discontinuity. </p>
+
+<h4><em>
+<a id="pgfId-1085318"></a>restart (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1086064"></a>This option is used when a sweep is run. If restart is <em>no</em>, the time-zero time point does not restart from scratch. It restarts from the time-zero solution of the previous sweep value. <em>yes</em> forces a new time-zero solution to be re-run from scratch every time. The default is <em>no</em>.</p>
+
+<h4><em>
+<a id="pgfId-1085311"></a>envmaxiters (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1086076"></a>The solution for each period of the carrier is an iterative solution. <em>envmaxiters</em> sets the maximum number of iterations that are allowed before the number of periods skipped is reduced. The default is three iterations for shooting and 40 for harmonic balance.</p>
+
+<h4>
+<a id="pgfId-1085454"></a>Accuracy Tab</h4>
+<p>
+<a id="pgfId-1105650"></a></p>
+<div class="webflare-div-image">
+<img width="398" height="377" src="images/Chap6-92.gif" /></div>
+<h4><em>
+<a id="pgfId-1114482"></a>method (tstab and shooting window for shooting, tstab only for Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1086099"></a>This option controls the integration method for the shooting window. Note that in harmonic balance, the <em>method</em> option only applies in the tstab interval because the harmonic balance envelope solver works in the frequency domain. The default value for the shooting window is determined by the setting of <em>errpreset</em>. For <em>moderate</em> and <em>conservative</em>, the default is <em>gear2only</em>. For <em>liberal</em> it is <em>traponly</em>. Generally, <em>gear2only</em> is preferred because of the absence of trapezoidal ringing inherent in the <em>trap</em> (trapezoidal) method. Note that <em>liberal</em> is not recommended for RF simulation. When you simulate high Q oscillators, set <em>method</em> to <em>traponly</em>. This is needed because <em>gear2only</em> slightly numerically damps the oscillations.</p>
+
+<h4><em>
+<a id="pgfId-1085475"></a>envmethod (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1105735"></a>This option controls the integration method for the part of the envelope analysis during the skipped cycles. In this part of the simulation, numerical integration still needs to be performed to get correct answers. For example, if there is a long time constant, the behavior on the node with the long time constant needs to be integrated even during the skipped cycles. <em>envmethod</em> controls this. The default is <em>gear2only</em> except for autonomous envelope (oscillators) where the numerical damping of <em>gear2only</em> is unacceptable. In this case, the default is <em>traponly</em>, which neither damps nor exaggerates the oscillations.</p>
+
+<h4><em>
+<a id="pgfId-1085468"></a>relref (Shooting (tstab and shooting window) and Harmonic Balance (tstab only))</em></h4>
+
+<p>
+<a id="pgfId-1086299"></a>In the order of most to least accurate, the <em>relref</em> settings are <em>pointlocal</em>, <em>alllocal</em>, <em>sigglobal</em>, <em>allglobal</em>. The default for <em>moderate</em> is <em>sigglobal</em> and for <em>conservative</em> it is <em>alllocal.</em> <em>relref</em> is used in the transient analysis in the tstab interval for both shooting and harmonic balance and in the shooting window for shooting. <em>relref</em> is used in hb only for the tstab interval because the solver works in the frequency domain. In some cases, the timestep can collapse to near zero. The symptom is that in the Spectre output window, the percent done number remains the same for many reporting intervals. The solution to this is to set <em>relref</em> to <em>sigglobal</em>, which is slightly less accurate. Another possibility is to use the <em>lteminstep</em> option as described in the <em>AdditionalParams</em> option of the <em>Misc</em> tab.</p>
+
+<h4><em>
+<a id="pgfId-1085461"></a>lteratio ((tstab and shooting window for shooting) and Harmonic Balance (tstab only))</em></h4>
+
+<p>
+<a id="pgfId-1086427"></a><em>lteratio</em> is a multiplier for the allowable numerical integration error in the tstab interval and the shooting window. The default is 3.5 or 10 depending on the setting of <em>reltol</em> and <em>errpreset</em>. See <a href="Chap4.html#92939">Controlling Accuracy</a> for details. <em>lteratio</em> cannot be set smaller than 1.0 and is normally between 3.5 and 100. In some cases, the timestep collapses to near zero and setting <em>relref</em> to <em>sigglobal</em> does not fix the problem. In this case, there might be a model discontinuity. To test this, disable numerical integration timestep control by setting <em>lteratio</em> to 1e9. Note that this is an extreme measure not to be used under normal simulations. If the timestep still collapses, there is a discontinuity in one of the models in the circuit. This could be a device model or a Verilog-A model. If it is necessary to set <em>lteratio</em> very large to get the simulation to complete, you must also set <em>maxstep</em> small enough to preserve the accuracy of the simulation. Note that <em>lteminstep</em> might also be used to treat this condition. See <em>AdditionalParams</em> in the <em>Misc</em> tab to see how to use this option.</p>
+
+<h4><em>
+<a id="pgfId-1085456"></a>envlteratio (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1089116"></a><em>envlteratio</em> is a multiplier for the allowable numerical integration error in the numerical integration that occurs in the part of the waveform where cycles are skipped. The default is 0.35 for conservative and 3.5 for moderate. Liberal is not recommended.</p>
+
+<h4><em>
+<a id="pgfId-1089117"></a>steadyratio (shooting Only)</em></h4>
+
+<p>
+<a id="pgfId-1086515"></a>The maximum mismatch between the beginning and ending values for the voltages and currents in the shooting window is determined by the <em>convergence criteria</em> * <em>lteratio</em> * <em>steadyratio</em>. The default is 0.1 for moderate, and 1.0 for conservative.</p>
+
+<h4>
+<a id="pgfId-1105924"></a>sweepmethod</h4>
+
+<p>
+<a id="pgfId-1114967"></a>When fast envelope is used, a series of harmonic balance simulations are run. The amplitude is swept over a range of values present in the I and Q modulation files. When the baseband model is used in fast envelope, the phase also needs to be swept. The <em>sweepmethod</em> option controls the density of the sweep points. The default is <em>coarse</em>, where 7 amplitude and 12 phase points are used. This is sufficient for most simulations. Fine uses 10 amplitude points and 16 phase points. <em>Userdefined</em> allows you to specify the number for both magnitude and phase points. <em>Adaptive</em> is a work in progress.</p>
+
+<h4>
+<a id="pgfId-1114960"></a>Magnitude points</h4>
+
+<p>
+<a id="pgfId-1114974"></a>When <em>sweepmethod</em> is set to <em>Userdefined</em>, Magnitude points specifies the number of different amplitude points to use in the characterization phase of fast envelope.</p>
+
+<h4>
+<a id="pgfId-1114953"></a>Phase points</h4>
+
+<p>
+<a id="pgfId-1114981"></a>When <em>sweepmethod</em> is set to <em>Userdefined</em>, and there is a baseband source in the circuit, this option controls the number of phase points to use in the characterization phase of fast envelope.</p>
+
+<h4>
+<a id="pgfId-1132925"></a>HB Fund Points</h4>
+
+<p>
+<a id="pgfId-1132959"></a>This option is available when fast envelope is set as <em>level2</em> and <em>sweepmethod</em> is set as <em>userdefined</em>. The value should be greater than greater than zero. Default value is <code>7</code>.</p>
+
+<h4>
+<a id="pgfId-1132953"></a>HBAC Freq points/decade</h4>
+
+<p>
+<a id="pgfId-1133110"></a>This option is available when fast envelope is set as <em>level2</em> and <em>sweepmethod</em> is set as <em>userdefined</em>. The value should be greater than greater than zero. Default value is <code>3</code>.</p>
+
+<h4>
+<a id="pgfId-1105928"></a>Output Tab</h4>
+<p>
+<a id="pgfId-1105936"></a></p>
+<div class="webflare-div-image">
+<img width="386" height="401" src="images/Chap6-93.gif" /></div>
+<h4><em>
+<a id="pgfId-1105929"></a>annotate</em></h4>
+<h4>
+<a id="pgfId-1086565"></a>Annotate (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1086566"></a>This option controls the level of detail in the output log. The default is <em>status. The level of detail increases as you move to the right</em>.</p>
+
+<h4>
+<a id="pgfId-1086591"></a>Save (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1122538"></a>The default is <em>allpub</em>. This saves all the public voltages at all levels of the hierarchy in the schematic. It excludes the internal nodes of the device models. <em>all</em> adds the internal nodes of all the devices. <em>lvl</em> saves all the nodes including the internal nodes of the devices through the level of hierarchy set in the <em>nestlvl</em> option. <em>lvlpub</em> is like <em>lvl</em>, but it does not save the internal nodes of the devices. <em>selected</em> saves only the nodes that are specifically saved. In ADE Explorer, this is accomplished using the <em>Outputs</em> - <em>To Be Saved</em> - <em>Select On Schematic</em> menu option and then selecting the nodes and terminals specifically in the schematic. At the netlist level, this is accomplished by using a save statement with a list of names to be saved.</p>
+
+<h4>
+<a id="pgfId-1122540"></a>Nestlvl (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1086594"></a>If <em>save</em> is set to <em>lvl</em> or <em>lvlpub</em>, this controls the maximum level of hierarchy to be saved. If <em>nestlvl</em> is <em>1</em>, only the top level is saved. If <em>nestlvl </em>is 2, the top level and the next level down are saved. The value for <em>nestlvl</em> can be any integer. There is no default for <em>nestlvl</em>.</p>
+
+<h4>
+<a id="pgfId-1086599"></a>Compression (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1086553"></a>Do not use this option.</p>
+
+<h4><em>
+<a id="pgfId-1085513"></a>outputtype (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1086846"></a>This option is rarely used. It controls which simulation results to save. Normally, both time and frequency domain data is saved. Envelope saves the time-domain data only. Spectrum saves just the frequency-domain data. The default is to save both time and frequency-domain data. Note that in fast envelope, you need to select the <em>yes</em> check box to the right of <em>Output time-domain waveform and all harmonics</em> in order to calculate time-domain output.</p>
+
+<h4><em>
+<a id="pgfId-1085506"></a>strobeperiod (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1086869"></a>This option specifies the envelope time in seconds to force cycles of the carrier to be simulated. Shooting will round this time to an integer number of periods of the carrier. This is used to force data at the times needed for the psd calculation. There is no default value.</p>
+
+<h4><em>
+<a id="pgfId-1086897"></a>transtrobeperiod (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1086898"></a>Normally, the time-domain waveform is a cycle of carrier followed by many skipped cycles, followed by another cycle of simulation. Since there is no waveform between the last point for the first cycle and the first point of the second cycle, the waveform tool just connects those points together with a straight line. The waveform can be made into a continuous waveform using the <em>transtrobeperiod</em> option. This should be set to an integer fraction of one period of the carrier frequency. When this is set, Spectre still skips cycles, but it also creates an interpolated, continuous waveform with time points at the <em>transtrobeperiod</em> interval. In the example below, 20 points are set for one period of the carrier at 2.5G.</p>
+
+<p>
+<a id="pgfId-1106070"></a></p>
+<div class="webflare-div-image">
+<img width="419" height="41" src="images/Chap6-94.gif" /></div>
+
+<p>
+<a id="pgfId-1086932"></a>Spectre does take expressions, as shown above. There is no default value for <em>transtrobeperiod</em>.</p>
+<p>
+<a id="pgfId-1086939"></a>Here is a comparison of the 2 waveforms.</p>
+
+<p>
+<a id="pgfId-1106130"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="409" src="images/Chap6-95.gif" /></div>
+
+<p>
+<a id="pgfId-1086960"></a>The red waveform is the normal waveform. The vertical spikes in the red waveform are the individual periods of the carrier that are normally calculated. When <em>transtrobeperiod</em> is set, the waveform becomes continuous, as shown in blue. A closer view is shown below.</p>
+
+<p>
+<a id="pgfId-1106183"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="407" src="images/Chap6-96.gif" /></div>
+<h4>
+<a id="pgfId-1085392"></a>Reuse Tab</h4>
+<p>
+<a id="pgfId-1106232"></a></p>
+<div class="webflare-div-image">
+<img width="383" height="359" src="images/Chap6-97.gif" /></div>
+<h4>
+<a id="pgfId-1114590"></a>Write (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1087039"></a><em>write</em> specifies a filename to which the DC solution used as the first time point be written to. If the name does not start with slash (/), the file is written in the <em>netlist</em> directory. To determine the netlist directory location, select <em>Setup</em> - <em>Simulator/Directory/Host</em> in ADE Explorer. The <em>Project Directory</em> field lists the location of the simulation directory. From this directory, the netlist directory is in <em>&lt;</em><span class="webflare-courier-new" style="white-space:pre"><em>Circuit Name</em></span><em>&gt;/&lt;</em><span class="webflare-courier-new" style="white-space:pre"><em>simulator name</em></span><em>&gt;/&lt;schematic or config&gt;/netlist</em>. There is no default value.</p>
+
+<h4>
+<a id="pgfId-1087045"></a>Writefinal (Shooting Only)</h4>
+
+<p>
+<a id="pgfId-1087046"></a><em>writefinal</em> writes the final envelope time point from the last period of the envelope analysis (not the final time point of the tstab interval) to the filename specified. See the description for <em>write</em> for the location. There is no default value.</p>
+
+<h4>
+<a id="pgfId-1087051"></a>Swapfile (Shooting Only)</h4>
+
+<p>
+<a id="pgfId-1087221"></a>This option is not currently implemented.</p>
+
+<h4>
+<a id="pgfId-1087240"></a>Saveclock (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1087241"></a><em>This option is not currently implemented.</em></p>
+
+<h4>
+<a id="pgfId-1087246"></a>Saveperiod (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1087247"></a><em>This option is not currently implemented.</em></p>
+
+<h4>
+<a id="pgfId-1087252"></a>Savetime (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1087253"></a><em>This option is not currently implemented.</em></p>
+
+<h4>
+<a id="pgfId-1087259"></a>Savefile (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1087260"></a><em>This option is not currently implemented.</em></p>
+
+<h4>
+<a id="pgfId-1087262"></a>Recover (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1087263"></a><em>This option is not currently implemented.</em></p>
+
+<h4>
+<a id="pgfId-1114750"></a>Writeenv</h4>
+
+<p>
+<a id="pgfId-1114798"></a>When fast envelope is used, the behavioral model can be written to a file and reused. Writeenv specifies the filename to save the behavioral model for fast envelope in.</p>
+
+<h4>
+<a id="pgfId-1114752"></a>Readenv</h4>
+
+<p>
+<a id="pgfId-1114758"></a>When fast envelope is used, the behavioral model can be written to a file and reused. Readenv specifies the file to read back in instead of running the characterization from scratch.</p>
+
+<h4>
+<a id="pgfId-1114759"></a>Misc Tab</h4>
+<p>
+<a id="pgfId-1106364"></a></p>
+<div class="webflare-div-image">
+<img width="392" height="598" src="images/Chap6-98.gif" /></div>
+<h4><em>
+<a id="pgfId-1085607"></a>start (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088097"></a>This option is rarely used. It defines the starting time for the envelope simulation. The default is 0.</p>
+
+<h4><em>
+<a id="pgfId-1085673"></a>outputstart (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088106"></a>This option is rarely used. This defines the simulation time to begin to save data to the output file. The default is to start writing data at time 0.</p>
+
+<h4><em>
+<a id="pgfId-1085666"></a>tstab (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088113"></a>This is seldom used in envelope simulation. This specifies a simulation time for the transient analysis to run before starting the envelope simulation. The default is to run 3 periods of the carrier signal.</p>
+
+<h4><em>
+<a id="pgfId-1085659"></a>modulationbw (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088120"></a><em>modulationbw</em> and <em>envmaxstep</em> accomplish the same thing, which is to define a maximum time interval to skip between carrier cycles that are simulated. When <em>modulationbw</em> is set, at least eight periods of the carrier are simulated in the time period of one cycle of the frequency <em>modulationbw</em>. <em>modulationbw</em> does not force data at equally spaced intervals, like <em>envstrobeperiod</em> does. Instead, it sets a a maximum delta-time for skipping cycles. There is no default.</p>
+
+<h4><em>
+<a id="pgfId-1085652"></a>maxstep (Shooting: tstab and waveform calculation. Harmonic balance: tstab interval only)</em></h4>
+
+<p>
+<a id="pgfId-1088189"></a>This option is rarely used. This sets the maximum delta-time for the shooting waveform in each cycle of the carrier. The default forces at least 20 time points for moderate, and 50 time points for conservative. It also is used in the transient analysis in the tstab interval.</p>
+
+<h4><em>
+<a id="pgfId-1088157"></a>envmaxstep (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088158"></a><em>envmaxstep</em> and <em>modulationbw</em> accomplish the same thing, which is to define a maximum time interval to skip between carrier cycles that are simulated. <em>envmaxstep</em> sets the maximum time between periods of the carrier that can be skipped. <em>envmaxstep</em> does not force datapoints at regularly spaced intervals. Instead, it sets a a maximum delta-time for skipping cycles. The default forces at least 25 periods to be simulated when <em>moderate</em> is selected, and 50 when <em>conservative</em> is selected.</p>
+
+<h4><em>
+<a id="pgfId-1085638"></a>pactimes (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088598"></a>During the transistor-level envelope simulation, one or more of the carrier periods that are simulated can be used as the nonlinear operating point for the small-signal pac, pxf, pnoise, or psp analyses. <em>pactimes</em> is a list of times separated by a space for the large-signal envelope solution that should be used for the small-signal analyses. The default is to not use any points for the small-signal analyses.</p>
+
+<p>
+<a id="pgfId-1106589"></a></p>
+<div class="webflare-div-image">
+<img width="420" height="69" src="images/Chap6-99.gif" /></div>
+<h4><em>
+<a id="pgfId-1085631"></a>pacnames (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088606"></a>This option is used in combination with <em>pactimes</em>. Specify a list of the small-signal analyses pac, pxf, pnoise, and/or psp in this option field, and these analyses will be run at the times specified in <em>pactimes</em>. The default is to not run any small-signal analyses.</p>
+<p>
+<a id="pgfId-1089028"></a>When this option has a list of small-signal analyses, the corresponding pac, pxf, pnoise, and psp analyses must also be set up and enabled.</p>
+
+<h4><em>
+<a id="pgfId-1085624"></a>fmspeedup (Shooting and Harmonic Balance)</em></h4>
+
+<p>
+<a id="pgfId-1088586"></a>This option allows the period of the carrier cycle to vary because of frequency modulation. When <em>fmspeedup</em> is set to the default of 0, the period of the carrier is not allowed to vary. When it is set to 1, the period is allowed to vary.</p>
+
+<h4>
+<a id="pgfId-1088025"></a>AdditionalParams (Shooting and Harmonic Balance)</h4>
+
+<p>
+<a id="pgfId-1088026"></a>This is a field for <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>option_name</em></span><code>&gt;=value</code> statements. Multiple <code>&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>option_name</em></span><code>&gt;=value</code> statements are allowed with a space between them. Generally, this is used to unlock the beta features, however, there is one case where this field might be useful for an option that is not available in the GUI.</p>
+<p>
+<a id="pgfId-1088027"></a>In some cases, in the tstab interval, the timestep collapses to near zero. The symptom is that the percent complete stays at the same value for many reporting intervals. In this case, there might be a discontinuity in one of the models. </p>
+<p>
+<a id="pgfId-1088028"></a>In transient simulation, two things can reduce the timestep; having too much numerical integration error or taking too many iterations at a single timestep can cause the timestep to be cut. Spectre does not report what is causing the timestep to become small. One way to eliminate the possibility of numerical integration error (which is called local truncation error in the simulator) as the cause of reducing the timestep is to set <em>lteratio</em> to 1e9. The disadvantage of this is that it disables the normal method of timestep control, therefore, <em>maxstep</em> must be set to maintain accuracy. </p>
+<p>
+<a id="pgfId-1088029"></a>Another way to accomplish this is to set <em>lteminstep</em> to a value of about the stop time divided by 1e5. This allows the normal method of timestep control, but if for some reason the numerical integration error wants to cut the timestep too small, the error is ignored. <em>lteminstep</em> is the way to specify this. To do this in ADE Explorer, type <code>lteminstep=&lt;</code><span class="webflare-courier-new" style="white-space:pre"><em>Stop_Time</em></span><code>&gt;/1e5</code>. If you use <code>lteratio=1e9</code>, or if you set <em>lteminstep</em> and you still have very small timesteps, try increasing <em>maxiters</em> in the <em>Convergence</em> tab to between 40 and 100. When <em>lteratio</em> or <em>lteminstep</em> is set and you still have timestep problems, there is likely a discontinuity in either a device model or in a Verilog-A model. An example is shown below.</p>
+
+<p>
+<a id="pgfId-1090265"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="35" src="images/Chap6-100.gif" /></div>
+<h3>
+<a id="pgfId-1066634"></a><a id="22684"></a>Autonomous ENVLP <a id="AutoENVLP"></a>Analysis (Oscillators)</h3>
+
+<p>
+<a id="pgfId-1092494"></a>Autonomous envelope is useful for simulating the startup behavior of high Q oscillators, and for simulating the frequency pulling and/or pushing effects caused by random data being applied to a system. In autonomous envelope, the period and amplitude of each cycle of the oscillator that is simulated needs to be solved.</p>
+<p>
+<a id="pgfId-1106780"></a>In general, harmonic balance is suggested for LC oscillators, and shooting should be used for ring oscillators. Crystal oscillators should use harmonic balance.</p>
+<p>
+<a id="pgfId-1106781"></a>The only additional requirement in the <em>Choosing Analyses</em> form for oscillators is the requirement to select the check box for oscillators, and specify a node or pair of nodes that has the oscillator signal on it. If the <em>osc initial condition</em> check box is set to <em>linear</em>, the nodes must be in the resonator of the oscillator. Although not a requirement, it is recommended that you use adaptive timestep control, and set the <em>modulationbw</em> (modulation bandwidth) option to the frequency of the oscillator divided by the Q of the oscillator.</p>
+
+<h4>
+<a id="pgfId-1092532"></a>Example: Startup behavior of a crystal oscillator</h4>
+
+<p>
+<a id="pgfId-1092542"></a>Here is an example circuit.</p>
+
+<p>
+<a id="pgfId-1106946"></a></p>
+<div class="webflare-div-image">
+<img width="620" height="566" src="images/Chap6-101.gif" /></div>
+
+<p>
+<a id="pgfId-1106947"></a>First, add an isource, set to <em>Source type</em> to <em>pulse</em>, and connect it to the resonator as highlighted above. The properties list is shown below.</p>
+
+<p>
+<a id="pgfId-1106896"></a></p>
+<div class="webflare-div-image">
+<img width="426" height="712" src="images/Chap6-102.gif" /></div>
+
+<p>
+<a id="pgfId-1092630"></a>Next, set the properties.</p>
+<ol><li>
+<a id="pgfId-1092638"></a>Set the <em>Zero value</em> to 0 (zero). The pulse starts at the zero value. With zero amps, the isource is a perfect open, so it does not load the circuit.</li><li>
+<a id="pgfId-1092656"></a>Set the <em>One value</em> to a current that starts the oscillator, but does not drive it too hard at the start. You will need to experiment with this value using the transient. In the waveform window below, the junction of the inductor and capacitor in the crystal motional equivalent circuit is plotted. This voltage will get quite large because of the high Q. Change the <em>One value</em> so that one to ten volts peak is generated at this node at the start of the transient simulation, and no huge transients are generated.<br />
+<a id="pgfId-1107115"></a><div class="webflare-div-image">
+<img width="619" height="404" src="images/Chap6-103.gif" /></div></li><li>
+<a id="pgfId-1092687"></a>Set the <em>Rise time</em> and <em>Fall time</em> to about 1/10th to 1/100th of the period. This is a 10MHz crystal oscillator. In this case, 1/100th of the period was used.</li><li>
+<a id="pgfId-1092694"></a>Set the <em>Pulse width</em> so that half a period is generated by the pulse. Half the period of 10M is 50nsec, so the total of <em>Rise time</em>, <em>Fall time</em>, and <em>Pulse width</em> is 50nsec.</li><li>
+<a id="pgfId-1092701"></a>Do not make an entry in the <em>Period of waveform</em> property.</li></ol>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1092708"></a>The effect of these entries is to set up a single current pulse to start the oscillator.</p>
+<p>
+<a id="pgfId-1092718"></a>Now, set up the envelope <em>Choosing Analyses</em> form.</p>
+
+<p>
+<a id="pgfId-1107226"></a></p>
+<div class="webflare-div-image">
+<img width="351" height="731" src="images/Chap6-104.gif" /></div>
+
+<ol><li>
+<a id="pgfId-1092725"></a>Select the appropriate engine. For LC and crystal oscillators, select <em>Harmonic Balance</em>. For ring oscillators select <em>Shooting</em>.</li><li>
+<a id="pgfId-1092735"></a>Set an appropriate <em>Stop Time</em> for your simulation. The time chosen will depend on the Q of the oscillator. About five times the Q periods need to be simulated.</li><li>
+<a id="pgfId-1092787"></a>Set the <em>Fundamental frequency</em>, <em>Number of Harmonics</em>, and <em>Oversample Factor</em> as needed for your simulation. See the discussion about setting harmonics and oversample factor in <em>Chapter 3: Harmonic Balance</em>.</li><li>
+<a id="pgfId-1092797"></a>Select <em>adaptive</em> <em>Time Step Control</em>. This allows the simulator to place the periods of oscillator simulation at the appropriate place.</li><li>
+<a id="pgfId-1092805"></a>Enable the check box next to the <em>Oscillator</em> Property, and specify a node inside the resonator for the oscillator node(s).</li><li>
+<a id="pgfId-1092813"></a>Set <em>Osc initial condition</em> to <em>default</em>. This ensures that the oscillator starts up as a result of the current pulse applied to the resonator.</li><li>
+<a id="pgfId-1092821"></a>Select <em>moderate</em> accuracy. In virtually every case, this is accurate enough.</li><li>
+<a id="pgfId-1092828"></a><em>Fast envlp mode</em> must be set to <em>off</em>. Fast envelope is not available for oscillators.</li></ol>
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1092835"></a>Options are not required, but are suggested. Click <em>Options</em> at the bottom of the <em>Choosing Analyses</em> form.</p>
+
+<p>
+<a id="pgfId-1107538"></a></p>
+<div class="webflare-div-image">
+<img width="371" height="384" src="images/Chap6-105.gif" /></div>
+
+<p>
+<a id="pgfId-1092871"></a>Set the <em>modulationbw</em> (modulation bandwidth) property to the period divided by the Q of the oscillator. Expressions are allowed by Spectre.</p>
+<p>
+<a id="pgfId-1092885"></a>Now run the simulation. Below is a comparison of the runtimes for the envelope analysis and for the transient analysis. Note that the runtime is much shorter for the envelope analysis.</p>
+
+<p>
+<a id="pgfId-1107597"></a></p>
+<div class="webflare-div-image">
+<img width="636" height="483" src="images/Chap6-106.gif" /></div>
+<p>
+<a id="pgfId-1092481"></a></p>
+<div class="webflare-div-image">
+<img width="636" height="398" src="images/Chap6-107.gif" /></div>
+
+<p>
+<a id="pgfId-1066706"></a>Now use the <em>Direct Plot Form</em> to plot the waveform. In ADE Explorer, select <em>Results</em> - <em>Direct Pot</em> - <em>Main Form</em>.</p>
+
+<p>
+<a id="pgfId-1107667"></a></p>
+<div class="webflare-div-image">
+<img width="287" height="424" src="images/Chap6-108.gif" /></div>
+
+<ol><li>
+<a id="pgfId-1093067"></a>Select <em>envlp</em> results.</li><li>
+<a id="pgfId-1093077"></a>Select <em>Voltage</em>.</li><li>
+<a id="pgfId-1093084"></a>Select <em>Net</em> or <em>Differential Nets</em>.</li><li>
+<a id="pgfId-1093091"></a>Select <em>time</em>.</li><li>
+<a id="pgfId-1093105"></a>Select a net in the schematic. The waveform is displayed.<br />
+<a id="pgfId-1107739"></a><div class="webflare-div-image">
+<img width="619" height="398" src="images/Chap6-109.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1093124"></a>The waveforms above are the envelope results on the left, and the transient results on the right. The results are almost identical for both, and envelope takes 16.4 seconds versus 2125.4 seconds for the transient on the same machine.</p>
+
+<h4>
+<a id="pgfId-1093672"></a>Common Problems With Oscillator Startup</h4>
+
+<p>
+<a id="pgfId-1093685"></a>In some cases, the oscillator will have a hard time starting up. You can recognize this by looking at the waveform in the resonator of the oscillator. Normally, the junction of the capacitor and the inductor in the crystal equivalent circuit will have voltages in the order of KiloVolts peak at steady-state. When you see the ragged startup waveforms, as shown below, set a fixed timestep with about 15 to 100 periods as the step interval.</p>
+
+<p>
+<a id="pgfId-1107796"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="402" src="images/Chap6-110.gif" /></div>
+
+<p>
+<a id="pgfId-1094137"></a>Spectre takes expressions in the entries, so it makes the period calculation easy.</p>
+
+<p>
+<a id="pgfId-1107851"></a></p>
+<div class="webflare-div-image">
+<img width="373" height="754" src="images/Chap6-111.gif" /></div>
+
+<p>
+<a id="pgfId-1094125"></a>The example above sets 20 periods of 10MHz as the step interval.</p>
+<p>
+<a id="pgfId-1093798"></a>Also, set the following analysis options:</p>
+<p>
+<a id="pgfId-1093805"></a>Set the <em>method</em> and <em>envmethod</em> options to <em>traponly</em>. <em>trap</em> does not damp or emphasize the oscillations of the oscillator. The default is <em>gear2only</em>, which slightly damps the oscillations. Also, set <em>relref</em> to <em>alllocal</em>. This is needed because of the mix of very large amplitude signals on the resonator with much smaller oscillations in the rest of the circuit.</p>
+
+<p>
+<a id="pgfId-1107947"></a></p>
+<div class="webflare-div-image">
+<img width="375" height="380" src="images/Chap6-112.gif" /></div>
+
+<p>
+<a id="pgfId-1093829"></a>Also, in some circuits, the initial pulse that is used to start the oscillator can cause large transients at the beginning of the envelope analysis and cause problems with the determination of the frequency at the beginning of the simulation. To determine if this is the case, look at the startup waveform at the beginning of the simulation.</p>
+
+<p>
+<a id="pgfId-1107998"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="404" src="images/Chap6-113.gif" /></div>
+
+<p>
+<a id="pgfId-1093894"></a>Note that the waveform is still settling at the beginning of the simulation. In this case, four periods are being simulated instead of one. You can see the frequency that is being used in the output log.</p>
+
+<p>
+<a id="pgfId-1108049"></a></p>
+<div class="webflare-div-image">
+<img width="494" height="631" src="images/Chap6-114.gif" /></div>
+
+<p>
+<a id="pgfId-1093899"></a>Setting <em>tstab</em> in the <em>Misc</em> tab can cause the simulation to start robustly.</p>
+
+<p>
+<a id="pgfId-1108085"></a></p>
+<div class="webflare-div-image">
+<img width="364" height="377" src="images/Chap6-115.gif" /></div>
+
+<p>
+<a id="pgfId-1093928"></a>The waveform is much smoother with tstab set.</p>
+
+<p>
+<a id="pgfId-1108123"></a></p>
+<div class="webflare-div-image">
+<img width="619" height="407" src="images/Chap6-116.gif" /></div>
+<h3>
+<a id="pgfId-1115442"></a>Examples</h3>
+
+<p>
+<a id="pgfId-1115464"></a>There are wireless examples provided with the release. To access the examples:</p>
+<ol><li>
+<a id="pgfId-1118372"></a>Navigate to <code>&lt;mmsim_install_directory&gt;/tools.&lt;platform&gt;/spectre/examples/SpectreRF_workshop</code>. </li><li>
+<a id="pgfId-1118379"></a>Copy the <code>rfworkshop.tar.Z</code> file to a directory where you have write access, and extract the file.</li><li>
+<a id="pgfId-1118386"></a>Navigate to the directory <code>/spectrerf_workshop/doc</code>. </li></ol>
+
+
+<p>
+<a id="pgfId-1118398"></a>In this directory, you will find directions for the wireless workshop.</p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="Chap5.html" id="prev" title="Multiple Input Large and Small-signal Analyses">Multiple Input Large and Small ...</a></em></b><b><em><a href="Chap7.html" id="nex" title="Large-Signal S-Parameter Simulation (LSSP)">Large-Signal S-Parameter Simul ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
