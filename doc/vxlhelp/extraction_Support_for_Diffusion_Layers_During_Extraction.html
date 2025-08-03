@@ -1,0 +1,166 @@
+
+<html><head><title>Support for Diffusion Layers During Extraction</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="sumehta" />
+<meta name="CreateDate" content="2023-10-26" />
+<meta name="CreateTime" content="1698327996" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes the functionality of the Virtuoso Layout Suite XL connectivity-driven features in the current release." />
+<meta name="DocTitle" content="Virtuoso Layout Suite XL: Connectivity Driven Editing User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Support for Diffusion Layers During Extraction" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vxlhelp" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-10-26" />
+<meta name="ModifiedTime" content="1698327996" />
+<meta name="NextFile" content="extraction_Weakly-Connected_Instance_Pins_During_Extraction.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="extraction_Instance_Terminal_Connectivity_Considered_During_Extraction.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Layout Suite XL: Connectivity Driven Editing User Guide -- Support for Diffusion Layers During Extraction" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="concept" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="Layout XL" />
+<meta name="prod_subfeature" content="Extraction" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vxlhelpIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vxlhelpTOC.html">Contents</a></li><li><a class="prev" href="extraction_Instance_Terminal_Connectivity_Considered_During_Extraction.html" title="Instance Terminal Connectivity Considered During Extraction">Instance Terminal Connectivity ...</a></li><li style="float: right;"><a class="viewPrint" href="vxlhelp.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="extraction_Weakly-Connected_Instance_Pins_During_Extraction.html" title="Weakly-Connected Instance Pins During Extraction">Weakly-Connected Instance Pins ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Layout Suite XL: Connectivity Driven Editing User Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<a id="Filename:Support_for_Diffusion_Layers_During_Extraction" title="Support for Diffusion Layers During Extraction"></a><h3>
+<a id="pgfId-1074040"></a>Support<a id="lceDiffSupport"></a> for Diffusion Layers During Extraction</h3>
+
+<p>
+<a id="pgfId-1074041"></a>Some manufacturing processes define diffusion shapes that must be explicitly implanted by n-type or p-type implant shapes to get their own type. If the implant is p-type, the diffusion shape is considered to be p-type. If the implant is n-type, the diffusion shape is considered to be n-type.</p>
+<p>
+<a id="pgfId-1074042"></a>Other processes derive the implant type from the definition of the diffusion layer, &#8220;ndiff&#8221; or &#8220;pdiff&#8221;, in the technology file. This is the case when an explicit implant does not exist. The connectivity extractor supports both types of diffusion layers.</p>
+<p>
+<a id="pgfId-1074043"></a>The connectivity extractor does not modify the connectivity of implant shapes.</p>
+<ul><li>
+<a id="pgfId-1074044"></a>Analog processes typically feature a single diffusion layer and two or more layers for implants. The extractor recognizes shapes on layers with function <code>diff</code> as unimplanted diffusion: they need an explicit &#8216;n&#8217; or &#8216;p&#8217; implant shape to connect to the appropriate <code>pwell</code> or <code>nwell</code>.<br />
+<a id="pgfId-1074045"></a>The <code>functions</code> table for such a process might include the following definitions.<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074046">
+<a id="pgfId-1074046"></a>functions(
+;( layer          function         [maskNumber])
+;( -----          --------         ------------)
+ ( pwell          &quot;pwell&quot;          10          )
+ ( nwell          &quot;nwell&quot;          20          )
+ ( diff           &quot;diff&quot;           30          )
+ ( poly           &quot;poly&quot;           40          )
+ ( pimp           &quot;pplus&quot;          50          )
+ ( nimp           &quot;nplus&quot;          60          )
+);functions
+</pre></span>
+<a id="pgfId-1074047"></a>Only <code>diff</code> diffusion is defined, so there are also <code>pimp</code> and <code>nimp</code> layers defined explicitly for the implants. A shape on <code>diff</code> must overlap with a shape on <code>pimp</code> to connect to a shape on <code>pwell</code> or with a shape on <code>nimp</code> to connect to a shape on <code>nwell</code>. The connectivity stack is derived as follows:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074048">
+<a id="pgfId-1074048"></a>metal -&gt; cut -&gt; (diff &amp; nplus) -&gt; nwell or ntype substrate</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074049">
+<a id="pgfId-1074049"></a>metal -&gt; cut -&gt; (diff &amp; pplus) -&gt; pwell or ptype substrate</pre></span></li><li>
+<a id="pgfId-1074050"></a>Manufacturing processes used in digital design often define separate layers for n and p diffusion. A shape on these layers is considered to have an <em>implicit implant</em> whose type is derived from the layer function.<br />
+<a id="pgfId-1074051"></a>Here, the functions table might include the following definitions.<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074052">
+<a id="pgfId-1074052"></a>functions(
+;( layer          function         [maskNumber])
+;( -----          --------         ------------)
+ ( lv_nwell       &quot;nwell&quot;          10          )
+ ( hv_nwell       &quot;nwell&quot;          20          )
+ ( hv_pwell       &quot;pwell&quot;          30          )
+ ( ndiff          &quot;ndiff&quot;          40          )
+ ( ndiff_hv       &quot;ndiff&quot;          50          )
+ ( pdiff          &quot;pdiff&quot;          60          )
+ ( odiff_hv       &quot;pdiff&quot;          70          )
+ ( poly           &quot;poly&quot;           80          )
+);functions
+</pre></span>
+<a id="pgfId-1074053"></a>There are no layers defined for implants, the extractor differentiates between p-type and n-type implants based on whether the function is <code>pdiff</code> or <code>ndiff</code>. An <code>ndiff</code> shape connects to shapes that have the <code>nwell</code> function; a <code>pdiff</code> shape connects to shapes that have the <code>pwell</code> or <code>substrate</code> function.<br />
+<a id="pgfId-1074054"></a>The connectivity stack is derived as follows:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074055">
+<a id="pgfId-1074055"></a>metal -&gt; cut -&gt; ndiff -&gt; nwell or ntype substrate
+</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074056">
+<a id="pgfId-1074056"></a>Metal -&gt; cut -&gt; pdiff -&gt; pwell or ptype substrate</pre></span></li><li>
+<a id="pgfId-1074057"></a>Some processes have a single active diffusion layer, such as &#8220;<code>ndiff</code>&#8221;, which is used to connect to both types of wells and substrates. These processes also have a single implant, such as &#8220;<code>pimp</code>&#8221;, which takes priority over the diffusion type.<br />
+<a id="pgfId-1074058"></a>The functions table for such a process might include the following definitions:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074059">
+<a id="pgfId-1074059"></a>functions(
+;( layer          function         [maskNumber])
+;( -----          --------         ------------)
+ ( M1             &quot;metal&quot;          10          )
+ ( CO             &quot;cut&quot;            20          )
+ ( NOD            &quot;ndiff&quot;          30          )
+ ( PP             &quot;pplus&quot;          40          )
+ ( NW             &quot;nwell&quot;          50          )
+ ( PW             &quot;pwell&quot;          60          )
+ );functions
+</pre></span>
+<a id="pgfId-1074060"></a>Both, a diffusion layer, <code>ndiff</code>, and an implant layer, <code>pimp</code>, are defined. An <code>ndiff</code> shape connects to shapes that have the <code>nwell</code> function. An <code>ndiff</code> shape when overlapped by a <code>pimp</code> shape connects to shapes that have the <code>pwell </code>function.<br />
+<a id="pgfId-1074061"></a>The connectivity stack is derived as follows:<span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074062">
+<a id="pgfId-1074062"></a>metal -&gt; cut -&gt; ndiff -&gt; nwell or ntype substrate</pre></span><span class="indent-as-level2"><pre class="webflare-pre-block webflare-courier-new" id="#id1074063">
+<a id="pgfId-1074063"></a>metal -&gt; cut -&gt; (ndiff &amp; pplus) -&gt; pwell or ptype substrate</pre></span></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4><em>
+<a id="pgfId-1137855"></a>Related Topics</em></h4>
+
+<p>
+<a id="pgfId-1137851"></a><a href="xlAssistants_Annotation_Browser_Assistant.html#23026">Annotation Browser Assistant</a></p>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="extraction_Instance_Terminal_Connectivity_Considered_During_Extraction.html" id="prev" title="Instance Terminal Connectivity Considered During Extraction">Instance Terminal Connectivity ...</a></em></b><b><em><a href="extraction_Weakly-Connected_Instance_Pins_During_Extraction.html" id="nex" title="Weakly-Connected Instance Pins During Extraction">Weakly-Connected Instance Pins ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
