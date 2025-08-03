@@ -1,0 +1,2562 @@
+;SKILL Language Functions
+("tcDumpTechFile"
+"tcDumpTechFile(
+d_techID 
+t_dumpFile
+[ l_sectionList t_mode 
+g_dumpEmptySectionHdrs ]
+)
+=> t / nil"
+"Dumps the technology data in the specified binary technology database to the specified ASCII file.")
+("tcLoadTechFile"
+"tcLoadTechFile(
+d_techID 
+t_sourceFile
+[ t_mode [ l_sections ] ]
+)
+=> t / nil"
+"Compiles the ASCII source file, opens the technology database in a (append) mode, and updates it with the compiled data. The default action is to merge the newly compiled data with the technology database already loaded into virtual memory. If you set t_mode to w, the system deletes the data in virtual memory and loads the newly compiled data. If you specify the sections to compile, this function compiles only the specified sections and preserves the data in the other sections.")
+("tcRegPostAttachTrigger"
+"tcRegPostAttachTrigger(
+s_function
+[ x_priority ]
+) 
+=> t / nil"
+"Registers a trigger function the system calls after attaching a design library to a technology library. You can use this function to keep track of the technology library of a design library is attached to.")
+("tcRegPostDumpTrigger"
+"tcRegPostDumpTrigger(
+s_function
+[ x_priority ]
+) 
+=> t / nil"
+"Registers a trigger function the system calls after it dumps a technology database. The s_function argument is a SKILL procedure with three arguments: the database identifier of the technology database, the port (or print destination) for the dump file, and the name of the dump file.
+
+Trigger functions are called in order of priority, with 0 having the highest priority. If you do not specify a priority argument, the default is the lowest priority (that is, it is executed after any other trigger function that specifies a priority).")
+("tcRegPostLoadTrigger"
+"tcRegPostLoadTrigger(
+s_function
+[ x_priority ]
+) 
+=> t / nil"
+"Registers a trigger function the system calls after loading a technology file. The s_function argument is a SKILL procedure with two arguments: the database identifier of the technology database and the name of the ASCII technology file you are loading.
+
+Trigger functions are called in order of priority, with 0 having the highest priority. If you do not specify a priority argument, the default is the lowest priority (that is, it executes after any other trigger function that specifies a priority).")
+("tcRegPostSetRefTrigger"
+"tcRegPostSetRefTrigger(
+s_trigFunc 
+[ x_priority ]
+)
+=> t / nil"
+"Registers a trigger function that the system calls after setting the reference for the specified technology database. You can use this function to keep track of the technology database reference when a technology database is updated.")
+("tcRegPreDumpTrigger"
+"tcRegPreDumpTrigger(
+s_function
+[ x_priority ]
+) 
+=> t / nil"
+"Registers a trigger function the system calls before dumping a technology database. The s_function argument is a SKILL procedure with three arguments: the database identifier of the technology database, the port (or print destination) for the dump file, and the name of the dump file.
+
+Trigger functions are called in order of priority, with 0 having the highest priority. If you do not specify a priority argument, the default is the lowest priority (that is, it executes after any other trigger function that specifies a priority).")
+("tcRegPreLoadTrigger"
+"tcRegPreLoadTrigger(
+s_function
+[ x_priority ]
+) 
+=> t / nil"
+"Registers a trigger function the system calls before loading a technology database. The s_function argument is a SKILL procedure with two arguments: the database identifier of the technology database and the name of the ASCII technology file you are loading. 
+
+Trigger functions are called in order of priority, with 0 having the highest priority. If you do not specify a priority argument, the default is the lowest priority (that is, it executes after any other trigger function that specifies a priority).")
+("tcUnregPostAttachTrigger"
+"tcUnregPostAttachTrigger(
+s_trigFun
+) 
+=> t / nil"
+"Unregisters post attach trigger so the system does not call the function after attaching a design library to a technology library.")
+("tcUnregPostDumpTrigger"
+"tcUnregPostDumpTrigger(
+s_function
+) 
+=> t / nil"
+"Unregisters the specified postdump trigger function so the system does not call it after dumping a technology database.")
+("tcUnregPostLoadTrigger"
+"tcUnregPostLoadTrigger(
+s_function
+) 
+=> t / nil "
+"Unregisters the specified trigger function so the system does not call it after loading a technology file.")
+("tcUnregPostSetRefTrigger"
+"tcUnregPostSetRefTrigger(
+s_trigFunc
+)
+=> t / nil"
+"Unregisters a specified trigger function so that the system does not call it after setting the reference for the specified technology database.")
+("tcUnregPreDumpTrigger"
+"tcUnregPreDumpTrigger(
+s_function
+) 
+=> t / nil"
+"Unregisters the specified predump trigger function so the system does not call it before dumping a technology database. ")
+("tcUnregPreLoadTrigger"
+"tcUnregPreLoadTrigger(
+s_function
+) 
+=> t / nil "
+"Unregisters the specified preload trigger function so the system does not call it before loading a technology file.")
+("techBindTechFile"
+"techBindTechFile(
+g_ID 
+[ t_techLibName 
+[ t_binaryName
+[ updateDev ] ] ]
+)
+=> t / nil"
+"Attaches the specified DFII library to the specified technology database by creating techLib and techFile properties. To get the design data identifier for a DFII library, use the ddGetObj function.")
+("techCloseTechFile"
+"techCloseTechFile( 
+d_techID 
+) 
+=> t / nil"
+"Changes the status of the technology database to closed and decrements the close count. The technology database is not purged from virtual memory until the system needs to use the memory. Internally, the system maintains a count of the number of times you open and close a specific technology database. The count increments when you open and decrements when you close. When the close count is 0 and the system needs more virtual memory, it purges the technology database from virtual memory.")
+("techCopyTechFile"
+"techCopyTechFile( 
+d_techID 
+t_newTechDBName
+t_path
+[ g_deleteOriginal ] 
+) 
+=> d_newtechID / nil"
+"Copies a technology database to a new location and optionally deletes the original. This function is especially useful for separating technology data out of libraries that contain both design data and technology data as it will copy only the technology data.")
+("techDeleteTechFile"
+"techDeleteTechFile( 
+d_techID 
+) 
+=> t / nil"
+"Deletes a technology database. This function is useful for deleting redundant technology data from design libraries that have been updated to share technology databases.")
+("techDeleteTechLibName"
+"techDeleteTechLibName( 
+g_ID
+) 
+=> t / nil"
+"Deletes the techLib property for the specified DFII library. This property is one of two that attach a library to a technology database.")
+("techGetDefaultTechName"
+"techGetDefaultTechName( 
+) 
+=> t_binaryName / nil"
+"Returns the default name of the binary technology database.")
+("techGetOpenTechFiles"
+"techGetOpenTechFiles(
+) 
+=> l_techIDs / nil"
+"Returns a list of the database identifiers of the technology databases that are open.")
+("techGetTechFile"
+"techGetTechFile( 
+{ g_libID }
+) 
+=> d_techID / nil"
+"Returns the identifier of the technology database attached to the specified DFII library.")
+("techGetTechFileDdId"
+"techGetTechFileDdId( 
+d_techID
+) 
+=> g_ddtechID / nil"
+"Returns the design data identifier for the technology database identified by the specified techID. This function is a wrapper for the ddGetObj function specifically designed to return the design data identifier of a technology database.")
+("techGetTechFileName"
+"techGetTechFileName( 
+g_ID
+) 
+=> t_name / nil"
+"Returns the value of the techFile property for the specified DFII library. This property is one of two that attach a library to a technology database.")
+("techGetTechLibName"
+"techGetTechLibName( 
+g_ID
+)
+=> t_name / nil"
+"Returns the value of the techLib property set for the specified library. This property is one of two that attach a library to a technology database.")
+("techGetTimeStamp"
+"techGetTimeStamp(
+d_techID
+) 
+=> x_timeStamp / nil"
+"Returns the last save time of the technology database loaded. The time stamp is updated every time you save the technology database. The time stamp is an integer representing the number of seconds elapsed since 00:00:00 GMT, January 1, 1970. ")
+("techMakeVirtuosoIccInfo"
+"techMakeVirtuosoIccInfo(
+d_techID
+[ g_iccRuleFileName ]
+[ g_constraintGroupName ]
+[ b_replaceConstraintGroup ]
+[ b_removeParams ]
+)
+=> t / nil"
+"Creates a constraint group from Virtuoso chip assembly router rules. Also creates a separate abstract rules file when iccConductors and/or iccKeepouts are specified. The router rules can be either in a separate ASCII icc rules file or in the technology file techParams section.")
+("techOpenDefaultTechFile"
+"techOpenDefaultTechFile( 
+) 
+=> d_techID / nil"
+"Loads the Cadence-supplied default binary technology database into virtual memory in read mode and returns the database identifier.The default technology database resides at the following location:
+
+your_install_dir/tools/dfII/etc/cdsDefTechLib/tech.db")
+("techOpenTechFile"
+"techOpenTechFile( 
+t_libName 
+t_binaryName
+[ t_mode ] 
+) 
+=> d_techID / nil"
+"Loads a binary technology database in virtual memory with the specified mode (r, w, and a) and returns the database identifier of that database.")
+("techPurgeTechFile"
+"techPurgeTechFile( 
+d_techID 
+) 
+=> t / nil"
+"Deletes the database from virtual memory if the close count for the file is 0. Internally, the system maintains a count of the number of times you open and close a specific technology database. The count increments when you open and decrements when you close. When the close count is 0 and the system needs more virtual memory, it automatically purges the technology database to free the memory. This function lets you manually purge the technology database.")
+("techRefreshTechFile"
+"techRefreshTechFile( 
+d_techID 
+) 
+=> t / nil"
+"Deletes the technology database loaded in virtual memory and reloads the binary database stored on disk. The edit mode (append, read, or write) of the database remains the same. If you refresh a technology database open in append mode, any changes you made and did not save are lost. If you refresh a technology database open in write mode, the empty disk file is loaded into virtual memory.")
+("techReopenTechFile"
+"techReopenTechFile( 
+d_techID 
+t_mode 
+) 
+=> t / nil"
+"Changes the mode of a technology database that has been opened. Use this function to upgrade the mode from r (read only) to a (append).")
+("techSaveTechFile"
+"techSaveTechFile(
+d_techID
+) 
+=> t / nil"
+"Saves the specified technology database from virtual memory to the disk file from which it was opened.")
+("techSetEvaluate"
+"techSetEvaluate(
+g_value
+) 
+=> t / nil"
+"Sets an internal flag that indicates whether the tcDumpTechFile and techGet functions evaluate expressions or read expressions as strings. The system automatically sets this internal flag to nil when it dumps a technology file so that expressions and controls are preserved. This function lets you manually set the flag. ")
+("techSetPrecision"
+"techSetPrecision(
+x_digits
+) 
+=> t / nil "
+"Sets the precision, or number of digits following the decimal point, to be used in floating-point calculations.")
+("techSetTechLibName"
+"techSetTechLibName( 
+g_ID
+t_libName 
+) 
+=> t / nil"
+"Updates the techLib property of the specified library. This property is one of two that attach a library to a technology database.")
+("techSetTimeStamp"
+"techSetTimeStamp( 
+d_techID 
+) 
+=> t / nil"
+"Updates the internal time stamp of the technology database to the current time. The time stamp is an integer representing the number of seconds elapsed since 00:00:00 GMT, January 1, 1970. ")
+("techTruncateTechFile"
+"techTruncateTechFile( 
+d_techID 
+) 
+=> t / nil"
+"Deletes the contents of the technology database stored on disk.")
+("techUnattachTechFile"
+"techUnattachTechFile( 
+d_object
+) 
+=> t / nil"
+"Unattaches a technology database from a design library. This function unattach the technology library from the design library without remaster the devices in the design library. However, the device master cellviews remain unchanged.")
+("techVerifyTechFileId"
+"techVerifyTechFileId( 
+d_ID 
+) 
+=> t / nil"
+"Determines whether the specified database identifier is for a technology database.")
+("techGetFabricType"
+"techGetFabricType(
+d_techfileID
+) 
+=> t_fabricType / nil"
+"Returns the fabric type of a technology database.")
+("techGetMfgGridResolution"
+"techGetMfgGridResolution(
+d_techID 
+) 
+=> g_resolution / nil"
+"Returns the value of the manufacturing grid resolution defined in the specified technology database. ASCII technology file location: mfgGridResolution subsection in the controls section. When specified, it establishes that grid snapping must be a multiple of the value of g_resolution.")
+("techGetParam"
+"techGetParam(
+d_techFileID
+t_name
+) 
+=> g_paramValue / nil"
+"Returns the value of the named control parameter in the specified technology database.")
+("techGetParams"
+"techGetParams(
+d_techFileID
+) 
+=> l_params / nil"
+"Returns the list of control parameters that are set in the specified technology database.")
+("techGetPermission"
+"techGetPermission(
+d_techFileID
+t_sectionName
+) 
+=> l_permissions / nil"
+"Returns the permissions explicitly applied to the specified section in the specified technology database.")
+("techGetPermissions"
+"techGetPermissions(
+d_techFileID
+) 
+=> l_permissions / nil"
+"Returns the permissions explicitly applied to the specified technology database.")
+("techGetProcessNode"
+"techGetProcessNode(
+d_techFileID
+) 
+=> f_processNode / nil"
+"Returns the local processNode value of the specified technology database. The function does not consider incremental technology databases.")
+("techGetViewTypeUnits"
+"techGetViewTypeUnits(
+d_techFileID 
+)
+=> l_units / nil"
+"Gets the units that are set for the each cellview type in the specified technology database.")
+("techIsMfgGridResolutionSet"
+"techIsMfgGridResolutionSet(
+d_techID 
+) 
+=> t / nil"
+"Checks whether the value used for grid snapping (the default manufacturing grid resolution for design sessions) is set in the specified technology database. ASCII technology file location: mfgGridResolution subsection in the controls section.")
+("techIsReadPermission"
+"techIsReadPermission(
+d_techFileID
+t_sectionname
+) 
+=> t / nil"
+"Indicates whether the current user has read permission explicitly set on the specified section in the specified technology database.")
+("techSetFabricType"
+"techSetFabricType(
+d_techfileID
+t_fabricType
+) 
+=> t / nil"
+"Sets the fabric type for a technology database.")
+("techSetMfgGridResolution"
+"techSetMfgGridResolution(
+d_techID 
+g_resolution
+) 
+=> t / nil"
+"Updates or sets the value used for grid snapping in the specified technology database. ASCII technology file location: mfgGridResolution subsection in the controls section.")
+("techSetParam"
+"techSetParam(
+d_techFileID
+t_paramName 
+g_paramValue
+) 
+=> t / nil"
+"Updates the value of the specified control parameter in the specified technology database. If the parameter does not exist, this function creates it.")
+("techSetReadPermission"
+"techSetReadPermission(
+d_techFileID
+t_sectionname
+t_rUser
+) 
+=> t / nil"
+"Sets read permission on the specified section in the specified technology database for the specified user.")
+("techSetReadWritePermission"
+"techSetReadWritePermission(
+d_techFileID
+t_sectionname
+t_rwUser
+) 
+=> t / nil"
+"Sets read/write permission on the specified section in the specified technology database for the specified user.")
+("analysisAttributeLocks"
+"analysisAttributeLocks(
+l_list
+) 
+=> t / nil"
+"Specifies the technology class to define layer analysis attribute lock.")
+("techCreateDerivedLayer"
+"techCreateDerivedLayer(
+d_techID
+x_derivedLayerNum
+t_derivedLayerName
+tx_layer1
+t_op
+[ tx_layer2 ]
+[ l_options ]
+)
+=> d_techLayerID / nil"
+"Creates a derived layer in the specified technology database.")
+("techCreateLayer"
+"techCreateLayer( 
+d_techID
+x_layerNumber
+t_layerName 
+[ t_layerAbbrev ]
+) 
+=> d_layerID / nil"
+"Creates a layer in the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used. If a techLayers subsection does not exist, this function creates one with the specified data.")
+("techCreateLP"
+"techCreateLP( 
+d_techID
+l_layerPurpose
+t_lpName
+) 
+=> d_lpID / nil"
+"Creates a named layer-purpose pair in the specified technology database. Layer-purpose pairs are used to define how layers are displayed. A layer is paired with a purpose, assigned a display packet and display attributes (in the techDisplays subsection in the layerDefinitions section of the ASCII technology file).")
+("techCreatePurpose"
+"techCreatePurpose( 
+d_techID
+x_purposeNumber
+t_purposeName 
+[ t_purposeAbbrev ]
+) 
+=> t / nil"
+"Creates a purpose in the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data. If a techPurposes subsection does not exist, this function creates one with the specified data.")
+("techCreatePurposeDef"
+"techCreatePurposeDef(
+d_techfileId
+x_purposeNumber
+t_purposeName
+[ t_purposeAbbrev ]
+)
+=> d_purposeDefId / nil"
+"Creates a purpose in the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data. If a techPurposes subsection does not exist, this function creates one with the specified data.")
+("techDeleteLayer"
+"techDeleteLayer(
+d_techID
+tx_layer
+)
+=> t / nil"
+"Deletes the specified layer from the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used.")
+("techDeleteLP"
+"techDeleteLP(
+d_layerPurposeID 
+)
+=> t / nil"
+"Deletes the specified layer-purpose pair from the current technology database. ASCII technology file location: in the techLayerPurposePriorities and techDisplays subsections of the layerDefinitions section.")
+("techDeletePurpose"
+"techDeletePurpose(
+d_techID
+tx_purpose
+)
+=> t / nil"
+"Deletes the specified purpose from the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data.")
+("techDeletePurposeDef"
+"techDeletePurposeDef(
+d_purposeDefId
+)
+=> t / nil"
+"Deletes the specified purpose from the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data.")
+("techDeleteTwoLayerProp"
+"techDeleteTwoLayerProp(
+d_techID
+tx_layer1 
+tx_layer2 
+t_name 
+) 
+=> t / nil"
+"Deletes the specified two-layer property from the specified technology database. ASCII technology file location: techLayerProperties subsection in the layerDefinitions section; it specifies special properties that you want to place on the layers in your design.")
+("techFindLayer"
+"techFindLayer(
+d_techfileID
+tx_layer
+)
+=> d_layerID / nil"
+"Returns the layerID in the specified technology database or a referenced technology database in an ITDB graph of the specified technology database. This function returns the layerID as per the specified layer name or layer number.")
+("techFindPurposeDef"
+"techFindPurposeDef(
+d_techfileID
+tx_purpose
+)
+=> d_purposeDefID / nil"
+"Returns the purposeDefID in the specified technology database or a referenced technology database in an ITDB graph of the specified technology database. This function returns the purposeDefID as per the specified purpose name or purpose number.")
+("techGetDerivedLayer"
+"techGetDerivedLayer(
+d_techID
+tx_layer1
+t_op
+tx_layer2
+)
+=> d_techLayerID / nil"
+"Returns the database identifier for the derived layer created from the two specified layers with the specified operation in the specified technology database.")
+("techGetEquivLayers"
+"techGetEquivLayers(
+d_techID
+) 
+=> l_equivLayersList / nil"
+"Returns a list of the equivalent layers defined in the specified technology database. ASCII technology file location: equivalentLayers subsection in the layerRules section; it lists layers that represent the same kind of material.")
+("techGetLabelLayers"
+"techGetLabelLayers(
+d_techID
+)
+=> l_labelLayers / nil"
+"Returns a list of the label layers defined in the specified technology database. ASCII technology file location: labels subsection in the layerRules section.")
+("techGetLayerAbbrev"
+"techGetLayerAbbrev(
+d_techID
+tx_layer 
+) 
+=> t_layerAbbrev / nil"
+"Returns the abbreviation of the specified layer from the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used.")
+("techGetLayerAnalysisAttribute"
+"techGetLayerAnalysisAttribute(
+d_techfileID
+tx_layer
+t_attributeName
+) 
+=> g_attributeValue / nil"
+"Returns the value of a specified attribute for a layer with a layer function that supports attribute analysis.")
+("techGetLayerAnalysisAttributeLock"
+"techGetLayerAnalysisAttributeLock(
+d_techID
+s_analysisAttributeLockType
+)
+=> t / nil"
+"Returns the state of the lock on layer analysis attributes for changes related to addition of new layers or updates of attributes.")
+("techGetLayerFunction"
+"techGetLayerFunction( 
+d_techID 
+tx_layer
+) 
+=> g_function / nil"
+"Returns the function (material) assigned to the specified layer in the specified technology database.")
+("techGetLayerFunctions"
+"techGetLayerFunctions( 
+d_techID 
+) 
+=> l_layerFunctions / nil"
+"Returns a list of the functions (materials) and mask numbers assigned to the user-defined layers in the specified technology database. Returns function unknown for layers without an assigned function.")
+("techGetLayerMaskNumber"
+"techGetLayerMaskNumber( 
+d_techID 
+tx_layer
+) 
+=> x_maskNumber / nil"
+"Returns the mask number assigned to the specified layer in the specified technology database.")
+("techGetLayerMfgResolution"
+"techGetLayerMfgResolution(
+d_techID 
+tx_layer
+)
+=> g_value / g_mfgGridResolution / nil"
+"Returns the manufacturing grid resolution assigned to the specified layer in the specified technology database. ASCII technology file location: layerRules section in the specified technology file. ")
+("techGetLayerMfgResolutions"
+"techGetLayerMfgResolutions(
+d_techID 
+)
+=> l_layers"
+"Returns each layer assigned a layer manufacturing grid resolution and the layer manufacturing grid resolution applied to it in the specified technology database. ASCII technology file location: mfgResolutions subsection in the layerRules section.")
+("techGetLayerName"
+"techGetLayerName( 
+d_techID 
+x_layerNumber 
+) 
+=> t_layerName / nil"
+"Returns the name of the layer associated with the specified layer number defined in the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used.")
+("techGetLayerNum"
+"techGetLayerNum( 
+d_techID
+t_layerName 
+) 
+=> x_layerNumber / nil"
+"Returns the layer number associated with the specified layer name defined in the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used.")
+("techGetLayerProp"
+"techGetLayerProp(
+d_techID
+tx_layer 
+t_propName 
+) 
+=> g_propValue / nil"
+"Returns the value of the specified layer property from the specified technology database. ASCII technology file location: techLayerProperties subsection in the layerDefinitions section; it specifies special properties that you want to place on the layers in your design.")
+("techGetLayerRoutingDirections"
+"techGetLayerRoutingDirections(
+d_techID
+)
+=> l_layerRoutingDirections / nil"
+"Returns a list of the layer routing directions for the routing layers in the specified technology database. ASCII technology file location: routingDirections subsection in the layerRules section.")
+("techGetLayerRoutingGrid"
+"techGetLayerRoutingGrid(
+d_techID 
+tx_layer
+)
+=> l_layerRoutingGrid / nil"
+"Returns the layer routing direction, pitch, and offset for the specified routing layer in the specified technology database.")
+("techGetLayerRoutingGrids"
+"techGetLayerRoutingGrids(
+d_techID 
+)
+=> l_layerRoutingGrids / nil"
+"Returns the layer routing direction, pitch, and offset assigned to layers in the specified technology database. ASCII technology file location: routingDirections subsection in the layerRules section.")
+("techGetLP"
+"techGetLP(
+d_techID
+l_layerPurpose
+) 
+=> l_layerPurposeID / nil"
+"Returns the database identifier of the specified layer-purpose pair specified in the current technology database.")
+("techGetLPAttr"
+"techGetLPAttr(
+d_layerPurposeID
+) 
+=> l_value / nil"
+"Returns the list of attributes for the specified layer-purpose pair in the current technology database. The attributes (display priority, visibility, selectability, if the layer is visible when dragged, and validity) are defined in the techLayerPurposePriorities and techDisplays subsections of the ASCII technology file associated with the layer-purpose pair. If the layer-purpose pair does not exist, this function returns nil.")
+("techGetLPPacketName"
+"techGetLPPacketName( 
+d_layerPurposeID
+) 
+=> t_packetName / nil"
+"Returns the name of the display packet defined for the specified layer-purpose pair in the current technology database. ASCII technology file location: techDisplays subsection of the ASCII technology file associated with the layer-purpose pair.")
+("techGetLPPriorityInContext"
+"techGetLPPriorityInContext
+(
+d_techID
+d_techLPId
+) 
+=> x_priority / nil"
+"Gets the drawing priority of the specified layer-purpose pair in the effective technology database rooted at the specified technology database.")
+("techGetLPProp"
+"techGetLPProp(
+d_lpID
+t_propName 
+) 
+=> g_propValue / nil"
+"Returns the value of the specified property from the specified LP. The techLayerProperties subsection in the layerDefinitions section of the ASCII technology file specifies special properties that you want to place on the layers in your design.")
+("techGetLPsByPriority"
+"techGetLPsByPriority(
+d_techFileID
+) 
+=> l_lps / nil"
+"Returns a list of database identifiers of all layer-purpose pairs (LPPs) from the specified technology file, from the lowest to the highest priority.")
+("techGetOrderLeLsw"
+"techGetOrderLeLsw(
+t_techLibName
+)
+=> list( (t_layer t_purpose n_priority)...) / nil"
+"Returns the ordered list of layer-purpose pairs associated with the specified technology library as defined by the function techOrderLeLsw.")
+("techGetOrderLPPriorityInContext"
+"techGetOrderLPPriorityInContext(
+t_techLibName
+)
+=> list( (t_layer t_purpose n_priority)...) / nil"
+"Returns the ordered list of layer-purpose pairs associated with the specified technology library as defined by the function techOrderLPPriorityInContext.")
+("techGetOuterViaLayers"
+"techGetOuterViaLayers(
+d_techID 
+tx_viaLayer
+) 
+=> l_outerViaLayers / nil"
+"Given the via layer, or the middle layer of the via, returns the bottom and top layers used with the via layer in standard via definitions in the specified technology database.")
+("techGetPurposeAbbrev"
+"techGetPurposeAbbrev(
+d_techID
+tx_purpose
+) 
+=> t_layerAbbrev / nil"
+"Returns the abbreviation of the specified purpose from the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data.")
+("techGetPurposeName"
+"techGetPurposeName(
+d_techID
+x_purposeNumber 
+) 
+=> t_purposeName / nil"
+"Returns the purpose name of the specified purpose number defined in the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data.")
+("techGetPurposeNum"
+"techGetPurposeNum(
+d_techID
+t_purposeName 
+) 
+=> x_purposeNumber / nil"
+"Returns the purpose number associated with the specified purpose name from the specified technology database. ASCII technology file location: techPurposes subsection in the layerDefinitions section; it lists the layer purposes used with technology data.")
+("techGetStampLabelLayers"
+"techGetStampLabelLayers(
+d_techID
+)
+=> l_labelLayers / nil"
+"Returns a list of the stamp label layers defined in the specified technology database. ASCII technology file location: stampLabels subsection in the layerRules section.")
+("techGetTrimLayerPairs"
+"techGetTrimLayerPairs(
+d_techFileID
+tx_layer 
+) 
+=> l_trimLayerPairs / nil"
+"Get list of layer pairs for given layer of trim material type.")
+("techGetTwoLayerProp"
+"techGetTwoLayerProp(
+d_techID
+tx_layer1 
+tx_layer2 
+t_propName 
+) 
+=> g_propValue / nil"
+"Returns the value of the specified two-layer property from the specified technology database. ASCII technology file location: techLayerProperties subsection in the layerDefinitions section; it specifies special properties that you want to place on the layers in your design.")
+("techGetViaLayers"
+"techGetViaLayers(
+d_techID
+) 
+=> l_viaLayers / nil"
+"Returns a list of the sets of layers used in the standard via definitions defined in the specified technology database.")
+("techHasLayerAnalysisAttribute"
+"techHasLayerAnalysisAttribute(
+d_techfileID
+tx_layer
+t_attributeName
+) 
+=> t / nil"
+"Checks if a specified attribute has been set for a layer with a layer function that supports attribute analysis.")
+("techIsLPValidBase"
+"techIsLPValidBase(
+d_lpId 
+)
+=> t / nil"
+"Returns boolean indication whether the layer-purpose pair valid attribute is true.")
+("techIsViaLayer"
+"techIsViaLayer(
+d_techID 
+tx_viaLayer
+) 
+=> t / nil"
+"Indicates whether the specified layer is defined as the middle, or via, layer in one or more standard via definitions in the specified technology database.")
+("techOrderLPPriorityInContext"
+"techOrderLPPriorityInContext(
+tx_techfileLibName 
+l_orderLpps
+) 
+=> t / nil"
+"Defines the relative priority for a dynamic set of layer-purpose pairs (LPPs) to be drawn on the canvas. The larger the number, the higher the priority and the lower the LPP is in the list. The LPP with the highest priority is drawn on top of all other LPPs.")
+("techSetEquivLayer"
+"techSetEquivLayer(
+d_techID 
+l_equivLayers 
+) 
+=> t / nil"
+"Appends the specified set of equivalent layers to the specified technology database. ASCII technology file location: equivalentLayers subsection in the layerRules section; it lists layers that represent the same kind of material.")
+("techSetEquivLayers"
+"techSetEquivLayers(
+d_techID 
+l_equivLayers
+) 
+=> t / nil"
+"Updates the equivalentLayers subsection of the specified technology database with the specified set or sets of equivalent layers. ASCII technology file location: equivalentLayers subsection in the layerRules section; it lists layers that represent the same kind of material. If an equivalentLayers subsection does not exist, this function creates one with the specified data. If the technology database already defines equivalent layers, this function deletes and replaces them with the specified data.")
+("techSetLabelLayer"
+"techSetLabelLayer(
+d_techID
+l_labelLayers
+)
+=> t / nil"
+"Appends the specified label layer to the label layers list in the specified technology database. ASCII technology file location: labels subsection in the layerRules section; it lists label layers followed by their associated sets of layers of any type. If the label layer already has a specification in the labels subsection, this function replaces it with the new specification. If the labels subsection does not exist, this function creates one with the specified data.")
+("techSetLabelLayers"
+"techSetLabelLayers(
+d_techID
+l_labelLayers
+)
+=> t / nil"
+"Replaces the label layers in the specified technology database. ASCII technology file location: labels subsection in the layerRules section; it lists label layers followed by their associated sets of layers of any type. If the labels subsection does not exist, this function creates one with the specified data. If the labels subsection does exist, this function deletes and replaces it with the specified data.")
+("techSetLayerAbbrev"
+"techSetLayerAbbrev(
+d_techID
+tx_layer 
+t_layerAbbrev
+) 
+=> t / nil"
+"Updates the abbreviation of the specified layer in the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used.")
+("techSetLayerAnalysisAttribute"
+"techSetLayerAnalysisAttribute(
+d_techfileID
+tx_layer
+t_attributeName
+g_attributeValue
+) 
+=> t / nil"
+"Sets a specified attribute value for a layer with a layer function that supports attribute analysis.")
+("techSetLayerAnalysisAttributeLock"
+"techSetLayerAnalysisAttributeLock(
+d_techID
+s_analysisAttributeLockType
+g_value
+)
+=> t / nil"
+"Sets a lock on layer analysis attributes for changes related to addition of new layers or updates to attributes.")
+("techSetLayerFunction"
+"techSetLayerFunction( 
+d_techID 
+tx_layer
+g_function
+) 
+=> t / nil"
+"When the specified layer is not already assigned a function (material), sets the function assignment in the specified technology database. If the layer is already assigned a function, techSetLayerFunction returns a message to that effect and does not update the technology database. ASCII technology file location: functions subsection in the layerRules section; it assigns functions to layers. If a functions subsection does not exist, this function creates one with the specified data.")
+("techSetLayerFunctions"
+"techSetLayerFunctions( 
+d_techID 
+l_layerFunctionsList
+) 
+=> t / nil"
+"When the specified layers are not already assigned functions (materials), sets the function assignments in the specified technology database. If any layer is already assigned a function, techSetLayerFunctions returns a message to that effect and does not change that function assignment, but does change the others. ASCII technology file location: functions subsection in the layerRules section; it assigns functions to layers. If a functions subsection does not exist, this function creates one with the specified data.")
+("techSetLayerMaskNumber"
+"techSetLayerMaskNumber( 
+d_techID 
+tx_layer
+x_maskNumber
+) 
+=> t / nil"
+"Updates the mask number of the specified layer in the specified technology database. ASCII technology file location: functions subsection in the layerRules section; it assigns functions and mask numbers to layers. ")
+("techSetLayerMfgResolution"
+"techSetLayerMfgResolution(
+d_techID 
+tx_layer
+g_value
+)
+=> t / nil"
+"Sets or updates the layer manufacturing grid resolution to be applied to the specified layer in the specified technology specified technology database. ASCII technology file location: mfgResolutions subsection in the layerRules section. If a mfgResolutions subsection does not exist, this function creates one with the specified data.")
+("techSetLayerMfgResolutions"
+"techSetLayerMfgResolutions(
+d_techID 
+l_layers
+)
+=> t / nil"
+"Replaces the layer manufacturing grid resolution data in the specified technology database. ASCII technology file location: mfgResolutions subsection in the layerRules section. If a mfgResolutions subsection does not exist, this function creates one with the specified data.")
+("techSetLayerName"
+"techSetLayerName(
+d_techID
+tx_layer
+t_layerName 
+) 
+=> t / nil "
+"Updates the name of the specified layer in the specified technology database. ASCII technology file location: techLayers subsection in the layerDefinitions section; it lists the layers that can be used.")
+("techSetLayerProp"
+"techSetLayerProp(
+d_techID
+tx_layer 
+l_propertyValue 
+) 
+=> t / nil "
+"Updates the value of the specified layer property in the specified technology database. ASCII technology file location: techLayerProperties subsection in the layerDefinitions section; it specifies special properties that you want to place on the layers in your design. If the techLayerProperties subsection does not exist, this function creates one with the specified data. If the property does not exist, the function creates a new layer property and sets the value to the specified value.")
+("techSetLayerRoutingGrid"
+"techSetLayerRoutingGrid(
+d_techID 
+tx_layer
+t_preferredDir
+[ g_pitch [ g_offset ] ]
+)
+=> t / nil"
+"Updates the routing direction, pitch, and offset for the specified layer in the specified technology database. The pitch is the minimum allowable spacing, center-to-center, between two regular geometries on different nets. The offset is the distance between the placement grid and the routing grid when there is a routing grid between two placement grids.")
+("techSetLayerRoutingGrids"
+"techSetLayerRoutingGrids(
+d_techID 
+l_layerRoutingGrids
+)
+=> t / nil"
+"Replaces the layer routing direction, pitch, and offset for the specified layers in the specified technology database. The pitch is the minimum allowable spacing, center-to-center, between two regular geometries on different nets. The offset is the distance between the placement grid and the routing grid when there is a routing grid between two placement grids.")
+("techSetLPAttr"
+"techSetLPAttr( 
+d_layerPurposeID
+l_layerAttributes 
+) 
+=> t / nil"
+"Updates layer attributes for the specified layer-purpose pair in the current technology database. The layer attributes are specified as a list and include the display priority, visibility, selectability, if the layer is visible when dragged, and validity. ASCII technology file location: techDisplays and techLayerPurposePriorities subsections of the layerDefinitions section.")
+("techSetLPPacketName"
+"techSetLPPacketName( 
+d_layerPurposeID
+t_packetName
+) 
+=> t / nil"
+"Updates the display packet assigned to the specified layer-purpose pair in the current technology database. ASCII technology file location: techDisplays subsection. The display packet must be defined in the display resource file before you can assign it.")
+("techSetLPPriorityInContext"
+"techSetLPPriorityInContext(
+d_tfId
+d_techLPId
+x_priority
+) 
+=> d_lppId / nil"
+"Sets the drawing priority of a layer-purpose pair in an effective technology database. The larger the number, the higher the priority. The layer-purpose pair must exist in the graph rooted at the specified technology database; it does not need to exist locally in the specified technology database.")
+("techSetStampLabelLayer"
+"techSetStampLabelLayer(
+d_techID
+l_labelLayers
+)
+=> t / nil"
+"Appends the specified stamp label layers to the label layers list in the specified technology database. ASCII technology file location: stampLabels subsection in the layerRules section; it lists label layers followed by their associated sets of layers of connected type. If the label layer already has a specification in the stampLabels subsection, this function replaces it with the new specification. If the stampLabels subsection does not exist, this function creates one with the specified data.")
+("techSetStampLabelLayers"
+"techSetStampLabelLayers(
+d_techID
+l_labelLayers
+)
+=> t / nil"
+"Replaces the specified stamp label layers in the specified technology database. ASCII technology file location: stampLabels subsection in the layerRules section; it lists label layers followed by their associated sets of layers of connected type. If the stampLabels subsection does not exist, this function creates one with the specified data. If the stampLabels subsection does exist, this function deletes and replaces it with the specified data.")
+("techSetTwoLayerProp"
+"techSetTwoLayerProp(
+d_techID
+tx_layer1 
+tx_layer2 
+l_propertyValue 
+) 
+=> t / nil"
+"Updates the value of the specified two-layer property in the specified technology database. ASCII technology file location: techLayerProperties subsection in the layerDefinitions section; it specifies special properties that you want to place on the layers in your design. If the techLayerProperties subsection does not exist, this function creates one with the specified data. If the property does not exist, the function creates a new two-layer property and sets the value to the specified value. ")
+("techSupportsLayerAnalysisAttributes"
+"techSupportsLayerAnalysisAttributes(
+d_techfileID
+tx_layer
+) 
+=> t / nil"
+"Checks if the given layer has a function that supports layer analysis attributes.")
+("techCreateSpacingRuleTable"
+"techCreateSpacingRuleTable( 
+d_techID 
+t_constraintName 
+l_indexDefinitions 
+tx_layer1 
+[ tx_layer2 ]
+) 
+=> t / nil"
+"Creates a spacing table and indexes for the named constraint in the specified technology database. This new table does not overwrite an existing one. ASCII technology file location: spacingTables subsection in the foundry constraint group. To create table entries, use techSetSpacingRuleTableEntry. If a spacingTables subsection does not exist, this function creates one.")
+("techGetOrderedSpacingRules"
+"techGetOrderedSpacingRules(
+d_techID
+) 
+=> l_spacingRules / nil"
+"Returns a list of all of the ordered spacing constraints defined in the specified technology database. ASCII technology file location: orderedSpacings subsection(s) in the foundry constraint group.")
+("techGetSpacingRules"
+"techGetSpacingRules(
+d_techID
+) 
+=> l_spacingRules / nil"
+"Returns a list of the spacing constraints defined in the specified technology database. ASCII technology file location: spacings subsection(s) in the foundry constraint group.")
+("techGetSpacingRuleTable"
+"techGetSpacingRuleTable(
+d_techID 
+t_constraintName 
+tx_layer1 
+[ tx_layer2 ]
+) 
+=> l_tables / nil"
+"Returns the table data for the specified constraint defined in the specified technology database and applied to the specified layer or layers. ASCII technology file location: spacingTables subsection in the foundry constraint group.")
+("techGetSpacingRuleTableEntry"
+"techGetSpacingRuleTableEntry( 
+d_techID 
+t_constraintName
+g_index | l_index
+tx_layer1
+[ tx_layer2 ]
+) 
+=> g_value / nil"
+"Returns the value of the table constraint in the specified technology database that (a) is in the foundry constraint group, (b) is applied to the specified layer or layers, and (c) is the value for the table entry with the specified index or indexes.")
+("techGetSpacingRuleTables"
+"techGetSpacingRuleTables( 
+d_techID 
+) 
+=> l_tables / nil"
+"Returns a list of the spacing tables and the layers to which they apply as defined in the specified technology database. ASCII technology file location: spacingTables subsection in the foundry constraint group.")
+("techGetViaStackLimit"
+"techGetViaStackLimit(
+d_techID
+)
+=> l_viaStackLimit / nil"
+"Returns the first viaStackingLimits constraint in the foundry constraint group in the specified technology database. ")
+("techGetViaStackLimits"
+"techGetViaStackLimits(
+d_techID
+)
+=> l_viaStackLimits / nil"
+"Returns a list of the stacked via limit data defined in the technology database. ASCII technology file location: foundry constraint group.")
+("techSetViaStackLimits"
+"techSetViaStackLimits(
+d_techID 
+l_viaStackLimits
+)
+=> t / nil"
+"Updates the viaStackingLimits in the foundry constraint group in the specified technology database with one or more sets of viaStackingLimits data. This function updates the number for any layer range already in viaStackingLimits and adds a new entry for any layer range not already in viaStackingLimits. If a viaStackingLimits section does not already exist, this function creates one.")
+("techSetOrderedSpacingRule"
+"techSetOrderedSpacingRule(
+d_techID 
+t_constraint 
+g_value 
+tx_layer1 
+tx_layer2
+) 
+=> t / nil"
+"Updates the value of the constraint in the specified technology database that (a) is in the foundry constraint group, (b) is the first hard constraint with the specified name in an orderedSpacings subsection, and (c) is applied to the specified layers. If the specified constraint does not already exist, this function creates a new orderedSpacings section containing the constraint.")
+("techSetSpacingRule"
+"techSetSpacingRule(
+d_techID 
+t_constraint 
+g_value 
+tx_layer1 
+[ tx_layer2 ]
+) 
+=> t / nil"
+"Updates the value of the constraint in the specified technology database that (a) is in the foundry constraint group, (b) is the first hard constraint with the specified name in a spacings subsection, and (c) is applied to the specified layer or layers. If the specified constraint does not already exist, this function creates a new spacings section containing the constraint.")
+("techSetSpacingRuleTableEntry"
+"techSetSpacingRuleTableEntry( 
+d_techID 
+t_constraintName
+g_index | l_index
+g_value
+tx_layer1
+[ tx_layer2 ]
+) 
+=> t / nil"
+"Updates the specified spacing table in the specified technology database. ASCII technology file location: spacingTables subsection in the foundry constraint group. If the specified index or index pair is in the table, this function updates the value assigned. If the specified index or index pair is not in the table, this function adds an entry to the table with the specified data.")
+("techSetViaStackLimit"
+"techSetViaStackLimit(
+d_techID 
+g_number
+[ tx_bottomLayer tx_topLayer ]
+)
+=> t / nil"
+"Updates a viaStackingLimits constraint in the foundry constraint group in the specified technology database with one set of via stack limit data. If the specified layer range is not already specified in the database, this function creates a new constraint with the data. If the viaStackingLimits subsection does not exist in the foundry constraint group, this function creates it with the specified data.")
+("techCreateElectricalRuleTable"
+"techCreateElectricalRuleTable( 
+d_techID 
+t_constraintName 
+l_indexDefinitions 
+tx_layer1 
+[ tx_layer2 ]
+) 
+=> t / nil"
+"Creates a current density table and indexes for the named layer attribute in the specified technology database. ASCII technology file location: currentDensityTables subsection of the layerRules section. To create table entries, use techSetElectricalRuleTableEntry. If a currentDensityTables subsection does not exist, this function creates one. If a current density table already exists for the named attribute applied to the specified layer or layers, this function replaces it; the original table entries are deleted.")
+("techGetCurrentDensityRules"
+"techGetCurrentDensityRules(
+d_techID
+)
+=> l_currentDensityRules / nil"
+"Returns a list of the current density attributes for layers from the specified technology database.")
+("techGetCurrentDensityRuleTable"
+"techGetCurrentDensityRuleTable(
+d_techID
+t_ruleTableName
+tx_layer
+)
+=> l_currentDensityRuleTable / nil"
+"Returns the named current density attribute table for the specified layer in the specified technology database.")
+("techGetCurrentDensityRuleTables"
+"techGetCurrentDensityRuleTables(
+d_techID
+)
+=> l_currentDensityRuleTables / nil"
+"Returns a list of the current density attribute tables for layers in the specified technology database.")
+("techGetElectricalRules"
+"techGetElectricalRules(
+d_techID
+) 
+=> l_electricalRules / nil"
+"Returns a list of all of the current density layer attributes and antenna models constraints defined in the specified technology database. ASCII technology file location: currentDensity subsection of the layerRules section and the antennaModels section of the foundry constraint group.")
+("techGetElectricalRuleTable"
+"techGetElectricalRuleTable( 
+d_techID 
+t_constraint 
+tx_layer1 
+[ tx_layer2 ]
+) 
+=> l_tables / nil"
+"Returns the table data for the specified layer attribute defined in the specified technology database. ASCII technology file location: currentDensityTables subsection of the layerRules section. Preferred: Use techGetCurrentDensityRuleTable function.")
+("techGetElectricalRuleTableEntry"
+"techGetElectricalRuleTableEntry( 
+d_techID 
+t_constraint
+l_index
+tx_layer1
+[ tx_layer2 ]
+) 
+=> g_value / nil"
+"Returns the value of the specified index in the specified current density table in the specified technology database. ASCII technology file location: currentDensityTables subsection of the layerRules section.")
+("techGetElectricalRuleTables"
+"techGetElectricalRuleTables( 
+d_techID 
+) 
+=> l_tables / nil"
+"Returns a list of the current density tables defined in the specified technology database. ASCII technology file location: currentDensityTables subsection in the layerRules section. Preferred: Use techGetCurrentDensityRuleTables function.")
+("techGetOrderedElectricalRules"
+"techGetOrderedElectricalRules(
+d_techID
+) 
+=> l_electricalRules / nil"
+"Returns a list of all of the ordered electrical constraints specified in the technology database. ASCII technology file location: orderedElectrical constraints in the foundry constraint group. This is a legacy section of the technology file used to store data converted from a technology file containing an obsolete subclass.")
+("techSetElectricalRule"
+"techSetElectricalRule(
+d_techID 
+t_constraint 
+g_value 
+tx_layer1 
+[ tx_layer2 ]
+) 
+=> t / nil"
+"Updates the value of the layer attribute in the specified technology database that (a) is the first layer attribute with the specified name in a currentDensity subsection of the layerRules section, and (b) is applied to the specified layer or layers. If the specified attribute does not already exist, this function creates a new currentDensity subsection containing the layer attribute. You cannot update or add antennaModels constraints with this function.")
+("techSetElectricalRuleTableEntry"
+"techSetElectricalRuleTableEntry( 
+d_techID 
+t_constraint
+l_index
+g_value
+tx_layer1
+[ tx_layer2 ]
+) 
+=> t / nil"
+"Updates the specified current density table in the specified technology database. ASCII technology file location: currentDensityTables subsection of the layerRules section. If the specified index or index pair is in the table, this function updates the value assigned. If the specified index or index pair is not in the table, this function adds an entry to the table with the specified data.")
+("techSetOrderedElectricalRule"
+"techSetOrderedElectricalRule(
+d_techID 
+t_constraint 
+g_value 
+tx_layer1 
+tx_layer2
+) 
+=> t / nil"
+"Updates the value of the first ordered electrical constraint for the specified layers in the specified technology database. ASCII technology file location: orderedElectrical subsection in the foundry constraint group. This is a legacy section of the technology file used to store data converted from a technology file containing the obsolete orderedCharacterizationRules subclass.")
+("techSetPrRoutingLayers"
+"techSetPrRoutingLayers(
+d_techID 
+l_routingLayers
+) 
+=> t / nil"
+"Updates the specified technology database to change or add the preferred routing direction for each of the specified layers. ASCII technology file location: routingDirections subsection in the layerRules section.")
+("techSetPrRoutingLayer"
+"techSetPrRoutingLayer(
+d_techID 
+tx_routingLayer 
+t_direction
+) 
+=> t / nil"
+"Updates the specified technology database to change or add the preferred routing direction for the specified layer. ASCII technology file location: routingDirections subsection in the layerRules section.")
+("techGetPrRoutingLayers"
+"techGetPrRoutingLayers(
+d_techID
+) 
+=> l_routingLayers / nil"
+"Returns a list of layers and their preferred routing directions. In the ASCII technology file, the layers are defined in the validLayers constraint in the interconnect subsection of the LEFDefaultRouteSpec constraint group. The preferred routing directions of the layers are specified in the routingDirections subsection of the layerRules section.")
+("techGetPrRoutingDirection"
+"techGetPrRoutingDirection(
+d_techID 
+tx_layer
+) 
+=> t_direction / nil"
+"Returns the direction assigned to the specified routing layer technology database. ASCII technology file location: routingDirections subsection in the layerRules section.")
+("techIsPrRoutingLayer"
+"techIsPrRoutingLayer(
+d_techID 
+tx_layer
+) 
+=> t / nil"
+"Indicates whether the specified layer is a routing layer, assigned a routing direction in the specified technology database. ASCII technology file location: routingDirections subsection of the layerRules section.")
+("techSetPrViaTypes"
+"techSetPrViaTypes(
+d_techID 
+l_viaTypes
+) 
+=> t / nil"
+"Adds the specified via definitions for the specified cell and cellview to the list of valid vias for the specified constraint group in the specified technology database.")
+("techSetPrViaType"
+"techSetPrViaType(
+d_techID 
+l_viaDef 
+t_constraintGroupName
+) 
+=> t / nil"
+"Adds the specified via definition to the specified technology database. ASCII technology file location: validVias section of the specified constraint group.")
+("techGetPrViaTypes"
+"techGetPrViaTypes(
+d_techID
+) 
+=> l_viaTypes / nil"
+"Returns a list of the vias defined in the specified technology database. ASCII technology file location: validVias sections.")
+("techGetPrViaType"
+"techGetPrViaType(
+d_techID 
+l_viaDef
+) 
+=> t_viaType / nil"
+"Returns all constraint groups in which the specified via definition is listed as a valid via in the specified technology database. ASCII technology file location: validVias section.")
+("techIsPrViaDevice"
+"techIsPrViaDevice(
+d_techID 
+l_viaDef
+) 
+=> t / nil"
+"Indicates whether the specified via definition is listed in the specified technology database. ASCII technology file location: in any validVias section the specified technology file.")
+("techSetPrStackVias"
+"techSetPrStackVias(
+d_techID 
+l_stackVias
+) 
+=> t / nil"
+"Updates the specified technology database to mark the listed pairs of via layers stackable. ASCII technology file location: stackable subsection in the spacings section of the foundry constraint group for the specified via layer pairs.")
+("techSetPrStackVia"
+"techSetPrStackVia(
+d_techID 
+tx_viaLayer1 
+tx_viaLayer2
+) 
+=> t / nil"
+"Updates the specified technology database to mark the specified pair of via layers stackable in the foundry constraint group. If the stackable section does not already exist, this function creates it.")
+("techGetPrStackVias"
+"techGetPrStackVias(
+d_techID
+) 
+=> l_stackVias / nil"
+"Returns a list of the via layer pairs defined as stackable in the specified technology database. ASCII technology file location: stackable in the foundry constraint group of specified technology file.")
+("techIsPrStackVia"
+"techIsPrStackVia(
+d_techID 
+tx_viaLayer1 
+tx_viaLayer2
+) 
+=> t / nil"
+"Indicates whether the specified via layer pair is defined as stackable in the specified technology database. ASCII technology file location: foundry constraint group.")
+("techSetPrMastersliceLayers"
+"techSetPrMastersliceLayers(
+d_techID 
+l_msLayers
+) 
+=> t / nil"
+"Verifies that the specified layers in the specified technology database are valid masterslice layers. A masterslice layer is any layer that meets both of the following conditions:
+
+1. The layer is explicitly assigned one of the following functions: nwell, pwell, ndiff, pdiff, or poly. ASCII technology file location: in the functions subsection of the layerRules section.
+
+2. If the technology database contains a LEFDefaultRouteSpec constraint group, the layer is not listed as a valid layer in the validLayers section of that constraint group.")
+("techSetPrMastersliceLayer"
+"techSetPrMastersliceLayer(
+d_techID 
+tx_msLayer
+) 
+=> t / nil"
+"Verifies that the specified layer in the specified technology database is a valid masterslice layer. A masterslice layer is any layer that meets both of the following conditions:
+
+1. The layer is explicitly assigned one of the following functions: nwell, pwell, ndiff, pdiff, or poly. ASCII technology file location: in the functions subsection of the layerRules section.
+
+2. If the technology database contains a LEFDefaultRouteSpec constraint group, the layer is not listed in the validLayers section of that constraint group.")
+("techGetPrMastersliceLayers"
+"techGetPrMastersliceLayers(
+d_techID
+) 
+=> l_msLayers / nil"
+"Returns a list of the layers in the specified technology database that are valid masterslice layers. A masterslice layer is any layer that meets both of the following conditions:
+
+1. The layer is explicitly assigned one of the following functions: nwell, pwell, ndiff, pdiff, or poly. ASCII technology file location: in the functions subsection of the layerRules section.
+
+2. If the technology database contains a LEFDefaultRouteSpec constraint group, the layer is not listed in the validLayers section of that constraint group.")
+("techIsPrMastersliceLayer"
+"techIsPrMastersliceLayer(
+d_techID 
+tx_msLayer
+) 
+=> t / nil"
+"Verifies whether the specified layer in the specified technology database is a valid masterslice layer. A masterslice layer is any layer that meets both of the following conditions:
+
+1. The layer is explicitly assigned one of the following functions: nwell, pwell, ndiff, pdiff, or poly. ASCII technology file location: in the functions subsection of the layerRules section.
+
+2. If the technology database contains a LEFDefaultRouteSpec constraint group, the layer is not listed in the validLayers section of that constraint group.")
+("techSetPrViaRule"
+"techSetPrViaRule(
+d_techID 
+t_viaSpecID 
+l_viaDefNames
+tx_layer1 
+t_direction1 
+l_params1 
+tx_layer2 
+t_direction2 
+l_params2
+) 
+=> t / nil"
+"Updates the specified via specification with the specified via definitions in the technology database. ASCII technology file location: viaSpecs section. If the viaSpecs section does not exist, this function creates it.")
+("techGetPrViaRules"
+"techGetPrViaRules(
+d_techID
+) 
+=> l_viaRules / nil"
+"Returns a list of the via specifications defined in the technology database. ASCII technology file location: viaSpecs section.")
+("techGetPrViaParams"
+"techGetPrViaParams(
+d_techID 
+t_viaSpecID
+) 
+=> l_viaParams / nil"
+"Returns the parameters assigned to the specified via specification in the technology database. ASCII technology file location: viaSpecs section.")
+("techSetPrGenViaRule"
+"techSetPrGenViaRule(
+d_techID 
+t_viaSpecName 
+l_genViaRule
+) 
+=> t / nil"
+"Updates the specified via specification and any related standard via definitions in the specified technology database.")
+("techGetPrGenViaRules"
+"techGetPrGenViaRules(
+d_techID
+) 
+=> l_genViaRules / nil"
+"Returns a list of all via specifications containing standard via definitions in the specified technology database.")
+("techGetPrGenViaParams"
+"techGetPrGenViaParams(
+d_techID 
+t_viaSpecName
+) 
+=> l_genViaParams / nil"
+"Returns the parameters of all via specifications containing standard via definitions in the specified technology database. ASCII technology file location: viaSpecs section. Standard via definitions are defined in the standardViaDefs subsection of the viaDefs section.")
+("techSetPrNonDefaultRule"
+"techSetPrNonDefaultRule(
+d_techID 
+t_constraintGroupName
+l_layerConstsProps
+l_viaDefNames
+[ l_vias ]
+) 
+=> t / nil"
+"Creates or updates the named constraint group with the specified place and route constraints specified technology database. ASCII technology file location: techLayerProperties section.")
+("techGetPrNonDefaultRules"
+"techGetPrNonDefaultRules(
+d_techID
+) 
+=> l_nonDefaultRules / nil"
+"Returns a list of the place and route constraint groups in the specified technology database.")
+("techGetPrNonDefaultParams"
+"techGetPrNonDefaultParams(
+d_techID 
+t_name
+) 
+=> l_nonDefaultParams / nil"
+"Returns nondefault rules parameters from the specified technology database.")
+("techSetPrRoutingPitch"
+"techSetPrRoutingPitch(
+d_techID 
+tx_layer 
+n_pitch
+) 
+=> t / nil"
+"Updates the routing pitch of the specified layer in the specified technology database.")
+("techGetPrRoutingPitch"
+"techGetPrRoutingPitch(
+d_techID 
+tx_layer
+) 
+=> n_pitch / nil"
+"Returns the routing pitch defined for the specified layer in the specified technology database.")
+("techSetPrRoutingOffset"
+"techSetPrRoutingOffset(
+d_techID 
+tx_layer
+n_offset
+) 
+=> t / nil"
+"Updates the routing offset of the specified layer in the specified technology database.")
+("techGetPrRoutingOffset"
+"techGetPrRoutingOffset(
+d_techID 
+tx_layer
+) 
+=> n_offset / nil"
+"Returns the routing offset defined for the specified layer in the specified technology database.")
+("techIsDBUPerUUSet"
+"techIsDBUPerUUSet(
+d_techID 
+t_cvType 
+)
+=> t / nil"
+"Checks whether the number of database units per user unit for the specified cellview type in the specified technology database is set.")
+("techSetDBUPerUU"
+"techSetDBUPerUU(
+d_techID 
+t_cvType 
+n_dbuPerUU
+)
+=> t / nil"
+"Sets the number of database units per each user unit for the specified cellview type in the specified technology database. Caution: Changing the number of database units per user unit with this function does not modify values previously stored in the database, which can result in misrepresented data. If you scale a full design or a cellview, you must use the XScale command in combination with modifying the technology database. For information about XScale, see Virtuoso Studio Design Environment User Guide.")
+("techGetDBUPerUU"
+"techGetDBUPerUU(
+d_techID 
+t_cvType
+)
+=> f_dbuperuu / nil"
+"Returns the number of database units per user unit for the specified cellview type from the specified technology database.")
+("techIsUserUnitSet"
+"techIsUserUnitSet(
+d_techID 
+t_cvType 
+)
+=> t / nil"
+"Checks whether the user unit is set for the specified cellview type in the specified technology database.")
+("techSetUserUnit"
+"techSetUserUnit(
+d_techID 
+t_cvType 
+t_userUnit
+)
+=> t / nil"
+"Sets the user unit for the specified cellview type in the specified technology database.")
+("techGetUserUnit"
+"techGetUserUnit(
+d_techID 
+t_cvType
+)
+=> t_userUnit / nil"
+"Returns the user unit that is set for the specified cellview type in the specified technology database.")
+("techCreateScalarSiteDef"
+"techCreateScalarSiteDef(
+d_techID
+t_siteDefName
+t_siteDefType
+n_width
+n_height
+[ g_symmetricInX = t | nil ]
+[ g_symmetricInY = t | nil ] 
+[ g_symmetricInR90 = t | nil ]
+)
+=> d_siteDefID / nil"
+"Creates in the specified technology database a definition of a site in which you can place cells in a row.")
+("techCreateArraySiteDef"
+"techCreateArraySiteDef(
+d_techID
+t_siteDefName 
+t_siteDefType 
+l_sitePattern 
+[ g_symmetricInX = t | nil ]
+[ g_symmetricInY = t | nil ] 
+[ g_symmetricInR90 = t | nil ]
+)
+=> d_arraySiteDefID / nil"
+"Creates an array of scalar site definitions in the specified technology database.")
+("techFindSiteDefByName"
+"techFindSiteDefByName(
+d_techID 
+t_siteDefName
+)
+=> d_siteDefID / nil"
+"Returns the database identifier of the named site definition from the specified technology database.")
+("techGetCellViewSiteDefs"
+"techGetCellViewSiteDefs(
+d_cellviewID
+)
+=> l_siteDefIDs / nil"
+"Returns a list of database identifiers of the site definitions used in the rows of the given cellview in the specified technology database.")
+("techDeleteSiteDef"
+"techDeleteSiteDef(
+d_siteDefID
+)
+=> t / nil"
+"Deletes the specified site definition from the specified technology database.")
+("cdsFixedViaDefs"
+"cdsFixedViaDefs(
+l_list
+) 
+=> t / nil"
+"Specifies the technology class to define the cds fixed viaDef.")
+("techCreateGenViaDef"
+"techCreateGenViaDef(
+d_techID 
+t_viaDefName
+tx_layer1 tx_layer2
+tx_cutLayer [l_extraLayers)(l_parameters)
+)
+=> d_viaDefID / nil"
+"Creates a generated via definition in the specified technology database. ASCII technology file location: cdsGenViaDefs subsection in the viaDefs section.")
+("techCreateStdViaDef"
+"techCreateStdViaDef(
+d_techID 
+t_viaDefName
+t_layer1Name
+t_layer2Name
+l_cutLayerInfo
+l_cutArrayInfo
+ln_layer1Enc
+ln_layer2Enc
+ln_layer1Offset
+ln_layer2Offset
+ln_originOffset
+[ t_imp1 ln_imp1Enc
+[ t_imp2 ln_imp2Enc ] ]
+)
+=> d_viaDefID / nil"
+"Creates a standard via definition in the specified technology database. This function will not create a standard via definition if the default parameters result in inverted shapes.")
+("techCreateCustomViaDef"
+"techCreateCustomViaDef(
+d_techID 
+t_viaDefName
+d_cellviewID
+t_layer1Name
+t_layer2Name
+)
+=> d_viaDefID / nil"
+"Creates a custom via definition in the specified technology database and associates it with the specified cellview.")
+("techCreateCustomViaDefByName"
+"techCreateCustomViaDefByName(
+d_techID 
+t_viaDefName
+t_libName
+t_cellName
+t_viewName
+t_layer1Name
+t_layer2Name
+)
+=> d_viaDefID / nil"
+"Creates a custom via definition in the specified technology database and associates it with the master cellview identified by the specified library, cell, and view names.")
+("techSetViaDefResistancePerCut"
+"techSetViaDefResistancePerCut(
+d_viaDefID 
+f_resistancePerCut
+)
+)=> t / nil"
+"Sets the resistance per cut for the specified via definition in the current technology database.")
+("techFindViaDefByName"
+"techFindViaDefByName(
+d_techID 
+t_viaDefName
+)
+=> d_viaDefID / nil"
+"Returns the database identifier of the named via definition in the specified technology database.")
+("techDeleteViaDef"
+"techDeleteViaDef(
+d_viaDefID
+)
+=> t / nil"
+"Deletes the specified via definition from the current technology database.")
+("techCreateGenViaVariant"
+"techCreateGenViaVariant(
+d_techID 
+t_viaVariantName
+t_viaDefName
+(l_parameters)
+)
+=> d_viaVariantID / nil"
+"Creates a generated via variant matching the specified generated via definition in the specified technology database. ASCII technology file location: cdsGenViaVariants subsection in the viaDefs section.")
+("techCreateStdViaVariant"
+"techCreateStdViaVariant(
+(d_techfileId t_viaVariantName t_viaDefName)
+(t_cutLayerName f_cutLayerWidth f_cutLayerHeight)
+(n_cutRows n_cutCol (f_cutSpaceX f_cutSpaceY))
+(f_layer1EncX f_layer1EncY)
+(f_layer2EncX f_layer2EncY)
+(f_layer1OffsetX f_layer1OffsetY)
+(f_layer2OffsetX f_layer2OffsetY)
+(f_origOffsetX f_origOffsetY)
+(f_impant1EncX f_implant1EncY)
+(f_impant2EncX f_implant2EncY)
+(cut_pattern) 
+)  
+=> d_viaVariantID / nil"
+"Creates a standard via variant in the current technology database. This function will not create a standard via variant by using the parameters that create inverted layer and implant enclosure shapes.")
+("techCreateCustomViaVariant"
+"techCreateCustomViaVariant(
+d_techfileID
+t_viaVariantName
+t_viaDefName
+l_viaParams
+)
+=> d_viaVariantID / nil"
+"Creates the custom via variant in the current technology database.")
+("techFindViaVariantByName"
+"techFindViaVariantByName(
+d_techfileID
+t_viaVariantName
+)
+=> d_viaVariantID / nil"
+"Finds the viaVariantId with the name t_viaVariantName.")
+("techCreateViaSpec"
+"techCreateViaSpec(
+d_techID 
+t_layer1
+t_layer2
+lt_defaultViaDefIDs
+)
+=> d_viaSpecID / nil"
+"Creates a via specification with a default set of via definitions, as specified, in the specified technology database.")
+("techSetViaSpecTableEntry"
+"techSetViaSpecTableEntry(
+d_viaSpecID 
+n_layer1MinWidth
+n_layer1MaxWidth
+n_layer2MinWidth
+n_layer2MaxWidth
+l_viaDefIDs
+)
+=> t / nil"
+"Sets the entry value of the via specification 2-D table with the specified width range values in the current technology database. If the width values specified are not already in the table, inserts them into the table in ascending order. The listed via definitions must exist.")
+("techGetViaSpecTableEntries"
+"techGetViaSpecTableEntries(
+d_viaSpecID 
+)
+=> l_table / nil"
+"Returns the contents of the via specification, which is stored as a table, identified by the viaSpec database identifier from the current technology database.")
+("techGetViaSpecTableEntriesByName"
+"techGetViaSpecTableEntriesByName(
+d_viaSpecID 
+)
+=> l_table / nil"
+"Generates all of the table entries in the via specification table for the specified via specification in the current technology database.")
+("techGetViaSpecTableEntry"
+"techGetViaSpecTableEntry(
+d_viaSpecID 
+n_layer1Width
+n_layer2Width
+)
+=> l_viaDefIDs / nil"
+"Returns a list of the viaDefIDs in the table entry with the specified layer widths in the requested via specification in the specified technology database.")
+("techFindViaSpec"
+"techFindViaSpec(
+d_techID 
+tx_layer1Num
+tx_layer2Num
+)
+=> d_viaSpecID / nil"
+"Returns the database identifier of any via specification containing the layers with the specified layer numbers in the specified technology database.")
+("techDeleteViaSpec"
+"techDeleteViaSpec(
+d_viaSpecID
+)
+=> t / nil"
+"Deletes the specified via specification from the current technology database.")
+("techGetDeviceCellView"
+"techGetDeviceCellView(
+d_techID
+t_deviceName 
+t_viewName
+)
+=> d_cellViewID / nil "
+"Loads the supermaster cellview of the specified device into virtual memory and returns the associated database identifier. The cellview opens in read mode. You can close the cellview with dbClose, as defined in Virtuoso Studio Design Environment SKILL Reference. The cellview must be defined as a device in the specified technology database. ASCII technology file location: devices section.")
+("techGetDeviceCParam"
+"techGetDeviceCParam(
+d_techID
+t_deviceName 
+t_viewName
+)
+=> l_paramValue / nil"
+"Returns a list of the names and values of the class parameters of the specified device from the specified technology database. ASCII technology file location: devices section")
+("techGetDeviceFParam"
+"techGetDeviceFParam(
+d_techID
+t_deviceName 
+t_viewName
+)
+=> l_paramValue / nil"
+"Returns a list of the names and values of the formal parameters defined for the specified device from the specified technology database. ASCII technology file location: devices section.")
+("techGetDeviceInClass"
+"techGetDeviceInClass(
+d_techID
+t_deviceType 
+t_viewName
+)
+=> l_devices / nil"
+"Returns a list of the names of all devices of the specified device type and view name from the specified technology database. ASCII technology file location: devices section.")
+("techGetDeviceClassViewList"
+"techGetDeviceClassViewList(
+d_techID 
+) 
+=> l_deviceClassViews / nil"
+"Returns a list of the view names used by devices from the specified technology database. ASCII technology file location: devices section.")
+("techRegisterUserDevice"
+"techRegisterUserDevice(
+t_techLibName
+t_className
+t_viewName
+t_devName
+) 
+=> t / nil"
+"Appends device name to the list of devices returned by call of techGetDeviceInClass.")
+("techUnregisterUserDevice"
+"techUnregisterUserDevice(
+t_techLibName
+t_className
+t_viewName
+[t_devName]
+) 
+=> t"
+"Removes device name from the list of devices returned by techGetDeviceInClass. The device name is omitted then all the devices registered for given class/view/libname will be unregistered. Only devices added by techRegisterUserDevice gets affected.")
+("techGetDeviceTechFile"
+"techGetDeviceTechFile(
+d_deviceID
+)
+=> d_techID / nil"
+"Returns the database identifier for the technology database bound to the specified device.")
+("techIsDevice"
+"techIsDevice(
+d_instID 
+) 
+=> t / nil "
+"Indicates whether the supermaster of the specified instance is defined as a device in the in the current technology database. ASCII technology file location: devices section.")
+("techSetDeviceProp"
+"techSetDeviceProp(
+d_techID 
+t_deviceName
+t_viewName 
+l_property
+) 
+=> t / nil"
+"Sets or updates the value of the specified device property in the specified technology database. If the property does not exist, this function creates it. When you create a device or set a property on a device, the software adds the device name, view name, property name, and property value for each property on the device.")
+("techGetDeviceProp"
+"techGetDeviceProp(
+d_techID
+t_deviceName
+t_viewName 
+t_propName 
+) 
+=> g_value / nil"
+"Returns the value of the specified device property from the specified technology database.")
+("techGetDeviceClass"
+"techGetDeviceClass(
+d_techID
+t_deviceName
+t_viewName 
+) 
+=> l_types / t_type / nil"
+"Returns a list of the names of all device types defined with the specified view in the specified technology database. ASCII technology file location: devices section. If you specify a device name, this function returns the device type of that device.")
+("techGetInstDeviceClass"
+"techGetInstDeviceClass(
+d_instID
+) 
+=> t_deviceClassName / nil"
+"Returns the device class of the specified instance in the current technology database. ASCII technology file location: devices section.")
+("techSetDeviceClassProp"
+"techSetDeviceClassProp(
+d_techID 
+t_deviceType 
+t_viewName
+l_propertyValue
+) 
+=> t / nil "
+"Updates the value of the specified device type property in the specified technology database. ASCII technology file location: devices section. If the property does not exist, this function creates it. ")
+("techGetDeviceClassProp"
+"techGetDeviceClassProp(
+d_techID
+t_deviceType 
+t_viewName 
+t_propName 
+) 
+=> g_propValue / nil"
+"Returns the value of the specified device type property from the specified technology database.")
+("techDeleteDeviceClass"
+"techDeleteDeviceClass(
+d_techID
+t_viewName 
+t_className 
+) 
+=> t / nil"
+"Deletes all devices of the specified device class and view from the specified technology database.")
+("techSetMPPTemplate"
+"techSetMPPTemplate(
+		( 	d_techID
+			t_mppTemplateName
+			l_template
+		) ;end of template
+		) ;end of techSetMPPTemplate
+
+		; l_template arguments
+		(
+			l_masterPathArgs
+			[l_offsetSubpathArgs...]
+			[l_enclosureSubpathArgs...]
+			[l_subrectangleArgs...]
+		) ; end of template argument lists
+
+		; l_masterPathArgs
+		(
+			txl_layer
+			[n_width]
+			[g_choppable]
+			[t_endType]
+			[n_beginExt]
+			[n_endExt]
+			[t_justification]
+			[n_offset]
+			[l_rodConnectivityArgs for master path]
+		) ;end of masterPathArgs list
+
+		; l_offsetSubpathArgs
+		(
+			(
+				txl_layer
+				[n_width]
+				[g_choppable]
+				[n_sep]
+				[t_justification]
+				[n_beginOffset]
+				[n_endOffset]
+				[l_rodConnectivityArgs for offset subpath]
+			) ; end of first offset subpath list
+			...
+		) ; end of all offset subpath lists
+
+		; l_enclosureSubpathArgs
+		(
+			(
+				txl_layer
+				[n_enclosure]
+				[g_choppable]
+				[n_beginOffset]
+				[n_endOffset]
+				[l_rodConnectivityArgs for enclosure subpath]
+			) ; end of first enclosure subpath list
+			...
+		) ; end of all enclosure subpath lists
+
+		; l_subRectangleArgs
+		(
+			(
+				txl_layer
+				[n_width]
+				[n_length]
+				[g_choppable]
+				[n_sep]
+				[t_justification]
+				[n_space]
+				[n_beginOffset]
+				[n_endOffset]
+				[n_gap]
+				[l_rodConnectivityArgs for subrectangles]
+				[n_beginSegmentOffset]
+				[n_endSegmentOffset]
+
+			) ; end of first subrectangle list
+			...
+		) ; end of all subrectangle lists
+
+		; l_rodConnectivityArgs
+		(
+			[t_termIOType]
+			[g_pin]
+			[tl_pinAccessDir]
+			[g_pinLabel]
+			[n_pinLabelHeight]
+			[txl_pinLabelLayer]
+			[t_pinLabelJust]
+			[t_pinLabelFont]
+			[g_pinLabelDrafting]
+			[t_pinLabelOrient]
+			[t_pinLabelRefHandle]
+			[l_pinLabelOffsetPoint]
+		) ; end of ROD Connectivity Argument list"
+"Defines a single template in your technology library in virtual memory that specifies a relative object design (ROD) multipart path (MPP). A multipart path is a single ROD object consisting of one or more parts at level zero in the hierarchy on the same or on different layers. The purpose of an MPP template is to let you create MPPs in layout cellviews using predefined values from your technology library. You can define any number of MPP templates in your technology library; each template must be identified by a unique template name (t_mppTemplateName).")
+("techGetMPPTemplateNames"
+"techGetMPPTemplateNames(
+d_techID
+) 
+=> l_mppTemplateNames / nil"
+"Returns the names of all multipart path (MPP) templates defined in the current technology database. ")
+("techGetMPPTemplateByName"
+"techGetMPPTemplateByName(
+d_techID
+t_mppTemplateName
+) 
+=> l_template / nil"
+"Returns the definition of the specified multipart path (MPP) template in the specified technology database.")
+("techGetExtractDevices"
+"techGetExtractDevices(
+d_techID
+) 
+=> l_extractDevices / nil"
+"Returns a list of all extract devices defined in the specified technology database. ASCII technology file location: devices section.")
+("techSetExtractMOS"
+"techSetExtractMOS(
+d_techID
+l_deviceDefinition
+) 
+=> t / nil"
+"Appends the specified extractMOS specification to the specified technology database. ASCII technology file location: extractMOS subsection of the devices section. If an extractMOS device of the same name exists, this function replaces it with the new specification. If the extractMOS subsection does not exist, this function creates it.")
+("techGetExtractMOS"
+"techGetExtractMOS(
+d_techID
+tx_deviceName
+) 
+=> l_deviceDefinition / nil"
+"Returns the definition of the named extractMOS device from the specified technology database.")
+("techSetExtractRES"
+"techSetExtractRES(
+d_techID
+l_deviceDefinition
+) 
+=> t / nil"
+"Appends the specified extractRESspecification to the specified technology database. ASCII technology file location: extractRES subsection of the devices section. If an extractRES device of the same name exists, this function replaces it with the new specification. If the extractRES subsection does not exist, this function creates it.")
+("techGetExtractRES"
+"techGetExtractRES(
+d_techID
+tx_deviceName
+) 
+=> l_deviceDefinition / nil"
+"Returns the definition of the named extractRES device from the specified technology database.")
+("techSetExtractCAP"
+"techSetExtractCAP(
+d_techID
+l_deviceDefinition
+) 
+=> t / nil"
+"Appends the specified extractCAP specification to the specified technology database. ASCII technology file location: extractCAP subsection of the devices section. If an extractCAP device of the same name exists, this function replaces it with the new specification. If the extractCAP subsection does not exist, this function creates it.")
+("techGetExtractCAP"
+"techGetExtractCAP(
+d_techID
+tx_deviceName
+) 
+=> l_deviceDefinition / nil"
+"Returns the definition of the named extractCAP device from the technology database.")
+("techSetExtractDIODE"
+"techSetExtractDIODE(
+d_techID
+l_deviceDefinition
+) 
+=> t / nil"
+"Appends the specified extractDIODE specification to the specified technology database. ASCII technology file location: extractDIODE subsection of the devices section. If an extractDIODE device of the same name exists, this function replaces it with the new specification. If the extractDIODE subsection does not exist, this function creates it.")
+("techGetExtractDIODE"
+"techGetExtractDIODE(
+d_techID
+tx_deviceName
+) 
+=> l_deviceDefinition / nil"
+"Returns the definition of the named extractDIODE device from the specified technology database.")
+("techCreateWaveguideDef"
+"techCreateWaveguideDef(
+d_techFileId
+t_name (tx_layer tx_purpose)
+l_derivedShapeSpecs
+[?minWidth n_minWidth]
+[?minBendRadius n_minBendRadius]
+[?modeProperties l_modeProperties]
+[?maxTaperAngle f_maxTaperAngle]
+) 
+=> d_waveguideDefId / nil"
+"(Virtuoso Photonics Option) Creates a waveguideDef object in the specified technology file and returns the database ID of the object.")
+("techDeleteWaveguideDef"
+"techDeleteWaveguideDef(
+d_waveguideDefId
+) 
+=> t / nil"
+"(Virtuoso Photonics Option) Deletes the specified waveguideDef object.")
+("techFindWaveguideDefByLP"
+"techFindWaveguideDefByLP(
+d_techFileId 
+tx_layer | (tx_layer tx_purpose)
+) 
+=> d_waveguideDefId / nil"
+"(Virtuoso Photonics Option) Returns the database ID of the waveguideDef object defined for the specified layer-purpose pair (LPP) in the specified technology database.")
+("techHasWaveguideDefMinBendRadius"
+"techHasWaveguideDefMinBendRadius(
+d_waveguideDefId 
+) 
+=> t / nil"
+"(Virtuoso Photonics Option) Checks if a minBendRadius value is defined for a waveguideDef object. ")
+("techSetWaveguideDefMinBendRadius"
+"techSetWaveguideDefMinBendRadius(
+d_waveguideDefId 
+n_minBendRadius
+) 
+=> t / nil"
+"(Virtuoso Photonics Option) Sets the minBendRadius value for a waveguideDef object. ")
+("techOrderLeLsw"
+"techOrderLeLsw(
+tx_techfileLibName 
+l_lswLayers
+) 
+=> t / nil"
+"Defines the relative priority for a dynamic set of layer-purpose pairs (LPPs) to be shown in the Palette assistant. The layers are pulled from the current leLswLayers section to the top of the display order according to their priority numbers. The smaller the number, the higher the priority and the higher the LPP is in the list.")
+("techSetLeLswLayers"
+"techSetLeLswLayers(
+d_techID 
+l_lswLayers
+) 
+=> t / nil"
+"Defines the layer display in the leLswLayers subsection of the leRules section in the specified technology database. If an leLswLayers subsection already exists, its contents are replaced with the specified data. If the layer display in the Palette assistant is currently controlled by leLswLayers, the list of layers is accordingly updated.")
+("techSetLeLswLayer"
+"techSetLeLswLayer(
+d_techID 
+l_layer
+) 
+=> t / nil"
+"Appends the specified layer-purpose pair at the end of the layer display definition in the leLswLayers subsection of the leRules section in the specified technology database. If the leRules section and the leLswLayers subsection do not exist, they are created with the specified data. If the layer display in the Palette assistant is currently controlled by leLswLayers, the list of layers is updated with the new layer-purpose pair.")
+("techGetLeLswLayers"
+"techGetLeLswLayers(
+d_techID
+) 
+=> l_lswLayers / nil"
+"Returns the leLswLayers layers from the technology database identified by techID, if found. If leLswLayers is not found in the technology database identified by techID, the function searches any open technology databases in the graph for leLswLayers and returns the first set that is found. The function does not open any technology databases that are explicitly closed.")
+("techIsLeLswLayer"
+"techIsLeLswLayer(
+d_techID 
+l_layer
+) 
+=> t / nil"
+"Indicates whether the specified layer-purpose pair is listed in the layer display definition in the leLswLayers subsection of the leRules section in the specified technology database.")
+("drDeleteDisplay"
+"drDeleteDisplay( 
+t_displayName 
+) 
+=> t / nil"
+"Deletes the specified display device. You can use the drLoadDrf SKILL function to load a file containing this function.")
+("drDeleteColor"
+"drDeleteColor( 
+tx_display
+t_colorName 
+) 
+=> t / nil"
+"Deletes the definition of the specified color for the specified display device from virtual memory. The program does not check to see if any other definitions use this display device.")
+("drDeleteLineStyle"
+"drDeleteLineStyle( 
+tx_display
+t_lineStyleName 
+) 
+=> t / nil"
+"Deletes the specified line style from virtual memory. The program does not check to see if any of the packet definitions use this line style.")
+("drDeletePacket"
+"drDeletePacket( 
+tx_display
+t_packetName 
+) 
+=> t / nil"
+"Deletes the definition of the specified packet for the specified display device from virtual memory. The program does not check to see if any layer definitions use this packet.")
+("drDeleteStipple"
+"drDeleteStipple( 
+tx_display
+t_stippleName 
+) 
+=> t / nil"
+"Deletes the definition of the specified stipple for the specified display device from virtual memory. The program does not check to see if any of the packet definitions use this stipple.")
+("drDumpDrf"
+"drDumpDrf(
+t_fileName 
+[ g_saveChange ]
+) 
+=> t / nil"
+"Dumps all of the display resource data from virtual memory or only the changes made in virtual memory into a file.")
+("drFindPacket"
+"drFindPacket(
+tx_display 
+t_packetName
+) 
+=> l_packetList / nil"
+"Reads virtual memory and returns a list of attributes of the specified packet for the specified display device.")
+("drGetActiveDisplayDrf"
+"drGetActiveDisplayDrf(
+)
+=> t_activeDrf / nil"
+"Displays the absolute path of the currently active display resource file display.drf.")
+("drGetColor"
+"drGetColor( 
+tx_display 
+tx_color 
+) 
+=> l_colorList / nil"
+"Reads virtual memory and returns the display device name, color name, and the red, green, blue, and blink values for the color.")
+("drGetDisplay"
+"drGetDisplay( 
+t_displayName 
+) 
+=> x_displayID / nil"
+"Reads virtual memory and returns the display device identifier for the specified display device name.")
+("drGetDisplayIdList"
+"drGetDisplayIdList(
+)
+=> l_displayIDList / nil"
+"Reads virtual memory and returns a complete list of display device identifiers.")
+("drGetDisplayName"
+"drGetDisplayName( 
+x_displayID
+) 
+=> t_displayName / nil"
+"Reads virtual memory and returns the display device name of the specified display device identifier.")
+("drGetDisplayNameList"
+"drGetDisplayNameList(
+)
+=> l_displayNameList / nil"
+"Reads virtual memory and returns a complete list of display device names.")
+("drGetLineStyle"
+"drGetLineStyle( 
+tx_display 
+tx_lineStyle 
+) 
+=> l_lineStyleList / nil"
+"Reads virtual memory and returns the display device name and the line style name, thickness, and pattern.")
+("drGetLineStyleIndexByName"
+"drGetLineStyleIndexByName(
+tx_display
+t_LineStyleName
+) 
+=> x_LineStyleIndex / nil"
+"Reads virtual memory and returns the line style index number for the specified line style for the specified display device.")
+("drGetPacket"
+"drGetPacket(
+tx_display
+t_packetName
+) 
+=> l_packetDefinition / nil"
+"Reads virtual memory and returns the definition of the specified display packet for the specified display device. ")
+("drGetPacketList"
+"drGetPacketList(
+tx_display
+) 
+=> l_packetName / nil"
+"Reads virtual memory and returns a list of the names of all of the display packets defined for the specified display device. ")
+("drGetPacketAlias"
+"drGetPacketAlias(
+tx_displayName 
+t_srcPacketName
+) 
+=> l_packetAliasList / nil"
+"Reads virtual memory and returns a list of packets that are aliased to the specified packet. ")
+("drGetPacketFillStyle"
+"drGetPacketFillStyle(
+tx_display 
+t_packetName
+) 
+=> x_fillStyle / nil"
+"Reads virtual memory and returns the fill style number of the specified packet for the specified display device.")
+("drGetStipple"
+"drGetStipple( 
+tx_display 
+tx_stipple 
+) 
+=> l_stippleList / nil"
+"Reads virtual memory and returns the display device name and the stipple name, width, height, and pattern.")
+("drGetStippleIndexByName"
+"drGetStippleIndexByName(
+tx_display
+t_stippleName
+) 
+=> x_stippleIndex / nil"
+"Reads virtual memory and returns the stipple index number.")
+("drLoadDrf"
+"drLoadDrf(
+t_filename 
+[ g_askToSave ]
+) 
+=> t / nil"
+"Loads the display resource file (usually named display.drf) from any location.")
+("drSetPacket"
+"drSetPacket( 
+tx_display 
+t_packetName
+t_stippleName 
+t_lineStyleName
+t_fillColorName 
+t_outlineColorName
+[ t_fillStyle ]
+) 
+=> t / nil"
+"Updates the value of the specified packet for the specified display device in virtual memory.")
+("techGetIntegrationColorModel"
+"techGetIntegrationColorModel(
+d_techFileId
+) 
+=> t_type / nil"
+"(Virtuoso Advanced Node for Layout Standard) Returns the value of the integration color model constraint for the current technology file. Possible return values are any or locked.")
+("techGetLayerNumColorMasks"
+"techGetLayerNumColorMasks( 
+d_techfile_Id
+xt_layer 
+) 
+=> x_numColorMasks / nil"
+"(Virtuoso Advanced Node for Layout Standard) Returns the number of allowed color masks on the layer, if coloring is supported on it.")
+("techGetStdViaDefCutColoring"
+"techGetStdViaDefCutColoring(
+d_viaDefID
+)
+=> t_cutColoring / nil"
+"(Virtuoso Advanced Node for Layout Standard) Returns the cut coloring pattern to use for the cut patterns created for this type of stdVia.")
+("techGetTechCutColoring"
+"techGetTechCutColoring(
+d_techID
+)
+=> t_defaultCutColoring / nil"
+"(Virtuoso Advanced Node for Layout Standard)(Virtuoso Advanced Node for Layout Standard) Returns the default cut coloring pattern to use for the cut patterns created for all of the StdVias defined in the technology file. The default checkerboard pattern is returned if the cutPattern coloring is not explicitly specified.")
+("techIsStdViaDefCutColoringSet"
+"techIsStdViaDefCutColoringSet(
+d_viaDefId
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Standard) Returns a boolean value indicating whether the cut coloring pattern was explicitly set on the specified stdViaDef.")
+("techSetIntegrationColorModel"
+"techSetIntegrationColorModel(
+d_techFileId
+t_type
+) 
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Standard) Sets the value of the integration color model constraint for the current technology file. Valid values for the integration color model are any or locked.")
+("techSetLayerNumColorMasks"
+"techSetLayerNumColorMasks( 
+d_techfile_Id
+xt_layer 
+x_numColorMasks
+) 
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Standard) Assigns the number of allowed color masks on the specified layer. 0, 2, and 3 are valid numbers that can be set. This function does not allow you to set the attribute on a DFII system-reserved layer.")
+("techSetStdViaDefCutColoring"
+"techSetStdViaDefCutColoring(
+d_viaDefID
+t_cutColoring
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Standard) Sets the cut coloring pattern to use for the cut patterns created for the specified type of stdVia.")
+("techSetTechCutColoring"
+"techSetTechCutColoring(
+d_techID
+t_defaultCutColoring
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Standard) Sets the default cut coloring pattern to use for the cut patterns created for all stdVias defined in the technology file.")
+("techManagerOpenTechToolBox"
+"techManagerOpenTechToolBox(
+)
+=> t / nil"
+"Opens the Technology Tool Box form. It is equivalent to the CIW Tools - Technology File Manager command.")
+("techManagerOpenDisplayToolBox"
+"techManagerOpenDisplayToolBox(
+)
+=> t / nil"
+"Opens the Display Resources Tool Box. It is equivalent to the CIW Tools - Display Resource Manager command.")
+("tcDisplayNewTechForm"
+"tcDisplayNewTechForm(
+)
+=> t / nil"
+"Opens the New Technology Library form. It is equivalent to clicking the New command in the Technology Tool Box form.")
+("tcNewLibDisplayRefTechForm"
+"tcNewLibDisplayRefTechForm(
+t_newLibName
+)
+=> t / nil"
+"Opens the Reference Existing Technology Libraries form that displays the reference technology file library choices for the newly created technology library with the specified name.")
+("tcDisplayTechGraphForm"
+"tcDisplayTechGraphForm(
+[ d_techID ]
+)
+=> t / nil"
+"Opens the Technology Database Graph form. It is equivalent to clicking the Graph button in the Technology Tool Box form.")
+("tcDisplayAttachTechForm"
+"tcDisplayAttachTechForm(
+)
+=> t / nil"
+"Opens the Attach Technology Library to Design Library form. It is equivalent to clicking the Attach button in the Technology Tool Box form.")
+("tcDisplayLoadTechForm"
+"tcDisplayLoadTechForm(
+)
+=> t / nil"
+"Opens the Load Technology File form. It is equivalent to clicking the Load button in the Technology Tool Box form. It is also equivalent to the tcDisplayCompTechForm SKILL function.")
+("tcDisplayCompTechForm"
+"tcDisplayCompTechForm(
+)
+=> t / nil"
+"Opens the Load Technology File form. It is equivalent to clicking the Load button in the Technology Tool Box form. It is also equivalent to the tcDisplayLoadTechForm SKILL function.")
+("tcDisplayDumpTechForm"
+"tcDisplayDumpTechForm(
+)
+=> t / nil"
+"Opens the Dump Technology File form. It is equivalent to clicking the Dump button in the Technology Tool Box form.")
+("tcDisplayDiscardTechForm"
+"tcDisplayDiscardTechForm(
+)
+=> t / nil"
+"Opens the Discard Edits To Technology File form. It is equivalent to clicking the Discard button in the Technology Tool Box form.")
+("tcDisplaySaveTechForm"
+"tcDisplaySaveTechForm(
+)
+=> t / nil"
+"Opens the Save Technology File form. It is equivalent to clicking the Save button in the Technology Tool Box form.")
+("tcQcInstallDevices"
+"tcQcInstallDevices(
+)
+=> t / nil"
+"Opens the Install Device form. This is equivalent to clicking the Install Device button in the Technology Tool Box form.")
+("dreInvokeDre"
+"dreInvokeDre(
+)
+=> t / nil"
+"Opens the Display Resource Editor form. It is equivalent to clicking the Edit button in the Display Resources Tool Box.")
+("techCreateSnapPatternDef"
+"techCreateSnapPatternDef(
+d_techFileId
+tx_name
+(tx_layer tx_purpose)
+t_stepDirection
+n_step
+[ l_snappingLayers ]
+[ t_type ]
+[ n_offset ]
+[ n_trackWidth ]
+[ l_trackGroups ]
+)
+=> d_snapPatternDefId / nil"
+"(Virtuoso Advanced Node for Layout Standard) Creates a snapPatternDef by using the specified parameters.")
+("techDeleteSnapPatternDef"
+"techDeleteSnapPatternDef(
+d_techSnapPatternDefId
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Standard) Deletes the specified snapPatternDef object.")
+("techFindSnapPatternDefByLP"
+"techFindSnapPatternDefByLP(
+d_techID
+(tx_layer tx_purpose)
+)
+=> snapPatternDefId / nil"
+"(Virtuoso Advanced Node for Layout Standard) Finds a snapPatternDef in the current technology database by layer or purpose.")
+("techFindSnapPatternDefByName"
+"techFindSnapPatternDefByName(
+d_techID
+t_name
+)
+=> snapPatternDefId / nil"
+"(Virtuoso Advanced Node for Layout Standard) Finds a snapPatternDef in the current technology database by name.")
+("techCreateWidthSpacingPattern"
+"techCreateWidthSpacingPattern(
+d_techFileId
+t_name
+l_patternSpecs
+[ g_offset ]
+[ b_repeatOffset ]
+[ b_shiftColor ]
+[ t_allowedRepeatMode ]
+[ t_defaultRepeatMode ]
+)
+=> d_WidthSpacingPatternId / nil"
+"(Virtuoso Advanced Node for Layout Only) Creates a width spacing pattern in the specified technology file.")
+("techCreateWidthSpacingPatternWithColor"
+"techCreateWidthSpacingPatternWithColor(
+d_techFileId
+t_name
+l_patternSpecs
+t_startingColor
+[ g_offset ]
+[ b_repeatOffset ]
+[ t_allowedRepeatMode ]
+[ t_defaultRepeatMode ]
+)
+=> d_WidthSpacingPatternId / nil"
+"(Virtuoso Advanced Node for Layout Only) Creates a width spacing pattern in the specified technology file. This function requires you to specify the color for only the first track, referred to as the starting color. All other tracks are colored automatically by shifting colors.")
+("techDeleteWidthSpacingPattern"
+"techDeleteWidthSpacingPattern(
+d_techWSPId
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Only) Deletes the specified width spacing pattern.")
+("techFindWidthSpacingPattern"
+"techFindWidthSpacingPattern(
+d_techFileId
+t_name
+)
+=> d_WidthSpacingPatternId / nil"
+"(Virtuoso Advanced Node for Layout Only) Searches for the width spacing pattern with the specified name in the specified technology file or a referenced technology database in an ITDB graph of the specified technology database.")
+("techGetWidthSpacingPatternAllowedRepeatMode"
+"techGetWidthSpacingPatternAllowedRepeatMode(
+d_wspId
+) 
+=> t_allowedRepeatMode / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns the allowed repeat mode set for a width spacing pattern.")
+("techGetWidthSpacingPatternDefaultRepeatMode"
+"techGetWidthSpacingPatternDefaultRepeatMode(
+d_wspId
+) 
+=> t_defaultRepeatMode / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns the default repeat mode set for a width spacing pattern.")
+("techGetWidthSpacingPatterns"
+"techGetWidthSpacingPatterns(
+d_techFileId
+)
+=> d_widthSpacingPatternIds / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns a list of all the width spacing pattern IDs in the specified technology file or in ITDB graph of the specified technology database.")
+("techSetWidthSpacingPatternRepeatMode"
+"techSetWidthSpacingPatternRepeatMode(
+d_wspId 
+t_allowedRepeatMode 
+t_defaultRepeatMode
+) 
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Only) Sets the allowed and default repeat modes for a width spacing pattern.")
+("techCreateWidthSpacingPatternGroup"
+"techCreateWidthSpacingPatternGroup(
+d_techFileId
+t_name
+l_patternNames
+)
+=> d_WidthSpacingPatternGroupId / nil"
+"(Virtuoso Advanced Node for Layout Only) Creates a group of width spacing patterns in the specified technology file.")
+("techDeleteWidthSpacingPatternGroup"
+"techDeleteWidthSpacingPatternGroup(
+d_techWSPGroupId
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Only) Deletes the specified width spacing pattern group.")
+("techFindWidthSpacingPatternGroup"
+"techFindWidthSpacingPatternGroup(
+d_techFileId
+t_name
+)
+=> d_widthSpacingPatternGroupId / nil"
+"(Virtuoso Advanced Node for Layout Only) Searches for the width spacing pattern group with the specified name in the specified technology file or a referenced technology database in an ITDB graph of the specified technology database.")
+("techGetWidthSpacingPatternGroups"
+"techGetWidthSpacingPatternGroups(
+d_techFileId
+)
+=> l_widthSpacingPatternGroupIds / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns a list of all the width spacing pattern group IDs in the specified technology file.")
+("techCreateWidthSpacingSnapPatternDef"
+"techCreateWidthSpacingSnapPatternDef(
+d_techFileId 
+t_name
+l_lp
+t_direction
+g_period
+t_defaultPatternName
+l_snappingLayers
+[ g_offset ]
+[ l_patternNames ]
+[ l_patternGroupNames ]
+[ g_gridType ]
+)
+=> d_widthSpacingSnapPatternDefId / nil"
+"(Virtuoso Advanced Node for Layout Only) Creates a widthSpacingSnapPatternDef object in the specified technology file.")
+("techDeleteWidthSpacingSnapPatternDef"
+"techDeleteWidthSpacingSnapPatternDef(
+d_techWidthSpacingSnapPatternDefId
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Only) Deletes the specified widthSpacingSnapPatternDef object.")
+("techGetWidthSpacingSnapPatternDefsByLP"
+"techGetWidthSpacingSnapPatternDefsByLP(
+d_techFileId
+l_LP
+)
+=> l_widthSpacingSnapPatternDefIDList / nil"
+"(Virtuoso Advanced Node for Layout Only) Retrieves from the specified technology file a list of widthSpacingSnapPatternDefs defined in a layer-purpose pair.")
+("techFindWidthSpacingSnapPatternDefByName"
+"techFindWidthSpacingSnapPatternDefByName(
+d_techFileId
+t_name
+)
+=> d_widthSpacingSnapPatternDefId / nil"
+"(Virtuoso Advanced Node for Layout Only) Searches for the widthSpacingSnapPatternDef object with the specified name in the specified technology file or a referenced technology database in an ITDB graph of the specified technology database.")
+("techCreateRelatedSnapPatterns"
+"techCreateRelatedSnapPatterns(
+d_techFileId
+t_name
+l_relatedSnapPatterns
+[l_extraLPP]   
+[f_regionSnapPitchHorizontal]    
+[f_regionSnapPitchVertical]
+)
+=> d_techRelatedSnapPatternsId / nil"
+"(Virtuoso Advanced Node for Layout Only) Creates a group of related snap patterns in the specified technology file.")
+("techDeleteRelatedSnapPatterns"
+"techDeleteRelatedSnapPatterns(
+d_techRSPId
+)
+=> t / nil"
+"(Virtuoso Advanced Node for Layout Only) Deletes the specified set of related snap patterns.")
+("techFindRelatedSnapPatterns"
+"techFindRelatedSnapPatterns(
+d_techFileId
+t_name
+)
+=> d_RelatedSnapPatternsId / nil"
+"(Virtuoso Advanced Node for Layout Only) Searches for the related snap patterns group with the specified name in the specified technology file or a referenced technology database in an ITDB graph of the specified technology database.")
+("techGetRelatedSnapPatterns"
+"techGetRelatedSnapPatterns(
+d_techFileId
+)
+=> l_relatedSnapPatternIds / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns a list of all related snap pattern IDs in the specified technology file.")
+("techGetTrimLayer"
+"techGetTrimLayer(
+d_techFileID 
+tx_layer 
+[ t_color t_colorState ] 
+) 
+=> l_trimLayer / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns the trim layer that trims tx_layer (metal or poly layer) with the specified color and color state combination. If only d_techFileID and tx_layer are specified, it returns a list of trim layers that trim tx_layer for all valid color and color state combinations.")
+("techGetTrimLayers"
+"techGetTrimLayers(
+d_techFileID 
+tx_layer 
+[ t_color t_colorState ] 
+) 
+=> l_trimLayers / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns a list of the trim layers that trim tx_layer (metal or poly layer) with the specified color and color state combination. If only d_techFileID and tx_layer are specified, it returns a list of the trim layers that trim tx_layer for all valid color and color state combinations. If all arguments are specified, it returns a list of the trim layers that trim tx_layer for the specified color and color state combinations.")
+("techGetTrimmedLayers"
+"techGetTrimmedLayers(
+d_techFileID 
+tx_layer 
+[ t_color t_colorState ] 
+) 
+=> l_trimmedLayers / nil"
+"(Virtuoso Advanced Node for Layout Only) Returns a list of metal or poly layers trimmed by tx_layer with the specified color and color state combination. If only d_techFileID and tx_layer are specified, it returns a list of metal or poly layers trimmed by tx_layer for all valid color and color state combinations.")
+("techCreateFingerDef"
+"techCreateFingerDef(
+d_techFileID 
+t_name
+l_typeSpec
+)
+=> d_fdID / nil"
+"(Virtuoso MultiTech Framework) Creates a finger definition in the specified technology file.")
+("techCreateWireProfile"
+"techCreateWireProfile(
+d_techFileID 
+t_name
+t_direction
+l_wpPoints
+[ g_fromVendor ]
+[ x_diameter ]
+[ t_material ]
+[ n_color ]
+[ g_visibility ] 
+)
+=> d_wireProfileID / nil"
+"(Virtuoso MultiTech Framework) Creates a wire profile object in the specified technology file.")
+("techCreateWireProfileGroup"
+"techCreateWireProfileGroup(
+d_techFileID 
+t_name
+l_wireProfileNames
+[?vendor t_vendor ]
+[?logo t_logoFile ]
+)
+=> d_wireProfileGroupID / nil"
+"(Virtuoso MultiTech Framework) Creates a wire profile group object in the specified technology file.")
+("techDeleteFingerDef"
+"techDeleteFingerDef(
+d_fdID 
+)
+=> t / nil"
+"(Virtuoso MultiTech Framework) Deletes a specified finger definition.")
+("techDeleteWireProfile"
+"techDeleteWireProfile(
+d_wpID 
+)
+=> t / nil"
+"(Virtuoso MultiTech Framework) Deletes a specified wire profile.")
+("techDeleteWireProfileGroup"
+"techDeleteWireProfileGroup(
+d_wpgID 
+)
+=> t / nil"
+"(Virtuoso MultiTech Framework) Deletes a specified wire profile group.")
+("techFindFingerDef"
+"techFindFingerDef(
+d_techFileID
+t_name
+)
+=> d_fdID / nil"
+"(Virtuoso MultiTech Framework) Returns the ID of a specified finger definition, if located in a specified technology file.")
+("techFindWireProfile"
+"techFindWireProfile(
+d_techFileID
+t_name
+)
+=> d_wireProfileID / nil"
+"(Virtuoso MultiTech Framework) Returns the ID of a specified wire profile name, if located in a specified technology file.")
+("techFindWireProfileGroup"
+"techFindWireProfileGroup(
+d_techFileID
+t_name
+)
+=> d_wireProfileGroupID / nil"
+"(Virtuoso MultiTech Framework) Returns the ID of a specified wire profile group name, if located in a specified technology file.")
+("techImportWireProfileSet"
+"techImportWireProfileSet(
+d_techID
+x_fileName
+t_groupName
+)
+=> t / nil"
+"(Virtuoso MultiTech Framework) Imports wire profile data from an XML file into a technology database. If a profile already exists in the technology database, it is overwritten with the profile specified in the XML file.")
+("techExportWireProfileSet"
+"techExportWireProfileSet(
+d_techID
+x_fileName
+[t_groupName]
+)
+=> t / nil"
+"(Virtuoso MultiTech Framework) Exports wire profile data from a technology database into an XML file. You can export either all profiles in the technology database or only those that are in a particular group. Default values are not exported.")

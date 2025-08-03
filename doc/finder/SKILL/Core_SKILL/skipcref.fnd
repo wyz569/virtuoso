@@ -1,0 +1,232 @@
+;SKILL Language Functions
+("ipcActivateBatch"
+"ipcActivateBatch( 
+o_childId 
+) 
+=> t / nil"
+"Switches a child process to batch mode.")
+("ipcActivateMessages"
+"ipcActivateMessages( 
+o_childId 
+) 
+=> t / nil"
+"Switches a child process into interactive mode. In interactive mode, output from the child is written to a log file and is passed on to the parent process.")
+("ipcBatchProcess"
+"ipcBatchProcess( 
+t_command 
+t_hostName 
+t_logFile 
+)
+=> o_childId"
+"Invokes a process to execute batch commands. The child process in this case is a batch process that does not communicate with the parent process.")
+("ipcBeginProcess"
+"ipcBeginProcess( 
+t_command 
+[ t_hostName ] 
+[ tsu_dataHandler ] 
+[ tsu_errHandler ] 
+[ tsu_postFunc ] 
+[ t_logFile ] 
+) 
+=> o_childId"
+"Invokes a process to execute a command or sequence of commands specified.")
+("ipcCloseProcess"
+"ipcCloseProcess( 
+o_childId 
+) 
+=> t / nil"
+"Closes the input channel of the child process.")
+("ipcContProcess"
+"ipcContProcess( 
+o_childId 
+) 
+=> t / nil"
+"Causes a suspended child process to resume executing. This is equivalent to sending a UNIX CONT signal.")
+("ipcGetExitStatus"
+"ipcGetExitStatus( 
+o_childId 
+) 
+=> x_status"
+"Returns the exit value of the child process.")
+("ipcGetPid"
+"ipcGetPid( 
+) 
+=> x_pid"
+"Returns the runtime process identification number of the process executing this function.")
+("ipcGetPriority"
+"ipcGetPriority( 
+[ o_childId ]
+) 
+=> x_priority"
+"Gets the current default priority. If a child process handle is given, ipcGetPriority returns the priority under which the relevant child process was invoked.")
+("ipcIsActiveProcess"
+"ipcIsActiveProcess( 
+o_childId 
+) 
+=> t / nil"
+"Determines if a child process is active; that is, not stopped.")
+("ipcIsAliveProcess"
+"ipcIsAliveProcess( 
+o_childId 
+) 
+=> t / nil"
+"Checks if a child process is still alive.")
+("ipcKillAllProcesses"
+"ipcKillAllProcesses( 
+) 
+=> t"
+"Kills every process initiated by the parent through one of the ipcBeginProcess class of functions.")
+("ipcKillProcess"
+"ipcKillProcess( 
+o_childId 
+) 
+=> t / nil"
+"Kills the process identified by o_childId. This call results in a UNIX SIGKILL signal being sent to the child process.")
+("ipcReadProcess"
+"ipcReadProcess( 
+o_childId 
+[ x_timeOut ] 
+)
+=> t_data / nil"
+"Reads data from the child process stdout channel, allowing the developer to specify a time, in seconds, beyond which the read operation must not block. It only reads 4096 bytes for each call.")
+("ipcSetPriority"
+"ipcSetPriority( 
+x_priorityChange 
+) 
+=> t"
+"Sets the priority value for child processes. All processes spawned after this call run at the priority offset to x_priorityChange.")
+("ipcSignalProcess"
+"ipcSignalProcess( 
+o_childId 
+s_signal 
+)
+=> t / nil"
+"Sends the specified POSIX signal to the specified UNIX/Linux child process.")
+("ipcSkillProcess"
+"ipcSkillProcess( 
+t_command 
+[ t_hostName ] 
+[ tsu_dataHandler ] 
+[ tsu_errHandler ] 
+[ tsu_postFunc ] 
+[ t_logFile ] 
+[ x_cmdDesc ] 
+[ x_resDesc ] 
+)
+=> o_childId"
+"Invokes an operating system process capable of executing SKILL functions in the parent process and opens two additional channels to the child process that let the child send and receive the results of SKILL commands.")
+("ipcSleep"
+"ipcSleep( 
+x_time 
+) 
+=> t"
+"Causes the parent process to be delayed for the given number of seconds.")
+("ipcSleepMilli"
+"ipcSleepMilli( 
+x_time 
+) 
+=> t"
+"Causes the parent process to be delayed for the given number of milliseconds. Use the otherwise identical ipcSleep function to specify the delay in seconds.")
+("ipcSoftInterrupt"
+"ipcSoftInterrupt( 
+o_childId 
+) 
+=> t / nil"
+"Equivalent to executing the UNIX kill -2 command. If the child process is active, it is sent a soft interrupt. The child is responsible for catching the signal.")
+("ipcStopProcess"
+"ipcStopProcess( 
+o_childId 
+) 
+=> t / nil"
+"Causes the child process to suspend its execution. This is equivalent to sending a STOP signal through the UNIX kill command.")
+("ipcWait"
+"ipcWait( 
+o_childId 
+[ x_interval ] 
+[ x_timeOut ] 
+) 
+=> t"
+"Causes the parent process to suspend until the child terminates.")
+("ipcWaitForProcess"
+"ipcWaitForProcess( 
+o_childId 
+[ x_timeOut ] 
+) 
+=> t"
+"Causes the parent process to suspend until the child process is alive and ready for communication.")
+("ipcWriteProcess"
+"ipcWriteProcess( 
+o_childId 
+t_data 
+) 
+=> t / nil"
+"Writes data to the stdin port of the child process.")
+("phoIPCGetServerCheck"
+"phoIPCGetServerCheck(
+t_toolName
+)
+=> s_funcName / nil"
+"Returns the name of the registered function that can be called to check if the server associated with the specified tool is operating correctly.")
+("phoIPCRegisterServerCheck"
+"phoIPCRegisterServerCheck(
+t_toolName
+s_serverCheckFunc
+)
+=> t / nil"
+"Registers a function that can be used to check if the server associated with the specified tool is operating correctly. The registered server check function is expected to have no arguments. If the function is not specified, or it has an argument, registration fails. If the function is registered, it checks that the IPC channel is open and connected to the child process. This function is intended to perform a quick check and is likely to be used inside a Pcell.")
+("phoIPCServerCheck"
+"phoIPCServerCheck(
+t_toolName
+[ d_cellViewID ]
+)
+=> t / nil"
+"Calls the registered server check function for the specified tool and issues a warning in the CIW if the server is not running. In addition, when a valid cellview is specified, the function creates a label at the origin that displays the same message in the layout canvas.")
+("phoIPCGetMessageProcessor"
+"phoIPCGetMessageProcessor(
+t_toolName
+)
+=> s_msgProcessor / nil"
+"Returns the name of the message processor associated with the specified tool.")
+("phoIPCProcessMarkers"
+"phoIPCProcessMarkers(
+d_cellviewID
+l_markerList
+s_displayToolName
+)
+=> t / nil"
+"Specifies the default marker processor for the specified tool and generates markers in the Annotation Browser assistant, categorizing the markers based on the specified markerList.")
+("phoIPCProcessPorts"
+"phoIPCProcessPorts(
+d_cellviewID
+l_opticalPortList
+[ l_portMap ]
+[ l_lppMap ]
+)
+=> t / nil"
+"Creates optical ports in the specified cellview using the specfied portList. This is the default optical port processor. ")
+("phoIPCProcessServerMessage"
+"phoIPCProcessServerMessage(
+d_cellviewID
+t_waveguideLayer
+t_serverMessage
+[ g_dropPorts ]
+[ l_portMap ]
+[ l_lppMap ]
+)"
+"Issues messages from the IPC processor, which can further be used in Pcells to create geometries.")
+("phoIPCProcessShapes"
+"phoIPCProcessShapes(
+d_cellviewID
+l_shapeList
+l_portMap
+[ l_lppMap ]
+)
+=> t / nil"
+"Uses shapeList to create shapes and electrical pins in the specified cellview. This is the default shape processor.")
+("phoIPCRegisterMessageProcessor"
+"phoIPCRegisterMessageProcessor(
+t_toolName
+s_msgProcessor
+)
+=> t / nil"
+"Registers the message processor corresponding to the specified tool. In addition, the function ensures that the message processor function is defined and has the correct number of arguments.")

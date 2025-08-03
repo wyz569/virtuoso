@@ -1,0 +1,899 @@
+;SKILL Language Functions
+("pcExprToString"
+"pcExprToString( 
+g_ilExpr
+)
+=> t_string"
+"Converts a SKILL expression to a string. The Pcell compiler uses this function to create labels that display the value of an expression as a string enclosed in quotes.")
+("pcTechFile"
+"pcTechFile( 
+g_expression 
+)
+=> g_result"
+"Evaluates an expression contained in a string. The Pcell compiler uses this function as an envelope around stretch expressions that access information from a technology file. This function prevents any symbols used in the technology file access expression from being defined as parameters of the Pcell.")
+("auHiUltraPCell"
+"auHiUltraPCell(
+[ t_filename ]
+)
+=> t / nil"
+"Displays the Ultra Pcell form to let you create an Ultra Pcell by compiling multiple Pcells into one cell. Optionally, you can save the Ultra Pcell SKILL code in a file by specifying the t_filename argument. For a description of Ultra Pcells, see Make Ultra Pcell Command ")
+("pcColinearPoints"
+"pcColinearPoints(
+l_pointList1
+l_pointList2
+l_pointList3
+) 
+=> t / nil"
+"Verifies whether the three coordinates specified are collinear lying on or passing through the same straight line and orthogonal parallel to the X or Y axis.")
+("pcConcatOrient"
+"pcConcatOrient(
+t_orientation1
+t_orientation2
+) 
+=> t_concatOrient / R0 "
+"Concatenates two specified object orientations into one.")
+("pcDefineCondition"
+"pcDefineCondition(
+d_cvId
+l_figs
+l_namelist
+g_condition
+g_stretch
+f_adjust 
+) 
+=> d_condId / nil"
+"Specifies that the conditional inclusion of a list of objects is controlled by a given SKILL expression. Also specifies the inclusion of a dependent stretch control line. If the SKILL expression evaluates to a value other than nil, the objects are included.")
+("pcDefineInheritParam"
+"pcDefineInheritParam(
+d_instId
+s_parameter
+g_value
+l_namelist
+) 
+=> d_inheritGroup / nil"
+"Specifies that a parameter of an instance of a Pcell takes its value from a parameter definition of the enclosing cellview. The selection filter allows you to select only instances.")
+("pcDefineParamCell"
+"pcDefineParamCell(
+d_cellviewId
+[ 'disablePrompt ]
+) 
+=> t / nil"
+"Allows you to compile a graphical Pcell (super) master in the database from the cellview you specify. If you do not compile a Pcell before you place an instance of it in another design, the system interprets the design as a standard fixed cell instead of a Pcell. Each time you edit a graphical Pcell, you must recompile it so that all placed instances reflect the changes.")
+("pcDefineParamLabel"
+"pcDefineParamLabel(
+d_labelId
+S_height
+) 
+=> t / nil"
+"Defines a parameterized label. A parameterized label is not an instance name, but a label displaying values within a Pcell, such as width and height of gates. This function should be used only when creating graphical Pcells.")
+("pcDefineParamLayer"
+"pcDefineParamLayer(
+d_cvId
+l_shapes
+g_layerExpr
+l_namelist
+[ g_purposeExpr ]
+) 
+=> d_paramLayerId"
+"Specifies that a set of shapes has its layer and purpose determined by a parameter definition in the cellview. The selection filter prevents you from selecting instances or stretch control lines.")
+("pcDefineParamPath"
+"pcDefineParamPath(
+d_pathId
+S_param
+g_margin
+g_width
+n_defaultWidth
+t_snap
+l_namelist
+) 
+=> d_paramShapeId"
+"Defines a path that has its vertices determined by a parameter of the cell. When you place the Pcell, you enter a coordinate string that is used as the vertices of the parameterized path. You can use this function more than once in a cellview if all paths have the same vertices.")
+("pcDefineParamPolygon"
+"pcDefineParamPolygon(
+d_polygonId
+S_param
+g_margin
+t_snap
+l_namelist
+) 
+=> d_paramShapeId"
+"Defines a polygon that has its vertices determined by a parameter of the cell. When you place the Pcell, you enter a coordinate string that is used as the vertices of the parameterized polygon. You can use this function more than once in a cellview.")
+("pcDefineParamProp"
+"pcDefineParamProp(
+d_cvId
+t_name
+g_expr
+) 
+=> t / nil"
+"Defines a parameterized property that can be accessed using a SKILL procedure. You can use this property to store any value within the Pcell.")
+("pcDefineParamRect"
+"pcDefineParamRect(
+d_rectangleId
+S_param
+g_margin
+l_namelist
+) 
+=> d_paramShapeId"
+"Defines a rectangle that has its vertices determined by a parameter of the cell. When you place the Pcell, you enter two coordinates that are used as the vertices of the parameterized rectangle. You can use this function more than once in a cellview. ")
+("pcDefineParamRefPointObject"
+"pcDefineParamRefPointObject(
+g_objects
+S_param
+l_refpoint
+) 
+=> d_refPointId"
+"Specifies that the location of an object or group of objects in the instance is determined by the location of a reference point that is a parameter of the cell. The objects in the instance have the same relationship to the reference point parameter as the objects in the master cellview have to the corresponding reference point in the master cellview.")
+("pcDefineParamSlot"
+"pcDefineParamSlot(
+g_type
+g_value
+g_pcIsParamSlot
+) 
+=> l_paramDefDPL"
+"Constructs a parameter DPL, which is used to define a parameter slot of the specified device.")
+("pcDefinePathRefPointObject"
+"pcDefinePathRefPointObject(
+l_objects
+S_param
+t_endpoint
+) 
+=> d_refPointId"
+"Specifies that the location of an object or group of objects in the instance be determined by the location of the endpoint of a parameterized path. The objects in the instance have the same relationship to the endpoint of the digitized path in the instance as the objects in the master cellview have to the corresponding endpoint of the parameterized path in the master cellview.")
+("pcDefinePCell"
+"pcDefinePCell(
+l_cellIdentifier
+l_formalArgs
+body_of_code
+) 
+=> d_cellViewId / nil"
+"Creates parameterized (super) master cellview. This function enables you to pass a SKILL definition for a Pcell including a list of its parameters.")
+("pcDefinePPCell"
+"pcDefinePPCell(
+l_cellIdentifier
+l_overrideCodeParams
+l_defaultCodeParams
+ls_formalArgs
+body_of_code
+) 
+=> d_cellViewId / nil"
+"Creates a parameterized Pcell master cellview (P2cell) that enables you to pass the SKILL definition for a Pcell, including a list of its arguments, similar to the pcDefinePCell function. This function also accepts a code argument declaration list and a code argument override list, where the code parameter can be used in the Pcell code body to create multiple Pcell super masters from a single Pcell code.
+
+Within pcDefinePPCell, the override code parameter is always a simple variable, which receives the input provided by the caller of pcDefinePPCell. This will always be the use model of P2cell because there is always a driver function that calls it. The function should not be used as a top-level function (not inside a procedure) because that will lose the purpose of the new parameterization feature.")
+("pcDefineRepeat"
+"pcDefineRepeat(
+d_cvId
+l_shapes
+l_namelist
+g_stepX
+g_stepY
+g_repeatX
+g_repeatY
+g_stretchX
+g_stretchY
+g_adjustX
+g_adjustY
+t_direction
+)
+=> d_repeatId"
+"Defines a repetition parameter to be applied to specified objects. Objects can be repeated in the X direction, Y direction, or both. If the value for the repetition direction, t_direction, is horizontal and vertical, the pcDefineRepeat function creates a two-dimensional array. ")
+("pcDefineSteppedObject"
+"pcDefineSteppedObject(
+g_objects
+S_param
+g_step
+g_startOffset
+g_endOffset
+l_namelist
+) 
+=> d_stepObjectId"
+"Defines an object or group of objects to be repeated along the length or perimeter of a parameterized shape that has already been defined in the Pcell. The selection filter prevents you from selecting stretch control lines, parameterized shapes, or objects in other repeat-along-shape groups.")
+("pcDefineStretchLine"
+"pcDefineStretchLine(
+d_lineId
+g_paramExpr 
+t_direction 
+f_defval
+f_minval 
+f_maxval 
+g_stretchRepeated
+) 
+=> d_StretchId"
+"Defines a stretch control line used to control stretching in the X direction or Y direction. Objects repeated in the direction parallel to the stretch direction can be set to stretch.")
+("pcDeleteCondition"
+"pcDeleteCondition(
+d_groupId
+)
+=> t / nil"
+"Deletes a previously defined conditional inclusion parameter.")
+("pcDeleteParam"
+"pcDeleteParam( 
+d_cvId
+t_paramName
+) 
+=> t / nil"
+"Deletes the definition of the parameter identified by t_paramName. It is recommended to use pcHIEditParameters instead of this function. ")
+("pcDeleteParamLayer"
+"pcDeleteParamLayer( 
+d_groupId
+) 
+=> t / nil"
+"Deletes a parameter associating a set of shapes with a layer parameter. ")
+("pcDeleteParamProp"
+"pcDeleteParamProp(
+d_cvId
+t_propname
+) 
+=> t / nil"
+"Deletes a parameterized property in the cellview d_cvId.")
+("pcDeleteParamShape"
+"pcDeleteParamShape( 
+d_memberId
+) 
+=> t / nil"
+"Deletes a parameterized shape directive, causing the specified shape to revert back to a regular (nonparameterized) shape. ")
+("pcDeleteRefPoint"
+"pcDeleteRefPoint(
+d_groupId
+) 
+=> t / nil"
+"Deletes a reference point parameter. You can use this command to delete either a reference point defined relative to a parameter of the cell or a reference point defined relative to a parameterized path endpoint. ")
+("pcDeleteRepeat"
+"pcDeleteRepeat(
+d_groupId
+) 
+=> t / nil"
+"Deletes the repetition parameter d_groupId.")
+("pcDeleteSteppedObject"
+"pcDeleteSteppedObject(
+d_groupId
+) 
+=> t / nil"
+"Deletes the repetition-along-shape parameter d_groupId.")
+("pcDraw"
+"pcDraw(
+g_device
+) 
+=> t / nil"
+"Creates database objects for the specified SKILL++ Pcell class. This method is implemented for each SKILL++ Pcell class. pcDraw is called by the Pcell source code in pcDefinePCell for the associated Pcell.")
+("pcExprToProp"
+"pcExprToProp(
+txfl_argument
+) 
+=> l_typeValue / nil"
+"Evaluates the argument and returns a list containing the data type and value of the result.")
+("pcFilterPoints"
+"pcFilterPoints(
+l_pointList
+) 
+=> l_pointList / nil"
+"Determines whether the specified list of coordinates represents a manhattan shape.")
+("pcFix"
+"pcFix( 
+n_num 
+[ f_precision ]
+)
+=> x_result"
+"Converts a number to an integer in the format fixnum. When n_num is close to a whole number, the system keeps the integer part of the number and adds a single decimal place equal to zero. Here, close means the value of the number is within the range of plus or minus the value of f_precision of the integer part of the number specified by n_num. When the value is not within this range, the function allows the system to use the value in the first decimal place to round the n_num to an integer in the format number.0; the system ignores all other decimal places. This function is useful for correcting the round-off approximation that can occur with floating-point numbers that are stored in 32 or 64 bits.")
+("pcGetBendAngle"
+"pcGetBendAngle(
+l_pointList
+) 
+=> x_signedDegrees / nil"
+"Determines whether the specified list of three coordinates represents a bend to the left (+90 degrees) or to the right (-90 degrees). The three coordinates must define a 90 degree angle.")
+("pcGetCodeParamNames"
+"pcGetCodeParamNames(
+d_cellViewId
+) 
+=> l_codeParamNames / nil"
+"Returns a list of all the defined code parameter names for the specified design ID.")
+("pcGetCodeParamValue"
+"pcGetCodeParamValue(
+d_cellViewId
+S_codeParamName
+) 
+=> g_value / nil"
+"Returns the value of a specified code parameter.")
+("pcGetConditions"
+"pcGetConditions(
+d_cvId
+) 
+=> l_condlist / nil"
+"Returns a list of identifiers for conditional inclusion parameters in the specified cellview.")
+("pcGetDefaultParamsFromClass"
+"pcGetDefaultParamsFromClass(
+s_className
+) 
+=> l_paramList"
+"Displays the defined Pcell parameter list from the specified class name.")
+("pcGetInheritParamDefn"
+"pcGetInheritParamDefn(
+d_instId
+) 
+=> l_inherit / nil"
+"Returns an identifier for an inherited parameter in the specified cellview.")
+("pcGetInheritParams"
+"pcGetInheritParams(
+d_cvId
+) 
+=> l_inheritlist / nil"
+"Returns a list of identifiers for inherited parameters in the specified cellview.")
+("pcGetOffsetPath"
+"pcGetOffsetPath(
+d_cvId
+l_vertex_points
+n_offset
+)
+=> l_vertex_points / nil"
+"Applies the offset to each vertex of the path to create a list of vertices for a longer or shorter version of the path. Returns a list of points for the vertices of the offset version of the path. This function does not change the original path and does not create the offset version of the path")
+("pcGetOffsetPolygon"
+"pcGetOffsetPolygon(
+d_cvId
+l_vertex_points
+n_offset
+)
+=> l_vertex_points / nil"
+"Applies the offset to each edge of the polygon to create a list of the vertices for an oversized or undersized version of the polygon. Returns a list of points for the vertices of the offset version of the polygon. This function does not change the original polygon and does not create the offset version of the polygon")
+("pcGetParameters"
+"pcGetParameters(
+d_cvId
+) 
+=> l_paramlist / nil"
+"Returns a list of parameters and their default values defined in the specified cellview. ")
+("pcGetParamLabelDefn"
+"pcGetParamLabelDefn(
+d_labelId
+) 
+=> d_paramlabelId / nil"
+"Returns the parameterized label identifier resulting from a call to pcDefineParamLabel on the specified label. ")
+("pcGetParamLabels"
+"pcGetParamLabels(
+d_cvId
+) 
+=> l_labellist / nil"
+"Returns a list of parameterized labels in the specified cellview.")
+("pcGetParamLayerDefn"
+"pcGetParamLayerDefn(
+d_instId
+) 
+=> l_layerId / nil"
+"Returns the identifier for a layer parameter of a specified shape. ")
+("pcGetParamLayers"
+"pcGetParamLayers(
+d_cvId
+) 
+=> l_layerlist / nil"
+"Returns a list of identifiers for layer parameters in the specified cellview.")
+("pcGetParamProps"
+"pcGetParamProps(
+d_cvId
+) 
+=> l_proplist / nil"
+"Lists parameterized properties in the specified cellview.")
+("pcGetParamShapeDefn"
+"pcGetParamShapeDefn(
+d_instId
+) 
+=> d_paramShapeId / nil"
+"Returns an identifier for a parameterized shape parameter resulting from a call to pcDefineParamPath, pcDefineParamPolygon, or pcDefineParamRect.")
+("pcGetParamShapes"
+"pcGetParamShapes(
+d_cvId
+) 
+=> l_paramshapelist / nil"
+"Returns a list of identifiers for the parameterized shape parameters in the specified cellview.")
+("pcGetParamSlotType"
+"pcGetParamSlotType(
+g_device
+s_propName
+)
+=> t_paramType"
+"Checks the type contained in the parameter slot propName of the given device. Parameter type is a string whose value is int, float, string, or iLList.")
+("pcGetParamSlotValue"
+"pcGetParamSlotValue
+g_device
+s_propName
+) 
+=> g_value"
+"Returns the value of the parameter slot, propName, of the specified device.")
+("pcGetPathRefPoint"
+"pcGetPathRefPoint(
+d_cvId
+l_objectVertices
+l_pathVertices
+t_endpoint
+l_offset
+)
+=> l_newObjVertices / nil"
+"Creates a list of coordinates representing the object specified by the l_objectVertices argument when offset from the specified endpoint of the parameterized path, where the offset is defined by l_offset and the path is defined l_pathVertices.")
+("pcGetRefPointDefn"
+"pcGetRefPointDefn(
+d_objectId
+) 
+=> l_refPointId / nil"
+"Returns an identifier for the reference point parameter defined in the specified cellview.")
+("pcGetRefPoints"
+"pcGetRefPoints(
+d_cvId
+) 
+=> l_refpointlist / nil"
+"Returns a list of identifiers for all the reference point parameters in a specified cellview.")
+("pcGetRepeatDefn"
+"pcGetRepeatDefn(
+d_objectId
+) 
+=> l_repeatlist / nil"
+"Returns a list of identifiers for all repetition parameters assigned to an object in the cellview. A single object can be assigned to more than one repetition group. ")
+("pcGetRepeats"
+"pcGetRepeats(
+d_cvId
+) 
+=> l_repeatlist / nil"
+"Returns a list of identifiers for repetition parameters in the specified cellview.")
+("pcGetStepDirection"
+"pcGetStepDirection(
+l_pointList
+) 
+=> t_stepDirection / nil"
+"Returns the direction from the first point in the list to the second point in the list.")
+("pcGetSteppedObjectDefn"
+"pcGetSteppedObjectDefn(
+d_objectId
+) 
+=> l_stepobjId / nil"
+"Returns an identifier for repetition-along-shape parameters resulting from calls to pcDefineSteppedObject. The object cannot be a parameterized shape.")
+("pcGetSteppedObjects"
+"pcGetSteppedObjects(
+d_cvId
+) 
+=> l_stepobjlist / nil"
+"Returns a list of identifiers for the repetition-along-shape parameters in the specified cellview.")
+("pcGetStretchDefn"
+"pcGetStretchDefn(
+d_objectId
+) 
+=> d_StretchId / nil"
+"Returns the identifier for a stretch parameter.")
+("pcGetStretches"
+"pcGetStretches(
+d_cvId
+) 
+=> l_stretchlist / nil"
+"Returns a list of identifiers for the stretch parameters in the specified cellview.")
+("pcGetStretchSummary"
+"pcGetStretchSummary(
+d_cvId
+)
+=> l_stretchLines / nil"
+"For a parameterized master cell created using the Virtuoso Pcell graphical user interface tool, returns a list of lists, where each list contains the field names and values from the Stretch in X and Stretch in Y forms for each stretch line that was defined for the parameterized cell.")
+("pcGrowBox"
+"pcGrowBox(
+l_pointList
+xf_margin
+) 
+=> l_incrementedPointList / nil"
+"Increase or decrease the size of the specified box by the specified margin. The system adds xf_margin to each coordinate in the list and returns a list of the coordinates of the resulting box.")
+("pcGrowPoints"
+"pcGrowPoints(
+l_pointList
+xf_margin
+) 
+=> l_incrementedPointList / nil"
+"Increase or decrease the size of a manhattan polygon by the specified margin. The system adds xf_margin to each coordinate in the list and returns a list of the coordinates of the resulting polygon.")
+("pcHICompileToSkill"
+"pcHICompileToSkill()
+=> t / nil"
+"Displays the Compile To SKILL form to let you create a SKILL file from the data in the current cellview. The file can then be edited as any SKILL file.")
+("pcHIDefineCondition"
+"pcHIDefineCondition()
+=> t / nil"
+"Lets you designate specified objects as conditional by prompting you to select one or more objects in the current cellview. When you complete selecting objects, the system displays the Conditional Inclusion form.")
+("pcHIDefineInheritedParameter"
+"pcHIDefineInheritedParameter()
+=> t / nil"
+"Lets you designate a Pcell instance whose parameters should be inherited from the Pcell parent in which the instance is placed by prompting you to select the instance in the current cellview. After you select the instance, the system displays the Define/Modify Inherited Parameters form.")
+("pcHIDefineLabel"
+"pcHIDefineLabel()
+=> t / nil"
+"Displays the Define Parameterized Label form to let you create a parameterized label for Pcell you are currently editing. After you complete the form, the system prompts you to enter an anchor point for the label.")
+("pcHIDefineLayer"
+"pcHIDefineLayer()
+=> t / nil"
+"Lets you designate specified shapes to be in a parameterized layer group by prompting you to select one or more shapes in the current cellview. When you complete selecting shapes, the system displays the Define Parameterized Layer form.")
+("pcHIDefineParamCell"
+"pcHIDefineParamCell( 
+[ l_cellIdentifier ] 
+)
+=> t / nil"
+"Displays the Compile To Pcell form to let you create a graphical Pcell (super) master in the database from the design in the current window or from the cellview you specify. If you do not compile a Pcell before you place an instance of it in another design, the system interprets the design as a standard fixed cell instead of a Pcell. Each time you edit a graphical Pcell, you must recompile it so that all placed instances reflect the changes.")
+("pcHIDefineParameterizedShape"
+"pcHIDefineParameterizedShape()
+=> t / nil"
+"Lets you assign the vertices of a shape as parameters of the Pcell you are currently editing by prompting you to select a shape. You can parameterize paths, polygons, and rectangles. When you place an instance of the Pcell, you supply values for the parameters by entering coordinates.")
+("pcHIDefineParamRefPointObject"
+"pcHIDefineParamRefPointObject()
+=> t / nil"
+"Lets you specify a reference point parameter as the origin point for a selected object or group of objects in the Pcell you are currently editing. The system prompts you for the reference point, then prompts you to select the object(s). When you complete selecting objects, the system displays the Reference Point by Parameter form. There can be only one reference point parameter defined in a Pcell.")
+("pcHIDefinePathRefPointObject"
+"pcHIDefinePathRefPointObject()
+=> t / nil"
+"Lets you specify the end of a parameterized path as the reference point for objects in the Pcell you are currently editing by prompting you to select the objects. When you complete selecting objects, the system displays the Reference Point by Path Endpoint form. There can be only one reference-point-by-path-endpoint parameter defined in a Pcell.")
+("pcHIDefineProp"
+"pcHIDefineProp()
+=> t / nil"
+"Displays the Parameterized Property form to let you specify a property for the Pcell you are currently editing.")
+("pcHIDefineRepeat"
+"pcHIDefineRepeat(
+t_direction
+)
+=> d_repeatId"
+"Lets you define a repetition parameter for specified objects by prompting you to select one or more objects in the current cellview. When you complete selecting objects, the system displays one of the following forms, depending on the value of the t_direction argument: Repeat in X, Repeat in Y, or Repeat in X and Y.")
+("pcHIDefineSteppedObject"
+"pcHIDefineSteppedObject()
+=> t / nil"
+"Lets you specify an object or group of objects to repeat along the coordinate string controlling a parameterized shape by prompting you to select the objects in the Pcell you are currently editing. The Pcell must already contain a parameterized shape. When you complete selecting objects, the system displays the Repeat Along Shape form.")
+("pcHIDefineStretch"
+"pcHIDefineStretch(
+t_direction
+)
+=> d_StretchId"
+"Allows you to define a stretch parameter for specified objects by prompting you to select one or more objects in the current cellview. The argument t_direction determines which form the system displays when you complete selecting objects: Stretch in X or Stretch in Y. ")
+("pcHIDeleteCondition"
+"pcHIDeleteCondition()
+=> t / nil"
+"Lets you delete an object from a conditional induction group by prompting you to select the object in the current cellview. When you select the object, the system displays the Delete Conditional Inclusion form.")
+("pcHIDeleteLayer"
+"pcHIDeleteLayer()
+=> t / nil"
+"Lets you remove a parameterized layer group by prompting you to select a shape in the group. When you select a shape, the system highlights all objects in the parameterized layer group and displays the Delete Parameterized Layer form.")
+("pcHIDeleteParameterizedShape"
+"pcHIDeleteParameterizedShape()
+=> t / nil"
+"Lets you delete a parameterized shape from the Pcell you are currently editing by prompting you to select the parameterized shape. When you delete a parameterized shape, the coordinates of the shape are no longer parameters of the Pcell. ")
+("pcHIDeleteProp"
+"pcHIDeleteProp()
+=> t / nil"
+"Displays the Delete Parameterized Property form to let you specify a property to delete from the Pcell you are currently editing. When there is more than one parameterized property defined for the Pcell, click Next to view another property.")
+("pcHIDeleteRefPointObject"
+"pcHIDeleteRefPointObject()
+=> t / nil"
+"Lets you delete either a reference point defined as a parameter of the cellview or a reference point defined relative to the endpoint of a parameterized path by prompting you to select any object in the reference point group. After you select an object, the system highlights all objects in the group and opens either the Delete Reference Point form or the Delete Reference Point By Path form.")
+("pcHIDeleteRepeat"
+"pcHIDeleteRepeat()
+=> t / nil"
+"Lets you delete a repeat group from the Pcell you are currently editing by prompting you to select a shape in the repeat group you want to delete. After you select a shape, the system highlights all shapes in the group and displays one of the following forms, depending on the type of repeat group you selected: Delete Repeat in X, Delete Repeat in Y, or Delete Repeat in X and Y. ")
+("pcHIDeleteSteppedObject"
+"pcHIDeleteSteppedObject()
+=> t / nil"
+"Lets you delete a repetition along shape group from the Pcell you are currently editing by prompting you to select a member (shape) of the repetition along shape group.")
+("pcHIDisplayCondition"
+"pcHIDisplayCondition()
+=> t / nil"
+"Highlights a conditional inclusion group in the current cellview window and displays the Show Conditional Inclusion text window with information about the highlighted group. When there is more than one conditional inclusion group, click OK in the text window to view the next one.")
+("pcHIDisplayInheritedParameter"
+"pcHIDisplayInheritedParameter()
+=> t / nil"
+"Highlights a Pcell instance whose parameters are inherited from the Pcell parent in which the instance is placed and displays the Show Inherited Parameters text window with information about the highlighted instance. When there is more than one Pcell instance with inherited parameters, click OK in the text window to view the next one.")
+("pcHIDisplayLayer"
+"pcHIDisplayLayer()
+=> t / nil"
+"Highlights a parameterized layer group in the current cellview window and displays Show Parameterized Layer text window with information about the highlighted group. When there is more than one parameterized layer group, click OK in the text window to view the next one.")
+("pcHIDisplayParameterizedShape"
+"pcHIDisplayParameterizedShape()
+=> t / nil"
+"Highlights a parameterized shape in the current cellview window and displays the Show Parameterized Shape text window with information about the highlighted group. When there is more than one parameterized shape, click OK in the text window to view the next one.")
+("pcHIDisplayParams"
+"pcHIDisplayParams()
+=> t / nil"
+"Although the pcHIDisplayParams function still displays the Show Parameters text window, the information contained in the window might not be complete. The Show Parameters command has been replaced by the Edit Parameters command. To display information about Pcell parameters, use either the pcHIEditParameters function or the pcHIParamsSummarize function.")
+("pcHIDisplayProp"
+"pcHIDisplayProp()
+=> t / nil"
+"Displays a Show Parameterized Property text window with information about all parameterized properties defined for the Pcell you are currently editing.")
+("pcHIDisplayRefPointObject"
+"pcHIDisplayRefPointObject()
+=> t / nil"
+"Highlights a reference point group in the current cellview window and opens the Show Reference Point text window with information about the highlighted group. When there is more than one reference point group, click OK in the text window to view the next one.")
+("pcHIDisplayRepeat"
+"pcHIDisplayRepeat()
+=> t / nil"
+"Highlights a repeat group in the current cellview window and displays one of the following text windows, depending on the type of group you selected: Show Repeat in X, Show Repeat in Y, or Show Repeat in X and Y with information about the highlighted group. When there is more than one repeat group, click OK in the text window to view the next one.")
+("pcHIDisplaySteppedObject"
+"pcHIDisplaySteppedObject()
+=> t / nil"
+"Highlights the objects in a repetition along shape group in the current cellview window and opens the Show Repetition Along Shape text window with information about the highlighted group. When there is more than one repetition along shape group, click OK in the text window to view the next one.")
+("pcHIEditParameters"
+"pcHIEditParameters()
+=> t"
+"Lets you change the data type and/or value for parameters already defined for the Pcell by displaying the Edit Parameters form.")
+("pcHIModifyCondition"
+"pcHIModifyCondition()
+=> t / nil"
+"Lets you add objects to a conditional inclusion group by prompting you to select an object in the inclusion group you want to modify. The system highlights all objects in the selected group and prompts you to select shapes to be added to the group. When you complete selecting the objects, the system displays the Modify Conditional Inclusion form.")
+("pcHIModifyLabel"
+"pcHIModifyLabel()
+=> t / nil"
+"Prompts you to select the parameterized label you want to modify. After you select the label, displays the Modify Parameterized Label form to let you change the values for the selected label.")
+("pcHIModifyLayer"
+"pcHIModifyLayer()
+=> t / nil"
+"Lets you add shapes to a parameterized layer group by prompting you to select an object in the layer group you want to modify. The system highlights all objects in the selected group and prompts you to select shapes to be added to the group. When you complete selecting the shapes, the system displays the Modify Parameterized Layer form.")
+("pcHIModifyParams"
+"pcHIModifyParams()
+=> t"
+"Lets you change the data type and/or value for parameters already defined for the Pcell by displaying the Edit Parameters form. This function is equivalent to the pcHIEditParameters function.")
+("pcHIModifyRefPointObject"
+"pcHIModifyRefPointObject()
+=> t / nil"
+"Lets you add objects to a reference group by prompting you to select an object in the group you want to modify. The system highlights all objects in the selected group and prompts you to select shapes to be added to the group. When you complete selecting the shapes, the system lets you change the reference point by displaying either the Reference Point by Parameter form or the Reference Point by Path Endpoint form, depending on the type of group you selected. There can be only one reference point parameter and only one reference point by path endpoint defined for a Pcell.")
+("pcHIModifyRepeat"
+"pcHIModifyRepeat()
+=> t / nil"
+"Lets you add shapes to a repeat group by prompting you to select a shape in the repeat group you want to modify. After you select an object, the system highlights all shapes in the group and prompts you to select shapes to be added to the group. When you complete selecting shapes, the system displays one of the following forms, depending on the type of repeat group you selected: Modify Repeat in X, Modify Repeat in Y, or Modify Repeat in X and Y. ")
+("pcHIModifySteppedObject"
+"pcHIModifySteppedObject()
+=> t / nil"
+"Lets you add shapes to a repetition along shape group by prompting you to select a shape in the group you want to modify. After you select a shape, the system highlights all shapes in the group and displays the Modify Repetition Along Shape form.")
+("pcHIModifyStretchLine"
+"pcHIModifyStretchLine()
+=> t / nil"
+"Prompts you to select the stretch line you want to modify. After you select a stretch line, displays the Stretch in X or Stretch in Y form, depending on whether you are modifying an X stretch line or a Y stretch line, to let you change the values for the selected stretch line.")
+("pcHIQualifyStretchLine"
+"pcHIQualifyStretchLine()
+=> t / nil"
+"Lets you add shapes to be affected by a stretch line by prompting you to select the stretch line. After you select a stretch line, prompts you to select the shapes to be affected. No form is displayed.")
+("pcHIRedefineStretchLine"
+"pcHIRedefineStretchLine()
+=> t / nil"
+"Lets you redefine a previously defined stretch control line or change the parameters assigned to a stretch control line by prompting you to select the stretch line. After you select a stretch line, the system prompts you to draw a stretch line to replace the selected stretch line. After you draw the line, the system displays the Stretch in X or Stretch in Y form, depending on whether you are redefining an X stretch line or a Y stretch line, to let you change the values for the redefined stretch line.")
+("pcHISummarizeParams"
+"pcHISummarizeParams()
+=> t / nil"
+"Displays the Pcell Parameter Summary text window with information about the parameters defined for the Pcell.")
+("pcIsParamSlot"
+"pcIsParamSlot(
+g_device
+s_propName
+)
+=> t / nil"
+"Checks whether the specified propName is a parameter slot of the specified device.")
+("pcModifyParam"
+"pcModifyParam( 
+d_cvId
+S_param
+t_type
+g_value
+)
+=> d_paramId / nil"
+"Lets you modify the parameter type and default value for parameters assigned to a compiled Pcell. ")
+("pcRedefineStretchLine"
+"pcRedefineStretchLine( 
+d_lineId 
+g_paramExpr 
+t_direction 
+f_defval
+f_minval 
+f_maxval 
+g_stretchRepeated 
+) 
+=> d_StretchId / nil"
+"Redefines the attributes of an existing stretch control line. You can also specify a new location for the stretch control line with this command.")
+("pcRestrictStretchToObjects"
+"pcRestrictStretchToObjects(
+d_stretchId
+l_objlist
+) 
+=> d_stretchId / nil"
+"Lets you specify the objects affected by a particular stretch control line. Objects not specified are not moved or stretched by this stretch control line.")
+("pcRound"
+"pcRound( 
+n_num 
+[ f_precision ]
+[ x_tolerance ]
+)
+=> x_result"
+"Lets you round a number to the closest integer, using the value of the decimal place specified by x_tolerance; additional decimal places are ignored. If the value of the specified decimal place is less than 5, the system drops all decimal places; if the value of the specified decimal place is greater than or equal to 5, the system drops all decimal places and adds one to the integer.")
+("pcSetFTermWidth"
+"pcSetFTermWidth(
+t_baseName
+x_width
+) 
+=> t_baseName_width / nil"
+"Creates a net or terminal name and assigns a width.")
+("pcSetParamSlotsFromMaster"
+"pcSetParamSlotsFromMaster(
+g_device
+d_cv
+) 
+=> t / nil"
+"Sets the class slot values of a specified device to the corresponding Pcell parameter values on a specified Pcell super master or sub master.")
+("pcSetParamSlotValue"
+"pcSetParamSlotValue
+g_device
+s_propName
+g_value
+) 
+=> g_value"
+"Sets the value of the specified parameter slot, propName, of the given device.")
+("pcSkillGen"
+"pcSkillGen(
+d_cellViewId
+t_outputFile
+g_isSkillFile
+[ `disablePrompt ]
+)
+=> t / nil"
+"Converts a specified cellview into a SKILL file. A SKILL file can be edited and loaded back to a cellview after modification. Loading a SKILL file generates a SKILL master; however, the cellview contains only a label with the text: Warning: The master is defined by the SKILL procedure associated with the cellview.")
+("pcStepAlongShape"
+"pcStepAlongShape(
+d_shape1Id
+l_stepDetails(
+l_shape2Points
+)
+=> t / nil"
+"Replicates a shape (d_shape1Id) along a second shape (l_shape2Points) by specifying a disembodied property list to define the stepping distance, gap between successive replications, starting offset, ending offset, and object type. The pitch is determined by the offset of the origin of d_shape1Id from the point 0:0. You specify the second shape (l_shape2Points) with a list of coordinates.")
+("pcUserAdjustParameters"
+"pcUserAdjustParameters( 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any objects. The procedure is normally used to generate code to transform user-specified parameter values, such as to snap them to an even value. Parameters can then be referenced as variables in the SKILL code that is generated.")
+("pcUserGenerateArray"
+"pcUserGenerateArray( 
+d_mosaic 
+t_masterTag 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any simple arrays (mosaics) in a master Pcell. The procedure is normally used to suppress array generation or to modify arrays. ")
+("pcUserGenerateInstance"
+"pcUserGenerateInstance( 
+d_inst 
+t_masterTag 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any instances in a master Pcell. The procedure is normally used to suppress instance generation or to modify instances.")
+("pcUserGenerateInstancesOfMaster"
+"pcUserGenerateInstancesOfMaster( 
+d_masterCV 
+l_instanceList
+t_tag 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler for every master Pcell in a master Pcell. The compiler calls the procedure before it generates code for instances (but not arrays) for the master. The procedure is normally used to generate code to switch masters.")
+("pcUserGenerateLPP"
+"pcUserGenerateLPP( 
+d_lpp 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes shapes belonging to layer-purpose pairs in the master Pcell. The procedure is normally used to suppress shape-set generation. ")
+("pcUserGeneratePin"
+"pcUserGeneratePin( 
+d_pin 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes pins on any terminals in the master Pcell. The procedure is normally used to suppress pin generation or to modify pins. ")
+("pcUserGenerateProperty"
+"pcUserGenerateProperty( 
+d_object 
+d_prop
+t_tag
+p_port 
+)
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes properties on any objects. The procedure is normally used to suppress property generation in the master Pcell. ")
+("pcUserGenerateShape"
+"pcUserGenerateShape( 
+d_shape 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any shapes in the master Pcell. The procedure is normally used to suppress shape generation or to modify shapes. ")
+("pcUserGenerateTerminal"
+"pcUserGenerateTerminal( 
+d_terminal 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any terminals in the master Pcell. The procedure is normally used to suppress terminal generation or to modify terminals. ")
+("pcUserInitRepeat"
+"pcUserInitRepeat( 
+l_stepX 
+l_stepY
+l_repeatX
+l_repeatY 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any repetitions. The procedure is normally used to generate code to set the values of variables for repetition parameters. ")
+("pcUserPostProcessCellView"
+"pcUserPostProcessCellView( 
+d_cv 
+t_tag 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler after it processes any object in a Pcell. The procedure is normally used to generate code to process a list of objects that was built during compilation. ")
+("pcUserPostProcessObject"
+"pcUserPostProcessObject( 
+d_obj 
+t_tag 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler after it processes any object (instance, shape, terminal, and so forth) in a master Pcell. The procedure is normally used to generate code to modify a generated object. ")
+("pcUserPreProcessCellView"
+"pcUserPreProcessCellView( 
+d_cv 
+t_tag 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any objects in a Pcell. The procedure is normally used to generate code to initialize variables before the compiler processes individual objects. ")
+("pcUserSetTermNetName"
+"pcUserSetTermNetName( 
+d_pinFig 
+p_port 
+) 
+=> t / nil"
+"A user-defined procedure called by the compiler before it processes any pins on any terminals that are part of a repetition group in the master Pcell. The procedure is normally used to customize the connectivity of replicated pins. SKILL code generated by this procedure should assign the net name to the SKILL variable pcTermNetName. This is the net name used in the code generated by the compiler to create terminals in the submaster Pcell. The SKILL variables pcIndexX and pcIndexY are available for incorporation into pcTermNetName if you need to make different nets for each different repeated pin.")
+("dbClearPcellCache"
+"dbClearPcellCache(
+[ t_libName ]
+[ t_cellName ]
+[ t_viewName ]
+)
+=> t / nil"
+"Deletes all the submasters of the cellview specified by t_libName, t_cellName, and t_viewName from the Express Pcell cache on disk at the location specified by the CDS_EXP_PCELL_DIR environment variable. If no argument is specified then it deletes the complete cache.")
+("dbSavePcellCache"
+"dbSavePcellCache(
+)
+=> t / nil"
+"If there is a mismatch in the timestamps of the supermaster, the existing submasters in the cache are deleted, and only the new submasters generated in virtual memory are saved to the Express Pcell cache on disk.")
+("dbSavePcellCacheForCV"
+"dbSavePcellCacheForCV(
+t_libName
+t_cellName
+t_viewName
+[ n_openLevels ]
+)
+=> t / nil"
+"Opens the cellview specified by t_libName, t_cellName, and t_viewName and saves all the existing submasters generated or updated in virtual memory to the Express Pcell cache (including any other pre-existing submasters in virtual memory) on disk at the location specified by the CDS_EXP_PCELL_DIR environment variable.")
+("dbSavePcellCacheForCVOnly"
+"dbSavePcellCacheForCVOnly(
+t_libName
+t_cellName
+t_viewName
+[ n_depth ]
+)
+=> t / nil"
+"Opens the cellview specified by t_libName, t_cellName, and t_viewName and saves all the Pcell submasters specified in the given cell in the Express Pcell Cache.")
+("xpcDumpCache"
+"xpcDumpCache(
+g_detailReport
+[ t_filename ]
+)"
+"This SKILL API dumps the Express Pcell cache information to CIW and in the specified file.")
+("dbUpdatePcellCache"
+"dbUpdatePcellCache(
+[ t_libName ] 
+[ t_cellName ] 
+[ t_viewName ] 
+[ g_checkTimeStamp ]
+)
+=> t / nil"
+"Updates and saves the submasters that exist in cache by re-evaluating the Pcells. If Library, cell, and view is specified, it updates the submasters only for the specified supermaster.")
+("xpcEnableExpressPcell"
+"xpcEnableExpressPcell(
+g_enable
+)"
+"Enables or disables the Express Pcell cache.")
+("xpcGetPDKVersion"
+"xpcGetPDKVersion(
+[ t_libName ]
+)
+=> t_libVersion / l_libVersion / nil"
+"Returns the version of the library or libraries stored in the Express Pcell cache.")

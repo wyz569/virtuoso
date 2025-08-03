@@ -1,0 +1,843 @@
+;SKILL Language Functions
+("profile"
+"profile( 
+s_profileField 
+) 
+=> t"
+"Turns on global SKILL profiling for measuring time or memory.")
+("profileReset"
+"profileReset( 
+) 
+=> t"
+"Resets all SKILL profiler data.")
+("profileSummary"
+"profileSummary( 
+[ ?file t_filename ] 
+[ ?sort s_sortKey ] 
+[ ?filters g_filterSpec ] 
+[ ?maxFns x_maxDisplayed ]
+[ ?minSecs f_minSecs ] 
+[ ?minBytes x_minBytes ]
+[ ?children g_showChildren ] 
+) 
+=> t"
+"Prints a summary of profiling results, showing either the execution time or memory allocated to SKILL functions that were executed.")
+("unprofile"
+"unprofile( 
+) 
+=> t"
+"Turns off SKILL profiling but does not reset.")
+("skDisableMessage"
+"skDisableMessage( 
+S_functionName 
+S_messageName 
+[ x_occurrences ]
+) 
+=> t"
+"Disables a SKILL Lint message from being reported inside a given function definition.")
+("skDisableMessageBlock"
+"skDisableMessageBlock( 
+l_rules 
+g_exp1 ... 
+) 
+=> g_result"
+"Disables one or a list of SKILL Lint messages from being reported by rules within the body of the function. You might want to turn off certain rules temporarily, and not globally, inside a particular block of code. SKILL Lint will recognize a call to this function if inserted inside the block of code being analyzed.")
+("skEnableMessageBlock"
+"skEnableMessageBlock( 
+l_rules 
+g_exp1 ... 
+) 
+=> g_result"
+"Re-enables reporting of one or more SKILL Lint messages that have been globally turned off within the body of this function only.")
+("skIgnoreMessage"
+"skIgnoreMessage( 
+g_ignoreList 
+) 
+=> t"
+"Turns off the reporting of specified SKILL Lint messages. For a message to appear, both the message and its group have to be unignored.")
+("sklint"
+"sklint(
+[ ?file tl_inputFileName ]
+[ ?context t_contextName ]
+[ ?outputFile t_outputFileName ]
+[ ?ignoreGroups l_ignoreGroups ]
+[ ?globals l_globals ]
+[ ?depends l_depends ]
+[ ?rulesFile t_rulesFile ]
+[ ?ignores l_ignoresMessageList ]
+[ ?checkNlambda g_checkNlambda ]
+[ ?noPrintLog g_noPrintLog ]
+[ ?useGlobalIgnores g_useGlobalIgnores ]
+[ ?useGlobalRulesFileList g_useGlobalRulesFileList ]
+[ ?useDisableMessages g_useDisableMessages ]
+[ ?checkCdsFuncs g_checkCdsFuncs ]
+[ ?checkPvtFuncs g_checkPvtFuncs ]
+[ ?checkPubFuncs g_checkPubFuncs ]
+[ ?prefixes l_prefixList ]
+[ ?checkCdsPrefixes g_checkCdsPrefixes ]
+[ ?checkFuncPrefixes g_checkFuncPrefixes ]
+[ ?tabulate g_tabulate ]
+[ ?skPath t_skPath ]
+[ ?codeVersion t_release ]
+)
+=> t / nil"
+"Checks a SKILL file or context and reports potential errors and ways to clean up your code.")
+("skUnignoreMessage"
+"skUnignoreMessage( 
+g_ignoreList 
+) 
+=> t"
+"Turns on the reporting of specified SKILL Lint messages. For a message to appear, both the message and its group have to be unignored.")
+("callInitProc"
+"callInitProc( 
+t_contextName 
+) 
+=> t"
+"Calls all the initialization functions associated with a context.")
+("callUserAutoInitProc"
+"callUserAutoInitProc( 
+t_contextName 
+) 
+=> t / g_result"
+"Calls the autoinit function for the given context name.")
+("checkContextBit"
+"checkContextBit( 
+t_contextPath 
+) 
+=> t_type"
+"Checks and returns the context type of the specified context file.")
+("defCapDepends"
+"defCapDepends( 
+s_context 
+l_dependsList 
+) 
+=> t"
+"Specifies which contexts depend on which other contexts.")
+("defCapPrefixes"
+"defCapPrefixes( 
+s_context 
+l_prefixList 
+) 
+=> t"
+"Specifies which prefixes are acceptable for a context's global variables.")
+("defInitProc"
+"defInitProc( 
+t_contextName 
+s_procName 
+) 
+=> t"
+"Registers a function that the system calls immediately after autoloading a context.")
+("isContextLoaded"
+"isContextLoaded( 
+t_cxt 
+) 
+=> t / nil"
+"Returns t if a context file with the given base name has been loaded into the current session.")
+("loadContext"
+"loadContext( 
+t_contextFileName 
+[ g_ignore64bitSubpath ]
+) 
+=> t / nil / error"
+"Loads a context file into the current session.")
+("loadTopContextForms"
+"loadTopContextForms( 
+t_FileName 
+[ ?debugMode g_debugMode ] 
+[ ?writeProtect g_writeProtect ] 
+[ ?writeProtectAll g_writeProtectAll ] 
+[ ?lazyComp g_lazyComp ] 
+[ ?printinfix g_printinfix ] 
+[ ?integermode g_integermode ] 
+[ ?mergemode g_mergemode ] 
+[ ?readProtect g_readProtect ] 
+) 
+=> t / nil"
+"Loads top-level SKILL or Scheme forms from a file. If the setContext mode is set, these forms are saved in a context. After the context is loaded, these forms are evaluated at the top-level, as if these were loaded from an .il or .ils file.")
+("saveContext"
+"saveContext( 
+t_contextFileName 
+[ g_ignore64bitSubpath ]
+) 
+=> t / nil"
+"Saves the current state of the SKILL language interpreter as a binary file. This function must be used in conjunction with setContext.")
+("setContext"
+"setContext( 
+t_contextName 
+) 
+=> t"
+"Allows contexts to be saved incrementally, creating micro contexts from a session's SKILL context.")
+("setSaveContextVersion"
+"setSaveContextVersion( 
+x_newVers 
+) 
+=> x_oldVers"
+"Resets the current saveContext version to x_newVers and returns the previous context version. If x_newVers has an unsupported value or the function is called between setContext and saveContext, it returns an error.")
+("getCurSaveContextVersion"
+"getCurSaveContextVersion( 
+) 
+=> x_curVers"
+"Returns the current saveContext version (the version which the new context will have.) The possible return values are, 601 for compatible contexts and 602 for native contexts (for IC 6.1.6/CAT 33.00)")
+("getNativeContextVersion"
+"getNativeContextVersion( 
+) 
+=> x_nativeVers"
+"Returns the native context version (for IC 6.1.6/CAT 33.00, the native context version is 602).")
+("getCompatContextVersion"
+"getCompatContextVersion( 
+) 
+=> x_compatVers"
+"Returns the compatible context version (for IC 6.1.6/CAT 33.00, the compatible context version is 601).")
+("break"
+"break( 
+) 
+=> none"
+"Forces entry to the break handler if inserted directly into a SKILL function. The default break handler is the debugger.")
+("breakpt"
+"breakpt( 
+[ u_function 
+[ break_condition ] ] 
+)
+where break_condition can be either
+(break_tag 
+g_condition 
+) 
+or 
+(
+(break_tag 
+g_condition)... 
+)
+=> g_result"
+"Sets breakpoints on one or more functions or function objects.")
+("breakptMethod"
+"breakptMethod( 
+[ S_name ]
+[ l_specializer [ @before | @after | @around ] ]
+[ break_condition ])
+where break_condition can be either
+(break_tag 
+g_condition 
+) 
+or 
+(
+(break_tag 
+g_condition)... 
+)
+=> t / nil"
+"Sets breakpoint on the specified method's defmethod declaration.")
+("clear"
+"clear( 
+) 
+=> t"
+"Clears all tracing and breakpoints.")
+("cont, continue"
+"cont( 
+)
+=> no return value"
+"Continues execution from a breakpoint. cont and continue are identical.")
+("count"
+"count( 
+[ s_function ... | t ]
+) 
+=> g_result / t"
+"Counts the number of times a function has been called. This is an nlambda function. Returns the functions marked for counting.")
+("debugQuit"
+"debugQuit( 
+[ g_all ]
+) 
+=> nil"
+"Exits one level of the SKILL debugger.")
+("debugStatus"
+"debugStatus( 
+) 
+=> nil"
+"Prints the functions and variables being traced, functions that have breakpoints set, functions being counted, and the line breakpoints statistics.")
+("dump"
+"dump( 
+[ x_variables ] 
+) 
+=> nil"
+"Prints the current value of all the local variables on the stack. SKILL++ variables are not displayed by this function. For SKILL++ use where to see the lexical bindings on the stack.")
+("gcsummary"
+"gcsummary( 
+) 
+=> t"
+"Prints a summary of memory allocation and garbage collection statistics in the current SKILL run.")
+("getAllLoadedFiles"
+"getAllLoadedFiles( 
+[ t_path ] 
+) 
+=> l_files / nil"
+"Returns a list of all files loaded since debug mode was turned on.")
+("getCallingFunction"
+"getCallingFunction( 
+[ tx_nestingLevel ] 
+) 
+=> s_functionName  / nil"
+"Returns the name of the calling function or procedure at the specified level in the call stack.")
+("getFunctions"
+"getFunctions( 
+t_fileName 
+) 
+=> l_functions / nil"
+"Returns functions defined in a file loaded after debug mode is turned on.")
+("getGFbyClass"
+"getGFbyClass( 
+s_ClassName 
+[ g_nonExistent ]
+[ g_clearGFcache ]
+) 
+=> l_methods"
+"Returns a list of generic functions specializing on a given class.")
+("ilAddTopLevelErrorHandler"
+"ilAddTopLevelErrorHandler( 
+[ s_handler ] 
+) 
+=> t"
+"Registers a new top-level error-handler. This error-handler is called after stacktrace, when an error occurs. If an error-handler already exists, the function displays a warning message.")
+("ilDebugCountLevels"
+"ilDebugCountLevels( 
+) 
+=> x_levels"
+"Returns the number of top-level debug and error frames present in the SKILL stack if SKILL is in breakpoint or error top level. Otherwise, the function returns 1.")
+("ilGetGFbyClass"
+"ilGetGFbyClass( 
+s_ClassName 
+[ g_nonExistent ]
+[ g_clearGFcache ]
+) 
+=> l_methods"
+"Returns a list of generic functions specializing on a given class.")
+("ilGetIdeSessionWindow"
+"ilGetIdeSessionWindow( 
+[ g_force ]
+) 
+=> w_IDE / nil"
+"Returns the SKILL IDE session window ID. If g_force is set to a value other than nil, the function creates an IDE window and displays it on the screen.")
+("ilGetTCovFiles"
+"ilGetTCovFiles( 
+) 
+=> l_tCovFiles / nil"
+"Returns the list of files processed when you run an application in test coverage mode using the command line option -ilTCov <fileList>.")
+("ilMergeTCovData"
+"ilMergeTCovData( 
+l_tCovDirs
+t_resultDir
+) 
+=> t"
+"Merges tCov files from several directories and stores them in a single directory.")
+("ilRemoveMethod"
+"ilRemoveMethod( 
+s_genFunction 
+g_className 
+[ g_method ]
+) 
+=> t / nil"
+"Removes a given method from a generic function.")
+("ilRemoveTopLevelErrorHandler"
+"ilRemoveTopLevelErrorHandler( 
+) 
+=> t"
+"Unregisters the top-level error handler previously registered by the ilAddTopLevelErrorHandler function.")
+("ilSlotBoundp"
+"ilSlotBoundp( 
+obj 
+t_slotName 
+) 
+=> t / nil"
+"Checks if a named slot is bound (has been assigned a value) to an instance.")
+("ilToolBox"
+"ilToolBox( 
+) 
+=> t"
+"Brings up the SKILL Development toolbox, which lets you debug SKILL programs using a form-based graphical user interface.")
+("inNext"
+"inNext( 
+) 
+=> t / nil"
+"Returns t if the function is called in the expression that is executed in the debugged code on the next() SKILL function.")
+("inStepOut"
+"inStepOut( 
+) 
+=> t / nil"
+"Returns t if the function is called in the stepout() SKILL function.")
+("installDebugger"
+"installDebugger( 
+) 
+=> t / nil"
+"Installs the SKILL debugger as the error handler so that the debugger is entered automatically upon error.")
+("listAlias"
+"listAlias( 
+[ s_aliasName ]
+) 
+=> s_functionName / l_propertyList / nil"
+"Prints a (property) list of all current aliases and associated function symbols, or the function symbol for which the given alias is defined.")
+("listFunctions"
+"listFunctions( 
+t_pattern 
+[ g_listAllFuncs ] 
+) 
+=> l_functions / nil"
+"Returns all public function names that contain the given substring or match the given regular expression. If the second (optional) argument is specified as t (or a non-nil value), listFunctions looks at the SKILL virtual machine, rather than the cdsFinder database, and returns all isCallable Cadence public functions and user-defined SKILL functions that contain the given substring or match the given regular expression.")
+("listVariables"
+"listVariables( 
+t_pattern 
+) 
+=> l_variables"
+"Returns all variable names that match the given substring or regular expression as part or all of their print name.")
+("memoryAllocated"
+"memoryAllocated(  
+) 
+=> f_megabytesAllocated"
+"Returns the amount of memory allocated by a process. The returned value is an approximation in megabytes and might not include the memory that has been allocated, but the amount that is unused.")
+("next"
+"next( 
+[ x_steps ] 
+)"
+"Allows execution to proceed until the next expression. This function only works if executed from within a break handler and if the code you want to step through was loaded under debugMode. See installDebugger.")
+("pp"
+"pp( 
+s_functionName 
+[ p_outputPort ] 
+) 
+=> nil"
+"Pretty prints the definition of a function. The function must not be read-protected. This is an nlambda function.")
+("printFunctions"
+"printFunctions( 
+t_pattern 
+[ p_outport ] 
+[ g_listAllFuncs ] 
+) 
+=> t"
+"Prints all function names that contain the given substring or match the given regular expression.")
+("printObject"
+"printObject( 
+g_object 
+[ p_outputPort ] 
+) 
+=> g_result"
+"Writes a description of an object to an output port.")
+("printstruct"
+"printstruct( 
+g_object 
+) 
+=> t"
+"Prints the contents of an association table or defstruct in a tabular format.")
+("printVariables"
+"printVariables( 
+t_pattern 
+[ p_outport ] 
+) 
+=> t"
+"Prints all variable names that contain the given substring or match the given regular expression, along with their values.")
+("removeMethod"
+"removeMethod( 
+s_genFunction 
+g_className 
+[ g_role ]
+) 
+=> t / nil"
+"Removes a given method from a generic function.")
+("resume"
+"resume( 
+[ g_result ] 
+)
+=> g_toplevel"
+"Exits the interactive top-level loop started with the most recently invoked toplevel function and returns its argument to the caller of toplevel. Do not use this function programmatically; use it only as an interactive command.")
+("skillDebugger"
+"skillDebugger( 
+) 
+=> nil"
+"Activates the SKILL Debugger. Usually invoked by a break or error handler.")
+("skillDevStatus"
+"skillDevStatus( 
+) 
+=> t / nil"
+"Returns the current status of the Cadence SKILL Development Environment license.")
+("stacktrace"
+"stacktrace( 
+[ g_unevaluated ] 
+[ x_depth ] 
+[ x_skip ] 
+[ p_port ] 
+) 
+=> x_result"
+"Prints the functions on the stack and their arguments to the depth specified, or to the bottom of the stack if no depth is specified.")
+("step"
+"step( 
+[ x_steps ] 
+)"
+"Steps into functions and executes a given number of SKILL functions. This function only works if executed from within a break handler and if the code you want to step through was loaded under debugMode. See installDebugger.")
+("stepend"
+"stepend( 
+[ x_stepN ] 
+)"
+"Allows execution to proceed to the end of the nth enclosing form and displays its result. stepend cannot proceed past the end of the current function. This function only works if executed from within a break handler and if the code you want to step through was loaded under debugMode. See installDebugger.")
+("stepout"
+"stepout( 
+[ x_steps ] 
+)"
+"Allows execution to proceed until the evaluator returns from the current function.")
+("toplevel"
+"toplevel( 
+[ s_langMode ] 
+[ e_envobj ]
+) 
+=> g_result"
+"Starts an interactive top-level loop in either SKILL or SKILL++ mode.")
+("tracef"
+"tracef( 
+[ s_function | t_fileName ... | t ]
+) 
+=> g_result"
+"Turns on tracing of specified functions. Shows the functions called with their evaluated arguments and return values. This is an nlambda function.")
+("tracelevlimit"
+"tracelevlimit(
+[ x_depth ] 
+) 
+=> t"
+"Limits the indentation level and hence the call depth while tracing functions, arrays, or variables.")
+("tracelevunlimit"
+"tracelevunlimit(
+) 
+=> t"
+"Turns off limiting of the indentation level and hence the call depth while tracing functions, arrays, or variables.")
+("tracep"
+"tracep( 
+[ s_property...| t ] 
+) 
+=> g_result"
+"Turns on tracing of assignments to specified properties. This is an nlambda function.")
+("tracev"
+"tracev( 
+[ s_variable ... | t ] 
+) 
+=> g_result"
+"Turns on tracing of assignments to specified variables. This is an nlambda function.")
+("unbreakpt"
+"unbreakpt( 
+[ u_function... | t ] 
+) 
+=> g_result"
+"Clears breakpoints. This is an nlambda function.")
+("unbreakptMethod"
+"unbreakptMethod( 
+[ s_name [ @before | @after ] ] 
+[ l_specializer ]
+) 
+=> t"
+"Removes breakpoints set on the specified method.")
+("uncount"
+"uncount( 
+[ s_function ... | t ] 
+) 
+=> g_result"
+"Turns off counting and returns the current count results. This is an nlambda function.")
+("uninstallDebugger"
+"uninstallDebugger( 
+) 
+=> t / nil"
+"Uninstalls the SKILL debugger as the error handler. Turns off debug mode.")
+("untrace"
+"untrace( 
+[ s_function | t_fileName ... | t ] 
+) 
+=> g_result"
+"Turns tracing off for all functions specified that were traced using the tracef function. This is an nlambda function.")
+("untracep"
+"untracep( 
+[ { S_property...| t } ] 
+) 
+=> g_result"
+"Turns off tracing of the specified properties. This is an nlambda function.")
+("untracev"
+"untracev( 
+[ { s_variable ... | t } ] 
+) 
+=> g_result"
+"Turns off tracing for assignments to specified variables. This is an nlambda function.")
+("unwatch"
+"unwatch( 
+[ s_symbol...] 
+) 
+=> t"
+"Clears watchpoints set on the specified variables.")
+("watch"
+"watch( 
+[ s_symbol...] 
+) 
+=> t / l_watchedVars / nil"
+"Sets watchpoints on the specified variables. If watch() is called without arguments, it returns the list of variables being watched. If no variables are being watched, it returns nil.")
+("where"
+"where( 
+[ g_unevaluated ] 
+[ x_depth ] 
+[ x_skip ] 
+[ p_port ] 
+) 
+=> x_result"
+"Prints the functions on the stack and their arguments to the depth specified, or to the bottom of the stack, including the local variables and their bindings.")
+("whereIs"
+"whereIs( 
+s_function
+) 
+=> t / nil"
+"Prints the last file loaded in debug mode in which a function was defined, as well as the starting line number.")
+("fndResetDb"
+"fndResetDb( 
+) 
+=> t"
+"Resets a previously loaded Finder database.")
+("startFinder"
+"startFinder( 
+[ ?funcName t_funcName ] 
+) 
+=> t / nil"
+"Starts the SKILL API Finder utility. If the t_funcName argument is provided, the corresponding documentation of the function is displayed in the Finder. If a Finder window is already open, it will be updated or a new window will be displayed. The Finder window remains open, unless specifically closed, even after the parent window has been closed.")
+("skTabulate"
+"skTabulate( 
+?fileNames g_tabulatedFileNames
+[ ?reportFile t_reportFile ] 
+[ ?showFile g_showFile ] 
+[ ?dontResolveSymLink g_dontResolveSymLink ] 
+[ ?customerInfo l_customerInfo ] 
+[ ?printFiltered g_printFiltered ] 
+[ ?ext l_ext ] 
+[ ?infoFile g_infoFile ] 
+[ ?defnFile g_defnFile ] 
+[ ?recurse g_recurse ] 
+[ ?exclude g_exclude ] 
+[ ?recurseExclude g_recurseExclude ] 
+[ ?sendReport g_sendReport ] 
+=> t"
+"Runs the SKILL Tabulator in batch mode.")
+("skTabulateSKILL"
+"skTabulateSKILL( 
+) 
+=> t"
+"Brings up the SKILL Tabulator UI form.")
+("ilgAddRecentFiles"
+"ilgAddRecentFiles( 
+l_fileList
+) 
+=> t"
+"Adds the files listed in l_fileList to the SKILL IDE File menu.")
+("ilgAppendText"
+"ilgAppendText( 
+t_text 
+[ w_tab ]
+) 
+=> t / nil"
+"Inserts text into the SKILL IDE editor window at the current cursor location.")
+("ilgCopy"
+"ilgCopy( 
+[ w_tab ]
+) 
+=> t"
+"Copies the selected text into public text buffer. This function does not work on read-only files.")
+("ilgCut"
+"ilgCut( 
+[ w_tab ]
+) 
+=> t / nil"
+"Cuts and pastes the selected text into public text buffer. This function does not work on read-only files.")
+("ilgFindIdent"
+"ilgFindIdent( 
+x_column 
+x_row 
+[ ?tab w_tab ]
+) 
+=> l_coord / nil"
+"Returns the nearest identifiers from a given opening parenthesis location '(' in the SKILL IDE editor tab.")
+("ilgFindParenthesis"
+"ilgFindParenthesis( 
+x_column 
+x_row 
+[ ?level S_level ]
+[ ?direction S_direction ]
+[ ?tab w_tab ]
+) 
+=> l_coord / nil"
+"Returns the closest parenthesis in a file currently open in the SKILL IDE editor.")
+("ilgFoldLine"
+"ilgFoldLine( 
+[ x_column ]
+[ x_row ]
+) 
+=> t / nil"
+"Folds a document block in SKILL IDE at (x_column x_row) where (x_column x_row) is the location of an opening parenthesis. If this function is called without arguments, the current cursor location is used for computing (x_column x_row).")
+("ilgGetCursorLocation"
+"ilgGetCursorLocation( 
+[ w_tab ]
+) 
+=> l_location"
+"Returns the location of the cursor in the SKILL IDE editor window.")
+("ilgGetEditLock"
+"ilgGetEditLock( 
+[ w_tab ]
+) 
+=> S_mode"
+"Returns the read-only property for a SKILL IDE editor window.")
+("ilgGetHighlight"
+"ilgGetHighlight( 
+[ ?loc l_location ]
+[ ?tab w_tab ]
+) 
+=> l_highlightIDs / nil"
+"Returns the list of highlight IDs for the text highlighted in the SKILL IDE editor window.")
+("ilgGetSelectedLocation"
+"ilgGetSelectedLocation( 
+[ w_tab ]
+) 
+=> l_location / nil"
+"Returns the location coordinates of the current selection in the SKILL IDE editor window.")
+("ilgGetText"
+"ilgGetText( 
+[ l_location_begin ]
+[ l_location_end ]
+[ w_tab ]
+) 
+=> t_text"
+"Returns the text between l_location_begin and l_location_end. If these locations are not provided, the entire text in the SKILL IDE editor window is returned.")
+("ilgInvokeIDE"
+"ilgInvokeIDE( 
+) 
+=> t"
+"Displays the SKILL IDE main window.")
+("ilgLastDir"
+"ilgLastDir( 
+) 
+=> t_dirPath"
+"Returns the directory path of the file currently open in SKILL IDE.")
+("ilgPaste"
+"ilgPaste( 
+[ w_tab ]
+) 
+=> t / nil"
+"Pastes the text from the clipboard/buffer to the cursor location in the SKILL IDE editor window. This function does not work on read-only files.")
+("ilgPositionInComment"
+"ilgPositionInComment( 
+x_column 
+x_row 
+[ ?tab w_tab ]
+) 
+=> t / nil"
+"Checks if the specified coordinates (x_column x_row) fall within a comments block in the SKILL IDE document.")
+("ilgRegisterSelectionCB"
+"ilgRegisterSelectionCB( 
+g_name 
+) 
+=> t"
+"Registers a SKILL callback for SKILL IDE, which is called when some text is selected in the SKILL IDE editor window.")
+("ilgResetErrorMarker"
+"ilgResetErrorMarker( 
+x_line
+[ w_tab ]
+) 
+=> t"
+"Clears the error marker that was set by ilgSetErrorMarker() on line x_line in the SKILL IDE editor window.")
+("ilgResetHighlight"
+"ilgResetHighlight( 
+l_highlightID
+[ w_tab ]
+) 
+=> t"
+"Resets a specified highlight in a SKILL IDE document between location l_location_begin and l_location_end.")
+("ilgResetWarningMarker"
+"ilgResetWarningMarker( 
+x_line
+[ w_tab ]
+) 
+=> t"
+"Clears the warning marker that was set by ilgSetWarningMarker() on line x_line in the SKILL IDE editor window.")
+("ilgRunSKILLIDE"
+"ilgRunSKILLIDE( 
+[ ?fileList lt_fileList ] 
+) 
+=> t / nil"
+"Launches SKILL IDE and opens the files listed in lt_fileList.")
+("ilgScrollToLocation"
+"ilgScrollToLocation( 
+l_location
+[ w_tab ]
+) 
+=> t / nil"
+"Scrolls to the specified location in the specified SKILL IDE editor window or tab.")
+("ilgSearchText"
+"ilgSearchText( 
+t_text 
+[ ?loc l_location ]
+[ ?direction s_direction ]
+[ w_tab ]
+) 
+=> l_location / nil"
+"Searches the specified text in a SKILL IDE document.")
+("ilgSelectText"
+"ilgSelectText( 
+l_location_begin
+l_location_end
+[ w_tab ]
+)
+=> t"
+"Selects the text between location l_location_begin and l_location_end in the SKILL IDE editor window.")
+("ilgSetColor"
+"ilgSetColor( 
+t_text
+t_value
+[ x_alpha ]
+)
+=> t / nil"
+"Sets a custom color for the given SKILL IDE GUI control.")
+("ilgSetCursorLocation"
+"ilgSetCursorLocation( 
+l_location
+[ w_tab ]
+) 
+=> t / nil"
+"Sets the cursor location in a SKILL IDE document.")
+("ilgSetEditLock"
+"ilgSetEditLock( 
+s_mode
+[ w_tab ]
+) 
+=> t"
+"Changes the read-only property for a SKILL IDE editor window.")
+("ilgSetErrorMarker"
+"ilgSetErrorMarker( 
+x_line
+t_description
+[ w_tab ]
+) 
+=> t"
+"Sets the error marker with the pop-up description t_description on line x_line of the SKILL IDE editor window.")
+("ilgSetHighlight"
+"ilgSetHighlight( 
+l_location_begin
+l_location_end
+t_color
+[ ?fullWidth g_fullWidth ]
+[ w_tab ]
+) 
+=> l_highlightID / nil"
+"Highlights the area within l_location_begin and l_location_end in the color specified by t_color.")
+("ilgSetWarningMarker"
+"ilgSetWarningMarker( 
+x_line
+t_description
+[ w_tab ]
+) 
+=> t"
+"Sets the warning marker with pop-up description t_description on line x_line of the SKILL IDE editor window.")
+("ilgUnfoldLine"
+"ilgUnfoldLine( 
+[ x_column ]
+[ x_row ] 
+)
+=> t / nil"
+"This function unfolds a document block in SKILL IDE at position (x_column x_row), if it was folded. Here (x_column x_row) is the location of an opening parenthesis. If this function is called without arguments, the current cursor location is used for computing (x_column x_row).")
+("ilgUnregisterSelectionCB"
+"ilgUnregisterSelectionCB( 
+[ S_name ]
+)
+=> t / nil"
+"Unregisters a selection callback that was previously registered using ilgRegisterSelectionCB.")
