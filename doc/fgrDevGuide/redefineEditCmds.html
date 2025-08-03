@@ -1,0 +1,313 @@
+
+<html><head><title>Write Customized Fluid Editing Commands</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="komal" />
+<meta name="CreateDate" content="2023-06-11" />
+<meta name="CreateTime" content="1686519788" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use the Fluid Guard Ring feature of Virtuoso Layout Suite" />
+<meta name="DocTitle" content="Virtuoso Fluid Guard Ring Developer Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Write Customized Fluid Editing Commands" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="fgrDevGuide" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-11" />
+<meta name="ModifiedTime" content="1686519788" />
+<meta name="NextFile" content="implementationVer.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="updateCreateGrForm.html" />
+<meta name="c_product" content="Virtuoso Layout Suite" />
+<meta name="Product" content="Virtuoso Layout Suite" />
+<meta name="ProductFamily" content="Virtuoso Layout Suite" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso Fluid Guard Ring Developer Guide -- Write Customized Fluid Editing Commands" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="fgrDevGuideIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="fgrDevGuideTOC.html">Contents</a></li><li><a class="prev" href="updateCreateGrForm.html" title="Customize Create Guard Ring Form">Customize Create Guard Ring Fo ...</a></li><li style="float: right;"><a class="viewPrint" href="fgrDevGuide.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="implementationVer.html" title="Methodology to Maintain Versions of Implementation Class">Methodology to Maintain Versio ...</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso Fluid Guard Ring Developer Guide<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>6
+<a id="pgfId-1070179"></a></h1>
+<h1>
+<a id="pgfId-1070181"></a><hr />
+<a id="37619"></a>Write Customized Fluid Editing Commands<hr />
+</h1>
+
+<p>
+<a id="pgfId-1072282"></a>A fluid shape of a fluid guard ring (FGR) device can be visually edited by a design editing tool or layout editor. In Layout L, a fluid shape is selectable from the top level. Therefore, it supports editing features like any other level 0 shape.</p>
+<p>
+<a id="pgfId-1072584"></a>The different editing features are implemented through SKILL functions declared and defined in the VFO infrastructure. These functions provide the layout editor with the information required to know about and be able to edit a fluid shape. Therefore, when you edit a fluid shape, the corresponding set of SKILL updater functions are called and you can see editing on the layout canvas alongside your actions.</p>
+<p>
+<a id="pgfId-1072585"></a>As a PDK developer, you have the flexibility to customize fluid editing commands. These commands are defined and controlled by a user-specified protocol class derived from the base protocol class. The following methods are available for you to specify the supported edit operations for an FGR (that is, enable or disable an edit command) and to redefine the behavior of edit operations.</p>
+<table class="webflareTable" id="#id1073139">
+<tbody><tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073213"></a><strong>Methods for Enabling or Disabling an Edit Command</strong></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073215"></a><strong>Methods for Defining the Behavior of an Edit Command</strong></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073141"></a><code>vfoSupportsChop?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073143"></a><code>vfoChopInstance</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073145"></a><code>vfoSupportsMerge?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073147"></a><code>vfoMergeInstances</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073149"></a><code>vfoSupportsCreateObstruction?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073151"></a><code>vfoCreateObstruction</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073153"></a><code>vfoSupportsDeleteObstruction?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073155"></a><code>vfoDeleteObstruction</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073157"></a><code>vfoSupportsConvertToPolygon?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073159"></a><code>vfoConvertToPolygon</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073386"></a><code>vfoSupportsAbut?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073163"></a><code>vfoAbut</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073388"></a><code>vfoSupportsUpdateModelShape?</code></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1073167"></a><code>vfoUpdateModelShape</code></p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1073120"></a>For syntactical details about these methods, refer to the section describing <a href="fgrInfra.html#76614">vfoAdvAlgClass</a> in <a href="fgrInfra.html#73829">Chapter 2, &#8220;Fluid Guard Ring Infrastructure.&#8221;</a> In case you are implementing fluid guard ring without pitch support, refer to the section describing <a href="fgrInfra.html#82958">vfoAbstractClass</a> class in <a href="fgrInfra.html#73829">Chapter 2, &#8220;Fluid Guard Ring Infrastructure.&#8221;</a></p>
+
+<h2>
+<a id="pgfId-1071353"></a>Defining Fluid Editing Commands</h2>
+
+<p>
+<a id="pgfId-1071771"></a>To write customized fluid editing commands, do the following:</p>
+<ul><li>
+<a id="pgfId-1071773"></a>In a SKILL code file:<ol><li>
+<a id="pgfId-1071800"></a>Define a user-defined protocol class that is extended from the base protocol class. For example, in the following code snippet, <code>sub1EditClass</code> has been extended from <code>vfoSfAdvImplClass</code>.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1073783">
+<a id="pgfId-1073783"></a>defclass( sub1EditClass (vfoSfAdvImplClass)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1073784">
+<a id="pgfId-1073784"></a>)</pre></li><li>
+<a id="pgfId-1073785"></a>Override methods for each required fluid editing feature and declare with it an object of the user-defined protocol class. For example, the following enables chop operation and defines the chop behavior by overriding <code>vfoSupportsChop?</code> and <code>vfoChopInstance</code> methods:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1071701">
+<a id="pgfId-1071701"></a>defmethod( vfoSupportsChop? ( ( obj sub1EditClass ) instId ) t</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1072719">
+<a id="pgfId-1072719"></a>defmethod( vfoChopInstance ( ( obj sub1EditClass ) instId chopShapeData @rest args )  </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1071702">
+<a id="pgfId-1071702"></a>prog(()</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1072726">
+<a id="pgfId-1072726"></a>&lt;<code><em>define here the behavior of the chop command</em></code>&gt;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1071703">
+<a id="pgfId-1071703"></a>))</pre></li></ol></li><li>
+<a id="pgfId-1071861"></a>In the technology file:<ol><li>
+<a id="pgfId-1071862"></a>Declare your user-defined protocol class in the <code>tcDeclareDevice</code> construct, as shown below.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1071961">
+<a id="pgfId-1071961"></a>tcDeclareDevice( &quot;layout&quot; &quot;cdsGuardRing&quot; &quot;NewDevice&quot;</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1072148">
+<a id="pgfId-1072148"></a> ( (defComplementaryDevice &quot;&quot;) (classVersion 1) </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1073084">
+<a id="pgfId-1073084"></a> (enclosureClass &quot;vfoSfEnclosureClass&quot;) </pre><pre class="webflare-pre-block webflare-courier-new" id="#id1073085">
+<a id="pgfId-1073085"></a> <strong>(vfoProtocolClass &quot;sub1EditClass&quot;)</strong></pre></li><li>
+<a id="pgfId-1073086"></a>Set the user-defined protocol class as a property of <code>vfoProtocolClass</code> in the <code>tfcDefineDeviceProp</code> construct, as shown below.<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1072231">
+<a id="pgfId-1072231"></a>tfcDefineDeviceProp(</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1072837">
+<a id="pgfId-1072837"></a>;(viewName     deviceName        propName          propValue)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1072838">
+<a id="pgfId-1072838"></a>  (layout      NewDevice         <strong>vfoProtocolClass  &quot;sub1EditClass&quot;</strong>)</pre><pre class="webflare-pre-block webflare-courier-new" id="#id1072839">
+<a id="pgfId-1072839"></a>)</pre></li></ol></li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1073541"></a>For more related details, refer to the <h-hot><a actuate="user" class="URL" href="http://support.cadence.com/wps/mypoc/cos?uri=deeplinkmin:DocumentViewer;src=wp;q=ApplicationNotes/Custom_IC_Design/AppNote_Creating_Fluid_SKILL_Pcells.pdf" show="replace" xml:link="simple">Creating Fluid SKILL Pcells</a></h-hot> application note available on the <h-hot><a actuate="user" class="URL" href="http://support.cadence.com" show="replace" xml:link="simple">Cadence Online Support</a></h-hot> website.</p>
+
+<h2>
+<a id="pgfId-1073948"></a>Pitch Handling Support for Editing Commands</h2>
+<h3>
+<a id="pgfId-1073949"></a>Stretch Command</h3>
+
+<p>
+<a id="pgfId-1074840"></a>For the <em>Stretch</em> command, pitch handling support is available only for orthogonal shapes, rectangle, path, and polygon, of <code>shapeType</code> &quot;<code>path</code>&quot;.</p>
+<p>
+<a id="pgfId-1074841"></a>Pitch handling is supported if the following options are selected in the Stretch form:</p>
+<ul><li>
+<a id="pgfId-1074055"></a><em>Snap Mode</em> option is set to <em>orthogonal</em> </li><li>
+<a id="pgfId-1074073"></a><em>Keep Guard Ring Ends Connected</em> option is selected</li></ul>
+
+<p>
+<a id="pgfId-1074086"></a>During the <em>Stretch</em> command, when you drag the mouse, the fluid shape snaps to the nearest available grid, as shown in the figure below.</p>
+
+<p>
+<a id="pgfId-1073954"></a></p>
+<div class="webflare-div-image">
+<img width="458" height="197" src="images/redefineEditCmds-2.gif" /></div>
+<h3>
+<a id="pgfId-1073955"></a>Merge Command</h3>
+
+<p>
+<a id="pgfId-1073956"></a>The pitch handling support is available for the <em>Merge</em> command only if all of the following conditions are true:</p>
+<ul><li>
+<a id="pgfId-1073957"></a>Ring-ring or path-path type shapes and <code>shapeType</code> is path</li><li>
+<a id="pgfId-1073958"></a>Both instances have same net or either of them has a net</li><li>
+<a id="pgfId-1073959"></a>The following parameters for both the instances are same for the same device type:<ul><li>
+<a id="pgfId-1073960"></a><code>horizontalPitch</code></li><li>
+<a id="pgfId-1073961"></a><code>verticalPitch</code></li><li>
+<a id="pgfId-1073962"></a><code>horizontalSegWidth</code></li><li>
+<a id="pgfId-1073963"></a><code>verticalSegWidth</code></li></ul></li></ul>
+
+
+
+
+
+
+<p>
+<a id="pgfId-1073964"></a>You can use the <code>vfoGRCompareParams </code>SKILL API to check other parameters, as shown in the example below:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1073965"></a>defmethod(vfoGRCompareParams ((obj userGuardRingClass) inst1 inst2)
+&#160;&#160;&#160;&#160;if(vfoGetParam(inst1 &#8220;userParam&#8221;) == vfoGetParam(inst2 &#8220;userParam&#8221;) t nil)
+&#160;&#160;&#160;&#160;)</pre>
+
+<p>
+<a id="pgfId-1074200"></a>The results of the <em>Merge</em> command are illustrated below:</p>
+<ul><li>
+<a id="pgfId-1074469"></a>During the ring-ring merge, for the merge to the successful, the <code>shapeData</code> of different fluid guard ring instances should overlap even if centerlines do not overlap. Also, the resulting shape is determined by the outermost edges of the fluid guard ring instances being merged.<br />
+<a id="pgfId-1074478"></a><div class="webflare-div-image">
+<img width="402" height="149" src="images/redefineEditCmds-3.gif" /></div></li><li>
+<a id="pgfId-1074473"></a>During path-path merge, the centerline of fluid shapes should be aligned at path ends that are to be merged. Also, the merge operation can be done only at path ends. <br /><ffi2-fig-frame-in-2 id="#id1073980">
+<a id="pgfId-1073980"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img width="407" height="132" src="images/redefineEditCmds-4.gif" /></div></li></ul>
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1074494"></a>For cases where no global or local grids are available in the layout canvas, there is no common snapping reference for different fluid guard ring instances. In such cases, the fin grids and poly lines of different FGR instances do not align with each other while placing the instances. When such instances are merged, the resulting fluid guard ring segment lengths are not pitch correct and result in alignment and DRC errors. In such cases, the VFO infrastructure automatically performs post-edit pitch correction, as shown in the figure below: </p>
+
+<p>
+<a id="pgfId-1075044"></a></p>
+<div class="webflare-div-image">
+<img width="667" height="384" src="images/redefineEditCmds-5.gif" /></div>
+<p>
+<a id="pgfId-1075107"></a></p>
+<div class="webflare-div-image">
+<img width="667" height="290" src="images/redefineEditCmds-6.gif" /></div>
+
+<p>
+<a id="pgfId-1073981"></a>However, the minimum segment length requirements and inner corner spacing, which result in DRC errors, are not taken care during the post-edit pitch correction. You should use the <em>Stretch</em> command to correct the segment lengths.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1075011"></a>You need to set the environment variable <a href="devEnvVars.html#34241">fgrPostEditPitchCorrection</a> so that the VFO infrastructure post-processes the merged fluid guard ring instance to ensure that fluid shape data follows the pitch parameters.</div>
+
+<h4><em>
+<a id="pgfId-1075870"></a>Pitch Parameter Support in Edit Properties Form</em></h4>
+
+<p>
+<a id="pgfId-1075877"></a>The four pitch parameters, <code>horizontalPitch,</code> <code>verticalPitch</code>, <code>horizontalSegWidth</code> and <code>verticalSegWidth</code>, can be updated through the Edit Properties form. When you update these parameters, the shape data is also updated for the FGR instance.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1075856"></a>The change in the pitch parameters through the Edit Properties form or <code>vfoSetParam</code> function does not guarantee that the instance will snap to pitches.</div>
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="updateCreateGrForm.html" id="prev" title="Customize Create Guard Ring Form">Customize Create Guard Ring Fo ...</a></em></b><b><em><a href="implementationVer.html" id="nex" title="Methodology to Maintain Versions of Implementation Class">Methodology to Maintain Versio ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
