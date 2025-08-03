@@ -1,0 +1,642 @@
+
+<html><head><title>Using the Spectre AMS Designer Simulator</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="shubh" />
+<meta name="CreateDate" content="2023-06-11" />
+<meta name="CreateTime" content="1686550178" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how you can migrate your design simulations from SpectreVerilog or UltraSimVerilog to AMS Designer" />
+<meta name="DocTitle" content="SpectreVerilog/UltraSimVerilog Migration to AMS Designer" />
+<meta name="DocType" content="Migration" />
+<meta name="FileTitle" content="Using the Spectre AMS Designer Simulator" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="migrateToAMS" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-11" />
+<meta name="ModifiedTime" content="1686550178" />
+<meta name="NextFile" content="" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design,Custom IC Design" />
+<meta name="PrevFile" content="setup.html" />
+<meta name="c_product" content="AMS Designer,Spectre" />
+<meta name="Product" content="AMS Designer,Spectre" />
+<meta name="ProductFamily" content="AMS Designer,Spectre" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="SpectreVerilog/UltraSimVerilog Migration to AMS Designer -- Using the Spectre AMS Designer Simulator" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="migrateToAMSIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="migrateToAMSTOC.html">Contents</a></li><li><a class="prev" href="setup.html" title="Setting Up the Migration Example">Setting Up the Migration Examp ...</a></li><li style="float: right;"><a class="viewPrint" href="migrateToAMS.pdf">View/Print PDF</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>SpectreVerilog/UltraSimVerilog Migration to AMS Designer<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>2
+<a id="pgfId-1039886"></a></h1>
+<h1>
+<a id="pgfId-1039888"></a><hr />
+<a id="73830"></a>Using the Spectre AMS Designer Simulator<hr />
+</h1>
+<div class="webflare-information-macro webflare-macro-information">
+<a id="pgfId-1039889"></a>
+Use IC 6.1.3, MMSIM 6.2 or later, and IUS 6.11 or later for this example. </div>
+
+<p>
+<a id="pgfId-1039890"></a>Spectre AMS Designer has many advantages:</p>
+<ul><li>
+<a id="pgfId-1039891"></a>Better performance (33% for this particular example)</li><li>
+<a id="pgfId-1039892"></a>More powerful digital solver (NC-Sim versus Verilog-XL)</li><li>
+<a id="pgfId-1039893"></a>Powerful connect rules (CRs)</li><li>
+<a id="pgfId-1039894"></a>Flexible discipline definitions</li><li>
+<a id="pgfId-1039895"></a>Bidirectional CR support</li><li>
+<a id="pgfId-1039896"></a>More language support (Verilog-AMS, VHDL-AMS, SystemVerilog, SystemC)</li></ul>
+
+
+
+
+
+<p>
+<a id="pgfId-1039897"></a>If you use the Spectre AMS Designer simulator in the Virtuoso Analog Design Environment (ADE), there are two netlisters:</p>
+<ul><li>
+<a id="pgfId-1039898"></a>The cell-based netlister, which is the original netlister for AMS, requires <code>ams</code> simInfo (which contains information such as a parameter list and how to netlist each component) when it generates the individual <code>netlist.vams</code> netlist files in the library/cell/view directory structure. For more information, see <a actuate="user" class="URL" href="../amsenvug/chap4.html#firstpage" show="replace" xml:link="simple">&#8220;Netlisting&#8221;</a> in the <em><a actuate="user" class="URL" href="../amsenvug/amsenvugTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso AMS Environment User Guide</a></em>.</li><li>
+<a id="pgfId-1039901"></a>The open simulation system (OSS) netlister is available in IC 5.1.41 USR4 and later. You can use this netlister when you migrate to AMS Designer. The OSS netlister uses existing <code>spectre</code> views. The OSS netlister generates a single netlist file (<code>netlist.vams</code>) that includes all the modules that need to be compiled. (The final netlist is also one file for Spectre and UltraSim.) The OSS netlister works the same way for the AMS Designer simulator as it does for the Spectre and UltraSim simulators.</li></ul>
+
+<p>
+<a id="pgfId-1039902"></a>If you are using the OSS netlister, you can use the same <code>config</code> view to run AMS Designer.</p>
+<p>
+<a id="pgfId-1039903"></a>This tutorial illustrates how to use the OSS netlister and <code>ncverilog</code> so that you can benefit from the many advantages of AMS Designer. See the following topics for more information:</p>
+<ul><li>
+<a id="pgfId-1039907"></a><a href="simulateAMSD.html#36030">Changing the Simulator to AMS Designer</a></li><li>
+<a id="pgfId-1039911"></a><a href="simulateAMSD.html#66646">Loading the State File for AMS Designer</a></li><li>
+<a id="pgfId-1039915"></a><a href="simulateAMSD.html#88253">Selecting and Customizing Connect Rules for AMS Designer</a></li><li>
+<a id="pgfId-1039919"></a><a href="simulateAMSD.html#39958">Setting Netlister and Run Modes</a></li><li>
+<a id="pgfId-1039923"></a><a href="simulateAMSD.html#10272">Viewing Options</a></li><li>
+<a id="pgfId-1039927"></a><a href="simulateAMSD.html#55067">Netlisting and Running</a></li><li>
+<a id="pgfId-1039931"></a><a href="simulateAMSD.html#49518">Viewing Waveforms</a></li><li>
+<a id="pgfId-1039935"></a><a href="simulateAMSD.html#13495">Displaying Partitions</a></li><li>
+<a id="pgfId-1039939"></a><a href="simulateAMSD.html#58118">Understanding Connect Rules and Disciplines in AMS Designer</a></li></ul>
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1039942"></a><a id="36030"></a>Changing the Simulator to <a id="changeToAMS"></a>AMS Designer</h2>
+
+<p>
+<a id="pgfId-1039943"></a>To change the simulator to AMS Designer, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1039944"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment session window, 
+choose <em>Setup &#8211; Simulator/Directory/Host</em>.<br />
+<a id="pgfId-1039945"></a>The Choosing Simulator/Directory/Host form appears.</li><li>
+<a id="pgfId-1039946"></a>In the <em>Simulator</em> drop-down combo box, select <em>ams</em>.<br />
+<a id="pgfId-1039950"></a><div class="webflare-div-image">
+<img src="images/formChoosingSimulatorAMS.gif" /></div></li><li>
+<a id="pgfId-1039951"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1039952"></a><em>Simulator: ams</em> appears on the status bar in the Virtuoso<sup>&#174;</sup> Analog Design Environment session window. The name of the analog solver (<em>Spectre</em> or <em>UltraSim</em>) appears in parentheses after <em>ams</em>.<br />
+<a id="pgfId-1039956"></a><div class="webflare-div-image">
+<img src="images/upperRightCornerAMS.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1039958"></a><a id="66646"></a>Loading the State File for AMS Designer</h2>
+
+<p>
+<a id="pgfId-1039959"></a>To load the state file for AMS Designer, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1039960"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Session &#8211; Load State</em>.<br />
+<a id="pgfId-1039961"></a>The Loading State form appears. <br />
+<a id="pgfId-1039965"></a><div class="webflare-div-image">
+<img src="images/formLoadStateAMS.gif" /></div></li><li>
+<a id="pgfId-1039966"></a>In the <em>State Name</em> area, select <em>state_amsu</em>.<br />
+<a id="pgfId-1039967"></a>This state uses the UltraSim solver. </li><li>
+<a id="pgfId-1039968"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1039969"></a>The state settings appear in the Virtuoso<sup>&#174;</sup> Analog Design Environment session window, such as <em>tran &#8230; 10u</em> in the <em>Analyses</em> area and nodes to plot in the <em>Outputs</em> area. 
+<em>Simulator: ams(UltraSim)</em> appears on the status bar in the ADE window. <br />
+<a id="pgfId-1039973"></a><div class="webflare-div-image">
+<img width="665" height="360" src="images/simulateAMSD-6.gif" /></div></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1039975"></a><a id="88253"></a>Selecting and Customizing Connect Rules for AMS Designer<a id="marker-1039976"></a></h2>
+
+<p>
+<a id="pgfId-1039978"></a>To specify and customize <h-hot><a href="simulateAMSD.html#connectRules">connect rules</a></h-hot> for the AMS Designer simulator, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1039979"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Setup &#8211; Connect Rules</em>.<br />
+<a id="pgfId-1039981"></a>The <a id="marker-1039980"></a>Select Connect Rules form appears. <br />
+<a id="pgfId-1039985"></a><div class="webflare-div-image">
+<img width="667" height="601" src="images/simulateAMSD-7.gif" /></div></li><li>
+<a id="pgfId-1039986"></a>In the <em>Rules Name</em> drop-down combo box, select <em>connectLib.ConnRules_3V_basic</em>.<br />
+<a id="pgfId-1039990"></a><div class="webflare-div-image">
+<img width="667" height="599" src="images/simulateAMSD-8.gif" /></div></li><li>
+<a id="pgfId-1039991"></a>(Optional) To view the contents of the connect rule, click <em>View</em>.<br />
+<a id="pgfId-1039992"></a>The connect rule file appears in a window. When you are finished viewing the file, you can choose <em>File &#8211; Close Window</em>.</li><li>
+<a id="pgfId-1039993"></a>To customize this connect rule, click <em>Customize</em>.<br />
+<a id="pgfId-1039995"></a>The <a id="marker-1039994"></a>Customize Built-in Rules form appears.<br />
+<a id="pgfId-1039999"></a><div class="webflare-div-image">
+<img width="608" height="686" src="images/simulateAMSD-9.gif" /></div></li><li>
+<a id="pgfId-1040000"></a>In the <em>Description</em> field, change the name of the rule to <code>My_ConnRules_25V_mid</code>:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1040001">
+<a id="pgfId-1040001"></a>This is the description for My_ConnRules_25V_mid</pre><br />
+<a id="pgfId-1040005"></a><div class="webflare-div-image">
+<img src="images/customDescription.gif" /></div></li><li>
+<a id="pgfId-1040006"></a>In the <em>Connect Module Declarations</em> group box, hilight the top three lines containing information for modules <em>E2L_0</em>, <em>L2E_0</em>, and <em>Bidir_0</em>.<br />
+<a id="pgfId-1040007"></a>The shared parameters appear in the <em>Parameters</em> group box.<br />
+<a id="pgfId-1040011"></a><div class="webflare-div-image">
+<img width="608" height="686" src="images/simulateAMSD-11.gif" /></div></li><li>
+<a id="pgfId-1040012"></a>Change these values as follows:<br />
+<a id="pgfId-1040044"></a><table class="webflareTable" id="#id1040013">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040015"></a><em>Parameter</em></p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040017"></a><em>Value</em></p>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040019"></a>Change it to</p>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040021"></a><em>vsup</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040023"></a><em>3.0</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040025"></a><code>2.5</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040027"></a><em>vthi</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040029"></a><em>2.0</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040031"></a><code>1.6</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040033"></a><em>vtlo</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040035"></a><em>1.0</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040037"></a><code>0.8</code></p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040039"></a><em>tr</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040041"></a><em>0.4n</em></p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1040043"></a><code>0.2n</code></p>
+</td>
+</tr>
+</tbody></table><ol><li>
+<a id="pgfId-1040045"></a>Select the parameter you want to change.</li><li>
+<a id="pgfId-1040046"></a>In the <em>Value</em> field, change its value.</li><li>
+<a id="pgfId-1040047"></a>Click <em>Change</em>.<br />
+<a id="pgfId-1040051"></a><div class="webflare-div-image">
+<img width="608" height="686" src="images/simulateAMSD-12.gif" /></div></li></ol></li><li>
+<a id="pgfId-1040052"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1040053"></a>On the Select Connect Rules form, click <em>Add</em>.<br />
+<a id="pgfId-1040057"></a><div class="webflare-div-image">
+<img width="666" height="413" src="images/simulateAMSD-13.gif" /></div>
+<a id="pgfId-1040058"></a><em>Modified built-in</em> appears in the <em>Type</em> column. </li><li>
+<a id="pgfId-1040059"></a>Click <em>OK</em>.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1040060"></a>The connect rules you specify on the Select Connect Rules form apply to the whole design. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040061"></a>You might want to have several connect rules in the same design. You can set disciplines on a net, cell, instance, or library, and you can specify several connect rules accordingly.</div>
+
+<h2>
+<a id="pgfId-1040064"></a><a id="39958"></a>Setting Netlister and Run Modes</h2>
+
+<p>
+<a id="pgfId-1040065"></a>To set netlister and run modes, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1040066"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Simulation &#8211; Netlist and Run Options</em>.<br />
+<a id="pgfId-1040068"></a>The <a id="marker-1040067"></a>Netlister and Run Options form appears.</li><li>
+<a id="pgfId-1040069"></a>For <em>Netlister Mode</em>, select <em>OSS-based</em>.<br />
+<a id="pgfId-1040070"></a>The <em>ncverilog</em> radio button appears as a <em>Run Mode</em> choice.<br />
+<a id="pgfId-1040076"></a><div class="webflare-div-image">
+<img width="440" height="592" src="images/simulateAMSD-14.gif" /></div>
+<a id="pgfId-1040077"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1040078"></a>You are ready to simulate. </li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1040080"></a><a id="10272"></a>Viewing Options</h2>
+
+<p>
+<a id="pgfId-1040081"></a>As you proceed through this next set of steps, you will notice several choices on the <em>Simulation &#8211; Options</em> menu in the Virtuoso<sup>&#174;</sup> Analog Design Environment window:</p>
+
+<p>
+<a id="pgfId-1040085"></a></p>
+<div class="webflare-div-image">
+<img width="434" height="282" src="images/simulateAMSD-15.gif" /></div>
+
+<p>
+<a id="pgfId-1040086"></a>You will not change any of these options during this example, but you will view some of the forms.</p>
+<p>
+<a id="pgfId-1040087"></a>See </p>
+<ul><li>
+<a id="pgfId-1040091"></a><a href="simulateAMSD.html#19919">Viewing Analog (Spectre) Options</a></li><li>
+<a id="pgfId-1040095"></a><a href="simulateAMSD.html#18713">Viewing FastSPICE (UltraSim) Options</a></li><li>
+<a id="pgfId-1040099"></a><a href="simulateAMSD.html#91074">Viewing AMS Options</a></li></ul>
+
+
+
+<h3>
+<a id="pgfId-1040102"></a><a id="19919"></a>Viewing <a id="marker-1040101"></a>Analog (Spectre) Options</h3>
+
+<p>
+<a id="pgfId-1040103"></a>To view Analog (Spectre) options, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1040104"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Simulation &#8211; Options &#8211; Analog(Spectre)</em>.<br />
+<a id="pgfId-1040105"></a>The Analog (Spectre) Options form appears.<br />
+<a id="pgfId-1040109"></a><div class="webflare-div-image">
+<img src="images/formAnalogOptions.gif" /></div>
+<a id="pgfId-1040110"></a>For information about the options you can set on this form, see the <em>Spectre Circuit Simulator and Accelerated Parallel Simulator User Guide</em>. </li><li>
+<a id="pgfId-1040111"></a>When you are finished viewing Spectre options, click <em>Cancel</em> to close the form.</li></ol>
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1040114"></a><a id="18713"></a>Viewing <a id="marker-1040113"></a>FastSPICE (UltraSim) Options</h3>
+
+<p>
+<a id="pgfId-1040115"></a>To view FastSPICE (UltraSim) options, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1040116"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Simulation &#8211; Options &#8211; FastSPICE(UltraSim)</em>.<br />
+<a id="pgfId-1040117"></a>The FastSPICE (UltraSim) Options form appears.<br />
+<a id="pgfId-1040121"></a><div class="webflare-div-image">
+<img src="images/formFastSPICEOptions.gif" /></div>
+<a id="pgfId-1040122"></a>For information about the options you can set on this form, see the <em><a actuate="user" class="URL" href="../UltraSim_User/UltraSim_UserTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso UltraSim Simulator User Guide</a></em>. </li><li>
+<a id="pgfId-1040124"></a>When you are finished viewing FastSPICE options, click <em>Cancel</em> to close the form.</li></ol>
+
+
+
+
+
+
+
+
+
+<h3>
+<a id="pgfId-1040127"></a><a id="91074"></a>Viewing <a id="marker-1040126"></a>AMS Options</h3>
+
+<p>
+<a id="pgfId-1040128"></a>To view AMS simulation options, do the following:</p>
+
+<ol><li>
+<a id="pgfId-1040129"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Simulation &#8211; Options &#8211; AMS Simulator</em>.<br />
+<a id="pgfId-1040133"></a><div class="webflare-div-image">
+<img width="554" height="712" src="images/simulateAMSD-18.gif" /></div></li><li>
+<a id="pgfId-1040135"></a><a id="marker-1040134"></a>Scroll down to the bottom of this form to see that <code>-iereport</code> appears in the <em>Additional arguments</em> field. <br />
+<a id="pgfId-1040136"></a>When you specify the <code>-iereport</code> option, the elaborator generates an interface element (IE) report. The IE report appears at the top of the simulation log file. This report contains information about each IE the software inserted into the design, such as its name, net, discipline, and so on. </li><li>
+<a id="pgfId-1040137"></a>When you are finished viewing options, click <em>Cancel</em> to close the form.</li></ol>
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1040139"></a><a id="55067"></a>Netlisting and Running</h2>
+
+<p>
+<a id="pgfId-1040140"></a>To netlist and run, do the following:</p>
+<ul><li>
+<a id="pgfId-1040141"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Simulation &#8211; Netlist and Run</em>.<br />
+<a id="pgfId-1040142"></a>Status appears in the upper left corner of the window. Simulation output information appears in the <code>ncverilog.log</code> file. The simulation time appears at the end of the file:<pre class="webflare-pre-block webflare-courier-new" id="#id1040143">
+<a id="pgfId-1040143"></a>Time Usage:
+  Total user time: 0:04:16 (256.980 sec), system time: 0:00:01 (1.100 sec), real time: 0:04:26 (266.600 sec) </pre><br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040144"></a>This simulation ran for 5 minutes 47 seconds on our Solaris machine with a 1.6 G CPU. </div>
+<a id="pgfId-1040146"></a><a id="marker-1040145"></a>Because <em>-iereport </em>appears in the <em>Additional arguments</em> field on the Main tab of the AMS tabbed window (see <a href="simulateAMSD.html#91074">&#8220;Viewing AMS Options&#8221;</a>), an IE report appears at the top of the log file. That report might look something like this: <pre class="webflare-pre-block webflare-courier-new" id="#id1040150">
+<a id="pgfId-1040150"></a>----------IE report -------------
+
+Automatically inserted instance: pll_160MHz_sim.I3.I11.I15.net18__E2L__logic (merged):
+        connectmodule name: E2L,
+        inserted across signal: net18
+        and ports of discipline: logic
+        Sensitivity infomation:
+                No Sensitivity info
+        Discipline of Port (Ain): electrical, Analog port
+        Discipline of Port (Dout): logic, Digital port
+        Drivers of port Dout: No drivers
+        Loads of port Dout: No loads</pre>
+<a id="pgfId-1040151"></a>As you scroll down past UltraSim version and build time information, you will notice messages related to the <a id="marker-1040152"></a>compiled C flow for Verilog-A. Those messages might look something like this:<pre class="webflare-pre-block webflare-courier-new" id="#id1040153">
+<a id="pgfId-1040153"></a>File read: .../Migrate_2_AMSD/models/spectre/resd_va.va
+Created directory amsControl.ahdlSimDB/ (775)
+Created directory
+        amsControl.ahdlSimDB/2143_migrateToAMS_Migrate_2_AMSD_models_spectre_resd_va.va.ahdlcmi/
+        (775)
+Created directory
+        amsControl.ahdlSimDB/2143_migrateToAMS_Migrate_2_AMSD_models_spectre_resd_va.va.ahdlcmi/Linux2.4.21-37.ELsmp+gcc/
+        (775)
+Compiling ahdlcmi module library.
+Finished compilation in 2 s (elapsed).
+Installed compiled interface for resd_va.</pre>
+<a id="pgfId-1040155"></a>You can use the <a id="marker-1040154"></a>compiled C flow to boost performance particularly when you are using Verilog-A to model bsources or CMOS devices such as MOSFETs, resistors, and capacitors. See &#8220;Using the Compiled C Code Flow&#8221; in the <em>Cadence Verilog-A Language Reference</em> for more information.<br />
+<a id="pgfId-1040157"></a>The IUS 5.83 release supports a feature called <a id="marker-1040156"></a>FastCross that speeds up the simulation by reducing the number of global time steps. Information about the <a id="marker-1040158"></a>total global time steps appears near the end of the log file:<pre class="webflare-pre-block webflare-courier-new" id="#id1040159">
+<a id="pgfId-1040159"></a>Total Accepts: 1.452 M</pre>
+<a id="pgfId-1040160"></a>You can close each window by choosing <em>File &#8211; Close Window</em>.</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1040162"></a><a id="49518"></a>Viewing Waveforms</h2>
+
+<p>
+<a id="pgfId-1040163"></a>When the simulation finishes, a graph window appears in Virtuoso Visualization and Analysis XL. For derails on using this waveform tool, see the <em><a actuate="user" class="URL" href="../vivaxlug/vivaxlugTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Visualization and Analysis XL User Guide</a></em>. </p>
+
+<h2>
+<a id="pgfId-1040166"></a><a id="13495"></a>Displaying Partitions</h2>
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040268"></a>You can view partitions only after you have completed simulation and elaboration.</div>
+<p>
+<a id="pgfId-1040269"></a>You can verify the partitions for AMS Designer:</p>
+
+<ol><li>
+<a id="pgfId-1040270"></a>Make the <em>AMS</em> menu available in the menu bar. For this, choose <em>Launch &#8211; Plug-ins &#8211; Mixed Signal &#8211; Options &#8211; AMS</em>. </li><li>
+<a id="pgfId-1040271"></a>In the schematic window, descend into <em>I3</em> :<ol><li>
+<a id="pgfId-1040272"></a>Select I3. </li><li>
+<a id="pgfId-1040273"></a>Type <code>e</code>.</li><li>
+<a id="pgfId-1040274"></a>Click <em>OK</em>. </li></ol></li><li>
+<a id="pgfId-1040275"></a>In the schematic window, choose <em>AMS &#8211; Display Partition &#8211; Initialize</em>.</li><li>
+<a id="pgfId-1040276"></a>In the schematic window, choose <em>AMS &#8211; Display Partition &#8211; Interactive</em>.<br />
+<a id="pgfId-1040277"></a>The AMS Partition Display form appears.<br />
+<a id="pgfId-1040281"></a><div class="webflare-div-image">
+<img src="images/formDisplayPartitionAMS.gif" /></div></li><li>
+<a id="pgfId-1040282"></a>Click <em>OK</em>.<br />
+<a id="pgfId-1040283"></a>On the schematic, mixed-signal items appear in orange and yellow.<br />
+<a id="pgfId-1040287"></a><div class="webflare-div-image">
+<img src="images/AMSpartitions.gif" /></div>
+<a id="pgfId-1040288"></a>You can see the set up for connect rules and disciplines both from the <em>AMS</em> menu in the schematic window and by choosing <em>Setup &#8211; Connect Rules</em> in the Virtuoso<sup>&#174;</sup> Analog Design Environment window.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>
+<a id="pgfId-1040190"></a><a id="58118"></a>Understanding <a id="connectRules"></a>Connect Rules and <a id="disciplines"></a>Disciplines in AMS Designer</h2>
+
+<p>
+<a id="pgfId-1040194"></a>The AMS Designer simulator uses <a id="marker-1040191"></a>disciplines, <a id="marker-1040192"></a>connect modules, and <a id="marker-1040193"></a>connect rules in place of A2D and D2A interface elements. A discipline denotes an object as analog or digital (with, for example, an <code>electrical</code> or <code>logic</code> discipline). When you connect objects of different disciplines, connect rules determine which connect modules to insert between the objects. The inserted connect modules convert signals to values that are appropriate for each discipline. You can modify connect rule parameters such as supply voltage and rise time in your connect modules to tailor conversion of your design.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040195"></a>For more information about disciplines, connect rules, and connect modules, see &#8220;Mixed-Signal Aspects of Verilog-AMS&#8221; in the <em>Cadence Verilog-AMS Language Reference</em>.</div>
+<p>
+<a id="pgfId-1040196"></a>Cadence provides sample connect rules in the following directory:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1040197"></a>$AMSHOME/tools/affirma_ams/etc/connect_lib</pre>
+
+<p>
+<a id="pgfId-1040198"></a>The sample connect rules (CRs) here are built in and ready for use in the Virtuoso<sup>&#174;</sup> Analog Design Environment (ADE). Built-in CRs work for a certain set of voltage supplies only (such as 1.8V, 3V, and 5V). You can modify the parameters to customize a built-in CR for your design needs. Advanced designers can write customized CRs and include them in the simulation.</p>
+<p>
+<a id="pgfId-1040199"></a>For this example, the voltage supply is 2.5 V. We can customize the 3V built-in CR to fit our simulation.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040200"></a>Cadence provides full-fast, full, mid, and basic built-in CRs. You can speed up the simulation for complicated designs using the full-fast CRs. For this example, we do not need a bidirectional CR; we can choose a simpler CR. </div>
+
+<h2>
+<a id="pgfId-1040202"></a>Simulating the Design Using the Spectre Solver</h2>
+
+<p>
+<a id="pgfId-1040203"></a>The AMS Designer simulator has two analog solvers: UltraSim and Spectre. To simulate the example design using the Spectre solver, you can do the following:</p>
+
+<ol><li>
+<a id="pgfId-1040204"></a>Save the results from the previous simulation as follows:<ol><li>
+<a id="pgfId-1040205"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Results &#8211; Save</em>.<br />
+<a id="pgfId-1040206"></a>The Save Results form appears.<br /><ffi2-fig-frame-in-2 id="#id1040210">
+<a id="pgfId-1040210"></a></ffi2-fig-frame-in-2><div class="webflare-div-image">
+<img src="images/formSaveResults.gif" /></div></li><li>
+<a id="pgfId-1040211"></a>In the <em>Save As</em> field, type a name for your results.</li><li>
+<a id="pgfId-1040212"></a>Click <em>OK</em>.</li></ol></li><li>
+<a id="pgfId-1040213"></a>Choose <em>Simulation &#8211; Solver</em>.<br />
+<a id="pgfId-1040214"></a>The Choose Solver form appears.<br />
+<a id="pgfId-1040218"></a><div class="webflare-div-image">
+<img width="328" height="130" src="images/simulateAMSD-22.gif" /></div></li><li>
+<a id="pgfId-1040219"></a>Select <em>Spectre</em> as the <em>Analog solver to be used</em>.</li><li>
+<a id="pgfId-1040220"></a>Click <em>OK</em>.</li><li>
+<a id="pgfId-1040221"></a>In the Virtuoso<sup>&#174;</sup> Analog Design Environment window, choose <em>Simulation &#8211; Netlist and Run</em>.<br />
+<a id="pgfId-1040222"></a>Status appears in the upper left corner of the window. Simulation output information appears in the <code>ncverilog.log</code> file. The simulation time appears at the end of the file.<pre class="webflare-pre-block webflare-courier-new" id="#id1040223">
+<a id="pgfId-1040223"></a>Total time required for tran analysis `tran&#39; was 3.11407 ks (51m  54.1s).</pre>
+<a id="pgfId-1040224"></a>You can compare these results to those from the simulation using AMS Designer with the UltraSim solver.<br /><div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1040225"></a>This simulation ran for 60 minutes on our Solaris machine with a 1.6 G CPU.</div>
+<a id="pgfId-1040226"></a>When the simulation finishes, a graph window appears. For derails on using this waveform tool, see the <em><a actuate="user" class="URL" href="../vivaxlug/vivaxlugTOC.html#firstpage" show="replace" xml:link="simple">Virtuoso Visualization and Analysis XL User Guide</a></em>. .<a id="axisStrips"></a></li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="setup.html" id="prev" title="Setting Up the Migration Example">Setting Up the Migration Examp ...</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
