@@ -1,0 +1,1013 @@
+
+<html><head><title>Modeling Schematics as VHDL</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Approver" content="Technical Publications" />
+<meta name="Author" content="rgirdhar" />
+<meta name="CreateDate" content="2023-06-17" />
+<meta name="CreateTime" content="1687031941" />
+<meta name="DataType" content="Manuals" />
+<meta name="Description" content="Describes how to use VHDL OSS Toolbox to generate netlist views" />
+<meta name="DocTitle" content="Virtuoso VHDL Toolbox User Guide" />
+<meta name="DocType" content="User Guide" />
+<meta name="FileTitle" content="Modeling Schematics as VHDL" />
+<meta name="FileType" content="Chapter" />
+<meta name="FMWikiRelease" content="FM-Wiki-4.0.0" />
+<meta name="Keyword" content="vhdlossuser" />
+<meta name="Language" content="English" />
+<meta name="ModifiedDate" content="2023-06-17" />
+<meta name="ModifiedTime" content="1687031941" />
+<meta name="NextFile" content="appB.html" />
+<meta name="Group" content="" />
+<meta name="Platform" content="Custom IC Design" />
+<meta name="PrevFile" content="vhdloss_chap5.html" />
+<meta name="c_product" content="Virtuoso Schematic Editor" />
+<meta name="Product" content="Virtuoso Schematic Editor" />
+<meta name="ProductFamily" content="Virtuoso Schematic Editor" />
+<meta name="ProductVersion" content="IC23.1" />
+<meta name="RightsManagement" content="Copyright 2023 Cadence Design Systems Inc." />
+<meta name="Title" content="Virtuoso VHDL Toolbox User Guide -- Modeling Schematics as VHDL" />
+<meta name="Keywords" content="" />
+<meta name="topic_type" content="" />
+<meta name="reference_type" content="" />
+<meta name="prod_feature" content="" />
+<meta name="prod_subfeature" content="" />
+<meta name="new_topic" content="No" />
+<meta name="spotlight_topic" content="0" />
+<meta name="Version" content="IC23.1" />
+<meta name="SpaceKey" content="vhdlossuserIC231" />
+<meta name="webflare-version" content="2.5" />
+<link rel="stylesheet" href="styles/webflare.css" type="text/css" />
+
+
+  <script>/*<![CDATA[*/
+ document.addEventListener("DOMContentLoaded", function(event) {  document.querySelectorAll("img").forEach((img, index) => {
+if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} img.addEventListener("click", (e) => {if(img.hasAttribute("usemap")){            img.setAttribute("style","cursor:none;");return;};document.querySelector("#cad_image_modal").classList.add("opac");document.querySelector("#cad_image_modal_center").innerHTML = `<img style="position:absolute;top:0;bottom:0;left:0;right:0;margin: auto;max-height:95%;"  src="${e.target.src}">`;});});});
+/*]]>*/</script> 
+
+
+
+
+ <style>/*<![CDATA[*/
+.cursorclass{cursor:pointer;}#cad_image_modal{position:fixed;left:0;top:0;width:100%;background:#00000099;overflow:hidden;height:0;opacity:0;transition: height 0ms 1s, opacity 1s 0ms;}#cad_image_modal.opac{height: 100%;opacity: 1;transition: height 0ms 0ms, opacity 1s 0ms;}#cad_image_modal span{position:fixed;right:10px;top:10px;cursor:pointer;color:#fff;}
+/*]]>*/</style> 
+</head><body style="background-color: #FFFFFF;"><a name="pagetop"></a>
+<!-- Begin Buttons -->
+<header><div class="docHeadr">Product Documentation<img src="icons/Cadence-Logo.jpg" /></div><nav class="blueHead"><ul><li><a class="content" href="vhdlossuserTOC.html">Contents</a></li><li><a class="prev" href="vhdloss_chap5.html" title="Simulating a Netlisted VHDL Design">Simulating a Netlisted VHDL De ...</a></li><li style="float: right;"><a class="viewPrint" href="vhdlossuser.pdf">View/Print PDF</a></li><li style="float: right;margin-right: 25px;"><a class="nextd" href="appB.html" title="Customizing Your Environment">Customizing Your Environment</a></li></ul></nav></header>
+<!-- End Buttons -->
+<h5><center>Virtuoso VHDL Toolbox User Guide<br />Product Version IC23.1, June 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
+
+<h1>6
+<a id="pgfId-1014262"></a></h1>
+<h1>
+<a id="pgfId-1014264"></a><hr />
+<a id="16752"></a>Modeling Schematics as VHDL<hr />
+</h1>
+
+<p>
+<a id="pgfId-1014265"></a>This chapter describes key aspects of how the VHDL netlister models Virtuoso schematics and symbols in VHDL. The netlister does this through modeling constructs directly to VHDL, using name mapping, renaming, aliasing, assigning, and converting, or by generating a separate VHDL package.</p>
+<p>
+<a id="pgfId-1014266"></a>The following sections describe</p>
+<ul><li>
+<a id="pgfId-1014270"></a><a href="vhdloss_chap6.html#27493">Mapping Case Sensitivity</a></li><li>
+<a id="pgfId-1014274"></a><a href="vhdloss_chap6.html#15831">Assigning VHDL Data Types</a></li><li>
+<a id="pgfId-1014278"></a><a href="vhdloss_chap6.html#35396">Modeling Schematic Pins as VHDL Ports</a></li><li>
+<a id="pgfId-1014282"></a><a href="vhdloss_chap6.html#15695">Modeling Schematic Nets as VHDL Signals</a></li><li>
+<a id="pgfId-1014286"></a><a href="vhdloss_chap6.html#31604">Modeling Schematic Instances as VHDL Instances</a></li><li>
+<a id="pgfId-1014290"></a><a href="vhdloss_chap6.html#25375">Modeling Multisheet Schematics</a></li></ul>
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1020065"></a>For information on the SKILL functions associated with VHDL Toolbox, see <em><a actuate="user" class="URL" href="../netlistsimulateref/netlistsimulaterefTOC.html#firstpage" show="replace" xml:link="simple">Digital Design Netlisting and Simulation SKILL Reference</a></em>.</div>
+
+<h2>
+<a id="pgfId-1014294"></a><a id="HYGGEN.16"></a><a id="marker-1014292"></a><a id="27493"></a>Mapping Case Sensitivity</h2>
+
+<p>
+<a id="pgfId-1014295"></a>Due to differences between the Virtuoso Schematic Editor L software, the Cadence&#174; library structure, and VHDL in the way they handle mixed-case identifiers, it is important to understand how the VHDL netlister handles these differences. The following sections describe these differences, the rules used by the netlister to handle them, and the implications for how design data is created and organized.</p>
+
+<h3>
+<a id="pgfId-1014297"></a>Mapping <a id="maplcvtovhdl"></a>Library, Cell, and Cellview Names to VHDL</h3>
+
+<p>
+<a id="pgfId-1014298"></a>VHDL design units are stored in Cadence libraries as cells and cellviews. For example, the <code>orgate </code>construct is stored in the gates library as</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014299"></a>gates/orgate/entity</pre>
+
+<p>
+<a id="pgfId-1014300"></a>The behavioral architecture of the <code>orgate</code> structure is stored as</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014301"></a>gates/orgate/behavioral</pre>
+
+<p>
+<a id="pgfId-1014302"></a>The names of libraries and design units in VHDL are case insensitive. This means that two referenced libraries named <code>Gates</code> and <code>gates</code> refer to the same library. In contrast, the names of libraries, cells, and cellviews in the Cadence library structure are case sensitive; so libraries defined as <code>Gates</code> and <code>gates</code> in the <code>cds.lib</code> file are considered as separate libraries.</p>
+<p>
+<a id="pgfId-1014303"></a>To provide a consistent approach to mapping VHDL identifiers (which refer to library elements), Cadence uses the following rules for VHDL design units stored in a Cadence library:</p>
+<ul><li>
+<a id="pgfId-1014304"></a>Any reference to a library element that is <em>not</em> escaped, regardless of the case of the identifier, refers to the lowercase equivalent of the identifier. For example, if an identifier refers to <code>OrGate</code>, then the equivalent library element is stored as <code>gates/orgate</code>.</li><li>
+<a id="pgfId-1014305"></a>Any references to a library element that <em>is</em> escaped refers to the case-sensitive equivalent. For example, if an identifier refers to <code>\OrGate\</code>, then the equivalent library element is stored as <code>gates/OrGate</code>.<br />
+<a id="pgfId-1018585"></a>You can avoid name mapping issues by always choosing names that use only lowercase letters and digits. For details on name mapping, refer to the <em><a actuate="user" class="URL" href="../caiuser/caiuserTOC.html#firstpage" show="replace" xml:link="simple">Cadence Application Infrastructure User Guide.</a></em></li></ul>
+
+
+<p>
+<a id="pgfId-1018587"></a>When the netlister converts symbols or schematics to VHDL, the rules are applied to name-map all references to libraries, cells, and cellviews. The netlister maps the name of any reference to a library, cell, or cellview in the generated netlist, which contains uppercase characters by adding a backslash &#8220;\&#8221; to the beginning and end of the name. For example, a component declaration that refers to the <code>OrGate</code> cell in a Cadence library is netlisted as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014309"></a>   COMPONENT \OrGate\<br />   PORT(<br />           in1 : IN std_ulogic;<br />           in2 : IN std_ulogic;<br />           out1: OUT std_ulogic<br />      );<br />   END COMPONENT;</pre>
+
+<p>
+<a id="pgfId-1014310"></a>Avoid naming issues between VHDL and the Cadence library structure by avoiding uppercase characters when you name libraries, cells, and cellviews in a Cadence library.</p>
+
+<h3>
+<a id="pgfId-1014311"></a>Mapping Identifier Names to VHDL</h3>
+
+<p>
+<a id="pgfId-1014313"></a>The <a id="marker-1014312"></a>names of objects (identifiers) in VHDL are case insensitive. This means two signals named <code>signal_a</code> and <code>SIGNAL_A</code> are the same signal. <a id="marker-1014314"></a>Identifiers in Virtuoso Schematic Editor L are case sensitive; so Virtuoso Schematic Editor L considers wires <code>signal_a</code> and <code>SIGNAL_A</code> to be separate nets.</p>
+
+<p>
+<a id="pgfId-1014886"></a></p>
+<div class="webflare-div-image">
+<img width="650" height="257" src="images/vhdloss_chap6-2.gif" /></div>
+
+<p>
+<a id="pgfId-1014327"></a>When converting the two schematic nets to VHDL, the netlister applies name mapping to one of the nets to model the identifiers correctly. The netlister uses the following rules to perform case-sensitive <a id="marker-1014328"></a>name mapping of pin, signal, alias, and instance names:</p>
+<ul><li>
+<a id="pgfId-1014329"></a>The netlister maps the name of any identifier that contains uppercase characters by adding a backslash (<code>\</code>) to the front and back of the name. With the backslashes, the identifier becomes an escaped identifier in VHDL, and its case is preserved. For example, <code>SIGNAL_A</code> netlists as <code>\SIGNAL_A\</code>.</li></ul>
+<p>
+<a id="pgfId-1014331"></a>To disable case-sensitive <a id="marker-1022475"></a>name mapping of pin, signal, alias, and instance names, set the <code>simVhdlEscapeNameMapping</code><a id="simVhdlEscapeNameMapping"></a> variable to <code>t</code> and select <code>Case</code> <code>Preserved</code> from the <em>Netlist Identifiers as</em> drop-down in the VHDL Setup - Netlist form.</p>
+<p>
+<a id="pgfId-1022404"></a>To generate instance names in 5141 format, set the <code>hnlVHDL5141LIKEFORMATTING</code> flag to <code>t</code>.</p>
+<p>
+<a id="pgfId-1014332"></a>The netlister also escapes any name that is an invalid VHDL identifier or is a VHDL keyword (reserved word). </p>
+
+<h3>
+<a id="pgfId-1014333"></a>Matching Compliant and Noncompliant Data</h3>
+
+<p>
+<a id="pgfId-1014334"></a>To allow loose case matching among identifiers when the design is a mix of compliant and noncompliant data, do the following:</p>
+<ul><li>
+<a id="pgfId-1014335"></a>Set the <span class="webflare-courier-new" style="white-space:pre"><em>CDS_ALT_NMP</em></span> UNIX environment variable to a substring of <code>match</code> (case insensitive). <br />
+<a id="pgfId-1014336"></a>Or, type the following command in the Command Interpreter Window (CIW):<pre class="webflare-pre-block webflare-courier-new" id="#id1014337">
+<a id="pgfId-1014337"></a>setShellEnvVar(&quot;CDS_ALT_NMP=match&quot;)</pre>
+<a id="pgfId-1014338"></a>From the standalone VHDL Netlister, type the following command in a UNIX shell window:<pre class="webflare-pre-block webflare-courier-new" id="#id1014339">
+<a id="pgfId-1014339"></a>setenv CDS_ALT_NMP match ( for C shell )</pre></li></ul>
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1014340"></a>The system preserves identifiers while converting from a case-sensitive name space to a case-insensitive one, such as VHDL.</p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1021185"></a>Alternatively, you can use the <code>vhdlKeepCaseAsNC</code> variable to preserve the case of identifiers. For more information, see Appendix E, Customization Variables in <em>Spectre AMS Designer Environment User Guide</em></div>
+
+<div class="ft-figtabl-title">
+<a id="pgfId-1014373"></a>Example</div>
+<p>
+<a id="pgfId-1015289"></a></p>
+<div class="webflare-div-image">
+<img width="668" height="281" src="images/vhdloss_chap6-3.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014374"></a>lib:RECEIVER(vhdl_arch) :<br />ARCHITECTURE vhdl_arch OF RECEIVER IS<br />BEGIN<br />END vhdl_arch;</pre>
+
+<p>
+<a id="pgfId-1014375"></a>When you netlist the design hierarchy shown above, the netlister escapes any uppercase identifier producing the following Virtuoso Schematic Editor L symbol <code>RECEIVER</code>:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014376"></a>ENTITY \RECEIVER\ IS<br />...<br />...<br />END \RECEIVER\;</pre>
+
+<p>
+<a id="pgfId-1014377"></a>However, in editing the VHDL architecture, if you use compliant data, but then used the following statement during the post netlisting analysis phase, </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014378"></a>&quot;ARCHITECTURE vhdl_arch OF RECEIVER IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014379"></a>&quot;</pre>
+
+<p>
+<a id="pgfId-1014380"></a>the statement would force the analyzer to believe that there is a VHDL entity called <code>receiver</code> since VHDL is case insensitive. However, the netlister, creates a VHDL entity named <code>RECEIVER</code>. This results in an analysis error. The name-mapping algorithm fails when the design hierarchy is a mixture of compliant and non-compliant data. </p>
+<p>
+<a id="pgfId-1014381"></a>The alternative name-mapping algorithm allows a less strict name matching by retaining the case of an identifier when matching between a case-sensitive name space, such as OA, and a case-insensitive one, such as VHDL. However, the limitation in this approach is that all tools who support the VHDL name space need to do case insensitive library lookup.</p>
+<p>
+<a id="pgfId-1014382"></a>When you map identifiers from a case-sensitive domain to the file system, the system converts the identifiers to lowercase. The netlisting results are as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014383"></a>ENTITY RECEIVER IS<br />...<br />...<br />END RECEIVER;</pre>
+
+<p>
+<a id="pgfId-1014384"></a>If you netlist a cellview using the VHDL Netlister, and that cellview is on top of the hierarchy, the Netlister refers to the schematic for the port order property, and not to the symbol. Because no pins exist in the schematic, no port declarations exist in the above entity. </p>
+
+<h2>
+<a id="pgfId-1014387"></a><a id="marker-1014385"></a><a id="15831"></a>Assigning VHDL Data Types</h2>
+
+<p>
+<a id="pgfId-1014388"></a>The netlister assigns data types to ports and signals when generating entities and architectures. Data types are values of data that pass through a signal, such as 0 and 1 for bits or red and yellow for color.</p>
+<p>
+<a id="pgfId-1014389"></a>The following list shows the rules, in order of priority, that the netlister uses for assigning a VHDL <a id="marker-1014390"></a>data type.</p>
+<ol><li>
+<a id="pgfId-1014391"></a>The object has a <code>vhdlDataType</code> property already assigned to it, which the netlister uses.</li><li>
+<a id="pgfId-1014392"></a>The netlister uses one of the objects connected to the data type, such as an instance pin.<br />
+<a id="pgfId-1014394"></a>The netlister <a id="marker-1014393"></a>predefines the <code>vhdlDataType</code> property, which you can set on pins and wires by choosing <em>Edit &#8211; Properties &#8211; Objects</em> in the schematic editor. If you use the VHDL pins, then the Edit Object Properties form automatically prompts you for these data types.</li><li>
+<a id="pgfId-1014395"></a>The netlister uses the default scalar or vector data type specified on the cellview. <br />
+<a id="pgfId-1014396"></a>You can specify the default scalar or vector data type by choosing <em>Edit &#8211; Properties &#8211; VHDL</em> in the schematic editor.</li><li>
+<a id="pgfId-1018363"></a>The netlister uses a default scalar or vector data type specified in the VHDL Toolbox. You can change the default scalar or vector VHDL data type in the <em>VHDL Set Up Check </em>dialog box. To display the <em>VHDL Set Up Check</em> dialog box choose <em>Setup &#8211; Check</em> in VHDL Toolbox. The default scalar data type is<code> std_ulogic</code> and the default vector data type is <code>std_ulogic_vector</code>.</li></ol>
+
+
+
+
+
+<p>
+<a id="pgfId-1018289"></a>In case of port bundles you can specify the VHDL datatype for individual signals as follows:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018301"></a>sigName1:sigType1, sigName2:sigType2, sigName3:sigType3</pre>
+
+<p>
+<a id="pgfId-1018378"></a>For example, you have defined two signals, sig1 and sig2 as:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018309"></a>vhdlDataType : sig1:real</pre>
+
+<p>
+<a id="pgfId-1018386"></a>In this case sig1 has <code>real</code> as the datatype and sig2 has the default scalar datatype.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018398"></a>vhdlDataType : real</pre>
+
+<p>
+<a id="pgfId-1018314"></a>In this case both the signals, sig1 and sig2, have <code>real</code> as the datatype.</p>
+<p>
+<a id="pgfId-1018316"></a>If you do not specify the <code>vhdlDataType</code> then both the signals have the default scalar datatype defined in the <em>VHDL Set Up Check </em>dialog box.</p>
+
+<h2>
+<a id="pgfId-1018291"></a><a id="35396"></a>Modeling Schematic Pins as VHDL Ports</h2>
+
+<p>
+<a id="pgfId-1014402"></a>The netlister models <a id="marker-1014401"></a>schematic pins as VHDL ports by converting the direction of the pin as follows:</p>
+<table class="webflareTable" id="#id1014403">
+<tbody><tr>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014405">
+<a id="pgfId-1014405"></a>Schematic pins</span>
+</th>
+<th class="webflareTh" colspan="1" rowspan="1">
+<span class="tbl-head" id="#id1014407">
+<a id="pgfId-1014407"></a>VHDL ports</span>
+</th>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014409"></a>input</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014411"></a>in</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014413"></a>output</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014415"></a>out</p>
+</td>
+</tr>
+<tr>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014417"></a>inputOutput</p>
+</td>
+<td class="webflareTd" colspan="1" rowspan="1">
+<p>
+<a id="pgfId-1014419"></a>inout</p>
+</td>
+</tr>
+</tbody></table>
+<p>
+<a id="pgfId-1014421"></a>If the schematic pin has the <a id="marker-1014420"></a>property </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014422"></a>vhdlPortType = &quot;buffer&quot;</pre>
+
+<p>
+<a id="pgfId-1014423"></a>the netlister assigns the direction of the port as <code>buffer</code>. </p>
+
+<h3>
+<a id="pgfId-1014425"></a><a id="HYGGEN.24"></a>Supporting Port Bundles</h3>
+
+<p>
+<a id="pgfId-1014428"></a>VHDL does not support bundles, <a id="marker-1014426"></a>so the netlister models <a id="marker-1014427"></a>port bundles as multiple VHDL ports, one for each bundle element. For example,</p>
+
+<p>
+<a id="pgfId-1014887"></a></p>
+<div class="webflare-div-image">
+<img width="334" height="115" src="images/vhdloss_chap6-4.gif" /></div>
+<h3>
+<a id="pgfId-1014442"></a>Discontinuous Ports</h3>
+
+<p>
+<a id="pgfId-1014443"></a>VHDL does not support sparse or discontinuous port ranges. That is, if a port is specified with a range, then all members of the range must be declared. Following is a simple example of a schematic that demonstrates a discontinuous port range.</p>
+
+<p>
+<a id="pgfId-1014888"></a></p>
+<div class="webflare-div-image">
+<img width="394" height="112" src="images/vhdloss_chap6-5.gif" /></div>
+
+<p>
+<a id="pgfId-1014447"></a>Here the schematic contains two out ports, <code>a&lt;0&gt;</code> and <code>a&lt;3&gt;</code>, which are discontinuous. The netlister name maps these port names by appending the index number and <code>_split_%d </code>to the end of the name.</p>
+<p>
+<a id="pgfId-1014448"></a>Following is the entity generated from the previous example, where the<code> a&lt;0&gt;</code> and <code>a&lt;3&gt;</code> ports are name-mapped to <code>a_split_0</code> and <code>a_split_3</code>, respectively:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014449"></a>ENTITY split IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014450"></a>   PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014451"></a>      a_split_0 : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014452"></a>      a_split_3 : OUT std_ulogic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014453"></a>   );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014454"></a>END split;</pre>
+<h2>
+<a id="pgfId-1014457"></a><a id="HYGGEN.25"></a><a id="15695"></a>Modeling Schematic Nets as VHDL Signals</h2>
+
+<p>
+<a id="pgfId-1014459"></a>The netlister models schematic <a id="marker-1014458"></a>internal or local nets as VHDL signals. VHDL does not support <a id="marker-1014460"></a>signal bundles<a id="marker-1014461"></a>. The netlister models signal bundles as multiple VHDL signals, one for each bundle element, as in the previous VHDL port example.</p>
+
+<h3>
+<a id="pgfId-1014463"></a><a id="HYGGEN.26"></a>Supporting Global Signals</h3>
+
+<p>
+<a id="pgfId-1014465"></a>The netlister supports <a id="marker-1014464"></a>global signals by</p>
+<ul><li>
+<a id="pgfId-1014466"></a>Generating a separate VHDL package to declare global signals called <code>cds_global_signals</code> </li><li>
+<a id="pgfId-1014467"></a>Gathering global signals while traversing all cellviews in the hierarchy </li><li>
+<a id="pgfId-1014469"></a>Inserting a reference to the <code>cds_global_signals</code><a id="marker-1014468"></a> packages in the context clause of each architecture that refers to a global signal (the <code>cds_global_signals</code> package is part of the top cellview library). </li><li>
+<a id="pgfId-1014470"></a>Removing &#8220;<code>!</code>&#8221; from the end of each global signal name, such as <code>vdd!</code>, and appending <code>_cds_global</code> to the end of the signal name, such as <code>vdd_cds_global</code>.</li></ul>
+
+
+
+
+<h3>
+<a id="pgfId-1014472"></a><a id="HYGGEN.22"></a>Aliasing Ports and Signals</h3>
+
+<p>
+<a id="pgfId-1014475"></a>VHDL<a id="marker-1014473"></a> supports <a id="marker-1014474"></a>aliases for ports and local signals in the following ways:</p>
+<ul><li>
+<a id="pgfId-1014476"></a>The netlister declares aliases for all wire names that are marked as an alias using <code>Add &#8211; Wire Name</code> or patchcords in the Virtuoso Schematic Editor L.</li><li>
+<a id="pgfId-1014477"></a>The netlister declares an alias for a net name that is connected to a pin with a different name.</li></ul>
+
+
+<h3>
+<a id="pgfId-1014479"></a><a id="HYGGEN.21"></a>Modeling Feedback Signals</h3>
+
+<p>
+<a id="pgfId-1014480"></a>If a signal is driven (connected to an input pin or output instance pin) and read (connected to an output pin or input instance pin), then the signal is in a <a id="marker-1014481"></a>feedback loop. <a id="p24"></a>The netlister models feedback loops by inserting a temporary signal and connecting it between instances and ports. The following example shows a schematic with a temporary signal that connects instance <code>I0</code>, instance <code>I1</code>, and pin <code>d</code> and its resulting netlist.</p>
+
+<p>
+<a id="pgfId-1014892"></a></p>
+<div class="webflare-div-image">
+<img src="images/chap7_1_new.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014486"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018082"></a>ARCHITECTURE schematic OF feedback IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014487"></a>    COMPONENT nand2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014488"></a>        PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014489"></a>            Y : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014490"></a>            B : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014491"></a>            A : IN std_ulogic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014492"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014493"></a>    END COMPONENT;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014494"></a>    SIGNAL d_tempsig : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014495"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014496"></a>    d &lt;= d_tempsig;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014497"></a>    I1 : nand2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014498"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014499"></a>            Y =&gt; e,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014500"></a>            B =&gt; c,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014501"></a>            A =&gt; d_tempsig</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014502"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014503"></a>    I0 : nand2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014504"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014505"></a>            Y =&gt; d_tempsig,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014506"></a>            B =&gt; b,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014507"></a>            A =&gt; a</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014508"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014509"></a>END schematic;</pre>
+<h3>
+<a id="pgfId-1014510"></a>Signal/Port Name Collisions</h3>
+
+<p>
+<a id="pgfId-1014511"></a>VHDL does not allow a port to be named <code>a&lt;0&gt;</code> and a signal to be named <code>a&lt;1&gt;</code>. Either <code>a&lt;0:1&gt;</code> is declared as a port or a signal, but not both. Following is a simple example that demonstrates how a schematic that violates this rule can be drawn:</p>
+
+<p>
+<a id="pgfId-1014893"></a></p>
+<div class="webflare-div-image">
+<img width="631" height="229" src="images/vhdloss_chap6-7.gif" /></div>
+
+<p>
+<a id="pgfId-1014515"></a>Here, the schematic contains a signal named <code>local&lt;0:3&gt;</code> and a port named <code>local&lt;0&gt;</code>. In VHDL, you cannot have a port and a signal with the same name, which in the example is <code>local</code>. Normally, the netlister can make the signal an alias of the port, but in this case the width of the signal is greater than the width of the port.</p>
+<p>
+<a id="pgfId-1014516"></a>Following is the netlist that is generated from the previous example, where the local signal is name-mapped to be <code>local_portclash:</code></p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014517"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014518"></a>ENTITY port_clash IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014519"></a>   PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014520"></a>      local : OUT std_ulogic_vector(0 DOWNTO 0);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014521"></a>      b : OUT std_ulogic_vector(0 TO 3);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014522"></a>      a : IN std_ulogic_vector(0 TO 3)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014523"></a>   );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014524"></a>END port_clash;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014525"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014526"></a>ARCHITECTURE schematic OF port_clash IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014527"></a>   COMPONENT blk</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014528"></a>      PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014529"></a>         blk_out : OUT std_ulogic_vector(0 TO 3);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014530"></a>         blk_in : IN std_ulogic_vector(0 TO 3)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014531"></a>         );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014532"></a>   END COMPONENT;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014533"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014534"></a>   SIGNAL local_portclash : std_ulogic_vector(3 DOWNTO 0);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014535"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014536"></a>   local(0) &lt;= local_portclash(0);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014537"></a>   I0 : blk</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014538"></a>      PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014539"></a>         blk_in(0 TO 3) =&gt; a(0 TO 3),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014540"></a>         blk_out(0) =&gt; local_portclash(0),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014541"></a>         blk_out(1) =&gt; local_portclash(1),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014542"></a>         blk_out(2) =&gt; local_portclash(2),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014543"></a>               blk_out(3) =&gt; local_portclash(3)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014544"></a>            );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014545"></a>   I1 : blk</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014546"></a>      PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014547"></a>         blk_in(0) =&gt; local_portclash(0),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014548"></a>         blk_in(1) =&gt; local_portclash(1),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014549"></a>            blk_in(2) =&gt; local_portclash(2),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014550"></a>         blk_in(3) =&gt; local_portclash(3),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014551"></a>            blk_out(0 TO 3) =&gt; b(0 TO 3)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014552"></a>      );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014553"></a>END schematic;</pre>
+<h2>
+<a id="pgfId-1014555"></a><a id="31604"></a>Modeling Schematic Instances as VHDL Instances</h2>
+
+<p>
+<a id="pgfId-1014558"></a>The netlister models <a id="marker-1014556"></a>schematic instances as <a id="marker-1014557"></a>VHDL component instances. </p>
+
+<h3>
+<a id="pgfId-1014559"></a>Ignoring Instances</h3>
+
+<p>
+<a id="pgfId-1014561"></a>The netlister skips over those instances that have the <code>nlAction</code><a id="marker-1014560"></a> property with the value of <code>ignore</code> on either the instance or the instance master. If you set the <code>nlAction</code> property, then the instance is ignored by all Cadence netlisters. Examples of instances that are ignored are pins, sheet borders, and power and ground symbols.</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014562"></a>&quot;nlAction&quot; = &quot;ignore&quot;</pre>
+
+<p>
+<a id="pgfId-1018457"></a><code></code><a id="marker-1018465"></a>If you want to prevent only the VHDL netlister from netlisting an instance, then you can set the string property, <code>nlIgnore</code> to <code>vhdl</code> on the design object as shown below: </p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1018479"></a>nlIgnore = &quot;vhdl&quot;</pre>
+
+<p>
+<a id="pgfId-1018502"></a>If a design object has <code>nlAction</code> set to <code>ignore</code> then irrespective of the value of <code>nlIgnore</code>, the design object will not be netlisted. This is because, <code>nlAction</code> has precedence over <code>nlIgnore</code>. </p>
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1018497"></a>Although the <code>nlIgnore</code> property accepts space-separated values, each value being the netlister name that should ignore the design object, currently only the VHDL netlister implements the <code>nlIgnore</code> property.</div>
+
+<h3>
+<a id="pgfId-1018459"></a>Modeling Iterated Instances</h3>
+
+<p>
+<a id="pgfId-1014565"></a>The netlister models <a id="marker-1014564"></a>iterated instances by splitting the iterated instances into individual instances. It names the individual instance using a base name appended with an iteration index. The following example shows a schematic containing an instance of a <a id="marker-1014566"></a>D flip-flop iterated from 0 to 3 and its resulting netlist.</p>
+
+<p>
+<a id="pgfId-1014894"></a></p>
+<div class="webflare-div-image">
+<img width="514" height="171" src="images/vhdloss_chap6-8.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014570"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014571"></a>ARCHITECTURE schematic OF iterated IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014572"></a>    COMPONENT dffp</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014573"></a>        PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014574"></a>            Q : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014575"></a>            Q_ : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014576"></a>            CLK : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014577"></a>            D : IN std_ulogic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014578"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014579"></a>    END COMPONENT;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014580"></a>    </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014581"></a>    SIGNAL q : std_ulogic_vector(0 TO 3);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014582"></a>    SIGNAL q_not : std_ulogic_vector(0 TO 3);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014583"></a>    SIGNAL clk : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014584"></a>    SIGNAL d : std_ulogic_vector(0 TO 3);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014585"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014586"></a>    a1_0 : dffp </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014587"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014588"></a>            Q =&gt; q(0),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014589"></a>            CLK =&gt; clk,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014590"></a>            Q_ =&gt; q_not(0),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014591"></a>            D =&gt; d(0)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014592"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014593"></a>    a1_1 : dffp </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014594"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014595"></a>            Q =&gt; q(1),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014596"></a>            CLK =&gt; clk,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014597"></a>            Q_ =&gt; q_not(1),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014598"></a>            D =&gt; d(1)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014599"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014600"></a>    a1_2 : dffp </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014601"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014602"></a>            Q =&gt; q(2),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014603"></a>            CLK =&gt; clk,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014604"></a>            Q_ =&gt; q_not(2),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014605"></a>            D =&gt; d(2)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014606"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014607"></a>    a1_3 : dffp </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014608"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014609"></a>            Q =&gt; q(3),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014610"></a>            CLK =&gt; clk,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014611"></a>            Q_ =&gt; q_not(3),</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014612"></a>            D =&gt; d(3)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014613"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014614"></a>END schematic;</pre>
+<h3>
+<a id="pgfId-1014615"></a><a id="33860"></a>Modeling<a id="instPropGeneric"></a> Instance Properties as Generics</h3>
+
+<p>
+<a id="pgfId-1014616"></a>Generics in VHDL let an instance pass information to its component. The netlister provides the ability to define <a id="marker-1014617"></a>generics of a component and to map the values of schematic instance properties to generics. The netlister accomplishes this through the use of the <code>vhdlGenericDefList</code> property.</p>
+<p>
+<a id="pgfId-1014619"></a>The <code>vhdlGenericDefList</code><a id="marker-1014618"></a> property defines a list of properties that represent the generics and their types for a component.</p>
+<p>
+<a id="pgfId-1016061"></a>You can store the property in the cellview defining the interface for the component from Virtuoso Schematic Editor or Virtuoso Symbol Editor. </p>
+<p>
+<a id="pgfId-1020523"></a>To store <code>vhdlGenericDefList</code> in a cell through Virtuoso Schematic Editor or Virtuoso Symbol Editor:</p>
+<ol><li>
+<a id="pgfId-1016047"></a>Open the cell in the editor and select <em>Edit </em>&#8211; <em>Properties</em> &#8211; <em>VHDL</em>. <br />
+<a id="pgfId-1016048"></a>The VHDL Properties form appears. </li><li>
+<a id="pgfId-1020399"></a>Click the <em>Add</em> button.<br />
+<a id="pgfId-1020419"></a>The Add Generic form appears. </li><li>
+<a id="pgfId-1020429"></a>Specify the following information in their respective fields:<ul><li>
+<a id="pgfId-1020456"></a>The name of the generic, for example, <code>MIN_DELAY</code>. </li><li>
+<a id="pgfId-1020466"></a>The valid VHDL data type, for example, <code>INTEGER</code>. </li><li>
+<a id="pgfId-1020475"></a>The value, for example, <code>10</code>. </li></ul></li><li>
+<a id="pgfId-1020447"></a>Click <em>OK</em>. <br />
+<a id="pgfId-1020492"></a>The added property appears in the generics section of VHDL Properties form.</li><li>
+<a id="pgfId-1016057"></a>Choose <em>File &#8212; Check and Save</em> in the editor.</li><li>
+<a id="pgfId-1019938"></a>Use VHDL Toolbox to regenerate the netlist of the design.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+<div class="webflare-information-macro webflare-macro-note">
+<a id="pgfId-1020750"></a>By default, VHDL Toolbox prints all generics. To print only those generics for which the default value is specified in the VHDL netlist, set <code>hnlVHDLSkipGenericWithNoDefaultValue</code> to <code>t</code> in Virtuoso CIW, <code>.simrc</code>, or <code>si.env</code>. You can set the default values of generics from the VHDL Setup - Netlist form. For details, see the <em><a actuate="user" class="URL" href="../vhdlossuser/vhdloss_chap3.html#genericdefaults" show="replace" xml:link="simple">Generic Defaults</a></em><em> </em>tab<em>.</em></div>
+<p>
+<a id="pgfId-1020847"></a>You can also store the <code>vhdlGenericDefList</code> property in the cell or library-level CDF of the component. </p>
+<p>
+<a id="pgfId-1020848"></a>To store <code>vhdlGenericDefList</code> as a CDF parameter of a component:</p>
+<ol><li>
+<a id="pgfId-1020849"></a>Choose <em>Tools</em> &#8211; <em>CDF</em> &#8211; <em>Edit </em>from Virtuoso CIW<em>. </em><br />
+<a id="pgfId-1020574"></a>The Edit CDF form appears. </li><li>
+<a id="pgfId-1020587"></a>Choose where you want to edit the CDF property, which can be at the <em>Cell</em> or <em>Library</em> level.</li><li>
+<a id="pgfId-1020617"></a>Choose <em>Base </em>in the <em>CDF Layer</em> area.</li><li>
+<a id="pgfId-1020888"></a>Specify the library and cell of the component in their respective fields.</li><li>
+<a id="pgfId-1021136"></a>Add the component parameter in the component parameters table. Use the following guidelines:<ul><li>
+<a id="pgfId-1021137"></a>Specify the parameter <em>Name</em> as <code>vhdlGenericDefList</code>.</li><li>
+<a id="pgfId-1021138"></a>Select the parameter <em>ype</em> as <code>string</code>.</li><li>
+<a id="pgfId-1016115"></a>Specify the <em>Default Value</em> of the parameter as shown in the following example:<br /><pre class="webflare-pre-block webflare-courier-new" id="#id1016116">
+<a id="pgfId-1016116"></a>((min_delay time 5 ns) (max_delay time 10 ns))</pre>
+<a id="pgfId-1016124"></a>The value specified in this example is an <code>iLList</code> type list.</li></ul></li><li>
+<a id="pgfId-1016127"></a>Click <em>Apply</em>, and then <em>OK</em> to save the CDF parameter and exit the Edit CDF form.</li><li>
+<a id="pgfId-1016125"></a>In the design, replace the entity so that it has the CDF parameter. <br />
+<a id="pgfId-1021057"></a>The VHDL generics become available in the newly created entity. You can then use VHDL Toolbox to regenerate the netlist.</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<a id="pgfId-1016123"></a>VHDL Toolbox uses the <code>vhdlGenericDefList</code> property when generating entities from schematics or symbols, and for generating component declarations when generating architectures. The property is stored as a SKILL list of lists, with each sublist containing the generic name, type, and an optional value. For example:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014621"></a>vhdlGenericDefList = ((&quot;min_delay&quot; &quot;time&quot; &quot;5 ns&quot;)</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014622"></a>                      (&quot;max_delay&quot; &quot;time&quot;))</pre>
+
+<p>
+<a id="pgfId-1014623"></a>The following schematic and resulting netlist show an instance of a D flip-flop with the two properties<code> min_delay</code> and <code>max_delay</code> representing generics. The D flip-flop symbol contains the <code>vhdlGenericDefList</code> property, which defines these properties as generics with the type of <code>time</code>.</p>
+
+<p>
+<a id="pgfId-1014895"></a></p>
+<div class="webflare-div-image">
+<img width="476" height="202" src="images/vhdloss_chap6-9.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014627"></a>ARCHITECTURE schematic OF generic_example IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014628"></a>    COMPONENT dffp</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014629"></a>        GENERIC(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014630"></a>            max_delay : time;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014631"></a>            min_delay : time</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014632"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014633"></a>        PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014634"></a>            Q : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014635"></a>            Q_ : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014636"></a>            CLK : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014637"></a>            D : IN std_ulogic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014638"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014639"></a>    END COMPONENT;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014640"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014641"></a>I0 : dffp </pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014642"></a>        GENERIC MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014643"></a>            max_delay =&gt; 8 ns,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014644"></a>            min_delay =&gt; 5 ns</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014645"></a>        )</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014646"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014647"></a>            Q =&gt; q,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014648"></a>            CLK =&gt; clk,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014649"></a>            Q_ =&gt; q_not,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014650"></a>            D =&gt; d</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014651"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014652"></a>END schematic;</pre>
+
+<p>
+<a id="pgfId-1020338"></a>It is possible that the same property is set in the VHDL file and a CDF parameter of a cell. In such a case, VHDL Toolbox determines the property to print in the <code>GENERIC</code> section of the netlist using the SKILL variable <code>hnlVHDLoverCDFGenerics</code>. By default, this variable is set to <code>nil</code> and VHDL Toolbox prints the CDF parameter. To configure VHDL Toolbox to print the VHDL property, instead of the conflicting CDF parameter, set <code>hnlVHDLoverCDFGenerics</code> to <code>t</code> in Virtuoso CIW, <code>.simrc</code>, or <code>si.env</code>.</p>
+<p>
+<a id="pgfId-1022259"></a>When you create entity view for a cell using cv2cv, the properties added as <code>Generics</code> through <code>vhdl</code> properties are printed in the <code>entity</code> generics. But, if a property with same name is added on the cellview through cellview properties, then the value corresponding to this property gets printed. If you do not wish to override this generic value, set the <code>vhdlDoNotUseCVPropForGenerics</code> flag to <code>t</code>.</p>
+
+<h3>
+<a id="pgfId-1014653"></a>Specifying Explicit Component Binding</h3>
+
+<p>
+<a id="pgfId-1014655"></a>Normally, the netlister determines a <a id="marker-1014654"></a>component&#8217;s binding while traversing a design hierarchy. However, it can be useful to explicitly specify the binding for a component instance. The netlist provides the following property for this purpose</p>
+<p>
+<a id="pgfId-1014657"></a>The <code>vhdlArchitectureName</code><a id="marker-1014656"></a> property can be placed on an instance in a schematic to explicitly specify the component binding for the instance. The property is stored as a string and specifies the library, entity, and architecture names of the component to use when generating a configuration specification for the instance. An example is <code>mixed.half_adder(behavior).</code></p>
+<p>
+<a id="pgfId-1014659"></a>The following schematic contains two instances of the <em></em><a id="marker-1014658"></a><code>half_adder</code> component, each containing a different value for <code>vhdlArchitectureName</code>. The resulting netlist follows the schematic.</p>
+
+<p>
+<a id="pgfId-1014896"></a></p>
+<div class="webflare-div-image">
+<img width="667" height="286" src="images/vhdloss_chap6-10.gif" /></div>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014663"></a>ARCHITECTURE schematic OF full_adder IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014664"></a>    COMPONENT or_gate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014665"></a>        PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014666"></a>            in1 : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014667"></a>            in2 : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014668"></a>            out1 : OUT std_ulogic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014669"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014670"></a>    END COMPONENT;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014671"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014672"></a>    COMPONENT half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014673"></a>        PORT(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014674"></a>            x : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014675"></a>            y : IN std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014676"></a>            sum : OUT std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014677"></a>            carry : OUT std_ulogic</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014678"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014679"></a>    END COMPONENT;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014680"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014681"></a>    SIGNAL temp_carry_2 : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014682"></a>    SIGNAL temp_carry_1 : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014683"></a>    SIGNAL temp_sum : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014684"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014685"></a>    FOR U0 : half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014686"></a>        USE ENTITY mixed.half_adder(rtl);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014687"></a>    FOR U1 : half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014688"></a>        USE ENTITY mixed.half_adder(behavior);</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014689"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014690"></a>    U2 : or_gate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014691"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014692"></a>            in2 =&gt; temp_carry_2,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014693"></a>            out1 =&gt; carry_out,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014694"></a>            in1 =&gt; temp_carry_1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014695"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014696"></a>    U0 : half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014697"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014698"></a>            x =&gt; a,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014699"></a>            y =&gt; b,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014700"></a>            sum =&gt; temp_sum,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014701"></a>            carry =&gt; temp_carry_1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014702"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014703"></a>    U1 : half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014704"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014705"></a>            x =&gt; temp_sum,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014706"></a>            y =&gt; carry_in,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014707"></a>            sum =&gt; ab,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014708"></a>            carry =&gt; temp_carry_2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014709"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014710"></a>END schematic;</pre>
+<h3>
+<a id="pgfId-1014712"></a>Specifying Components Declared in <a id="marker-1014711"></a>External Packages</h3>
+
+<p>
+<a id="pgfId-1014714"></a>The netlister generates <a id="marker-1014713"></a>component declarations for all components that are instantiated in the schematic being netlisted. However, it is common to specify component declarations in a package that can be referenced by architectures that instantiate these components. The netlister provides the following properties for specifying components declared in an external package.</p>
+<ul><li>
+<a id="pgfId-1014719"></a>You can place the <code>vhdlComponentDecl</code><a id="marker-1014718"></a> property in a symbol to specify the name of the external package containing its component declaration. When generating a netlist for a schematic that instantiates the symbol, the netlister does not generate a component declaration. <br />
+<a id="pgfId-1021488"></a>However, the component declaration won&#8217;t be skipped when you place the <code>vhdlComponentDecl</code> property on a symbol (for example, <code>library:cell::L1:C1</code>) and specify an external <code>vhdl</code> text file containing the definition for a cell with the same name in a different library (for example, <code>library:cell::L2:C1</code>). </li></ul>
+
+<p>
+<a id="pgfId-1014723"></a>The following schematic demonstrates the use of this property:</p>
+
+<p>
+<a id="pgfId-1014897"></a></p>
+<div class="webflare-div-image">
+<img width="666" height="293" src="images/vhdloss_chap6-11.gif" /></div>
+
+<p>
+<a id="pgfId-1014724"></a>The schematic contains two instances of <code>half_adder </code>and one of <code>or_gate</code>. The schematic also contains the property</p>
+<p>
+<a id="pgfId-1014726"></a>specifying that the component declaration for the <code>half_adder</code> component exists in an external package. The <code>or_gate</code> symbol contains the property</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014727"></a>vhdlComponentDecl=((&quot;adder&quot; &quot;adder_components&quot; &quot;all&quot;))</pre>
+
+<p>
+<a id="pgfId-1014728"></a>specifying that its component declaration exists in the <code>adder_components</code> package in the <code>adder</code> library. Following is the resulting netlist:</p>
+
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014729"></a>LIBRARY ieee, adder;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014730"></a>USE ieee.std_logic_1164.all;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014731"></a>USE adder.adder_components.all;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014732"></a></pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014733"></a>ARCHITECTURE schematic OF full_adder IS</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014734"></a>    SIGNAL temp_carry_2 : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014735"></a>    SIGNAL temp_carry_1 : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014736"></a>    SIGNAL temp_sum : std_ulogic;</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014737"></a>BEGIN</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014738"></a>    U2 : or_gate</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014739"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014740"></a>            in2 =&gt; temp_carry_2,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014741"></a>            out1 =&gt; carry_out,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014742"></a>            in1 =&gt; temp_carry_1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014743"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014744"></a>    U0 : half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014745"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014746"></a>            x =&gt; a,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014747"></a>            y =&gt; b,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014748"></a>            sum =&gt; temp_sum,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014749"></a>            carry =&gt; temp_carry_1</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014750"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014751"></a>    U1 : half_adder</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014752"></a>        PORT MAP(</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014753"></a>            x =&gt; temp_sum,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014754"></a>            y =&gt; carry_in,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014755"></a>            sum =&gt; ab,</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014756"></a>            carry =&gt; temp_carry_2</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1014757"></a>        );</pre>
+<pre class="webflare-courier-new codeContent">
+<a id="pgfId-1021758"></a>END schematic;</pre>
+<h2>
+<a id="pgfId-1014763"></a><a id="HYGGEN.19"></a><a id="HYGGEN.17"></a><a id="HYGGEN.18"></a><a id="25375"></a>Modeling Multisheet Schematics</h2>
+
+<p>
+<a id="pgfId-1014765"></a>The netlister models <a id="marker-1014764"></a>a multisheet schematic as a single design unit (architecture) by<a id="p22"></a></p>
+<ul><li>
+<a id="pgfId-1014769"></a>Generating a single entity for the <a id="marker-1014767"></a>schematic index to declare <a id="marker-1014768"></a>hierarchical pins</li><li>
+<a id="pgfId-1014771"></a>Defining each sheet in the architecture as a separate <a id="marker-1014770"></a>VHDL block</li><li>
+<a id="pgfId-1014772"></a>Matching the name of the block to the instance name of the sheet</li><li>
+<a id="pgfId-1014774"></a>Maintaining separate <a id="marker-1014773"></a>name scopes within a block that directly map to the use model of separate cellviews for each sheet<a id="HYGGEN.20"></a></li></ul>
+
+
+
+
+<br /><a href="#pagetop">Return to top</a><br /></div>
+<!-- Begin Buttons --><!-- End Buttons -->
+<footer><nav class="navigation"><b><em><a href="vhdloss_chap5.html" id="prev" title="Simulating a Netlisted VHDL Design">Simulating a Netlisted VHDL De ...</a></em></b><b><em><a href="appB.html" id="nex" title="Customizing Your Environment">Customizing Your Environment</a></em></b></nav><div>
+            For further assistance, contact <a href="https://support.cadence.com">Cadence Online Support</a>. Copyright &#169; 2023, <a href="https://www.cadence.com">Cadence Design Systems, Inc.</a> All rights reserved. 
+          </div></footer>
+ 
+
+ <div id="cad_image_modal" style="background-color: rgba(0, 0, 0, 0.6);"><center id="cad_image_modal_center">&#160;⠀ </center><span style="margin-right:50px;margin-top:100px;font-weight:bold;font-size:20px;background:#e5e5e5;border:1px solid #e5e5e5;border-radius:25px;height:30px;width:20px;padding-left:6px;padding-top:2px;color: black;" onclick="document.querySelector('#cad_image_modal').classList.remove('opac');">X</span></div> 
+
+</body></html>
