@@ -1,5 +1,5 @@
 
-<html><head><title>Creating an Abstract from a DEF Block</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<html><head><title>Creating an Abstract from a DEF Block / 从 DEF Block 创建 Abstract</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="Approver" content="Technical Publications" />
 <meta name="Author" content="spriya" />
 <meta name="CreateDate" content="2023-10-26" />
@@ -55,12 +55,17 @@ if (img.hasAttribute("usemap")){return;}else{img.classList.add("cursorclass");} 
 <!-- End Buttons -->
 <h5><center>Virtuoso Abstract Generator User Guide<br />Product Version IC23.1, November 2023</center></h5><div id="main-content" style="min-height: 50vh; margin-left: 5%; margin-right: 2%;"><a name="#firstpage"></a>
 
-<a id="Filename:tk_Creating_an_Abstract_from_a_DEF_Block" title="Creating an Abstract from a DEF Block"></a><h3>
+<a id="Filename:tk_Creating_an_Abstract_from_a_DEF_Block" title="Creating an Abstract from a DEF Block"></a><h3 style="color: #999999;">
 <a id="pgfId-1051706"></a>Creating an Abstract from a DEF Block</h3>
 
-<p>
+<h3 style="color: #2E7D32;">从 DEF Block 创建 Abstract</h3>
+
+<p style="color: #999999;">
 <a id="pgfId-1051707"></a>Abstract Generator can be used to generate abstracts and process antenna information for routed blocks.</p>
-<ol><li>
+
+<p style="color: #2E7D32;">Abstract Generator 可用于为已布线的 block 生成 abstract，并处理天线（antenna）信息。</p>
+
+<ol style="color: #999999;"><li>
 <a id="pgfId-1051708"></a>Choose <em>File</em> &#8211; <em>Import</em> &#8211; <em>LEF</em> option to import your LEF file.<br /><div class="webflare-information-macro webflare-macro-note">
 <a id="pgfId-1051709"></a>When generating process antenna data for a routed block, you only need standard cell LEF, which has antenna information on the terminals.</div>
 <a id="pgfId-1051710"></a>Ensure that the DEF file contains pins for VSS/VDD with no geometry.</li><li>
@@ -79,6 +84,23 @@ VDD + NET VDD + DIRECTION INOUT + USE POWER</code></li><li>
 <a id="pgfId-1051722"></a>For <em>Power Nets</em>, if the power pin geometry was defined in the DEF file, it is likely that this is the desired pin geometry in the abstract. In this case, it is recommended that both <em>Create boundary pins</em> and <em>Create ring pins</em> options be turned off.</li><li>
 <a id="pgfId-1051723"></a>If the DEF file contains no geometric pin shape, you should select the <em>Create boundary pins </em>option for <em>Signal Nets</em> and <em>Create boundary pins</em> or <em>Create ring pins</em> option for <em>Power Nets</em>.</li></ul></li></ol>
 
+<ol style="color: #2E7D32;"><li>
+选择 <em>File</em> &#8211; <em>Import</em> &#8211; <em>LEF</em> 导入 LEF 文件。<br /><div class="webflare-information-macro webflare-macro-note">为已布线 block 生成工艺天线（process antenna）数据时，只需要包含端子（terminal）天线信息的标准单元 LEF（standard cell LEF）。</div>
+确保 DEF 文件包含 VSS/VDD 的 pin 且不带几何信息。</li><li>
+运行 <em>Pins</em> 步骤。<ul><li>
+在 <em>Power</em> 页签的 Extract 步骤中，保持 <em>Extract power nets</em> 选项关闭。</li><li>
+在 <em>Adjust</em> 页签的 Abstract 步骤中，选择要创建的 power pin 样式，例如 boundary 或 pin。</li></ul><br />
+该方案不受 block 内标准单元是否包含 feedthru 或 abutment pin 的影响，也不受你为 block 自身选择的 power pin 样式影响。<br />
+如果 DEF 文件不包含 VSS/VDD 的 power pin 语句，请按如下示例将这些语句添加到 DEF 文件的 pins 段：<br />
+<code>VSS + NET VSS + DIRECTION INOUT + USE GROUND
+VDD + NET VDD + DIRECTION INOUT + USE POWER</code></li><li>
+运行 Extract 步骤。<ul><li>
+计算工艺天线效应（PAE）时，需要运行 <code>do_extraction</code>。推荐做法是保持 <em>Extract signal nets</em> 选项关闭，在 <em>Antenna</em> 页签中选择所有合适的天线计算按钮，并在 <em>Layer Assignment for Extraction</em> 表格中列出 polysilicon、contact 与 diffusion layer。此处推荐执行的天线计算为 <em>Calculate hierarchical antenna</em>，该计算不需要在 extraction 中包含 <code>DIFF</code>、<code>CONT</code> 或 <code>POLY</code> layer。</li><li>
+按上述设置，Abstract Generator 会运行 <code>do_extraction</code> 生成 PAE 数据，但不会创建任何新的 pin。pin 的几何形状本质上将与 DEF pins 段中定义的内容一致。</li></ul></li><li>
+运行 Abstract 步骤。<ul><li>
+在 DEF 流程中，如果 DEF 文件中的每个 pin 都包含几何信息，建议关闭 <em>Create boundary pins</em> 选项。</li><li>
+对于 <em>Power Nets</em>，如果 power pin 的几何形状已在 DEF 文件中定义，则这很可能就是 abstract 中期望的 pin 几何。在这种情况下，建议同时关闭 <em>Create boundary pins</em> 与 <em>Create ring pins</em> 选项。</li><li>
+如果 DEF 文件不包含几何 pin 形状，则应为 <em>Signal Nets</em> 选择 <em>Create boundary pins</em> 选项，并为 <em>Power Nets</em> 选择 <em>Create boundary pins</em> 或 <em>Create ring pins</em> 选项。</li></ul></li></ol>
 
 
 
@@ -94,11 +116,16 @@ VDD + NET VDD + DIRECTION INOUT + USE POWER</code></li><li>
 
 
 
-<h4><em>
+
+<h4 style="color: #999999;"><em>
 <a id="pgfId-1051724"></a>Related Topics</em></h4>
 
-<p>
+<h4 style="color: #2E7D32;"><em>相关主题</em></h4>
+
+<p style="color: #999999;">
 <a id="pgfId-1051701"></a><a href="AG_Forms_re_Import_LEF_Form.html#15427">Import LEF Form</a></p>
+
+<p style="color: #2E7D32;"><a href="AG_Forms_re_Import_LEF_Form.html#15427">Import LEF 表单</a></p>
 
 <br /><a href="#pagetop">Return to top</a><br /></div>
 <!-- Begin Buttons --><!-- End Buttons -->
